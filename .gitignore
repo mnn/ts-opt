@@ -1,0 +1,7 @@
+.idea/*
+coverage/
+*.log
+node_modules/
+*.swp
+*.iml
+.nyc_output/
