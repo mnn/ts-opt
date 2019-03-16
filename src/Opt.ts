@@ -66,6 +66,18 @@ export abstract class Opt<T> {
   chain<U>(f: (_: T) => Opt<U>): Opt<U> { return this.flatMap(f); }
 
   /**
+   * Combination of [[flatMap]] and [[opt]] functions.
+   *
+   * ```ts
+   * some(1).chainToOpt(x => x === 1 ? null : x + 1) // None
+   * some(2).chainToOpt(x => x === 1 ? null : x + 1) // Some(3)
+   * ```
+   *
+   * @param f
+   */
+  chainToOpt<U>(f: (_: T) => U | undefined | null): Opt<U> { return this.flatMap(x => opt(f(x))); }
+
+  /**
    * Returns value when [[Some]], throws error with `msg` otherwise.
    * @param msg Error message.
    */

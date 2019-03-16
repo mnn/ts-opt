@@ -154,8 +154,8 @@ describe('opt', () => {
   });
 
   it('flatBimap', () => {
-    expect(none.flatBimap(x => some(x),() => some('none')).orNull()).to.be.eq('none');
-    expect(some('some').flatBimap(x => some(x),() => some('none')).orNull()).to.be.eq('some');
+    expect(none.flatBimap(x => some(x), () => some('none')).orNull()).to.be.eq('none');
+    expect(some('some').flatBimap(x => some(x), () => some('none')).orNull()).to.be.eq('some');
   });
 
   it('toString', () => {
@@ -163,6 +163,11 @@ describe('opt', () => {
     expect(some('a').toString()).to.eq('Some("a")');
     expect(some(null).toString()).to.eq('Some(null)');
     expect(none.toString()).to.eq('None');
+  });
+
+  it('chainToOpt', () => {
+    expect(some(1).chainToOpt(x => x === 1 ? null : x + 1).orUndef()).to.be.eq(undefined);
+    expect(some(2).chainToOpt(x => x === 1 ? null : x + 1).orUndef()).to.be.eq(3);
   });
 });
 
@@ -194,5 +199,54 @@ describe('helper functions', () => {
     expect(isOpt({value: 0})).to.be.false;
     expect(isOpt(some(1))).to.be.true;
     expect(isOpt(none)).to.be.true;
+  });
+});
+
+interface Person {
+  name: string;
+  surname: string | null;
+}
+
+type Db = { [_: string]: Person };
+
+describe('examples', () => {
+  it('1', () => {
+    const db: Db = {
+      '0': {name: 'John', surname: null},
+      '1': {name: 'Worf', surname: 'Mercer'}
+    };
+
+    const capitalize = (x: string) => x.split('').map(y => y.toUpperCase()).join('');
+
+    // without
+    const f = (id: number | undefined): string | null => {
+      if (id === undefined) { return null; }
+      const item = db[id];
+      if (!item) { return null; }
+      const surname = item.surname ? capitalize(item.surname) : '<missing>';
+      return item.name + ' ' + surname;
+    };
+
+    // with
+    const g = (id: number | undefined): string | null => opt(id)
+      .chainToOpt(x => db[x])
+      .map(item => item.name + ' ' + opt(item.surname).map(capitalize).orElse('<missing>'))
+      .orNull();
+
+    f(0); // 'John <missing>'
+    g(0); // 'John <missing>'
+
+    f(1); // 'Worf MERCER'
+    g(1); // 'Worf MERCER'
+
+    f(2); // null
+    g(2); // null
+
+    expect(f(0)).to.be.eq('John <missing>');
+    expect(g(0)).to.be.eq('John <missing>');
+    expect(f(1)).to.be.eq('Worf MERCER');
+    expect(g(1)).to.be.eq('Worf MERCER');
+    expect(f(2)).to.be.eq(null);
+    expect(g(2)).to.be.eq(null);
   });
 });
