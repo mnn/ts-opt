@@ -10,7 +10,7 @@
     "lint": "tslint src/*.ts",
     "pretest": "npm run lint",
     "test": "nyc -r html -e .ts -x \"test/*.ts\" mocha -r ts-node/register test/**/*.ts && nyc report --check-coverage --branches 100 --functions 100 --lines 100 --statements 100",
-    "doc": "typedoc --out doc src",
+    "doc": "typedoc --out doc --target es5 --module node src",
     "prebuild": "npm run clean && npm run test",
     "build": "tsc --outDir ./dist -p . ",
     "precommit": "npm run build && npm run doc",
