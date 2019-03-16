@@ -1,6 +1,6 @@
 {
   "name": "ts-opt",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Typed Option/Maybe monad for TypeScript and JavaScript.",
   "main": "dist/src/Opt.js",
   "author": "monnef",
@@ -13,7 +13,8 @@
     "doc": "typedoc --out doc src",
     "prebuild": "npm run clean && npm run test && npm run doc",
     "build": "tsc --outDir ./dist -p . ",
-    "precommit": "npm run build"
+    "precommit": "npm run build",
+    "prepublish": "npm run build"
   },
   "devDependencies": {
     "@types/chai": "4.1.7",
