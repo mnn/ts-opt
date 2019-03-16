@@ -1,0 +1,26 @@
+image: node:8.11.2
+
+before_script:
+- npm install
+
+cache:
+  paths:
+    - node_modules/
+
+lint:
+  script:
+    - npm run lint
+
+test:
+  script:
+    - npm run build
+    - npm run test
+
+release:
+  only:
+    - tags
+  script:
+    - npm run build
+  artifacts:
+    paths:
+      - dist/src
