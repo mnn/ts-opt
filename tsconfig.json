@@ -12,10 +12,11 @@
     "strict": true,
     "pretty": true,
     "sourceMap": true,
-    "target": "ES6",
+    "target": "ES5",
     "declaration": true,
     "outDir": "./dist",
-    "stripInternal": true
+    "stripInternal": true,
+    "lib": ["es2015"]
   },
   "exclude": [
     "node_modules",

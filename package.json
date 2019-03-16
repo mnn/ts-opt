@@ -1,6 +1,6 @@
 {
   "name": "ts-opt",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Typed Option/Maybe monad for TypeScript and JavaScript.",
   "main": "dist/src/Opt.js",
   "author": "monnef",
@@ -11,10 +11,10 @@
     "pretest": "npm run lint",
     "test": "nyc -r html -e .ts -x \"test/*.ts\" mocha -r ts-node/register test/**/*.ts && nyc report --check-coverage --branches 100 --functions 100 --lines 100 --statements 100",
     "doc": "typedoc --out doc src",
-    "prebuild": "npm run clean && npm run test && npm run doc",
+    "prebuild": "npm run clean && npm run test",
     "build": "tsc --outDir ./dist -p . ",
-    "precommit": "npm run build",
-    "prepublish": "npm run build"
+    "precommit": "npm run build && npm run doc",
+    "prepublish": "npm run build && npm run doc"
   },
   "devDependencies": {
     "@types/chai": "4.1.7",
