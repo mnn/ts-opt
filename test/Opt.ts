@@ -157,6 +157,13 @@ describe('opt', () => {
     expect(none.flatBimap(x => some(x),() => some('none')).orNull()).to.be.eq('none');
     expect(some('some').flatBimap(x => some(x),() => some('none')).orNull()).to.be.eq('some');
   });
+
+  it('toString', () => {
+    expect(some(1).toString()).to.eq('Some(1)');
+    expect(some('a').toString()).to.eq('Some("a")');
+    expect(some(null).toString()).to.eq('Some(null)');
+    expect(none.toString()).to.eq('None');
+  });
 });
 
 describe('helper functions', () => {
