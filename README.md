@@ -21,21 +21,19 @@ type Db = { [_: string]: Person };
       '1': {name: 'Worf', surname: 'Mercer'}
     };
 
-    const capitalize = (x: string) => x.split('').map(y => y.toUpperCase()).join('');
-
     // without
     const f = (id: number | undefined): string | null => {
       if (id === undefined) { return null; }
       const item = db[id];
       if (!item) { return null; }
-      const surname = item.surname ? capitalize(item.surname) : '<missing>';
+      const surname = item.surname ? item.surname.toUpperCase() : '<missing>';
       return item.name + ' ' + surname;
     };
 
     // with
     const g = (id: number | undefined): string | null => opt(id)
       .chainToOpt(x => db[x])
-      .map(item => item.name + ' ' + opt(item.surname).map(capitalize).orElse('<missing>'))
+      .map(item => item.name + ' ' + opt(item.surname).map(x => x.toUpperCase()).orElse('<missing>'))
       .orNull();
 
     f(0); // 'John <missing>'
