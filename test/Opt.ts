@@ -210,7 +210,30 @@ interface Person {
 type Db = { [_: string]: Person };
 
 describe('examples', () => {
-  it('1', () => {
+  it('basic', () => {
+    // without
+    const f = (name: string | undefined) => {
+      if (!name) { throw new Error('Missing name.'); }
+      return name[0];
+    };
+
+    // with
+    const g = (name: string | undefined) => opt(name).orCrash('Missing name.')[0];
+
+    f('Riker'); // 'R'
+    g('Riker'); // 'R'
+
+    // f(undefined); // exception thrown
+    // g(undefined); // exception thrown
+
+    expect(f('Riker')).to.eq('R');
+    expect(g('Riker')).to.eq('R');
+
+    expect(() => f(undefined)).to.throw();
+    expect(() => g(undefined)).to.throw();
+  });
+
+  it('more advanced', () => {
     const db: Db = {
       '0': {name: 'John', surname: null},
       '1': {name: 'Worf', surname: 'Mercer'}

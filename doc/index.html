@@ -66,7 +66,29 @@
 			<div class="tsd-panel tsd-typography">
 				<h1 id="ts-opt">ts-opt</h1>
 				<p>Typed Option/Maybe monad for TypeScript and JavaScript (based on Scala and Haskell).</p>
+				<h1 id="installation">Installation</h1>
+				<pre><code class="language-sh">npm i -S ts-opt</code></pre>
 				<h1 id="examples">Examples</h1>
+				<h2 id="basic">Basic</h2>
+				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { opt } <span class="hljs-keyword">from</span> <span class="hljs-string">'ts-opt'</span>;
+
+<span class="hljs-comment">/* ... */</span>
+
+    <span class="hljs-comment">// without</span>
+    <span class="hljs-keyword">const</span> f = <span class="hljs-function">(<span class="hljs-params">name: <span class="hljs-built_in">string</span> | <span class="hljs-literal">undefined</span></span>) =&gt;</span> {
+      <span class="hljs-keyword">if</span> (!name) { <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Missing name.'</span>); }
+      <span class="hljs-keyword">return</span> name[<span class="hljs-number">0</span>];
+    };
+
+    <span class="hljs-comment">// with</span>
+    <span class="hljs-keyword">const</span> g = <span class="hljs-function">(<span class="hljs-params">name: <span class="hljs-built_in">string</span> | <span class="hljs-literal">undefined</span></span>) =&gt;</span> opt(name).orCrash(<span class="hljs-string">'Missing name.'</span>)[<span class="hljs-number">0</span>];
+
+    f(<span class="hljs-string">'Riker'</span>); <span class="hljs-comment">// 'R'</span>
+    g(<span class="hljs-string">'Riker'</span>); <span class="hljs-comment">// 'R'</span>
+
+    f(<span class="hljs-literal">undefined</span>); <span class="hljs-comment">// exception thrown</span>
+    g(<span class="hljs-literal">undefined</span>); <span class="hljs-comment">// exception thrown</span></code></pre>
+				<h2 id="more-advanced">More advanced</h2>
 				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { opt } <span class="hljs-keyword">from</span> <span class="hljs-string">'ts-opt'</span>;
 
 <span class="hljs-keyword">interface</span> Person {
@@ -83,21 +105,19 @@
       <span class="hljs-string">'1'</span>: {name: <span class="hljs-string">'Worf'</span>, surname: <span class="hljs-string">'Mercer'</span>}
     };
 
-    <span class="hljs-keyword">const</span> capitalize = <span class="hljs-function">(<span class="hljs-params">x: <span class="hljs-built_in">string</span></span>) =&gt;</span> x.split(<span class="hljs-string">''</span>).map(<span class="hljs-function"><span class="hljs-params">y</span> =&gt;</span> y.toUpperCase()).join(<span class="hljs-string">''</span>);
-
     <span class="hljs-comment">// without</span>
     <span class="hljs-keyword">const</span> f = (id: <span class="hljs-built_in">number</span> | <span class="hljs-literal">undefined</span>): <span class="hljs-built_in">string</span> | <span class="hljs-function"><span class="hljs-params">null</span> =&gt;</span> {
       <span class="hljs-keyword">if</span> (id === <span class="hljs-literal">undefined</span>) { <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; }
       <span class="hljs-keyword">const</span> item = db[id];
       <span class="hljs-keyword">if</span> (!item) { <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; }
-      <span class="hljs-keyword">const</span> surname = item.surname ? capitalize(item.surname) : <span class="hljs-string">'&lt;missing&gt;'</span>;
+      <span class="hljs-keyword">const</span> surname = item.surname ? item.surname.toUpperCase() : <span class="hljs-string">'&lt;missing&gt;'</span>;
       <span class="hljs-keyword">return</span> item.name + <span class="hljs-string">' '</span> + surname;
     };
 
     <span class="hljs-comment">// with</span>
     <span class="hljs-keyword">const</span> g = (id: <span class="hljs-built_in">number</span> | <span class="hljs-literal">undefined</span>): <span class="hljs-built_in">string</span> | <span class="hljs-function"><span class="hljs-params">null</span> =&gt;</span> opt(id)
       .chainToOpt(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> db[x])
-      .map(<span class="hljs-function"><span class="hljs-params">item</span> =&gt;</span> item.name + <span class="hljs-string">' '</span> + opt(item.surname).map(capitalize).orElse(<span class="hljs-string">'&lt;missing&gt;'</span>))
+      .map(<span class="hljs-function"><span class="hljs-params">item</span> =&gt;</span> item.name + <span class="hljs-string">' '</span> + opt(item.surname).map(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x.toUpperCase()).orElse(<span class="hljs-string">'&lt;missing&gt;'</span>))
       .orNull();
 
     f(<span class="hljs-number">0</span>); <span class="hljs-comment">// 'John &lt;missing&gt;'</span>

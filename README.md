@@ -2,8 +2,39 @@ ts-opt
 ===
 Typed Option/Maybe monad for TypeScript and JavaScript (based on Scala and Haskell).
 
+Installation
+===
+```sh
+npm i -S ts-opt
+```
+
 Examples
 ===
+Basic
+---
+```typescript
+import { opt } from 'ts-opt';
+
+/* ... */
+
+    // without
+    const f = (name: string | undefined) => {
+      if (!name) { throw new Error('Missing name.'); }
+      return name[0];
+    };
+
+    // with
+    const g = (name: string | undefined) => opt(name).orCrash('Missing name.')[0];
+
+    f('Riker'); // 'R'
+    g('Riker'); // 'R'
+
+    f(undefined); // exception thrown
+    g(undefined); // exception thrown
+```
+
+More advanced
+---
 ```typescript
 import { opt } from 'ts-opt';
 

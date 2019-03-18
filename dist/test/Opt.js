@@ -175,12 +175,30 @@ describe('helper functions', function () {
     });
 });
 describe('examples', function () {
-    it('1', function () {
+    it('basic', function () {
+        // without
+        var f = function (name) {
+            if (!name) {
+                throw new Error('Missing name.');
+            }
+            return name[0];
+        };
+        // with
+        var g = function (name) { return Opt_1.opt(name).orCrash('Missing name.')[0]; };
+        f('Riker'); // 'R'
+        g('Riker'); // 'R'
+        // f(undefined); // exception thrown
+        // g(undefined); // exception thrown
+        expect(f('Riker')).to.eq('R');
+        expect(g('Riker')).to.eq('R');
+        expect(function () { return f(undefined); }).to.throw();
+        expect(function () { return g(undefined); }).to.throw();
+    });
+    it('more advanced', function () {
         var db = {
             '0': { name: 'John', surname: null },
             '1': { name: 'Worf', surname: 'Mercer' }
         };
-        var capitalize = function (x) { return x.split('').map(function (y) { return y.toUpperCase(); }).join(''); };
         // without
         var f = function (id) {
             if (id === undefined) {
@@ -190,13 +208,13 @@ describe('examples', function () {
             if (!item) {
                 return null;
             }
-            var surname = item.surname ? capitalize(item.surname) : '<missing>';
+            var surname = item.surname ? item.surname.toUpperCase() : '<missing>';
             return item.name + ' ' + surname;
         };
         // with
         var g = function (id) { return Opt_1.opt(id)
             .chainToOpt(function (x) { return db[x]; })
-            .map(function (item) { return item.name + ' ' + Opt_1.opt(item.surname).map(capitalize).orElse('<missing>'); })
+            .map(function (item) { return item.name + ' ' + Opt_1.opt(item.surname).map(function (x) { return x.toUpperCase(); }).orElse('<missing>'); })
             .orNull(); };
         f(0); // 'John <missing>'
         g(0); // 'John <missing>'

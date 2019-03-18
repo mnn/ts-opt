@@ -1,8 +1,9 @@
 {
   "name": "ts-opt",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Typed Option/Maybe monad for TypeScript and JavaScript.",
   "main": "dist/src/Opt.js",
+  "types": "dist/src/Opt.d.ts",
   "author": "monnef",
   "license": "MIT",
   "scripts": {
