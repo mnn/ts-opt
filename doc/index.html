@@ -65,16 +65,21 @@
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
 				<h1 id="ts-opt">ts-opt</h1>
-				<p>Typed Option/Maybe monad for TypeScript and JavaScript (based on Scala and Haskell).</p>
+				<p>Typed Option/Maybe for TypeScript and JavaScript (based on Scala, Haskell and Sanctuary), created to simplify code involving optional values.</p>
+				<h1 id="features">Features</h1>
+				<ul>
+					<li>🗜️ Lightweight - no dependencies, only around 1KiB gzip+minified</li>
+					<li>💪 TypeScript Support - fully usable from JavaScript as well</li>
+					<li>🔩 Pragmatic - doesn&#39;t force functional programming paradigm</li>
+					<li>📏 100% Test Coverage</li>
+				</ul>
 				<h1 id="installation">Installation</h1>
 				<pre><code class="language-sh">npm i -S ts-opt</code></pre>
 				<h1 id="examples">Examples</h1>
+				<p>In all examples <code>opt</code> import is presumed to be present:</p>
+				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { opt } <span class="hljs-keyword">from</span> <span class="hljs-string">'ts-opt'</span>;</code></pre>
 				<h2 id="basic">Basic</h2>
-				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { opt } <span class="hljs-keyword">from</span> <span class="hljs-string">'ts-opt'</span>;
-
-<span class="hljs-comment">/* ... */</span>
-
-    <span class="hljs-comment">// without</span>
+				<pre><code class="language-typescript">    <span class="hljs-comment">// without</span>
     <span class="hljs-keyword">const</span> f = <span class="hljs-function">(<span class="hljs-params">name: <span class="hljs-built_in">string</span> | <span class="hljs-literal">undefined</span></span>) =&gt;</span> {
       <span class="hljs-keyword">if</span> (!name) { <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Missing name.'</span>); }
       <span class="hljs-keyword">return</span> name[<span class="hljs-number">0</span>];
@@ -89,9 +94,7 @@
     f(<span class="hljs-literal">undefined</span>); <span class="hljs-comment">// exception thrown</span>
     g(<span class="hljs-literal">undefined</span>); <span class="hljs-comment">// exception thrown</span></code></pre>
 				<h2 id="more-advanced">More advanced</h2>
-				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { opt } <span class="hljs-keyword">from</span> <span class="hljs-string">'ts-opt'</span>;
-
-<span class="hljs-keyword">interface</span> Person {
+				<pre><code class="language-typescript"><span class="hljs-keyword">interface</span> Person {
   name: <span class="hljs-built_in">string</span>;
   surname: <span class="hljs-built_in">string</span> | <span class="hljs-literal">null</span>;
 }

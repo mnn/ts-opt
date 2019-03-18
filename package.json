@@ -1,7 +1,16 @@
 {
   "name": "ts-opt",
   "version": "0.0.4",
-  "description": "Typed Option/Maybe monad for TypeScript and JavaScript.",
+  "description": "Typed Option/Maybe for TypeScript and JavaScript, created to simplify code involving optional values.",
+  "keywords": [
+    "option",
+    "maybe",
+    "optional",
+    "fp",
+    "functional programming",
+    "typescript",
+    "monad"
+  ],
   "main": "dist/src/Opt.js",
   "types": "dist/src/Opt.d.ts",
   "author": "monnef",
@@ -15,7 +24,16 @@
     "prebuild": "npm run clean && npm run test",
     "build": "tsc --outDir ./dist -p . ",
     "precommit": "npm run build && npm run doc",
+    "prepush": "npm run build && npm run doc",
     "prepublish": "npm run build && npm run doc"
+  },
+  "husky": {
+    "pre-commit": "npm run precommit",
+    "pre-push": "npm run prepush"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/monnef/ts-opt"
   },
   "devDependencies": {
     "@types/chai": "4.1.7",

@@ -147,7 +147,7 @@ exports.none = Object.freeze(new None());
  * Usually it is [[opt]] you are looking for (only in rare cases you want to have for example `Some(undefined)`).
  * @param x
  */
-exports.some = function (x) { return new Some(x); };
+exports.some = function (x) { return Object.freeze(new Some(x)); };
 /**
  * Main constructor function - for `undefined`, `null` and `NaN` returns [[None]].
  * Anything else is wrapped into [[Some]].

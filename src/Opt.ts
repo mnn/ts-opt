@@ -337,7 +337,7 @@ export const none: None<any> = Object.freeze(new None());
  * Usually it is [[opt]] you are looking for (only in rare cases you want to have for example `Some(undefined)`).
  * @param x
  */
-export const some = <T>(x: T) => new Some(x);
+export const some = <T>(x: T) => Object.freeze(new Some(x));
 
 /**
  * Main constructor function - for `undefined`, `null` and `NaN` returns [[None]].

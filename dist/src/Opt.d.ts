@@ -267,7 +267,7 @@ export declare const none: None<any>;
  * Usually it is [[opt]] you are looking for (only in rare cases you want to have for example `Some(undefined)`).
  * @param x
  */
-export declare const some: <T>(x: T) => Some<T>;
+export declare const some: <T>(x: T) => Readonly<Some<T>>;
 /**
  * Main constructor function - for `undefined`, `null` and `NaN` returns [[None]].
  * Anything else is wrapped into [[Some]].

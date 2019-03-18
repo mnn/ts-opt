@@ -1,6 +1,13 @@
 ts-opt
 ===
-Typed Option/Maybe monad for TypeScript and JavaScript (based on Scala and Haskell).
+Typed Option/Maybe for TypeScript and JavaScript (based on Scala, Haskell and Sanctuary), created to simplify code involving optional values.
+
+Features
+===
+* 🗜️ Lightweight - no dependencies, only around 1KiB gzip+minified
+* 💪 TypeScript Support - fully usable from JavaScript as well
+* 🔩 Pragmatic - doesn't force functional programming paradigm
+* 📏 100% Test Coverage
 
 Installation
 ===
@@ -10,13 +17,15 @@ npm i -S ts-opt
 
 Examples
 ===
+In all examples `opt` import is presumed to be present:
+
+```typescript
+import { opt } from 'ts-opt';
+```
+
 Basic
 ---
 ```typescript
-import { opt } from 'ts-opt';
-
-/* ... */
-
     // without
     const f = (name: string | undefined) => {
       if (!name) { throw new Error('Missing name.'); }
@@ -36,8 +45,6 @@ import { opt } from 'ts-opt';
 More advanced
 ---
 ```typescript
-import { opt } from 'ts-opt';
-
 interface Person {
   name: string;
   surname: string | null;
