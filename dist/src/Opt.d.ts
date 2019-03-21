@@ -14,9 +14,13 @@ export declare abstract class Opt<T> {
      */
     static fromArray<T>(x: [] | [T]): Opt<T>;
     /**
-     * `true` for [[Some]], `false` for [[None]].
+     * `false` for [[Some]], `true` for [[None]].
      */
     abstract readonly isEmpty: boolean;
+    /**
+     * `false` for [[Some]], `true` for [[None]].
+     */
+    readonly nonEmpty: boolean;
     /**
      * Converts `Opt` to an array.
      *
@@ -92,6 +96,24 @@ export declare abstract class Opt<T> {
      * ```
      */
     abstract orNull(): T | null;
+    /**
+     * Returns inner value for [[Some]], `false` for [[None]].
+     *
+     * ```ts
+     * some(1).orFalse() // 1
+     * none.orFalse() // false
+     * ```
+     */
+    abstract orFalse(): T | false;
+    /**
+     * Returns inner value for [[Some]], `true` for [[None]].
+     *
+     * ```ts
+     * some(1).orTrue() // 1
+     * none.orTrue() // true
+     * ```
+     */
+    abstract orTrue(): T | true;
     /**
      * Applies appropriate function and returns result from the function.
      *
@@ -224,6 +246,8 @@ declare class None<T> extends Opt<T> {
     orCrash(msg: string): T;
     orNull(): T | null;
     orUndef(): T | undefined;
+    orFalse(): false | T;
+    orTrue(): true | T;
     caseOf<R>(_onSome: (x: T) => R, onNone: () => R): R;
     onNone(f: () => void): void;
     onSome(_f: (x: T) => void): void;
@@ -246,6 +270,8 @@ declare class Some<T> extends Opt<T> {
     orCrash(_msg: string): T;
     orNull(): T | null;
     orUndef(): T | undefined;
+    orFalse(): false | T;
+    orTrue(): true | T;
     caseOf<R>(onSome: (x: T) => R, _onNone: () => R): R;
     contains(x: T): boolean;
     exists(p: (x: T) => boolean): boolean;

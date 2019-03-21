@@ -15,9 +15,14 @@ export abstract class Opt<T> {
   static fromArray<T>(x: [] | [T]): Opt<T> { return opt(x[0]); }
 
   /**
-   * `true` for [[Some]], `false` for [[None]].
+   * `false` for [[Some]], `true` for [[None]].
    */
   abstract get isEmpty(): boolean;
+
+  /**
+   * `false` for [[Some]], `true` for [[None]].
+   */
+  get nonEmpty(): boolean { return !this.isEmpty; }
 
   /**
    * Converts `Opt` to an array.
@@ -102,6 +107,26 @@ export abstract class Opt<T> {
    * ```
    */
   abstract orNull(): T | null;
+
+  /**
+   * Returns inner value for [[Some]], `false` for [[None]].
+   *
+   * ```ts
+   * some(1).orFalse() // 1
+   * none.orFalse() // false
+   * ```
+   */
+  abstract orFalse(): T | false;
+
+  /**
+   * Returns inner value for [[Some]], `true` for [[None]].
+   *
+   * ```ts
+   * some(1).orTrue() // 1
+   * none.orTrue() // true
+   * ```
+   */
+  abstract orTrue(): T | true;
 
   /**
    * Applies appropriate function and returns result from the function.
@@ -254,6 +279,10 @@ class None<T> extends Opt<T> {
 
   orUndef(): T | undefined { return undefined; }
 
+  orFalse(): false | T { return false; }
+
+  orTrue(): true | T { return true; }
+
   caseOf<R>(_onSome: (x: T) => R, onNone: () => R): R {
     return onNone();
   }
@@ -299,6 +328,10 @@ class Some<T> extends Opt<T> {
   orNull(): T | null { return this.value; }
 
   orUndef(): T | undefined { return this.value; }
+
+  orFalse(): false | T { return this.value; }
+
+  orTrue(): true | T { return this.value; }
 
   caseOf<R>(onSome: (x: T) => R, _onNone: () => R): R { return onSome(this.value); }
 

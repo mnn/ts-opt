@@ -24,6 +24,16 @@ describe('opt', () => {
     expect(opt([]).isEmpty).to.be.false;
   });
 
+  it('isEmpty', () => {
+    expect(opt(null).isEmpty).to.be.true;
+    expect(opt(0).isEmpty).to.be.false;
+  });
+
+  it('nonEmpty', () => {
+    expect(opt(null).nonEmpty).to.be.false;
+    expect(opt(0).nonEmpty).to.be.true;
+  });
+
   it('length', () => {
     expect(opt(null).length).to.eq(0);
     expect(opt(0).length).to.eq(1);
@@ -37,6 +47,16 @@ describe('opt', () => {
   it('orNull', () => {
     expect(opt(null).orNull()).to.eq(null);
     expect(opt(0).orNull()).to.eq(0);
+  });
+
+  it('orFalse', () => {
+    expect(opt(null).orFalse()).to.be.false;
+    expect(opt(0).orFalse()).to.eq(0);
+  });
+
+  it('orTrue', () => {
+    expect(opt(null).orTrue()).to.be.true;
+    expect(opt(0).orTrue()).to.eq(0);
   });
 
   it('orCrash', () => {

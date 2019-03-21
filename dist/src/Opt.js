@@ -30,6 +30,14 @@ var Opt = /** @class */ (function () {
      * @param x
      */
     Opt.fromArray = function (x) { return exports.opt(x[0]); };
+    Object.defineProperty(Opt.prototype, "nonEmpty", {
+        /**
+         * `false` for [[Some]], `true` for [[None]].
+         */
+        get: function () { return !this.isEmpty; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Opt.prototype, "length", {
         /**
          * `1` for [[Some]], `0` for [[None]].
@@ -85,6 +93,8 @@ var None = /** @class */ (function (_super) {
     None.prototype.orCrash = function (msg) { throw new Error(msg); };
     None.prototype.orNull = function () { return null; };
     None.prototype.orUndef = function () { return undefined; };
+    None.prototype.orFalse = function () { return false; };
+    None.prototype.orTrue = function () { return true; };
     None.prototype.caseOf = function (_onSome, onNone) {
         return onNone();
     };
@@ -122,6 +132,8 @@ var Some = /** @class */ (function (_super) {
     Some.prototype.orCrash = function (_msg) { return this.value; };
     Some.prototype.orNull = function () { return this.value; };
     Some.prototype.orUndef = function () { return this.value; };
+    Some.prototype.orFalse = function () { return this.value; };
+    Some.prototype.orTrue = function () { return this.value; };
     Some.prototype.caseOf = function (onSome, _onNone) { return onSome(this.value); };
     Some.prototype.contains = function (x) { return this.value === x; };
     Some.prototype.exists = function (p) { return p(this.value); };

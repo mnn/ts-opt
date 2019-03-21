@@ -20,6 +20,14 @@ describe('opt', function () {
         expect(Opt_1.opt({}).isEmpty).to.be.false;
         expect(Opt_1.opt([]).isEmpty).to.be.false;
     });
+    it('isEmpty', function () {
+        expect(Opt_1.opt(null).isEmpty).to.be.true;
+        expect(Opt_1.opt(0).isEmpty).to.be.false;
+    });
+    it('nonEmpty', function () {
+        expect(Opt_1.opt(null).nonEmpty).to.be.false;
+        expect(Opt_1.opt(0).nonEmpty).to.be.true;
+    });
     it('length', function () {
         expect(Opt_1.opt(null).length).to.eq(0);
         expect(Opt_1.opt(0).length).to.eq(1);
@@ -31,6 +39,14 @@ describe('opt', function () {
     it('orNull', function () {
         expect(Opt_1.opt(null).orNull()).to.eq(null);
         expect(Opt_1.opt(0).orNull()).to.eq(0);
+    });
+    it('orFalse', function () {
+        expect(Opt_1.opt(null).orFalse()).to.be.false;
+        expect(Opt_1.opt(0).orFalse()).to.eq(0);
+    });
+    it('orTrue', function () {
+        expect(Opt_1.opt(null).orTrue()).to.be.true;
+        expect(Opt_1.opt(0).orTrue()).to.eq(0);
     });
     it('orCrash', function () {
         expect(function () { return Opt_1.opt(null).orCrash(''); }).to.throw();

@@ -111,6 +111,7 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_opt_.opt.html#isempty" class="tsd-kind-icon">is<wbr>Empty</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_opt_.opt.html#length" class="tsd-kind-icon">length</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_opt_.opt.html#nonempty" class="tsd-kind-icon">non<wbr>Empty</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -131,7 +132,9 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_opt_.opt.html#orcrash" class="tsd-kind-icon">or<wbr>Crash</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_opt_.opt.html#orelse" class="tsd-kind-icon">or<wbr>Else</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_opt_.opt.html#orelseopt" class="tsd-kind-icon">or<wbr>Else<wbr>Opt</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_opt_.opt.html#orfalse" class="tsd-kind-icon">or<wbr>False</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_opt_.opt.html#ornull" class="tsd-kind-icon">or<wbr>Null</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_opt_.opt.html#ortrue" class="tsd-kind-icon">or<wbr>True</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_opt_.opt.html#orundef" class="tsd-kind-icon">or<wbr>Undef</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="_opt_.opt.html#pipe" class="tsd-kind-icon">pipe</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_opt_.opt.html#toarray" class="tsd-kind-icon">to<wbr>Array</a></li>
@@ -159,7 +162,7 @@
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p><code>true</code> for <a href="_opt_.some.html">Some</a>, <code>false</code> for <a href="_opt_.none.html">None</a>.</p>
+									<p><code>false</code> for <a href="_opt_.some.html">Some</a>, <code>true</code> for <a href="_opt_.none.html">None</a>.</p>
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -176,7 +179,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:35</li>
+									<li>Defined in Opt.ts:40</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -185,6 +188,28 @@
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="nonempty" class="tsd-anchor"></a>
+					<h3>non<wbr>Empty</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> nonEmpty<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in Opt.ts:25</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p><code>false</code> for <a href="_opt_.some.html">Some</a>, <code>true</code> for <a href="_opt_.none.html">None</a>.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -201,7 +226,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:216</li>
+									<li>Defined in Opt.ts:241</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -272,7 +297,7 @@ none.bimap(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;<
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:117</li>
+									<li>Defined in Opt.ts:142</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -347,7 +372,7 @@ none.caseOf(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:66</li>
+									<li>Defined in Opt.ts:71</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -401,7 +426,7 @@ none.caseOf(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:78</li>
+									<li>Defined in Opt.ts:83</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -462,7 +487,7 @@ some(<span class="hljs-number">2</span>).chainToOpt(<span class="hljs-function">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:155</li>
+									<li>Defined in Opt.ts:180</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -495,7 +520,7 @@ none.contains(<span class="hljs-literal">undefined</span>) <span class="hljs-com
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:168</li>
+									<li>Defined in Opt.ts:193</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -547,7 +572,7 @@ none.exists(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:229</li>
+									<li>Defined in Opt.ts:254</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -619,7 +644,7 @@ some(<span class="hljs-number">5</span>).flat<span class="hljs-constructor">Bima
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:60</li>
+									<li>Defined in Opt.ts:65</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -676,7 +701,7 @@ none.flat<span class="hljs-constructor">Map(<span class="hljs-params">x</span> =
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:180</li>
+									<li>Defined in Opt.ts:205</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -728,7 +753,7 @@ none.for<span class="hljs-constructor">All(<span class="hljs-params">x</span> =&
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:47</li>
+									<li>Defined in Opt.ts:52</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -784,7 +809,7 @@ none.map(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</s
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:129</li>
+									<li>Defined in Opt.ts:154</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -826,7 +851,7 @@ none.map(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</s
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:123</li>
+									<li>Defined in Opt.ts:148</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -874,7 +899,7 @@ none.map(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</s
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:84</li>
+									<li>Defined in Opt.ts:89</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -905,7 +930,7 @@ none.map(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</s
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:192</li>
+									<li>Defined in Opt.ts:217</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -938,7 +963,7 @@ none.orElse(<span class="hljs-number">2</span>) <span class="hljs-comment">// 2<
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:204</li>
+									<li>Defined in Opt.ts:229</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -962,6 +987,33 @@ none.orElse(none) <span class="hljs-comment">// None</span></code></pre>
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="orfalse" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> or<wbr>False</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">or<wbr>False<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in Opt.ts:119</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns inner value for <a href="_opt_.some.html">Some</a>, <code>false</code> for <a href="_opt_.none.html">None</a>.</p>
+								</div>
+								<pre><code class="language-ts">some(<span class="hljs-number">1</span>).orFalse() <span class="hljs-comment">// 1</span>
+none.orFalse() <span class="hljs-comment">// false</span></code></pre>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span>
+								<span class="tsd-signature-symbol"> | </span>
+								<span class="tsd-signature-type">false</span>
+							</h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="ornull" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> or<wbr>Null</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -971,7 +1023,7 @@ none.orElse(none) <span class="hljs-comment">// None</span></code></pre>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:104</li>
+									<li>Defined in Opt.ts:109</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -989,6 +1041,33 @@ none.orNull() <span class="hljs-comment">// null</span></code></pre>
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="ortrue" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> or<wbr>True</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">or<wbr>True<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in Opt.ts:129</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns inner value for <a href="_opt_.some.html">Some</a>, <code>true</code> for <a href="_opt_.none.html">None</a>.</p>
+								</div>
+								<pre><code class="language-ts">some(<span class="hljs-number">1</span>).orTrue() <span class="hljs-comment">// 1</span>
+none.orTrue() <span class="hljs-comment">// true</span></code></pre>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span>
+								<span class="tsd-signature-symbol"> | </span>
+								<span class="tsd-signature-type">true</span>
+							</h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="orundef" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> or<wbr>Undef</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -998,7 +1077,7 @@ none.orNull() <span class="hljs-comment">// null</span></code></pre>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:94</li>
+									<li>Defined in Opt.ts:99</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1025,7 +1104,7 @@ none.orUndef() <span class="hljs-comment">// undefined</span></code></pre>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:142</li>
+									<li>Defined in Opt.ts:167</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1082,7 +1161,7 @@ none.pipe(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:30</li>
+									<li>Defined in Opt.ts:35</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1109,7 +1188,7 @@ none.toArray() <span class="hljs-comment">// []</span></code></pre>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:239</li>
+									<li>Defined in Opt.ts:264</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1190,6 +1269,9 @@ Opt.fromArray([<span class="hljs-number">1</span>]) <span class="hljs-comment">/
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="_opt_.opt.html#length" class="tsd-kind-icon">length</a>
 							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="_opt_.opt.html#nonempty" class="tsd-kind-icon">non<wbr>Empty</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
 								<a href="_opt_.opt.html#bimap" class="tsd-kind-icon">bimap</a>
 							</li>
@@ -1236,7 +1318,13 @@ Opt.fromArray([<span class="hljs-number">1</span>]) <span class="hljs-comment">/
 								<a href="_opt_.opt.html#orelseopt" class="tsd-kind-icon">or<wbr>Else<wbr>Opt</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_opt_.opt.html#orfalse" class="tsd-kind-icon">or<wbr>False</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_opt_.opt.html#ornull" class="tsd-kind-icon">or<wbr>Null</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_opt_.opt.html#ortrue" class="tsd-kind-icon">or<wbr>True</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_opt_.opt.html#orundef" class="tsd-kind-icon">or<wbr>Undef</a>
