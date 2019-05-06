@@ -1,3 +1,6 @@
+const someSymbol = Symbol('Some');
+const noneSymbol = Symbol('None');
+
 /**
  * @typeparam T Wrapped value type.
  */
@@ -127,6 +130,16 @@ export abstract class Opt<T> {
    * ```
    */
   abstract orTrue(): T | true;
+
+  /**
+   * Returns inner value for [[Some]], `NaN` for [[None]].
+   *
+   * ```ts
+   * some(1).orNaN() // 1
+   * none.orNaN() // NaN
+   * ```
+   */
+  abstract orNaN(): T | number;
 
   /**
    * Applies appropriate function and returns result from the function.
@@ -265,6 +278,8 @@ export abstract class Opt<T> {
 }
 
 class None<T> extends Opt<T> {
+  readonly '@@type' = noneSymbol;
+
   toArray(): [] | [T] { return []; }
 
   get isEmpty(): boolean { return true; }
@@ -282,6 +297,8 @@ class None<T> extends Opt<T> {
   orFalse(): false | T { return false; }
 
   orTrue(): true | T { return true; }
+
+  orNaN(): number | T { return NaN; }
 
   caseOf<R>(_onSome: (x: T) => R, onNone: () => R): R {
     return onNone();
@@ -309,51 +326,55 @@ class None<T> extends Opt<T> {
 }
 
 class Some<T> extends Opt<T> {
-  constructor(private value: T) { super(); }
+  readonly '@@type' = someSymbol;
 
-  toArray(): [] | [T] { return [this.value]; }
+  constructor(private _value: T) { super(); }
+
+  toArray(): [] | [T] { return [this._value]; }
 
   get isEmpty(): boolean { return false; }
 
   flatMap<U>(f: (_: T) => Opt<U>): Opt<U> {
-    return f(this.value);
+    return f(this._value);
   }
 
   map<U>(f: (_: T) => U): Opt<U> {
-    return new Some(f(this.value));
+    return new Some(f(this._value));
   }
 
-  orCrash(_msg: string): T { return this.value; }
+  orCrash(_msg: string): T { return this._value; }
 
-  orNull(): T | null { return this.value; }
+  orNull(): T | null { return this._value; }
 
-  orUndef(): T | undefined { return this.value; }
+  orUndef(): T | undefined { return this._value; }
 
-  orFalse(): false | T { return this.value; }
+  orFalse(): false | T { return this._value; }
 
-  orTrue(): true | T { return this.value; }
+  orTrue(): true | T { return this._value; }
 
-  caseOf<R>(onSome: (x: T) => R, _onNone: () => R): R { return onSome(this.value); }
+  orNaN(): number | T { return this._value; }
 
-  contains(x: T): boolean { return this.value === x; }
+  caseOf<R>(onSome: (x: T) => R, _onNone: () => R): R { return onSome(this._value); }
 
-  exists(p: (x: T) => boolean): boolean { return p(this.value); }
+  contains(x: T): boolean { return this._value === x; }
 
-  forAll(p: (x: T) => boolean): boolean { return p(this.value); }
+  exists(p: (x: T) => boolean): boolean { return p(this._value); }
+
+  forAll(p: (x: T) => boolean): boolean { return p(this._value); }
 
   onNone(_f: () => void): void { }
 
-  onSome(f: (x: T) => void): void { f(this.value); }
+  onSome(f: (x: T) => void): void { f(this._value); }
 
-  orElse(_def: T): T { return this.value; }
+  orElse(_def: T): T { return this._value; }
 
   orElseOpt(_def: Opt<T>): Opt<T> { return this; }
 
-  bimap<U>(someF: (_: T) => U, _noneF: () => U): Opt<U> { return opt(someF(this.value)); }
+  bimap<U>(someF: (_: T) => U, _noneF: () => U): Opt<U> { return opt(someF(this._value)); }
 
-  flatBimap<U>(someF: (_: T) => Opt<U>, _noneF: () => Opt<U>): Opt<U> { return someF(this.value); }
+  flatBimap<U>(someF: (_: T) => Opt<U>, _noneF: () => Opt<U>): Opt<U> { return someF(this._value); }
 
-  toString(): string { return `Some(${JSON.stringify(this.value)})`; }
+  toString(): string { return `Some(${JSON.stringify(this._value)})`; }
 }
 
 const isNoneValue = (x: any): boolean => {
@@ -378,6 +399,12 @@ export const some = <T>(x: T) => Object.freeze(new Some(x));
  * @param x
  */
 export const opt = <T>(x: T | undefined | null): Opt<T> => isNoneValue(x) ? none : new Some(x as T);
+
+/**
+ * For falsy values returns [[None]].
+ * @param x
+ */
+export const optFalsy = <T>(x: T | undefined | null | ''): Opt<T> => x ? new Some(x as T) : none;
 
 /**
  * Is given value an instance of [[Opt]]?

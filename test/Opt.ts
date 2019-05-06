@@ -1,7 +1,9 @@
+/* tslint:disable:no-unused-expression */
+
 import * as chai from 'chai';
 import * as spies from 'chai-spies';
 
-import { opt, some, none, isOpt, Opt } from '../src/Opt';
+import { isOpt, none, opt, Opt, optFalsy, some } from '../src/Opt';
 
 chai.use(spies);
 const {expect} = chai;
@@ -57,6 +59,11 @@ describe('opt', () => {
   it('orTrue', () => {
     expect(opt(null).orTrue()).to.be.true;
     expect(opt(0).orTrue()).to.eq(0);
+  });
+
+  it('orNaN', () => {
+    expect(opt(null).orNaN()).to.be.NaN;
+    expect(opt(0).orNaN()).to.eq(0);
   });
 
   it('orCrash', () => {
@@ -222,12 +229,26 @@ describe('helper functions', () => {
   });
 });
 
+describe('optFalsy', () => {
+  it('construction', () => {
+    expect(optFalsy(undefined).isEmpty).to.be.true;
+    expect(optFalsy(NaN).isEmpty).to.be.true;
+    expect(optFalsy(null).isEmpty).to.be.true;
+    expect(optFalsy('').isEmpty).to.be.true;
+    expect(optFalsy('a').isEmpty).to.be.false;
+    expect(optFalsy(0).isEmpty).to.be.true;
+    expect(optFalsy(1).isEmpty).to.be.false;
+    expect(optFalsy({}).isEmpty).to.be.false;
+    expect(optFalsy([]).isEmpty).to.be.false;
+  });
+});
+
 interface Person {
   name: string;
   surname: string | null;
 }
 
-type Db = { [_: string]: Person };
+interface Db { [_: string]: Person }
 
 describe('examples', () => {
   it('basic', () => {
@@ -255,8 +276,8 @@ describe('examples', () => {
 
   it('more advanced', () => {
     const db: Db = {
-      '0': {name: 'John', surname: null},
-      '1': {name: 'Worf', surname: 'Mercer'}
+      0: {name: 'John', surname: null},
+      1: {name: 'Worf', surname: 'Mercer'}
     };
 
     // without

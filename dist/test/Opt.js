@@ -1,4 +1,5 @@
 "use strict";
+/* tslint:disable:no-unused-expression */
 Object.defineProperty(exports, "__esModule", { value: true });
 var chai = require("chai");
 var spies = require("chai-spies");
@@ -47,6 +48,10 @@ describe('opt', function () {
     it('orTrue', function () {
         expect(Opt_1.opt(null).orTrue()).to.be.true;
         expect(Opt_1.opt(0).orTrue()).to.eq(0);
+    });
+    it('orNaN', function () {
+        expect(Opt_1.opt(null).orNaN()).to.be.NaN;
+        expect(Opt_1.opt(0).orNaN()).to.eq(0);
     });
     it('orCrash', function () {
         expect(function () { return Opt_1.opt(null).orCrash(''); }).to.throw();
@@ -190,6 +195,19 @@ describe('helper functions', function () {
         expect(Opt_1.isOpt(Opt_1.none)).to.be.true;
     });
 });
+describe('optFalsy', function () {
+    it('construction', function () {
+        expect(Opt_1.optFalsy(undefined).isEmpty).to.be.true;
+        expect(Opt_1.optFalsy(NaN).isEmpty).to.be.true;
+        expect(Opt_1.optFalsy(null).isEmpty).to.be.true;
+        expect(Opt_1.optFalsy('').isEmpty).to.be.true;
+        expect(Opt_1.optFalsy('a').isEmpty).to.be.false;
+        expect(Opt_1.optFalsy(0).isEmpty).to.be.true;
+        expect(Opt_1.optFalsy(1).isEmpty).to.be.false;
+        expect(Opt_1.optFalsy({}).isEmpty).to.be.false;
+        expect(Opt_1.optFalsy([]).isEmpty).to.be.false;
+    });
+});
 describe('examples', function () {
     it('basic', function () {
         // without
@@ -212,8 +230,8 @@ describe('examples', function () {
     });
     it('more advanced', function () {
         var db = {
-            '0': { name: 'John', surname: null },
-            '1': { name: 'Worf', surname: 'Mercer' }
+            0: { name: 'John', surname: null },
+            1: { name: 'Worf', surname: 'Mercer' }
         };
         // without
         var f = function (id) {

@@ -115,6 +115,15 @@ export declare abstract class Opt<T> {
      */
     abstract orTrue(): T | true;
     /**
+     * Returns inner value for [[Some]], `NaN` for [[None]].
+     *
+     * ```ts
+     * some(1).orNaN() // 1
+     * none.orNaN() // NaN
+     * ```
+     */
+    abstract orNaN(): T | number;
+    /**
      * Applies appropriate function and returns result from the function.
      *
      * ```
@@ -239,6 +248,7 @@ export declare abstract class Opt<T> {
     abstract toString(): string;
 }
 declare class None<T> extends Opt<T> {
+    readonly '@@type': symbol;
     toArray(): [] | [T];
     readonly isEmpty: boolean;
     flatMap<U>(_f: (_: T) => Opt<U>): Opt<U>;
@@ -248,6 +258,7 @@ declare class None<T> extends Opt<T> {
     orUndef(): T | undefined;
     orFalse(): false | T;
     orTrue(): true | T;
+    orNaN(): number | T;
     caseOf<R>(_onSome: (x: T) => R, onNone: () => R): R;
     onNone(f: () => void): void;
     onSome(_f: (x: T) => void): void;
@@ -261,8 +272,9 @@ declare class None<T> extends Opt<T> {
     toString(): string;
 }
 declare class Some<T> extends Opt<T> {
-    private value;
-    constructor(value: T);
+    private _value;
+    readonly '@@type': symbol;
+    constructor(_value: T);
     toArray(): [] | [T];
     readonly isEmpty: boolean;
     flatMap<U>(f: (_: T) => Opt<U>): Opt<U>;
@@ -272,6 +284,7 @@ declare class Some<T> extends Opt<T> {
     orUndef(): T | undefined;
     orFalse(): false | T;
     orTrue(): true | T;
+    orNaN(): number | T;
     caseOf<R>(onSome: (x: T) => R, _onNone: () => R): R;
     contains(x: T): boolean;
     exists(p: (x: T) => boolean): boolean;
@@ -300,6 +313,11 @@ export declare const some: <T>(x: T) => Readonly<Some<T>>;
  * @param x
  */
 export declare const opt: <T>(x: T | null | undefined) => Opt<T>;
+/**
+ * For falsy values returns [[None]].
+ * @param x
+ */
+export declare const optFalsy: <T>(x: "" | T | null | undefined) => Opt<T>;
 /**
  * Is given value an instance of [[Opt]]?
  * @param x

@@ -1,6 +1,6 @@
 {
   "name": "ts-opt",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Typed Option/Maybe for TypeScript and JavaScript, created to simplify code involving optional values.",
   "keywords": [
     "option",

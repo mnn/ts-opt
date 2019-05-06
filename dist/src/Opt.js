@@ -13,6 +13,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+var someSymbol = Symbol('Some');
+var noneSymbol = Symbol('None');
 /**
  * @typeparam T Wrapped value type.
  */
@@ -80,7 +82,9 @@ exports.Opt = Opt;
 var None = /** @class */ (function (_super) {
     __extends(None, _super);
     function None() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this['@@type'] = noneSymbol;
+        return _this;
     }
     None.prototype.toArray = function () { return []; };
     Object.defineProperty(None.prototype, "isEmpty", {
@@ -95,6 +99,7 @@ var None = /** @class */ (function (_super) {
     None.prototype.orUndef = function () { return undefined; };
     None.prototype.orFalse = function () { return false; };
     None.prototype.orTrue = function () { return true; };
+    None.prototype.orNaN = function () { return NaN; };
     None.prototype.caseOf = function (_onSome, onNone) {
         return onNone();
     };
@@ -112,39 +117,41 @@ var None = /** @class */ (function (_super) {
 }(Opt));
 var Some = /** @class */ (function (_super) {
     __extends(Some, _super);
-    function Some(value) {
+    function Some(_value) {
         var _this = _super.call(this) || this;
-        _this.value = value;
+        _this._value = _value;
+        _this['@@type'] = someSymbol;
         return _this;
     }
-    Some.prototype.toArray = function () { return [this.value]; };
+    Some.prototype.toArray = function () { return [this._value]; };
     Object.defineProperty(Some.prototype, "isEmpty", {
         get: function () { return false; },
         enumerable: true,
         configurable: true
     });
     Some.prototype.flatMap = function (f) {
-        return f(this.value);
+        return f(this._value);
     };
     Some.prototype.map = function (f) {
-        return new Some(f(this.value));
+        return new Some(f(this._value));
     };
-    Some.prototype.orCrash = function (_msg) { return this.value; };
-    Some.prototype.orNull = function () { return this.value; };
-    Some.prototype.orUndef = function () { return this.value; };
-    Some.prototype.orFalse = function () { return this.value; };
-    Some.prototype.orTrue = function () { return this.value; };
-    Some.prototype.caseOf = function (onSome, _onNone) { return onSome(this.value); };
-    Some.prototype.contains = function (x) { return this.value === x; };
-    Some.prototype.exists = function (p) { return p(this.value); };
-    Some.prototype.forAll = function (p) { return p(this.value); };
+    Some.prototype.orCrash = function (_msg) { return this._value; };
+    Some.prototype.orNull = function () { return this._value; };
+    Some.prototype.orUndef = function () { return this._value; };
+    Some.prototype.orFalse = function () { return this._value; };
+    Some.prototype.orTrue = function () { return this._value; };
+    Some.prototype.orNaN = function () { return this._value; };
+    Some.prototype.caseOf = function (onSome, _onNone) { return onSome(this._value); };
+    Some.prototype.contains = function (x) { return this._value === x; };
+    Some.prototype.exists = function (p) { return p(this._value); };
+    Some.prototype.forAll = function (p) { return p(this._value); };
     Some.prototype.onNone = function (_f) { };
-    Some.prototype.onSome = function (f) { f(this.value); };
-    Some.prototype.orElse = function (_def) { return this.value; };
+    Some.prototype.onSome = function (f) { f(this._value); };
+    Some.prototype.orElse = function (_def) { return this._value; };
     Some.prototype.orElseOpt = function (_def) { return this; };
-    Some.prototype.bimap = function (someF, _noneF) { return exports.opt(someF(this.value)); };
-    Some.prototype.flatBimap = function (someF, _noneF) { return someF(this.value); };
-    Some.prototype.toString = function () { return "Some(" + JSON.stringify(this.value) + ")"; };
+    Some.prototype.bimap = function (someF, _noneF) { return exports.opt(someF(this._value)); };
+    Some.prototype.flatBimap = function (someF, _noneF) { return someF(this._value); };
+    Some.prototype.toString = function () { return "Some(" + JSON.stringify(this._value) + ")"; };
     return Some;
 }(Opt));
 var isNoneValue = function (x) {
@@ -166,6 +173,11 @@ exports.some = function (x) { return Object.freeze(new Some(x)); };
  * @param x
  */
 exports.opt = function (x) { return isNoneValue(x) ? exports.none : new Some(x); };
+/**
+ * For falsy values returns [[None]].
+ * @param x
+ */
+exports.optFalsy = function (x) { return x ? new Some(x) : exports.none; };
 /**
  * Is given value an instance of [[Opt]]?
  * @param x
