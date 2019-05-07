@@ -248,13 +248,13 @@ interface Person {
   surname: string | null;
 }
 
-interface Db { [_: string]: Person }
+interface Db {[_: string]: Person}
 
 describe('examples', () => {
   it('basic', () => {
     // without
     const f = (name: string | undefined) => {
-      if (!name) { throw new Error('Missing name.'); }
+      if (!name || name === '') { throw new Error('Missing name.'); }
       return name[0];
     };
 
@@ -272,6 +272,29 @@ describe('examples', () => {
 
     expect(() => f(undefined)).to.throw();
     expect(() => g(undefined)).to.throw();
+  });
+
+  it('caseOf', () => {
+    const console = {
+      logHistory: [] as string[],
+      log(x: string) { this.logHistory.push(x); }
+    };
+
+    // tslint:disable-next-line:no-console
+    const fireMissiles = () => { console.log('FIRING!'); };
+    // tslint:disable-next-line:no-console
+    const printSuccess = (x: string) => { console.log(x); };
+
+    const handleMoveVanilla = (usersMove?: string): void => usersMove ? printSuccess(usersMove) : fireMissiles();
+    const handleMove = (usersMove?: string): void => opt(usersMove).caseOf(printSuccess, fireMissiles);
+
+    handleMoveVanilla(); // prints FIRING!
+    handleMove(); // prints FIRING!
+    handleMoveVanilla('Build a pylon.'); // prints Build a pylon.
+    handleMove('Build a pylon.'); // prints Build a pylon.
+
+    // tslint:disable-next-line:no-console
+    expect(console.logHistory).to.eql(['FIRING!', 'FIRING!', 'Build a pylon.', 'Build a pylon.']);
   });
 
   it('more advanced', () => {

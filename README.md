@@ -23,12 +23,12 @@ In all examples `opt` import is presumed to be present:
 import { opt } from 'ts-opt';
 ```
 
-Basic
+Basic use
 ---
 ```typescript
     // without
     const f = (name: string | undefined) => {
-      if (!name) { throw new Error('Missing name.'); }
+      if (!name || name === '') { throw new Error('Missing name.'); }
       return name[0];
     };
 
@@ -40,6 +40,21 @@ Basic
 
     f(undefined); // exception thrown
     g(undefined); // exception thrown
+```
+
+caseOf
+---
+```typescript
+    const fireMissiles = () => { console.log('FIRING!'); };
+    const printSuccess = (x: string) => { console.log(x); };
+
+    const handleMoveVanilla = (usersMove?: string): void => usersMove ? printSuccess(usersMove) : fireMissiles();
+    const handleMove = (usersMove?: string): void => opt(usersMove).caseOf(printSuccess, fireMissiles);
+
+    handleMoveVanilla(); // prints FIRING!
+    handleMove(); // prints FIRING!
+    handleMoveVanilla('Build a pylon.'); // prints Build a pylon.
+    handleMove('Build a pylon.'); // prints Build a pylon.
 ```
 
 More advanced
