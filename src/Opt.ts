@@ -407,6 +407,12 @@ export const opt = <T>(x: T | undefined | null): Opt<T> => isNoneValue(x) ? none
 export const optFalsy = <T>(x: T | undefined | null | ''): Opt<T> => x ? new Some(x as T) : none;
 
 /**
+ * For empty array (`[]`) returns [[None]].
+ * @param x
+ */
+export const optEmptyArray = <T>(x: T[]): Opt<T[]> => x.length ? new Some(x) : none;
+
+/**
  * Is given value an instance of [[Opt]]?
  * @param x
  */

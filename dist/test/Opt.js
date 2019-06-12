@@ -208,11 +208,18 @@ describe('optFalsy', function () {
         expect(Opt_1.optFalsy([]).isEmpty).to.be.false;
     });
 });
+describe('optEmptyArray', function () {
+    it('construction', function () {
+        expect(Opt_1.optEmptyArray([]).isEmpty).to.be.true;
+        expect(Opt_1.optEmptyArray([0]).isEmpty).to.be.false;
+        expect(Opt_1.optEmptyArray([0]).orNull()).to.eql([0]);
+    });
+});
 describe('examples', function () {
     it('basic', function () {
         // without
         var f = function (name) {
-            if (!name) {
+            if (!name || name === '') {
                 throw new Error('Missing name.');
             }
             return name[0];
@@ -227,6 +234,24 @@ describe('examples', function () {
         expect(g('Riker')).to.eq('R');
         expect(function () { return f(undefined); }).to.throw();
         expect(function () { return g(undefined); }).to.throw();
+    });
+    it('caseOf', function () {
+        var console = {
+            logHistory: [],
+            log: function (x) { this.logHistory.push(x); }
+        };
+        // tslint:disable-next-line:no-console
+        var fireMissiles = function () { console.log('FIRING!'); };
+        // tslint:disable-next-line:no-console
+        var printSuccess = function (x) { console.log(x); };
+        var handleMoveVanilla = function (usersMove) { return usersMove ? printSuccess(usersMove) : fireMissiles(); };
+        var handleMove = function (usersMove) { return Opt_1.opt(usersMove).caseOf(printSuccess, fireMissiles); };
+        handleMoveVanilla(); // prints FIRING!
+        handleMove(); // prints FIRING!
+        handleMoveVanilla('Build a pylon.'); // prints Build a pylon.
+        handleMove('Build a pylon.'); // prints Build a pylon.
+        // tslint:disable-next-line:no-console
+        expect(console.logHistory).to.eql(['FIRING!', 'FIRING!', 'Build a pylon.', 'Build a pylon.']);
     });
     it('more advanced', function () {
         var db = {

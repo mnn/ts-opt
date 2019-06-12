@@ -179,6 +179,11 @@ exports.opt = function (x) { return isNoneValue(x) ? exports.none : new Some(x);
  */
 exports.optFalsy = function (x) { return x ? new Some(x) : exports.none; };
 /**
+ * For empty array (`[]`) returns [[None]].
+ * @param x
+ */
+exports.optEmptyArray = function (x) { return x.length ? new Some(x) : exports.none; };
+/**
  * Is given value an instance of [[Opt]]?
  * @param x
  */

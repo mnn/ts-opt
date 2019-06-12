@@ -319,6 +319,11 @@ export declare const opt: <T>(x: T | null | undefined) => Opt<T>;
  */
 export declare const optFalsy: <T>(x: "" | T | null | undefined) => Opt<T>;
 /**
+ * For empty array (`[]`) returns [[None]].
+ * @param x
+ */
+export declare const optEmptyArray: <T>(x: T[]) => Opt<T[]>;
+/**
  * Is given value an instance of [[Opt]]?
  * @param x
  */

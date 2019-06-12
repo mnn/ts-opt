@@ -1,7 +1,7 @@
 {
   "name": "ts-opt",
-  "version": "0.0.7",
-  "description": "Typed Option/Maybe for TypeScript and JavaScript, created to simplify code involving optional values.",
+  "version": "0.0.8",
+  "description": "Typed Option/Optional/Maybe for TypeScript and JavaScript, created to simplify code involving optional values (null, undefined, NaN).",
   "keywords": [
     "option",
     "maybe",
@@ -9,7 +9,9 @@
     "fp",
     "functional programming",
     "typescript",
-    "monad"
+    "monad",
+    "applicative",
+    "functor"
   ],
   "main": "dist/src/Opt.js",
   "types": "dist/src/Opt.d.ts",

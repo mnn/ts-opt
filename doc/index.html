@@ -78,10 +78,10 @@
 				<h1 id="examples">Examples</h1>
 				<p>In all examples <code>opt</code> import is presumed to be present:</p>
 				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { opt } <span class="hljs-keyword">from</span> <span class="hljs-string">'ts-opt'</span>;</code></pre>
-				<h2 id="basic">Basic</h2>
+				<h2 id="basic-use">Basic use</h2>
 				<pre><code class="language-typescript">    <span class="hljs-comment">// without</span>
     <span class="hljs-keyword">const</span> f = <span class="hljs-function">(<span class="hljs-params">name: <span class="hljs-built_in">string</span> | <span class="hljs-literal">undefined</span></span>) =&gt;</span> {
-      <span class="hljs-keyword">if</span> (!name) { <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Missing name.'</span>); }
+      <span class="hljs-keyword">if</span> (!name || name === <span class="hljs-string">''</span>) { <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Missing name.'</span>); }
       <span class="hljs-keyword">return</span> name[<span class="hljs-number">0</span>];
     };
 
@@ -93,6 +93,17 @@
 
     f(<span class="hljs-literal">undefined</span>); <span class="hljs-comment">// exception thrown</span>
     g(<span class="hljs-literal">undefined</span>); <span class="hljs-comment">// exception thrown</span></code></pre>
+				<h2 id="caseof">caseOf</h2>
+				<pre><code class="language-typescript">    <span class="hljs-keyword">const</span> fireMissiles = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> { <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'FIRING!'</span>); };
+    <span class="hljs-keyword">const</span> printSuccess = <span class="hljs-function">(<span class="hljs-params">x: <span class="hljs-built_in">string</span></span>) =&gt;</span> { <span class="hljs-built_in">console</span>.log(x); };
+
+    <span class="hljs-keyword">const</span> handleMoveVanilla = (usersMove?: <span class="hljs-built_in">string</span>): <span class="hljs-function"><span class="hljs-params">void</span> =&gt;</span> usersMove ? printSuccess(usersMove) : fireMissiles();
+    <span class="hljs-keyword">const</span> handleMove = (usersMove?: <span class="hljs-built_in">string</span>): <span class="hljs-function"><span class="hljs-params">void</span> =&gt;</span> opt(usersMove).caseOf(printSuccess, fireMissiles);
+
+    handleMoveVanilla(); <span class="hljs-comment">// prints FIRING!</span>
+    handleMove(); <span class="hljs-comment">// prints FIRING!</span>
+    handleMoveVanilla(<span class="hljs-string">'Build a pylon.'</span>); <span class="hljs-comment">// prints Build a pylon.</span>
+    handleMove(<span class="hljs-string">'Build a pylon.'</span>); <span class="hljs-comment">// prints Build a pylon.</span></code></pre>
 				<h2 id="more-advanced">More advanced</h2>
 				<pre><code class="language-typescript"><span class="hljs-keyword">interface</span> Person {
   name: <span class="hljs-built_in">string</span>;

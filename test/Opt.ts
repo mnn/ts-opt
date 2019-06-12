@@ -3,7 +3,7 @@
 import * as chai from 'chai';
 import * as spies from 'chai-spies';
 
-import { isOpt, none, opt, Opt, optFalsy, some } from '../src/Opt';
+import { isOpt, none, opt, Opt, optEmptyArray, optFalsy, some } from '../src/Opt';
 
 chai.use(spies);
 const {expect} = chai;
@@ -240,6 +240,14 @@ describe('optFalsy', () => {
     expect(optFalsy(1).isEmpty).to.be.false;
     expect(optFalsy({}).isEmpty).to.be.false;
     expect(optFalsy([]).isEmpty).to.be.false;
+  });
+});
+
+describe('optEmptyArray', () => {
+  it('construction', () => {
+    expect(optEmptyArray([]).isEmpty).to.be.true;
+    expect(optEmptyArray([0]).isEmpty).to.be.false;
+    expect(optEmptyArray([0]).orNull()).to.eql([0]);
   });
 });
 
