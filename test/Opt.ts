@@ -196,6 +196,27 @@ describe('opt', () => {
     expect(some(1).chainToOpt(x => x === 1 ? null : x + 1).orUndef()).to.be.eq(undefined);
     expect(some(2).chainToOpt(x => x === 1 ? null : x + 1).orUndef()).to.be.eq(3);
   });
+
+  it('zip', () => {
+    expect(some(1).zip(some(true)).orNull()).to.be.eql([1, true]);
+    expect(some(1).zip(none).orNull()).to.be.null;
+    expect(none.zip(some(true)).orNull()).to.be.null;
+    expect(none.zip(some(true)).orNull()).to.be.null;
+  });
+
+  it('zip3', () => {
+    expect(some(1).zip3(some(true), some('a')).orNull()).to.be.eql([1, true, 'a']);
+    expect(some(1).zip3(some(true), none).orNull()).to.be.null;
+
+    expect(some(1).zip3(none, some('a')).orNull()).to.be.null;
+    expect(some(1).zip3(none, none).orNull()).to.be.null;
+
+    expect(none.zip3(some(true), some('a')).orNull()).to.be.null;
+    expect(none.zip3(some(true), none).orNull()).to.be.null;
+
+    expect(none.zip3(some(true), some('a')).orNull()).to.be.null;
+    expect(none.zip3(some(true), none).orNull()).to.be.null;
+  });
 });
 
 describe('helper functions', () => {

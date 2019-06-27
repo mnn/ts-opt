@@ -167,6 +167,22 @@ describe('opt', function () {
         expect(Opt_1.some(1).chainToOpt(function (x) { return x === 1 ? null : x + 1; }).orUndef()).to.be.eq(undefined);
         expect(Opt_1.some(2).chainToOpt(function (x) { return x === 1 ? null : x + 1; }).orUndef()).to.be.eq(3);
     });
+    it('zip', function () {
+        expect(Opt_1.some(1).zip(Opt_1.some(true)).orNull()).to.be.eql([1, true]);
+        expect(Opt_1.some(1).zip(Opt_1.none).orNull()).to.be.null;
+        expect(Opt_1.none.zip(Opt_1.some(true)).orNull()).to.be.null;
+        expect(Opt_1.none.zip(Opt_1.some(true)).orNull()).to.be.null;
+    });
+    it('zip3', function () {
+        expect(Opt_1.some(1).zip3(Opt_1.some(true), Opt_1.some('a')).orNull()).to.be.eql([1, true, 'a']);
+        expect(Opt_1.some(1).zip3(Opt_1.some(true), Opt_1.none).orNull()).to.be.null;
+        expect(Opt_1.some(1).zip3(Opt_1.none, Opt_1.some('a')).orNull()).to.be.null;
+        expect(Opt_1.some(1).zip3(Opt_1.none, Opt_1.none).orNull()).to.be.null;
+        expect(Opt_1.none.zip3(Opt_1.some(true), Opt_1.some('a')).orNull()).to.be.null;
+        expect(Opt_1.none.zip3(Opt_1.some(true), Opt_1.none).orNull()).to.be.null;
+        expect(Opt_1.none.zip3(Opt_1.some(true), Opt_1.some('a')).orNull()).to.be.null;
+        expect(Opt_1.none.zip3(Opt_1.some(true), Opt_1.none).orNull()).to.be.null;
+    });
 });
 describe('helper functions', function () {
     describe('some', function () {

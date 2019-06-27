@@ -275,6 +275,30 @@ export abstract class Opt<T> {
    * ```
    */
   abstract toString(): string;
+
+  /**
+   * Joins two optional values to a pair. If either of them is [[None]] then the result is [[None]].
+   *
+   * ```ts
+   * some(1).zip(some(true)) // Some([1, true])
+   * some(1).zip(none) // None
+   * none.zip(some(1)) // None
+   * none.zip(none) // None
+   * ```
+   * @param other
+   */
+  abstract zip<U>(other: Opt<U>): Opt<[T, U]>;
+
+  /**
+   * Same as [[zip]], but with one more optional.
+   * ```ts
+   * some(1).zip3(some('a'), some(false)) // Some([1, 'a', false])
+   * none.zip3(some(1), some(2)) // None
+   * ```
+   * @param x
+   * @param y
+   */
+  abstract zip3<X, Y>(x: Opt<X>, y: Opt<Y>): Opt<[T, X, Y]>;
 }
 
 class None<T> extends Opt<T> {
@@ -323,6 +347,10 @@ class None<T> extends Opt<T> {
   flatBimap<U>(_someF: (_: T) => Opt<U>, noneF: () => Opt<U>): Opt<U> { return noneF(); }
 
   toString(): string { return 'None'; }
+
+  zip<U>(_other: Opt<U>): Opt<[T, U]> { return none; }
+
+  zip3<X, Y>(_x: Opt<X>, _y: Opt<Y>): Opt<[T, X, Y]> {return none; }
 }
 
 class Some<T> extends Opt<T> {
@@ -375,6 +403,17 @@ class Some<T> extends Opt<T> {
   flatBimap<U>(someF: (_: T) => Opt<U>, _noneF: () => Opt<U>): Opt<U> { return someF(this._value); }
 
   toString(): string { return `Some(${JSON.stringify(this._value)})`; }
+
+  zip<U>(other: Opt<U>): Opt<[T, U]> {
+    if (other.isEmpty) { return none; }
+    return opt([this._value, other.orCrash('bug in isEmpty or orCrash')] as [T, U]);
+  }
+
+  zip3<X, Y>(x: Opt<X>, y: Opt<Y>): Opt<[T, X, Y]> {
+    if (x.isEmpty || y.isEmpty) { return none; }
+    const [xVal, yVal] = [x.orCrash('bug in isEmpty or orCrash'), y.orCrash('bug in isEmpty or orCrash')];
+    return opt([this._value, xVal, yVal] as [T, X, Y]);
+  }
 }
 
 const isNoneValue = (x: any): boolean => {

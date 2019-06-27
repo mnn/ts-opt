@@ -113,6 +113,8 @@ var None = /** @class */ (function (_super) {
     None.prototype.bimap = function (_someF, noneF) { return exports.opt(noneF()); };
     None.prototype.flatBimap = function (_someF, noneF) { return noneF(); };
     None.prototype.toString = function () { return 'None'; };
+    None.prototype.zip = function (_other) { return exports.none; };
+    None.prototype.zip3 = function (_x, _y) { return exports.none; };
     return None;
 }(Opt));
 var Some = /** @class */ (function (_super) {
@@ -152,6 +154,19 @@ var Some = /** @class */ (function (_super) {
     Some.prototype.bimap = function (someF, _noneF) { return exports.opt(someF(this._value)); };
     Some.prototype.flatBimap = function (someF, _noneF) { return someF(this._value); };
     Some.prototype.toString = function () { return "Some(" + JSON.stringify(this._value) + ")"; };
+    Some.prototype.zip = function (other) {
+        if (other.isEmpty) {
+            return exports.none;
+        }
+        return exports.opt([this._value, other.orCrash('bug in isEmpty or orCrash')]);
+    };
+    Some.prototype.zip3 = function (x, y) {
+        if (x.isEmpty || y.isEmpty) {
+            return exports.none;
+        }
+        var _a = [x.orCrash('bug in isEmpty or orCrash'), y.orCrash('bug in isEmpty or orCrash')], xVal = _a[0], yVal = _a[1];
+        return exports.opt([this._value, xVal, yVal]);
+    };
     return Some;
 }(Opt));
 var isNoneValue = function (x) {
