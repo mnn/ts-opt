@@ -10,6 +10,8 @@ const {expect} = chai;
 chai.should();
 
 const add1 = (x: number) => x + 1;
+const gt0 = (x: number) => x > 0;
+const lt0 = (x: number) => x < 0;
 
 const randomNumOpt = (): Opt<number> => Math.random() > .5 ? none : some(Math.random());
 
@@ -216,6 +218,18 @@ describe('opt', () => {
 
     expect(none.zip3(some(true), some('a')).orNull()).to.be.null;
     expect(none.zip3(some(true), none).orNull()).to.be.null;
+  });
+
+  it('filter', () => {
+    expect(some(1).filter(gt0).orNull()).to.be.eq(1);
+    expect(some(1).filter(lt0).orNull()).to.be.null;
+    expect(none.filter(lt0).orNull()).to.be.null;
+  });
+
+  it('noneIf', () => {
+    expect(some(1).noneIf(lt0).orNull()).to.be.eq(1);
+    expect(some(1).noneIf(gt0).orNull()).to.be.null;
+    expect(none.noneIf(lt0).orNull()).to.be.null;
   });
 });
 

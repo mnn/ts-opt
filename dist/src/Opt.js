@@ -76,6 +76,18 @@ var Opt = /** @class */ (function () {
      * @param f
      */
     Opt.prototype.pipe = function (f) { return f(this); };
+    /**
+     * Returns [[None]] if predicate holds, otherwise passes same instance of [[Opt]].
+     * ```ts
+     * opt(1).noneIf(x => x > 0); // None
+     * opt(-1).noneIf(x => x > 0); // Some(-1)
+     * ```
+     * @see [[filter]]
+     * @param predicate
+     */
+    Opt.prototype.noneIf = function (predicate) {
+        return this.filter(function (x) { return !predicate(x); });
+    };
     return Opt;
 }());
 exports.Opt = Opt;
@@ -115,6 +127,7 @@ var None = /** @class */ (function (_super) {
     None.prototype.toString = function () { return 'None'; };
     None.prototype.zip = function (_other) { return exports.none; };
     None.prototype.zip3 = function (_x, _y) { return exports.none; };
+    None.prototype.filter = function (_predicate) { return exports.none; };
     return None;
 }(Opt));
 var Some = /** @class */ (function (_super) {
@@ -167,6 +180,7 @@ var Some = /** @class */ (function (_super) {
         var _a = [x.orCrash('bug in isEmpty or orCrash'), y.orCrash('bug in isEmpty or orCrash')], xVal = _a[0], yVal = _a[1];
         return exports.opt([this._value, xVal, yVal]);
     };
+    Some.prototype.filter = function (predicate) { return predicate(this._value) ? this : exports.none; };
     return Some;
 }(Opt));
 var isNoneValue = function (x) {

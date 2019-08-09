@@ -8,6 +8,8 @@ chai.use(spies);
 var expect = chai.expect;
 chai.should();
 var add1 = function (x) { return x + 1; };
+var gt0 = function (x) { return x > 0; };
+var lt0 = function (x) { return x < 0; };
 var randomNumOpt = function () { return Math.random() > .5 ? Opt_1.none : Opt_1.some(Math.random()); };
 describe('opt', function () {
     it('construction', function () {
@@ -182,6 +184,16 @@ describe('opt', function () {
         expect(Opt_1.none.zip3(Opt_1.some(true), Opt_1.none).orNull()).to.be.null;
         expect(Opt_1.none.zip3(Opt_1.some(true), Opt_1.some('a')).orNull()).to.be.null;
         expect(Opt_1.none.zip3(Opt_1.some(true), Opt_1.none).orNull()).to.be.null;
+    });
+    it('filter', function () {
+        expect(Opt_1.some(1).filter(gt0).orNull()).to.be.eq(1);
+        expect(Opt_1.some(1).filter(lt0).orNull()).to.be.null;
+        expect(Opt_1.none.filter(lt0).orNull()).to.be.null;
+    });
+    it('noneIf', function () {
+        expect(Opt_1.some(1).noneIf(lt0).orNull()).to.be.eq(1);
+        expect(Opt_1.some(1).noneIf(gt0).orNull()).to.be.null;
+        expect(Opt_1.none.noneIf(lt0).orNull()).to.be.null;
     });
 });
 describe('helper functions', function () {

@@ -299,6 +299,30 @@ export abstract class Opt<T> {
    * @param y
    */
   abstract zip3<X, Y>(x: Opt<X>, y: Opt<Y>): Opt<[T, X, Y]>;
+
+  /**
+   * Returns [[Some]] with same value if predicate holds, [[None]] otherwise.
+   * ```ts
+   * opt(1).filter(x => x > 0); // Some(1)
+   * opt(-1).filter(x => x > 0); // None
+   * ```
+   * @see [[noneIf]]
+   * @param predicate
+   */
+  abstract filter(predicate: (_: T) => boolean): Opt<T>;
+
+  /**
+   * Returns [[None]] if predicate holds, otherwise passes same instance of [[Opt]].
+   * ```ts
+   * opt(1).noneIf(x => x > 0); // None
+   * opt(-1).noneIf(x => x > 0); // Some(-1)
+   * ```
+   * @see [[filter]]
+   * @param predicate
+   */
+  noneIf(predicate: (_: T) => boolean): Opt<T> {
+    return this.filter(x => !predicate(x));
+  }
 }
 
 class None<T> extends Opt<T> {
@@ -351,6 +375,9 @@ class None<T> extends Opt<T> {
   zip<U>(_other: Opt<U>): Opt<[T, U]> { return none; }
 
   zip3<X, Y>(_x: Opt<X>, _y: Opt<Y>): Opt<[T, X, Y]> {return none; }
+
+  filter(_predicate: (_: T) => boolean): Opt<T> { return none; }
+
 }
 
 class Some<T> extends Opt<T> {
@@ -414,6 +441,8 @@ class Some<T> extends Opt<T> {
     const [xVal, yVal] = [x.orCrash('bug in isEmpty or orCrash'), y.orCrash('bug in isEmpty or orCrash')];
     return opt([this._value, xVal, yVal] as [T, X, Y]);
   }
+
+  filter(predicate: (_: T) => boolean): Opt<T> { return predicate(this._value) ? this : none; }
 }
 
 const isNoneValue = (x: any): boolean => {

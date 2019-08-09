@@ -22,6 +22,10 @@ export declare abstract class Opt<T> {
      */
     readonly nonEmpty: boolean;
     /**
+     * `1` for [[Some]], `0` for [[None]].
+     */
+    readonly length: number;
+    /**
      * Converts `Opt` to an array.
      *
      * ```ts
@@ -30,10 +34,6 @@ export declare abstract class Opt<T> {
      * ```
      */
     abstract toArray(): [] | [T];
-    /**
-     * `1` for [[Some]], `0` for [[None]].
-     */
-    readonly length: number;
     /**
      * Applies function to the wrapped value and returns a new instance of [[Some]].
      *
@@ -268,11 +268,31 @@ export declare abstract class Opt<T> {
      * @param y
      */
     abstract zip3<X, Y>(x: Opt<X>, y: Opt<Y>): Opt<[T, X, Y]>;
+    /**
+     * Returns [[Some]] with same value if predicate holds, [[None]] otherwise.
+     * ```ts
+     * opt(1).filter(x => x > 0); // Some(1)
+     * opt(-1).filter(x => x > 0); // None
+     * ```
+     * @see [[noneIf]]
+     * @param predicate
+     */
+    abstract filter(predicate: (_: T) => boolean): Opt<T>;
+    /**
+     * Returns [[None]] if predicate holds, otherwise passes same instance of [[Opt]].
+     * ```ts
+     * opt(1).noneIf(x => x > 0); // None
+     * opt(-1).noneIf(x => x > 0); // Some(-1)
+     * ```
+     * @see [[filter]]
+     * @param predicate
+     */
+    noneIf(predicate: (_: T) => boolean): Opt<T>;
 }
 declare class None<T> extends Opt<T> {
     readonly '@@type': symbol;
-    toArray(): [] | [T];
     readonly isEmpty: boolean;
+    toArray(): [] | [T];
     flatMap<U>(_f: (_: T) => Opt<U>): Opt<U>;
     map<U>(): Opt<U>;
     orCrash(msg: string): T;
@@ -294,13 +314,14 @@ declare class None<T> extends Opt<T> {
     toString(): string;
     zip<U>(_other: Opt<U>): Opt<[T, U]>;
     zip3<X, Y>(_x: Opt<X>, _y: Opt<Y>): Opt<[T, X, Y]>;
+    filter(_predicate: (_: T) => boolean): Opt<T>;
 }
 declare class Some<T> extends Opt<T> {
-    private _value;
     readonly '@@type': symbol;
+    readonly isEmpty: boolean;
+    private _value;
     constructor(_value: T);
     toArray(): [] | [T];
-    readonly isEmpty: boolean;
     flatMap<U>(f: (_: T) => Opt<U>): Opt<U>;
     map<U>(f: (_: T) => U): Opt<U>;
     orCrash(_msg: string): T;
@@ -322,6 +343,7 @@ declare class Some<T> extends Opt<T> {
     toString(): string;
     zip<U>(other: Opt<U>): Opt<[T, U]>;
     zip3<X, Y>(x: Opt<X>, y: Opt<Y>): Opt<[T, X, Y]>;
+    filter(predicate: (_: T) => boolean): Opt<T>;
 }
 /**
  * Single global instance of [[None]].
@@ -343,7 +365,7 @@ export declare const opt: <T>(x: T | null | undefined) => Opt<T>;
  * For falsy values returns [[None]].
  * @param x
  */
-export declare const optFalsy: <T>(x: "" | T | null | undefined) => Opt<T>;
+export declare const optFalsy: <T>(x: '' | T | null | undefined) => Opt<T>;
 /**
  * For empty array (`[]`) returns [[None]].
  * @param x
