@@ -64,21 +64,31 @@
 	<div class="row">
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
-				<h1 id="ts-opt">ts-opt</h1>
+				<a href="#ts-opt" id="ts-opt" style="color: inherit; text-decoration: none;">
+					<h1>ts-opt</h1>
+				</a>
 				<p>Typed Option/Maybe for TypeScript and JavaScript (based on Scala, Haskell and Sanctuary), created to simplify code involving optional values.</p>
-				<h1 id="features">Features</h1>
+				<a href="#features" id="features" style="color: inherit; text-decoration: none;">
+					<h1>Features</h1>
+				</a>
 				<ul>
 					<li>🗜️ Lightweight - no dependencies, only around 1KiB gzip+minified</li>
 					<li>💪 TypeScript Support - fully usable from JavaScript as well</li>
 					<li>🔩 Pragmatic - doesn&#39;t force functional programming paradigm</li>
 					<li>📏 100% Test Coverage</li>
 				</ul>
-				<h1 id="installation">Installation</h1>
+				<a href="#installation" id="installation" style="color: inherit; text-decoration: none;">
+					<h1>Installation</h1>
+				</a>
 				<pre><code class="language-sh">npm i -S ts-opt</code></pre>
-				<h1 id="examples">Examples</h1>
+				<a href="#examples" id="examples" style="color: inherit; text-decoration: none;">
+					<h1>Examples</h1>
+				</a>
 				<p>In all examples <code>opt</code> import is presumed to be present:</p>
 				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { opt } <span class="hljs-keyword">from</span> <span class="hljs-string">'ts-opt'</span>;</code></pre>
-				<h2 id="basic-use">Basic use</h2>
+				<a href="#basic-use" id="basic-use" style="color: inherit; text-decoration: none;">
+					<h2>Basic use</h2>
+				</a>
 				<pre><code class="language-typescript">    <span class="hljs-comment">// without</span>
     <span class="hljs-keyword">const</span> f = <span class="hljs-function">(<span class="hljs-params">name: <span class="hljs-built_in">string</span> | <span class="hljs-literal">undefined</span></span>) =&gt;</span> {
       <span class="hljs-keyword">if</span> (!name || name === <span class="hljs-string">''</span>) { <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Missing name.'</span>); }
@@ -93,7 +103,9 @@
 
     f(<span class="hljs-literal">undefined</span>); <span class="hljs-comment">// exception thrown</span>
     g(<span class="hljs-literal">undefined</span>); <span class="hljs-comment">// exception thrown</span></code></pre>
-				<h2 id="caseof">caseOf</h2>
+				<a href="#caseof" id="caseof" style="color: inherit; text-decoration: none;">
+					<h2>caseOf</h2>
+				</a>
 				<pre><code class="language-typescript">    <span class="hljs-keyword">const</span> fireMissiles = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> { <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'FIRING!'</span>); };
     <span class="hljs-keyword">const</span> printSuccess = <span class="hljs-function">(<span class="hljs-params">x: <span class="hljs-built_in">string</span></span>) =&gt;</span> { <span class="hljs-built_in">console</span>.log(x); };
 
@@ -104,7 +116,9 @@
     handleMove(); <span class="hljs-comment">// prints FIRING!</span>
     handleMoveVanilla(<span class="hljs-string">'Build a pylon.'</span>); <span class="hljs-comment">// prints Build a pylon.</span>
     handleMove(<span class="hljs-string">'Build a pylon.'</span>); <span class="hljs-comment">// prints Build a pylon.</span></code></pre>
-				<h2 id="more-advanced">More advanced</h2>
+				<a href="#more-advanced" id="more-advanced" style="color: inherit; text-decoration: none;">
+					<h2>More advanced</h2>
+				</a>
 				<pre><code class="language-typescript"><span class="hljs-keyword">interface</span> Person {
   name: <span class="hljs-built_in">string</span>;
   surname: <span class="hljs-built_in">string</span> | <span class="hljs-literal">null</span>;
@@ -142,13 +156,17 @@
 
     f(<span class="hljs-number">2</span>); <span class="hljs-comment">// null</span>
     g(<span class="hljs-number">2</span>); <span class="hljs-comment">// null</span></code></pre>
-				<h1 id="documentation">Documentation</h1>
+				<a href="#documentation" id="documentation" style="color: inherit; text-decoration: none;">
+					<h1>Documentation</h1>
+				</a>
 				<p>All methods are documented, if you don&#39;t see a description please make sure you are reading the base class page - <code>Opt</code>.</p>
 				<ul>
 					<li>Main <a href="https://glcdn.githack.com/monnef/ts-opt/raw/v0.0.9/doc/classes/_opt_.opt.html">Opt</a> class</li>
 					<li><a href="https://glcdn.githack.com/monnef/ts-opt/raw/v0.0.9/doc/modules/_opt_.html">Module</a> (constructors and helper functions)</li>
 				</ul>
-				<h1 id="license">License</h1>
+				<a href="#license" id="license" style="color: inherit; text-decoration: none;">
+					<h1>License</h1>
+				</a>
 				<p><strong>MIT</strong></p>
 			</div>
 		</div>
@@ -182,6 +200,7 @@
 				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
 				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
 				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
@@ -230,7 +249,7 @@
 	</div>
 </footer>
 <div class="container tsd-generator">
-	<p>Generated using <a href="http://typedoc.org/" target="_blank">TypeDoc</a></p>
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
 </div>
 <div class="overlay"></div>
 <script src="assets/js/main.js"></script>
