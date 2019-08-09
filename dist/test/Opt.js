@@ -243,6 +243,17 @@ describe('optEmptyArray', function () {
         expect(Opt_1.optEmptyArray([0]).orNull()).to.eql([0]);
     });
 });
+describe('application', function () {
+    it('ap', function () {
+        expect(Opt_1.ap(Opt_1.opt(gt0))(Opt_1.opt(1)).orNull()).to.be.true;
+        expect(Opt_1.ap(Opt_1.none)(Opt_1.opt(1)).orNull()).to.be.null;
+        expect(Opt_1.ap(Opt_1.opt(gt0))(Opt_1.none).orNull()).to.be.null;
+    });
+    it('apFn', function () {
+        expect(Opt_1.apFn(gt0)(Opt_1.opt(1)).orNull()).to.be.true;
+        expect(Opt_1.apFn(gt0)(Opt_1.none).orNull()).to.be.null;
+    });
+});
 describe('examples', function () {
     it('basic', function () {
         // without

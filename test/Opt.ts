@@ -3,15 +3,15 @@
 import * as chai from 'chai';
 import * as spies from 'chai-spies';
 
-import { isOpt, none, opt, Opt, optEmptyArray, optFalsy, some } from '../src/Opt';
+import { ap, apFn, isOpt, none, opt, Opt, optEmptyArray, optFalsy, some } from '../src/Opt';
 
 chai.use(spies);
 const {expect} = chai;
 chai.should();
 
 const add1 = (x: number) => x + 1;
-const gt0 = (x: number) => x > 0;
-const lt0 = (x: number) => x < 0;
+const gt0 = (x: number): boolean => x > 0;
+const lt0 = (x: number): boolean => x < 0;
 
 const randomNumOpt = (): Opt<number> => Math.random() > .5 ? none : some(Math.random());
 
@@ -283,6 +283,18 @@ describe('optEmptyArray', () => {
     expect(optEmptyArray([]).isEmpty).to.be.true;
     expect(optEmptyArray([0]).isEmpty).to.be.false;
     expect(optEmptyArray([0]).orNull()).to.eql([0]);
+  });
+});
+
+describe('application', () => {
+  it('ap', () => {
+    expect(ap(opt(gt0))(opt(1)).orNull()).to.be.true;
+    expect(ap(none)(opt(1)).orNull()).to.be.null;
+    expect(ap(opt(gt0))(none).orNull()).to.be.null;
+  });
+  it('apFn', () => {
+    expect(apFn(gt0)(opt(1)).orNull()).to.be.true;
+    expect(apFn(gt0)(none).orNull()).to.be.null;
   });
 });
 

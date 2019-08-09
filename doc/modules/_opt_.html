@@ -89,6 +89,8 @@
 						<section class="tsd-index-section ">
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_opt_.html#ap" class="tsd-kind-icon">ap</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_opt_.html#apfn" class="tsd-kind-icon">ap<wbr>Fn</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_opt_.html#isnonevalue" class="tsd-kind-icon">is<wbr>None<wbr>Value</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="_opt_.html#isopt" class="tsd-kind-icon">is<wbr>Opt</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_opt_.html#opt-1" class="tsd-kind-icon">opt</a></li>
@@ -140,6 +142,117 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Functions</h2>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
+					<a name="ap" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> ap</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">ap&lt;A, B&gt;<span class="tsd-signature-symbol">(</span>of<span class="tsd-signature-symbol">: </span><a href="../classes/_opt_.opt.html" class="tsd-signature-type">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">(Anonymous function)</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in Opt.ts:502</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<pre><code class="language-ts">&lt;A, B&gt;<span class="hljs-function">(<span class="hljs-params">of: Opt&lt;(<span class="hljs-params">_: A</span>) =&gt; B&gt;</span>) =&gt;</span> (oa: Opt&lt;A&gt;): Opt&lt;B&gt;</code></pre>
+									<p>Apply <code>oa</code> to function <code>of</code>. If any argument is <a href="../classes/_opt_.none.html">None</a> then result is <a href="../classes/_opt_.none.html">None</a>.</p>
+									<pre><code class="language-ts">ap(opt(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x &gt; <span class="hljs-number">0</span>))(opt(<span class="hljs-number">1</span>)) <span class="hljs-comment">// Opt(true)</span>
+ap(opt(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x &gt; <span class="hljs-number">0</span>))(none) <span class="hljs-comment">// None</span>
+ap(none)(opt(<span class="hljs-number">1</span>)) <span class="hljs-comment">// None</span></code></pre>
+								</div>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>A</h4>
+									<div class="tsd-comment tsd-typography">
+										<p>input of function inside <code>of</code></p>
+									</div>
+								</li>
+								<li>
+									<h4>B</h4>
+									<div class="tsd-comment tsd-typography">
+										<p>output of function inside <code>of</code></p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>of: <a href="../classes/_opt_.opt.html" class="tsd-signature-type">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">(Anonymous function)</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
+					<a name="apfn" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> ap<wbr>Fn</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">ap<wbr>Fn&lt;A, B&gt;<span class="tsd-signature-symbol">(</span>f<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">(Anonymous function)</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in Opt.ts:518</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<pre><code class="language-ts">&lt;A, B&gt;<span class="hljs-function">(<span class="hljs-params">f: (<span class="hljs-params">_: A</span>) =&gt; B</span>) =&gt;</span> (oa: Opt&lt;A&gt;): Opt&lt;B&gt;</code></pre>
+									<p>Apply <code>oa</code> to function <code>f</code>. If argument is <a href="../classes/_opt_.none.html">None</a> then result is <a href="../classes/_opt_.none.html">None</a>.</p>
+									<pre><code class="language-ts">apFn(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x &gt; <span class="hljs-number">0</span>)(opt(<span class="hljs-number">1</span>)) <span class="hljs-comment">// Opt(true)</span>
+apFn(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x &gt; <span class="hljs-number">0</span>)(none) <span class="hljs-comment">// None</span></code></pre>
+								</div>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>A</h4>
+									<div class="tsd-comment tsd-typography">
+										<p>input of function <code>f</code></p>
+									</div>
+								</li>
+								<li>
+									<h4>B</h4>
+									<div class="tsd-comment tsd-typography">
+										<p>output of function <code>f</code></p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>f: <span class="tsd-signature-type">function</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-siganture">
+											<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>_<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">A</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">B</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>_: <span class="tsd-signature-type">A</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">B</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">(Anonymous function)</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
 					<a name="isnonevalue" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagConst">Const</span> is<wbr>None<wbr>Value</h3>
@@ -383,6 +496,12 @@
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="_opt_.html#somesymbol" class="tsd-kind-icon">some<wbr>Symbol</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="_opt_.html#ap" class="tsd-kind-icon">ap</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="_opt_.html#apfn" class="tsd-kind-icon">ap<wbr>Fn</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="_opt_.html#isnonevalue" class="tsd-kind-icon">is<wbr>None<wbr>Value</a>

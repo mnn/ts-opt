@@ -22,10 +22,6 @@ export declare abstract class Opt<T> {
      */
     readonly nonEmpty: boolean;
     /**
-     * `1` for [[Some]], `0` for [[None]].
-     */
-    readonly length: number;
-    /**
      * Converts `Opt` to an array.
      *
      * ```ts
@@ -34,6 +30,10 @@ export declare abstract class Opt<T> {
      * ```
      */
     abstract toArray(): [] | [T];
+    /**
+     * `1` for [[Some]], `0` for [[None]].
+     */
+    readonly length: number;
     /**
      * Applies function to the wrapped value and returns a new instance of [[Some]].
      *
@@ -291,8 +291,8 @@ export declare abstract class Opt<T> {
 }
 declare class None<T> extends Opt<T> {
     readonly '@@type': symbol;
-    readonly isEmpty: boolean;
     toArray(): [] | [T];
+    readonly isEmpty: boolean;
     flatMap<U>(_f: (_: T) => Opt<U>): Opt<U>;
     map<U>(): Opt<U>;
     orCrash(msg: string): T;
@@ -317,11 +317,11 @@ declare class None<T> extends Opt<T> {
     filter(_predicate: (_: T) => boolean): Opt<T>;
 }
 declare class Some<T> extends Opt<T> {
-    readonly '@@type': symbol;
-    readonly isEmpty: boolean;
     private _value;
+    readonly '@@type': symbol;
     constructor(_value: T);
     toArray(): [] | [T];
+    readonly isEmpty: boolean;
     flatMap<U>(f: (_: T) => Opt<U>): Opt<U>;
     map<U>(f: (_: T) => U): Opt<U>;
     orCrash(_msg: string): T;
@@ -365,7 +365,7 @@ export declare const opt: <T>(x: T | null | undefined) => Opt<T>;
  * For falsy values returns [[None]].
  * @param x
  */
-export declare const optFalsy: <T>(x: '' | T | null | undefined) => Opt<T>;
+export declare const optFalsy: <T>(x: "" | T | null | undefined) => Opt<T>;
 /**
  * For empty array (`[]`) returns [[None]].
  * @param x
@@ -376,4 +376,31 @@ export declare const optEmptyArray: <T>(x: T[]) => Opt<T[]>;
  * @param x
  */
 export declare const isOpt: (x: unknown) => x is Opt<unknown>;
+/**
+ * ```ts
+ * <A, B>(of: Opt<(_: A) => B>) => (oa: Opt<A>): Opt<B>
+ * ```
+ * Apply `oa` to function `of`. If any argument is [[None]] then result is [[None]].
+ * ```ts
+ * ap(opt(x => x > 0))(opt(1)) // Opt(true)
+ * ap(opt(x => x > 0))(none) // None
+ * ap(none)(opt(1)) // None
+ * ```
+ * @typeparam A input of function inside `of`
+ * @typeparam B output of function inside `of`
+ */
+export declare const ap: <A, B>(of: Opt<(_: A) => B>) => (oa: Opt<A>) => Opt<B>;
+/**
+ * ```ts
+ * <A, B>(f: (_: A) => B) => (oa: Opt<A>): Opt<B>
+ * ```
+ * Apply `oa` to function `f`. If argument is [[None]] then result is [[None]].
+ * ```ts
+ * apFn(x => x > 0)(opt(1)) // Opt(true)
+ * apFn(x => x > 0)(none) // None
+ * ```
+ * @typeparam A input of function `f`
+ * @typeparam B output of function `f`
+ */
+export declare const apFn: <A, B>(f: (_: A) => B) => (oa: Opt<A>) => Opt<B>;
 export {};

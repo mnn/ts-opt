@@ -217,4 +217,35 @@ exports.optEmptyArray = function (x) { return x.length ? new Some(x) : exports.n
  * @param x
  */
 exports.isOpt = function (x) { return x instanceof Opt; };
+/**
+ * ```ts
+ * <A, B>(of: Opt<(_: A) => B>) => (oa: Opt<A>): Opt<B>
+ * ```
+ * Apply `oa` to function `of`. If any argument is [[None]] then result is [[None]].
+ * ```ts
+ * ap(opt(x => x > 0))(opt(1)) // Opt(true)
+ * ap(opt(x => x > 0))(none) // None
+ * ap(none)(opt(1)) // None
+ * ```
+ * @typeparam A input of function inside `of`
+ * @typeparam B output of function inside `of`
+ */
+exports.ap = function (of) { return function (oa) {
+    return oa.caseOf(function (a) { return of.map(function (f) { return f(a); }); }, function () { return exports.none; });
+}; };
+/**
+ * ```ts
+ * <A, B>(f: (_: A) => B) => (oa: Opt<A>): Opt<B>
+ * ```
+ * Apply `oa` to function `f`. If argument is [[None]] then result is [[None]].
+ * ```ts
+ * apFn(x => x > 0)(opt(1)) // Opt(true)
+ * apFn(x => x > 0)(none) // None
+ * ```
+ * @typeparam A input of function `f`
+ * @typeparam B output of function `f`
+ */
+exports.apFn = function (f) { return function (oa) {
+    return exports.ap(exports.opt(f))(oa);
+}; };
 //# sourceMappingURL=Opt.js.map

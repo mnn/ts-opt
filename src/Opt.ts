@@ -485,3 +485,36 @@ export const optEmptyArray = <T>(x: T[]): Opt<T[]> => x.length ? new Some(x) : n
  * @param x
  */
 export const isOpt = (x: unknown): x is Opt<unknown> => x instanceof Opt;
+
+/**
+ * ```ts
+ * <A, B>(of: Opt<(_: A) => B>) => (oa: Opt<A>): Opt<B>
+ * ```
+ * Apply `oa` to function `of`. If any argument is [[None]] then result is [[None]].
+ * ```ts
+ * ap(opt(x => x > 0))(opt(1)) // Opt(true)
+ * ap(opt(x => x > 0))(none) // None
+ * ap(none)(opt(1)) // None
+ * ```
+ * @typeparam A input of function inside `of`
+ * @typeparam B output of function inside `of`
+ */
+export const ap = <A, B>(of: Opt<(_: A) => B>) => (oa: Opt<A>): Opt<B> => {
+  return oa.caseOf(a => of.map(f => f(a)), () => none as Opt<B>);
+};
+
+/**
+ * ```ts
+ * <A, B>(f: (_: A) => B) => (oa: Opt<A>): Opt<B>
+ * ```
+ * Apply `oa` to function `f`. If argument is [[None]] then result is [[None]].
+ * ```ts
+ * apFn(x => x > 0)(opt(1)) // Opt(true)
+ * apFn(x => x > 0)(none) // None
+ * ```
+ * @typeparam A input of function `f`
+ * @typeparam B output of function `f`
+ */
+export const apFn = <A, B>(f: (_: A) => B) => (oa: Opt<A>): Opt<B> => {
+  return ap(opt(f))(oa);
+};
