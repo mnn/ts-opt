@@ -499,9 +499,8 @@ export const isOpt = (x: unknown): x is Opt<unknown> => x instanceof Opt;
  * @typeparam A input of function inside `of`
  * @typeparam B output of function inside `of`
  */
-export const ap = <A, B>(of: Opt<(_: A) => B>) => (oa: Opt<A>): Opt<B> => {
-  return oa.caseOf(a => of.map(f => f(a)), () => none as Opt<B>);
-};
+export const ap = <A, B>(of: Opt<(_: A) => B>) => (oa: Opt<A>): Opt<B> =>
+  oa.caseOf(a => of.map(f => f(a)), () => none as Opt<B>);
 
 /**
  * ```ts
@@ -515,6 +514,23 @@ export const ap = <A, B>(of: Opt<(_: A) => B>) => (oa: Opt<A>): Opt<B> => {
  * @typeparam A input of function `f`
  * @typeparam B output of function `f`
  */
-export const apFn = <A, B>(f: (_: A) => B) => (oa: Opt<A>): Opt<B> => {
-  return ap(opt(f))(oa);
-};
+export const apFn = <A, B>(f: (_: A) => B) => (oa: Opt<A>): Opt<B> => ap(opt(f))(oa);
+
+/**
+ * Transforms array of opts into an array where [[None]]s are omitted and [[Some]]s are unwrapped.
+ * ```ts
+ * catOpts([opt(1), opt(null)]) // [1]
+ * ```
+ * @param xs
+ */
+export const catOpts = <A>(xs: Opt<A>[]): A[] =>
+  xs.reduce((acc, x) => x.caseOf(y => [...acc, y], () => acc), [] as A[]);
+
+/**
+ * Similar to `Array.map`, but also allows omitting elements.
+ * ```ts
+ * mapOpt((x: number) => x > 0 ? opt(x) : none)([-1, 0, 1]) // [1]
+ * ```
+ * @param f
+ */
+export const mapOpt = <A, B>(f: (_: A) => Opt<B>) => (xs: A[]): B[] => catOpts(xs.map(f));

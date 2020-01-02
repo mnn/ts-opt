@@ -12,6 +12,13 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
@@ -245,7 +252,23 @@ exports.ap = function (of) { return function (oa) {
  * @typeparam A input of function `f`
  * @typeparam B output of function `f`
  */
-exports.apFn = function (f) { return function (oa) {
-    return exports.ap(exports.opt(f))(oa);
-}; };
+exports.apFn = function (f) { return function (oa) { return exports.ap(exports.opt(f))(oa); }; };
+/**
+ * Transforms array of opts into an array where [[None]]s are omitted and [[Some]]s are unwrapped.
+ * ```ts
+ * catOpts([opt(1), opt(null)]) // [1]
+ * ```
+ * @param xs
+ */
+exports.catOpts = function (xs) {
+    return xs.reduce(function (acc, x) { return x.caseOf(function (y) { return __spreadArrays(acc, [y]); }, function () { return acc; }); }, []);
+};
+/**
+ * Similar to `Array.map`, but also allows omitting elements.
+ * ```ts
+ * mapOpt((x: number) => x > 0 ? opt(x) : none)([-1, 0, 1]) // [1]
+ * ```
+ * @param f
+ */
+exports.mapOpt = function (f) { return function (xs) { return exports.catOpts(xs.map(f)); }; };
 //# sourceMappingURL=Opt.js.map

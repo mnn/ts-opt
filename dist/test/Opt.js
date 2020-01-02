@@ -254,6 +254,25 @@ describe('application', function () {
         expect(Opt_1.apFn(gt0)(Opt_1.none).orNull()).to.be.null;
     });
 });
+describe('catOpts', function () {
+    it('converts to array', function () {
+        expect(Opt_1.catOpts([])).to.eql([]);
+        expect(Opt_1.catOpts([Opt_1.some(1)])).to.eql([1]);
+        expect(Opt_1.catOpts([Opt_1.none])).to.eql([]);
+        expect(Opt_1.catOpts([Opt_1.opt(1), Opt_1.opt(null)])).to.eql([1]);
+    });
+});
+describe('mapOpt', function () {
+    it('maps', function () {
+        expect(Opt_1.mapOpt(Opt_1.opt)([1, 2, 3])).to.eql([1, 2, 3]);
+    });
+    it('omits', function () {
+        expect(Opt_1.mapOpt(function (_x) { return Opt_1.none; })([1])).to.eql([]);
+    });
+    it('maps and omits', function () {
+        expect(Opt_1.mapOpt(function (x) { return x > 0 ? Opt_1.opt(x) : Opt_1.none; })([-1, 0, 1])).to.eql([1]);
+    });
+});
 describe('examples', function () {
     it('basic', function () {
         // without

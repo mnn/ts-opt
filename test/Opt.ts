@@ -3,7 +3,7 @@
 import * as chai from 'chai';
 import * as spies from 'chai-spies';
 
-import { ap, apFn, isOpt, none, opt, Opt, optEmptyArray, optFalsy, some } from '../src/Opt';
+import {ap, apFn, catOpts, isOpt, mapOpt, none, opt, Opt, optEmptyArray, optFalsy, some} from '../src/Opt';
 
 chai.use(spies);
 const {expect} = chai;
@@ -295,6 +295,27 @@ describe('application', () => {
   it('apFn', () => {
     expect(apFn(gt0)(opt(1)).orNull()).to.be.true;
     expect(apFn(gt0)(none).orNull()).to.be.null;
+  });
+});
+
+describe('catOpts', () => {
+  it('converts to array', () => {
+    expect(catOpts([])).to.eql([]);
+    expect(catOpts([some(1)])).to.eql([1]);
+    expect(catOpts([none])).to.eql([]);
+    expect(catOpts([opt(1), opt(null)])).to.eql([1]);
+  });
+});
+
+describe('mapOpt', () => {
+  it('maps', () => {
+    expect(mapOpt(opt)([1, 2, 3])).to.eql([1, 2, 3]);
+  });
+  it('omits', () => {
+    expect(mapOpt(_x => none)([1])).to.eql([]);
+  });
+  it('maps and omits', () => {
+    expect(mapOpt((x: number) => x > 0 ? opt(x) : none)([-1, 0, 1])).to.eql([1]);
   });
 });
 

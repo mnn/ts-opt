@@ -16,11 +16,11 @@ export declare abstract class Opt<T> {
     /**
      * `false` for [[Some]], `true` for [[None]].
      */
-    abstract readonly isEmpty: boolean;
+    abstract get isEmpty(): boolean;
     /**
      * `false` for [[Some]], `true` for [[None]].
      */
-    readonly nonEmpty: boolean;
+    get nonEmpty(): boolean;
     /**
      * Converts `Opt` to an array.
      *
@@ -33,7 +33,7 @@ export declare abstract class Opt<T> {
     /**
      * `1` for [[Some]], `0` for [[None]].
      */
-    readonly length: number;
+    get length(): number;
     /**
      * Applies function to the wrapped value and returns a new instance of [[Some]].
      *
@@ -292,7 +292,7 @@ export declare abstract class Opt<T> {
 declare class None<T> extends Opt<T> {
     readonly '@@type': symbol;
     toArray(): [] | [T];
-    readonly isEmpty: boolean;
+    get isEmpty(): boolean;
     flatMap<U>(_f: (_: T) => Opt<U>): Opt<U>;
     map<U>(): Opt<U>;
     orCrash(msg: string): T;
@@ -321,7 +321,7 @@ declare class Some<T> extends Opt<T> {
     readonly '@@type': symbol;
     constructor(_value: T);
     toArray(): [] | [T];
-    readonly isEmpty: boolean;
+    get isEmpty(): boolean;
     flatMap<U>(f: (_: T) => Opt<U>): Opt<U>;
     map<U>(f: (_: T) => U): Opt<U>;
     orCrash(_msg: string): T;
@@ -403,4 +403,20 @@ export declare const ap: <A, B>(of: Opt<(_: A) => B>) => (oa: Opt<A>) => Opt<B>;
  * @typeparam B output of function `f`
  */
 export declare const apFn: <A, B>(f: (_: A) => B) => (oa: Opt<A>) => Opt<B>;
+/**
+ * Transforms array of opts into an array where [[None]]s are omitted and [[Some]]s are unwrapped.
+ * ```ts
+ * catOpts([opt(1), opt(null)]) // [1]
+ * ```
+ * @param xs
+ */
+export declare const catOpts: <A>(xs: Opt<A>[]) => A[];
+/**
+ * Similar to `Array.map`, but also allows omitting elements.
+ * ```ts
+ * mapOpt((x: number) => x > 0 ? opt(x) : none)([-1, 0, 1]) // [1]
+ * ```
+ * @param f
+ */
+export declare const mapOpt: <A, B>(f: (_: A) => Opt<B>) => (xs: A[]) => B[];
 export {};
