@@ -97,6 +97,7 @@
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_opt_.html#mapopt" class="tsd-kind-icon">map<wbr>Opt</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_opt_.html#opt-1" class="tsd-kind-icon">opt</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_opt_.html#optemptyarray" class="tsd-kind-icon">opt<wbr>Empty<wbr>Array</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_opt_.html#optemptyobject" class="tsd-kind-icon">opt<wbr>Empty<wbr>Object</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_opt_.html#optfalsy" class="tsd-kind-icon">opt<wbr>Falsy</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_opt_.html#some-1" class="tsd-kind-icon">some</a></li>
 							</ul>
@@ -154,7 +155,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:502</li>
+									<li>Defined in Opt.ts:510</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -163,7 +164,8 @@
 									<p>Apply <code>oa</code> to function <code>of</code>. If any argument is <a href="../classes/_opt_.none.html">None</a> then result is <a href="../classes/_opt_.none.html">None</a>.</p>
 									<pre><code class="language-ts">ap(opt(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x &gt; <span class="hljs-number">0</span>))(opt(<span class="hljs-number">1</span>)) <span class="hljs-comment">// Opt(true)</span>
 ap(opt(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x &gt; <span class="hljs-number">0</span>))(none) <span class="hljs-comment">// None</span>
-ap(none)(opt(<span class="hljs-number">1</span>)) <span class="hljs-comment">// None</span></code></pre>
+ap(none)(opt(<span class="hljs-number">1</span>)) <span class="hljs-comment">// None</span>
+ap(none)(none) <span class="hljs-comment">// None</span></code></pre>
 								</div>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -201,7 +203,7 @@ ap(none)(opt(<span class="hljs-number">1</span>)) <span class="hljs-comment">// 
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:517</li>
+									<li>Defined in Opt.ts:525</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -265,7 +267,7 @@ apFn(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:526</li>
+									<li>Defined in Opt.ts:534</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -327,7 +329,7 @@ apFn(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:487</li>
+									<li>Defined in Opt.ts:494</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -359,7 +361,7 @@ apFn(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:536</li>
+									<li>Defined in Opt.ts:544</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -452,7 +454,7 @@ apFn(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span>
 					<a name="optemptyarray" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagConst">Const</span> opt<wbr>Empty<wbr>Array</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
-						<li class="tsd-signature tsd-kind-icon">opt<wbr>Empty<wbr>Array&lt;T&gt;<span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../classes/_opt_.opt.html" class="tsd-signature-type">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">opt<wbr>Empty<wbr>Array&lt;T&gt;<span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../classes/_opt_.opt.html" class="tsd-signature-type">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -475,7 +477,7 @@ apFn(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>x: <span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span></h5>
+									<h5>x: <span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<div class="lead">
 										</div>
@@ -483,6 +485,44 @@ apFn(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="../classes/_opt_.opt.html" class="tsd-signature-type">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
+					<a name="optemptyobject" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> opt<wbr>Empty<wbr>Object</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">opt<wbr>Empty<wbr>Object&lt;T&gt;<span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../classes/_opt_.opt.html" class="tsd-signature-type">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in Opt.ts:487</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>For empty object (<code>{}</code>) returns <a href="../classes/_opt_.none.html">None</a>.</p>
+								</div>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>T<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span></h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>x: <span class="tsd-signature-type">T</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+										</div>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../classes/_opt_.opt.html" class="tsd-signature-type">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -621,6 +661,9 @@ apFn(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="_opt_.html#optemptyarray" class="tsd-kind-icon">opt<wbr>Empty<wbr>Array</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="_opt_.html#optemptyobject" class="tsd-kind-icon">opt<wbr>Empty<wbr>Object</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="_opt_.html#optfalsy" class="tsd-kind-icon">opt<wbr>Falsy</a>

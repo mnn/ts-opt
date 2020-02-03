@@ -3,7 +3,20 @@
 import * as chai from 'chai';
 import * as spies from 'chai-spies';
 
-import {ap, apFn, catOpts, isOpt, mapOpt, none, opt, Opt, optEmptyArray, optFalsy, some} from '../src/Opt';
+import {
+  ap,
+  apFn,
+  catOpts,
+  isOpt,
+  mapOpt,
+  none,
+  opt,
+  Opt,
+  optEmptyArray,
+  optEmptyObject,
+  optFalsy,
+  some
+} from '../src/Opt';
 
 chai.use(spies);
 const {expect} = chai;
@@ -280,9 +293,21 @@ describe('optFalsy', () => {
 
 describe('optEmptyArray', () => {
   it('construction', () => {
+    expect(optEmptyArray(null).isEmpty).to.be.true;
+    expect(optEmptyArray(undefined).isEmpty).to.be.true;
     expect(optEmptyArray([]).isEmpty).to.be.true;
     expect(optEmptyArray([0]).isEmpty).to.be.false;
     expect(optEmptyArray([0]).orNull()).to.eql([0]);
+  });
+});
+
+describe('optEmptyObject', () => {
+  it('construction', () => {
+    expect(optEmptyObject(null).isEmpty).to.be.true;
+    expect(optEmptyObject(undefined).isEmpty).to.be.true;
+    expect(optEmptyObject({}).isEmpty).to.be.true;
+    expect(optEmptyObject({a: 1}).isEmpty).to.be.false;
+    expect(optEmptyObject({a: 1}).map(x => x.a).orNull()).to.be.eq(1);
   });
 });
 
@@ -291,6 +316,7 @@ describe('application', () => {
     expect(ap(opt(gt0))(opt(1)).orNull()).to.be.true;
     expect(ap(none)(opt(1)).orNull()).to.be.null;
     expect(ap(opt(gt0))(none).orNull()).to.be.null;
+    expect(ap(none)(none).orNull()).to.be.null;
   });
   it('apFn', () => {
     expect(apFn(gt0)(opt(1)).orNull()).to.be.true;
