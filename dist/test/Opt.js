@@ -238,9 +238,20 @@ describe('optFalsy', function () {
 });
 describe('optEmptyArray', function () {
     it('construction', function () {
+        expect(Opt_1.optEmptyArray(null).isEmpty).to.be.true;
+        expect(Opt_1.optEmptyArray(undefined).isEmpty).to.be.true;
         expect(Opt_1.optEmptyArray([]).isEmpty).to.be.true;
         expect(Opt_1.optEmptyArray([0]).isEmpty).to.be.false;
         expect(Opt_1.optEmptyArray([0]).orNull()).to.eql([0]);
+    });
+});
+describe('optEmptyObject', function () {
+    it('construction', function () {
+        expect(Opt_1.optEmptyObject(null).isEmpty).to.be.true;
+        expect(Opt_1.optEmptyObject(undefined).isEmpty).to.be.true;
+        expect(Opt_1.optEmptyObject({}).isEmpty).to.be.true;
+        expect(Opt_1.optEmptyObject({ a: 1 }).isEmpty).to.be.false;
+        expect(Opt_1.optEmptyObject({ a: 1 }).map(function (x) { return x.a; }).orNull()).to.be.eq(1);
     });
 });
 describe('application', function () {
@@ -248,6 +259,7 @@ describe('application', function () {
         expect(Opt_1.ap(Opt_1.opt(gt0))(Opt_1.opt(1)).orNull()).to.be.true;
         expect(Opt_1.ap(Opt_1.none)(Opt_1.opt(1)).orNull()).to.be.null;
         expect(Opt_1.ap(Opt_1.opt(gt0))(Opt_1.none).orNull()).to.be.null;
+        expect(Opt_1.ap(Opt_1.none)(Opt_1.none).orNull()).to.be.null;
     });
     it('apFn', function () {
         expect(Opt_1.apFn(gt0)(Opt_1.opt(1)).orNull()).to.be.true;

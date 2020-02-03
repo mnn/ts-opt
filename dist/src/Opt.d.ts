@@ -370,7 +370,12 @@ export declare const optFalsy: <T>(x: "" | T | null | undefined) => Opt<T>;
  * For empty array (`[]`) returns [[None]].
  * @param x
  */
-export declare const optEmptyArray: <T>(x: T[]) => Opt<T[]>;
+export declare const optEmptyArray: <T>(x: T[] | null | undefined) => Opt<T[]>;
+/**
+ * For empty object (`{}`) returns [[None]].
+ * @param x
+ */
+export declare const optEmptyObject: <T extends object>(x: T | null | undefined) => Opt<T>;
 /**
  * Is given value an instance of [[Opt]]?
  * @param x
@@ -385,6 +390,7 @@ export declare const isOpt: (x: unknown) => x is Opt<unknown>;
  * ap(opt(x => x > 0))(opt(1)) // Opt(true)
  * ap(opt(x => x > 0))(none) // None
  * ap(none)(opt(1)) // None
+ * ap(none)(none) // None
  * ```
  * @typeparam A input of function inside `of`
  * @typeparam B output of function inside `of`

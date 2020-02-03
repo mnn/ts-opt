@@ -218,7 +218,14 @@ exports.optFalsy = function (x) { return x ? new Some(x) : exports.none; };
  * For empty array (`[]`) returns [[None]].
  * @param x
  */
-exports.optEmptyArray = function (x) { return x.length ? new Some(x) : exports.none; };
+exports.optEmptyArray = function (x) { return exports.opt(x).filter(function (y) { return y.length > 0; }); };
+/**
+ * For empty object (`{}`) returns [[None]].
+ * @param x
+ */
+exports.optEmptyObject = function (x) {
+    return exports.opt(x).filter(function (y) { return Object.keys(y).length !== 0; });
+};
 /**
  * Is given value an instance of [[Opt]]?
  * @param x
@@ -233,6 +240,7 @@ exports.isOpt = function (x) { return x instanceof Opt; };
  * ap(opt(x => x > 0))(opt(1)) // Opt(true)
  * ap(opt(x => x > 0))(none) // None
  * ap(none)(opt(1)) // None
+ * ap(none)(none) // None
  * ```
  * @typeparam A input of function inside `of`
  * @typeparam B output of function inside `of`

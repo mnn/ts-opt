@@ -4,7 +4,7 @@ Typed Option/Maybe for TypeScript and JavaScript (based on Scala, Haskell and Sa
 
 Features
 ===
-* 🗜️ Lightweight - no dependencies, only around 1KiB gzip+minified
+* 🗜️ Lightweight - no dependencies, only around 2KiB gzip+minified
 * 💪 TypeScript Support - fully usable from JavaScript as well
 * 🔩 Pragmatic - doesn't force functional programming paradigm
 * 📏 100% Test Coverage
