@@ -365,7 +365,7 @@ export declare const opt: <T>(x: T | null | undefined) => Opt<T>;
  * For falsy values returns [[None]].
  * @param x
  */
-export declare const optFalsy: <T>(x: "" | T | null | undefined) => Opt<T>;
+export declare const optFalsy: <T>(x: false | "" | T | null | undefined) => Opt<T>;
 /**
  * For empty array (`[]`) returns [[None]].
  * @param x

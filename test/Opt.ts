@@ -289,6 +289,10 @@ describe('optFalsy', () => {
     expect(optFalsy({}).isEmpty).to.be.false;
     expect(optFalsy([]).isEmpty).to.be.false;
   });
+  it('false not in T', () => {
+    const x: number | null = optFalsy(1 as number | false).orNull();
+    expect(x).to.be.eq(1);
+  });
 });
 
 describe('optEmptyArray', () => {

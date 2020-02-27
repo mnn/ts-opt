@@ -235,6 +235,10 @@ describe('optFalsy', function () {
         expect(Opt_1.optFalsy({}).isEmpty).to.be.false;
         expect(Opt_1.optFalsy([]).isEmpty).to.be.false;
     });
+    it('false not in T', function () {
+        var x = Opt_1.optFalsy(1).orNull();
+        expect(x).to.be.eq(1);
+    });
 });
 describe('optEmptyArray', function () {
     it('construction', function () {
