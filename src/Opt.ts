@@ -6,6 +6,21 @@ const noneSymbol = Symbol('None');
  */
 export abstract class Opt<T> {
   /**
+   * `false` for [[Some]], `true` for [[None]].
+   */
+  abstract get isEmpty(): boolean;
+
+  /**
+   * `false` for [[Some]], `true` for [[None]].
+   */
+  get nonEmpty(): boolean { return !this.isEmpty; }
+
+  /**
+   * `1` for [[Some]], `0` for [[None]].
+   */
+  get length(): number { return this.isEmpty ? 0 : 1; }
+
+  /**
    * Create Opt instance from an array of one or zero items.
    *
    * ```ts
@@ -18,16 +33,6 @@ export abstract class Opt<T> {
   static fromArray<T>(x: [] | [T]): Opt<T> { return opt(x[0]); }
 
   /**
-   * `false` for [[Some]], `true` for [[None]].
-   */
-  abstract get isEmpty(): boolean;
-
-  /**
-   * `false` for [[Some]], `true` for [[None]].
-   */
-  get nonEmpty(): boolean { return !this.isEmpty; }
-
-  /**
    * Converts `Opt` to an array.
    *
    * ```ts
@@ -36,11 +41,6 @@ export abstract class Opt<T> {
    * ```
    */
   abstract toArray(): [] | [T];
-
-  /**
-   * `1` for [[Some]], `0` for [[None]].
-   */
-  get length(): number { return this.isEmpty ? 0 : 1; }
 
   /**
    * Applies function to the wrapped value and returns a new instance of [[Some]].
@@ -328,9 +328,9 @@ export abstract class Opt<T> {
 class None<T> extends Opt<T> {
   readonly '@@type' = noneSymbol;
 
-  toArray(): [] | [T] { return []; }
-
   get isEmpty(): boolean { return true; }
+
+  toArray(): [] | [T] { return []; }
 
   flatMap<U>(_f: (_: T) => Opt<U>): Opt<U> { return none as unknown as Opt<U>; }
 
@@ -385,9 +385,9 @@ class Some<T> extends Opt<T> {
 
   constructor(private _value: T) { super(); }
 
-  toArray(): [] | [T] { return [this._value]; }
-
   get isEmpty(): boolean { return false; }
+
+  toArray(): [] | [T] { return [this._value]; }
 
   flatMap<U>(f: (_: T) => Opt<U>): Opt<U> {
     return f(this._value);
@@ -469,19 +469,25 @@ export const some = <T>(x: T) => Object.freeze(new Some(x));
 export const opt = <T>(x: T | undefined | null): Opt<T> => isNoneValue(x) ? none : new Some(x as T);
 
 /**
- * For falsy values returns [[None]].
+ * For falsy values returns [[None]], otherwise acts same as [[opt]].
+ * ```ts
+ * optFalsy(''); // None
+ * optFalsy(0); // None
+ * optFalsy(false); // None
+ * optFalsy(NaN); // None
+ * ```
  * @param x
  */
-export const optFalsy = <T>(x: T | undefined | null | '' | false): Opt<T> => x ? new Some(x as T) : none;
+export const optFalsy = <T>(x: T | undefined | null | '' | false | 0): Opt<T> => x ? new Some(x as T) : none;
 
 /**
- * For empty array (`[]`) returns [[None]].
+ * For empty array (`[]`) returns [[None]], otherwise acts same as [[opt]].
  * @param x
  */
 export const optEmptyArray = <T>(x: T[] | undefined | null): Opt<T[]> => opt(x).filter(y => y.length > 0);
 
 /**
- * For empty object (`{}`) returns [[None]].
+ * For empty object (`{}`) returns [[None]], otherwise acts same as [[opt]].
  * @param x
  */
 export const optEmptyObject = <T extends object>(x: T | undefined | null): Opt<T> =>

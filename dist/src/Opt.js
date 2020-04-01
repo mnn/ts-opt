@@ -28,17 +28,6 @@ var noneSymbol = Symbol('None');
 var Opt = /** @class */ (function () {
     function Opt() {
     }
-    /**
-     * Create Opt instance from an array of one or zero items.
-     *
-     * ```ts
-     * Opt.fromArray([]) // None
-     * Opt.fromArray([1]) // Some(1)
-     * ```
-     *
-     * @param x
-     */
-    Opt.fromArray = function (x) { return exports.opt(x[0]); };
     Object.defineProperty(Opt.prototype, "nonEmpty", {
         /**
          * `false` for [[Some]], `true` for [[None]].
@@ -55,6 +44,17 @@ var Opt = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
+    /**
+     * Create Opt instance from an array of one or zero items.
+     *
+     * ```ts
+     * Opt.fromArray([]) // None
+     * Opt.fromArray([1]) // Some(1)
+     * ```
+     *
+     * @param x
+     */
+    Opt.fromArray = function (x) { return exports.opt(x[0]); };
     /**
      * Alias of [[flatMap]]
      * @param f
@@ -105,12 +105,12 @@ var None = /** @class */ (function (_super) {
         _this['@@type'] = noneSymbol;
         return _this;
     }
-    None.prototype.toArray = function () { return []; };
     Object.defineProperty(None.prototype, "isEmpty", {
         get: function () { return true; },
         enumerable: true,
         configurable: true
     });
+    None.prototype.toArray = function () { return []; };
     None.prototype.flatMap = function (_f) { return exports.none; };
     None.prototype.map = function () { return exports.none; };
     None.prototype.orCrash = function (msg) { throw new Error(msg); };
@@ -145,12 +145,12 @@ var Some = /** @class */ (function (_super) {
         _this['@@type'] = someSymbol;
         return _this;
     }
-    Some.prototype.toArray = function () { return [this._value]; };
     Object.defineProperty(Some.prototype, "isEmpty", {
         get: function () { return false; },
         enumerable: true,
         configurable: true
     });
+    Some.prototype.toArray = function () { return [this._value]; };
     Some.prototype.flatMap = function (f) {
         return f(this._value);
     };
@@ -210,17 +210,23 @@ exports.some = function (x) { return Object.freeze(new Some(x)); };
  */
 exports.opt = function (x) { return isNoneValue(x) ? exports.none : new Some(x); };
 /**
- * For falsy values returns [[None]].
+ * For falsy values returns [[None]], otherwise acts same as [[opt]].
+ * ```ts
+ * optFalsy(''); // None
+ * optFalsy(0); // None
+ * optFalsy(false); // None
+ * optFalsy(NaN); // None
+ * ```
  * @param x
  */
 exports.optFalsy = function (x) { return x ? new Some(x) : exports.none; };
 /**
- * For empty array (`[]`) returns [[None]].
+ * For empty array (`[]`) returns [[None]], otherwise acts same as [[opt]].
  * @param x
  */
 exports.optEmptyArray = function (x) { return exports.opt(x).filter(function (y) { return y.length > 0; }); };
 /**
- * For empty object (`{}`) returns [[None]].
+ * For empty object (`{}`) returns [[None]], otherwise acts same as [[opt]].
  * @param x
  */
 exports.optEmptyObject = function (x) {

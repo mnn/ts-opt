@@ -3,6 +3,18 @@
  */
 export declare abstract class Opt<T> {
     /**
+     * `false` for [[Some]], `true` for [[None]].
+     */
+    abstract get isEmpty(): boolean;
+    /**
+     * `false` for [[Some]], `true` for [[None]].
+     */
+    get nonEmpty(): boolean;
+    /**
+     * `1` for [[Some]], `0` for [[None]].
+     */
+    get length(): number;
+    /**
      * Create Opt instance from an array of one or zero items.
      *
      * ```ts
@@ -14,14 +26,6 @@ export declare abstract class Opt<T> {
      */
     static fromArray<T>(x: [] | [T]): Opt<T>;
     /**
-     * `false` for [[Some]], `true` for [[None]].
-     */
-    abstract get isEmpty(): boolean;
-    /**
-     * `false` for [[Some]], `true` for [[None]].
-     */
-    get nonEmpty(): boolean;
-    /**
      * Converts `Opt` to an array.
      *
      * ```ts
@@ -30,10 +34,6 @@ export declare abstract class Opt<T> {
      * ```
      */
     abstract toArray(): [] | [T];
-    /**
-     * `1` for [[Some]], `0` for [[None]].
-     */
-    get length(): number;
     /**
      * Applies function to the wrapped value and returns a new instance of [[Some]].
      *
@@ -291,8 +291,8 @@ export declare abstract class Opt<T> {
 }
 declare class None<T> extends Opt<T> {
     readonly '@@type': symbol;
-    toArray(): [] | [T];
     get isEmpty(): boolean;
+    toArray(): [] | [T];
     flatMap<U>(_f: (_: T) => Opt<U>): Opt<U>;
     map<U>(): Opt<U>;
     orCrash(msg: string): T;
@@ -320,8 +320,8 @@ declare class Some<T> extends Opt<T> {
     private _value;
     readonly '@@type': symbol;
     constructor(_value: T);
-    toArray(): [] | [T];
     get isEmpty(): boolean;
+    toArray(): [] | [T];
     flatMap<U>(f: (_: T) => Opt<U>): Opt<U>;
     map<U>(f: (_: T) => U): Opt<U>;
     orCrash(_msg: string): T;
@@ -362,17 +362,23 @@ export declare const some: <T>(x: T) => Readonly<Some<T>>;
  */
 export declare const opt: <T>(x: T | null | undefined) => Opt<T>;
 /**
- * For falsy values returns [[None]].
+ * For falsy values returns [[None]], otherwise acts same as [[opt]].
+ * ```ts
+ * optFalsy(''); // None
+ * optFalsy(0); // None
+ * optFalsy(false); // None
+ * optFalsy(NaN); // None
+ * ```
  * @param x
  */
-export declare const optFalsy: <T>(x: false | "" | T | null | undefined) => Opt<T>;
+export declare const optFalsy: <T>(x: false | "" | 0 | T | null | undefined) => Opt<T>;
 /**
- * For empty array (`[]`) returns [[None]].
+ * For empty array (`[]`) returns [[None]], otherwise acts same as [[opt]].
  * @param x
  */
 export declare const optEmptyArray: <T>(x: T[] | null | undefined) => Opt<T[]>;
 /**
- * For empty object (`{}`) returns [[None]].
+ * For empty object (`{}`) returns [[None]], otherwise acts same as [[opt]].
  * @param x
  */
 export declare const optEmptyObject: <T extends object>(x: T | null | undefined) => Opt<T>;
