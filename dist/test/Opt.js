@@ -258,6 +258,19 @@ describe('optEmptyObject', function () {
         expect(Opt_1.optEmptyObject({ a: 1 }).map(function (x) { return x.a; }).orNull()).to.be.eq(1);
     });
 });
+describe('optEmptyString', function () {
+    it('construction', function () {
+        expect(Opt_1.optEmptyString(undefined).isEmpty).to.be.true;
+        expect(Opt_1.optEmptyString(NaN).isEmpty).to.be.true;
+        expect(Opt_1.optEmptyString(null).isEmpty).to.be.true;
+        expect(Opt_1.optEmptyString('').isEmpty).to.be.true;
+        expect(Opt_1.optEmptyString('a').isEmpty).to.be.false;
+        expect(Opt_1.optEmptyString(0).isEmpty).to.be.false;
+        expect(Opt_1.optEmptyString(1).isEmpty).to.be.false;
+        expect(Opt_1.optEmptyString({}).isEmpty).to.be.false;
+        expect(Opt_1.optEmptyString([]).isEmpty).to.be.false;
+    });
+});
 describe('application', function () {
     it('ap', function () {
         expect(Opt_1.ap(Opt_1.opt(gt0))(Opt_1.opt(1)).orNull()).to.be.true;

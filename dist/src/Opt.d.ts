@@ -383,6 +383,11 @@ export declare const optEmptyArray: <T>(x: T[] | null | undefined) => Opt<T[]>;
  */
 export declare const optEmptyObject: <T extends object>(x: T | null | undefined) => Opt<T>;
 /**
+ * For empty string (`''`) returns [[None]], otherwise acts same as [[opt]].
+ * @param x
+ */
+export declare const optEmptyString: <T>(x: "" | T | null | undefined) => Opt<T>;
+/**
  * Is given value an instance of [[Opt]]?
  * @param x
  */

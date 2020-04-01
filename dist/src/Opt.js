@@ -233,6 +233,11 @@ exports.optEmptyObject = function (x) {
     return exports.opt(x).filter(function (y) { return Object.keys(y).length !== 0; });
 };
 /**
+ * For empty string (`''`) returns [[None]], otherwise acts same as [[opt]].
+ * @param x
+ */
+exports.optEmptyString = function (x) { return x === '' ? exports.none : exports.opt(x); };
+/**
  * Is given value an instance of [[Opt]]?
  * @param x
  */
