@@ -13,8 +13,8 @@
     "applicative",
     "functor"
   ],
-  "main": "dist/src/Opt.js",
-  "types": "dist/src/Opt.d.ts",
+  "main": "dist/Opt.js",
+  "types": "dist/Opt.d.ts",
   "author": "monnef",
   "license": "MIT",
   "scripts": {
