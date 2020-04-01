@@ -13,7 +13,7 @@ import {
   opt,
   Opt,
   optEmptyArray,
-  optEmptyObject,
+  optEmptyObject, optEmptyString,
   optFalsy,
   some
 } from '../src/Opt';
@@ -312,6 +312,20 @@ describe('optEmptyObject', () => {
     expect(optEmptyObject({}).isEmpty).to.be.true;
     expect(optEmptyObject({a: 1}).isEmpty).to.be.false;
     expect(optEmptyObject({a: 1}).map(x => x.a).orNull()).to.be.eq(1);
+  });
+});
+
+describe('optEmptyString', () => {
+  it('construction', () => {
+    expect(optEmptyString(undefined).isEmpty).to.be.true;
+    expect(optEmptyString(NaN).isEmpty).to.be.true;
+    expect(optEmptyString(null).isEmpty).to.be.true;
+    expect(optEmptyString('').isEmpty).to.be.true;
+    expect(optEmptyString('a').isEmpty).to.be.false;
+    expect(optEmptyString(0).isEmpty).to.be.false;
+    expect(optEmptyString(1).isEmpty).to.be.false;
+    expect(optEmptyString({}).isEmpty).to.be.false;
+    expect(optEmptyString([]).isEmpty).to.be.false;
   });
 });
 

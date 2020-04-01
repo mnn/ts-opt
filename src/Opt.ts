@@ -494,6 +494,12 @@ export const optEmptyObject = <T extends object>(x: T | undefined | null): Opt<T
   opt(x).filter(y => Object.keys(y).length !== 0);
 
 /**
+ * For empty string (`''`) returns [[None]], otherwise acts same as [[opt]].
+ * @param x
+ */
+export const optEmptyString = <T>(x: T | undefined | null | ''): Opt<T> => x === '' ? none : opt(x);
+
+/**
  * Is given value an instance of [[Opt]]?
  * @param x
  */
