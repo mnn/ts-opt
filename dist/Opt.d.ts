@@ -280,6 +280,21 @@ export declare abstract class Opt<T> {
      */
     abstract zip3<X, Y>(x: Opt<X>, y: Opt<Y>): Opt<[T, X, Y]>;
     /**
+     * Same as [[zip3]], but with one more optional.
+     * @param x
+     * @param y
+     * @param z
+     */
+    abstract zip4<X, Y, Z>(x: Opt<X>, y: Opt<Y>, z: Opt<Z>): Opt<[T, X, Y, Z]>;
+    /**
+     * Same as [[zip4]], but with one more optional.
+     * @param x
+     * @param y
+     * @param z
+     * @param zz
+     */
+    abstract zip5<X, Y, Z, ZZ>(x: Opt<X>, y: Opt<Y>, z: Opt<Z>, zz: Opt<ZZ>): Opt<[T, X, Y, Z, ZZ]>;
+    /**
      * Returns [[Some]] with same value if predicate holds, [[None]] otherwise.
      * ```ts
      * opt(1).filter(x => x > 0); // Some(1)
@@ -345,6 +360,8 @@ declare class None<T> extends Opt<T> {
     toString(): string;
     zip<U>(_other: Opt<U>): Opt<[T, U]>;
     zip3<X, Y>(_x: Opt<X>, _y: Opt<Y>): Opt<[T, X, Y]>;
+    zip4<X, Y, Z>(_x: Opt<X>, _y: Opt<Y>, _z: Opt<Z>): Opt<[T, X, Y, Z]>;
+    zip5<X, Y, Z, ZZ>(_x: Opt<X>, _y: Opt<Y>, _z: Opt<Z>, _zz: Opt<ZZ>): Opt<[T, X, Y, Z, ZZ]>;
     filter(_predicate: (_: T) => boolean): Opt<T>;
     narrow<U>(_guard: (value: any) => value is U): Opt<U>;
     print(tag?: string): Opt<T>;
@@ -377,6 +394,8 @@ declare class Some<T> extends Opt<T> {
     toString(): string;
     zip<U>(other: Opt<U>): Opt<[T, U]>;
     zip3<X, Y>(x: Opt<X>, y: Opt<Y>): Opt<[T, X, Y]>;
+    zip4<X, Y, Z>(x: Opt<X>, y: Opt<Y>, z: Opt<Z>): Opt<[T, X, Y, Z]>;
+    zip5<X, Y, Z, ZZ>(x: Opt<X>, y: Opt<Y>, z: Opt<Z>, zz: Opt<ZZ>): Opt<[T, X, Y, Z, ZZ]>;
     filter(predicate: (_: T) => boolean): Opt<T>;
     narrow<U>(guard: (value: any) => value is U): Opt<U>;
     print(tag?: string): Opt<T>;

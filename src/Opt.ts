@@ -315,6 +315,23 @@ export abstract class Opt<T> {
   abstract zip3<X, Y>(x: Opt<X>, y: Opt<Y>): Opt<[T, X, Y]>;
 
   /**
+   * Same as [[zip3]], but with one more optional.
+   * @param x
+   * @param y
+   * @param z
+   */
+  abstract zip4<X, Y, Z>(x: Opt<X>, y: Opt<Y>, z: Opt<Z>): Opt<[T, X, Y, Z]>;
+
+  /**
+   * Same as [[zip4]], but with one more optional.
+   * @param x
+   * @param y
+   * @param z
+   * @param zz
+   */
+  abstract zip5<X, Y, Z, ZZ>(x: Opt<X>, y: Opt<Y>, z: Opt<Z>, zz: Opt<ZZ>): Opt<[T, X, Y, Z, ZZ]>;
+
+  /**
    * Returns [[Some]] with same value if predicate holds, [[None]] otherwise.
    * ```ts
    * opt(1).filter(x => x > 0); // Some(1)
@@ -414,7 +431,11 @@ class None<T> extends Opt<T> {
 
   zip<U>(_other: Opt<U>): Opt<[T, U]> { return none; }
 
-  zip3<X, Y>(_x: Opt<X>, _y: Opt<Y>): Opt<[T, X, Y]> {return none; }
+  zip3<X, Y>(_x: Opt<X>, _y: Opt<Y>): Opt<[T, X, Y]> { return none; }
+
+  zip4<X, Y, Z>(_x: Opt<X>, _y: Opt<Y>, _z: Opt<Z>): Opt<[T, X, Y, Z]> { return none; }
+
+  zip5<X, Y, Z, ZZ>(_x: Opt<X>, _y: Opt<Y>, _z: Opt<Z>, _zz: Opt<ZZ>): Opt<[T, X, Y, Z, ZZ]> { return none; }
 
   filter(_predicate: (_: T) => boolean): Opt<T> { return none; }
 
@@ -492,6 +513,20 @@ class Some<T> extends Opt<T> {
     if (x.isEmpty || y.isEmpty) { return none; }
     const [xVal, yVal] = [x.orCrash('bug in isEmpty or orCrash'), y.orCrash('bug in isEmpty or orCrash')];
     return opt([this._value, xVal, yVal] as [T, X, Y]);
+  }
+
+  zip4<X, Y, Z>(x: Opt<X>, y: Opt<Y>, z: Opt<Z>): Opt<[T, X, Y, Z]> {
+    const args = [x, y, z];
+    if (args.some(a => a.isEmpty)) { return none; }
+    const [xVal, yVal, zVal] = args.map(a => a.orCrash('bug in isEmpty or orCrash'));
+    return opt([this._value, xVal, yVal, zVal] as [T, X, Y, Z]);
+  }
+
+  zip5<X, Y, Z, ZZ>(x: Opt<X>, y: Opt<Y>, z: Opt<Z>, zz: Opt<ZZ>): Opt<[T, X, Y, Z, ZZ]> {
+    const args = [x, y, z, zz];
+    if (args.some(a => a.isEmpty)) { return none; }
+    const [xVal, yVal, zVal, zzVal] = args.map(a => a.orCrash('bug in isEmpty or orCrash'));
+    return opt([this._value, xVal, yVal, zVal, zzVal] as [T, X, Y, Z, ZZ]);
   }
 
   filter(predicate: (_: T) => boolean): Opt<T> { return predicate(this._value) ? this : none; }

@@ -140,6 +140,8 @@ var None = /** @class */ (function (_super) {
     None.prototype.toString = function () { return 'None'; };
     None.prototype.zip = function (_other) { return exports.none; };
     None.prototype.zip3 = function (_x, _y) { return exports.none; };
+    None.prototype.zip4 = function (_x, _y, _z) { return exports.none; };
+    None.prototype.zip5 = function (_x, _y, _z, _zz) { return exports.none; };
     None.prototype.filter = function (_predicate) { return exports.none; };
     None.prototype.narrow = function (_guard) { return this; };
     None.prototype.print = function (tag) {
@@ -202,6 +204,22 @@ var Some = /** @class */ (function (_super) {
         }
         var _a = [x.orCrash('bug in isEmpty or orCrash'), y.orCrash('bug in isEmpty or orCrash')], xVal = _a[0], yVal = _a[1];
         return exports.opt([this._value, xVal, yVal]);
+    };
+    Some.prototype.zip4 = function (x, y, z) {
+        var args = [x, y, z];
+        if (args.some(function (a) { return a.isEmpty; })) {
+            return exports.none;
+        }
+        var _a = args.map(function (a) { return a.orCrash('bug in isEmpty or orCrash'); }), xVal = _a[0], yVal = _a[1], zVal = _a[2];
+        return exports.opt([this._value, xVal, yVal, zVal]);
+    };
+    Some.prototype.zip5 = function (x, y, z, zz) {
+        var args = [x, y, z, zz];
+        if (args.some(function (a) { return a.isEmpty; })) {
+            return exports.none;
+        }
+        var _a = args.map(function (a) { return a.orCrash('bug in isEmpty or orCrash'); }), xVal = _a[0], yVal = _a[1], zVal = _a[2], zzVal = _a[3];
+        return exports.opt([this._value, xVal, yVal, zVal, zzVal]);
     };
     Some.prototype.filter = function (predicate) { return predicate(this._value) ? this : exports.none; };
     Some.prototype.narrow = function (guard) {

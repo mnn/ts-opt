@@ -36,6 +36,9 @@ const isNumber = (x: any): x is number => typeof x === 'number';
 const isObject = (x: any): x is object => typeof x === 'object';
 const isArray = (x: any): x is unknown[] => Array.isArray(x);
 
+type EnumAB = 'a' | 'b';
+type Enum12 = 1 | 2;
+
 describe('opt', () => {
   beforeEach(() => {
     sandbox.on(console, ['log']);
@@ -257,6 +260,23 @@ describe('opt', () => {
 
     expect(none.zip3(some(true), some('a')).orNull()).to.be.null;
     expect(none.zip3(some(true), none).orNull()).to.be.null;
+  });
+
+  it('zip4', () => {
+    expect(some(1).zip4(some(true), some('a'), some('b' as EnumAB)).orNull()).to.be.eql([1, true, 'a', 'b']);
+    expect(some(1).zip4(some(true), none, some('b' as EnumAB)).orNull()).to.be.null;
+    expect(some(1).zip4(none, some('a'), some('b' as EnumAB)).orNull()).to.be.null;
+    expect(none.zip4(some(true), some('a'), some('b' as EnumAB)).orNull()).to.be.null;
+  });
+
+  it('zip5', () => {
+    expect(some(1).zip5(some(true), some('a'), some('b' as EnumAB), some(2 as Enum12)).orNull())
+      .to.be.eql([1, true, 'a', 'b', 2]);
+    expect(some(1).zip5(some(true), some('a'), some('b' as EnumAB), none).orNull()).to.be.null;
+    expect(some(1).zip5(some(true), some('a'), none, some(2 as Enum12)).orNull()).to.be.null;
+    expect(some(1).zip5(some(true), none, some('b' as EnumAB), some(2 as Enum12)).orNull()).to.be.null;
+    expect(some(1).zip5(none, some('a'), some('b' as EnumAB), some(2 as Enum12)).orNull()).to.be.null;
+    expect(none.zip5(some(true), some('a'), some('b' as EnumAB), some(2 as Enum12)).orNull()).to.be.null;
   });
 
   it('filter', () => {
