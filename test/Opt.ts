@@ -14,7 +14,7 @@ import {
   Opt,
   optEmptyArray,
   optEmptyObject, optEmptyString,
-  optFalsy,
+  optFalsy, optZero,
   some
 } from '../src/Opt';
 
@@ -330,6 +330,20 @@ describe('optEmptyString', () => {
     expect(optEmptyString(1).isEmpty).to.be.false;
     expect(optEmptyString({}).isEmpty).to.be.false;
     expect(optEmptyString([]).isEmpty).to.be.false;
+  });
+});
+
+describe('optZero', () => {
+  it('construction', () => {
+    expect(optZero(undefined).isEmpty).to.be.true;
+    expect(optZero(NaN).isEmpty).to.be.true;
+    expect(optZero(null).isEmpty).to.be.true;
+    expect(optZero(0).isEmpty).to.be.true;
+    expect(optZero(1).isEmpty).to.be.false;
+    expect(optZero('').isEmpty).to.be.false;
+    expect(optZero('a').isEmpty).to.be.false;
+    expect(optZero({}).isEmpty).to.be.false;
+    expect(optZero([]).isEmpty).to.be.false;
   });
 });
 

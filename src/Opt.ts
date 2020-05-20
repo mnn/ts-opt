@@ -508,6 +508,11 @@ export const optEmptyObject = <T extends object>(x: T | undefined | null): Opt<T
 export const optEmptyString = <T>(x: T | undefined | null | ''): Opt<T> => x === '' ? none : opt(x);
 
 /**
+ * For a number `0` returns [[None]], otherwise acts same as [[opt]].
+ */
+export const optZero = <T>(x: T | undefined | null | 0): Opt<T> => x === 0 ? none : opt(x);
+
+/**
  * Is given value an instance of [[Opt]]?
  * @param x
  */
