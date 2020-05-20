@@ -337,6 +337,16 @@ export abstract class Opt<T> {
   noneIf(predicate: (_: T) => boolean): Opt<T> {
     return this.filter(x => !predicate(x));
   }
+
+  /**
+   * Narrows type inside [[Opt]] using given type guard.
+   * ```ts
+   * some('1' as string | number).narrow(isString) // Some('1'): Opt<string>
+   * some(1 as string | number).narrow(isString) // None: Opt<string>
+   * ```
+   * @param guard
+   */
+  abstract narrow<U>(guard: (value: any) => value is U): Opt<U>;
 }
 
 class None<T> extends Opt<T> {
@@ -397,6 +407,7 @@ class None<T> extends Opt<T> {
 
   filter(_predicate: (_: T) => boolean): Opt<T> { return none; }
 
+  narrow<U>(_guard: (value: any) => value is U): Opt<U> { return this as unknown as Opt<U>; }
 }
 
 class Some<T> extends Opt<T> {
@@ -467,6 +478,10 @@ class Some<T> extends Opt<T> {
   }
 
   filter(predicate: (_: T) => boolean): Opt<T> { return predicate(this._value) ? this : none; }
+
+  narrow<U>(guard: (value: any) => value is U): Opt<U> {
+    return guard(this._value) ? this as unknown as Opt<U> : none;
+  }
 }
 
 const isNoneValue = (x: any): boolean => {

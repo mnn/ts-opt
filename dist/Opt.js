@@ -141,6 +141,7 @@ var None = /** @class */ (function (_super) {
     None.prototype.zip = function (_other) { return exports.none; };
     None.prototype.zip3 = function (_x, _y) { return exports.none; };
     None.prototype.filter = function (_predicate) { return exports.none; };
+    None.prototype.narrow = function (_guard) { return this; };
     return None;
 }(Opt));
 var Some = /** @class */ (function (_super) {
@@ -198,6 +199,9 @@ var Some = /** @class */ (function (_super) {
         return exports.opt([this._value, xVal, yVal]);
     };
     Some.prototype.filter = function (predicate) { return predicate(this._value) ? this : exports.none; };
+    Some.prototype.narrow = function (guard) {
+        return guard(this._value) ? this : exports.none;
+    };
     return Some;
 }(Opt));
 var isNoneValue = function (x) {

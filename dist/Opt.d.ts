@@ -299,6 +299,15 @@ export declare abstract class Opt<T> {
      * @param predicate
      */
     noneIf(predicate: (_: T) => boolean): Opt<T>;
+    /**
+     * Narrows type inside [[Opt]] using given type guard.
+     * ```ts
+     * some('1' as string | number).narrow(isString) // Some('1'): Opt<string>
+     * some(1 as string | number).narrow(isString) // None: Opt<string>
+     * ```
+     * @param guard
+     */
+    abstract narrow<U>(guard: (value: any) => value is U): Opt<U>;
 }
 declare class None<T> extends Opt<T> {
     readonly '@@type': symbol;
@@ -327,6 +336,7 @@ declare class None<T> extends Opt<T> {
     zip<U>(_other: Opt<U>): Opt<[T, U]>;
     zip3<X, Y>(_x: Opt<X>, _y: Opt<Y>): Opt<[T, X, Y]>;
     filter(_predicate: (_: T) => boolean): Opt<T>;
+    narrow<U>(_guard: (value: any) => value is U): Opt<U>;
 }
 declare class Some<T> extends Opt<T> {
     private _value;
@@ -357,6 +367,7 @@ declare class Some<T> extends Opt<T> {
     zip<U>(other: Opt<U>): Opt<[T, U]>;
     zip3<X, Y>(x: Opt<X>, y: Opt<Y>): Opt<[T, X, Y]>;
     filter(predicate: (_: T) => boolean): Opt<T>;
+    narrow<U>(guard: (value: any) => value is U): Opt<U>;
 }
 /**
  * Single global instance of [[None]].

@@ -30,6 +30,11 @@ const lt0 = (x: number): boolean => x < 0;
 
 const randomNumOpt = (): Opt<number> => Math.random() > .5 ? none : some(Math.random());
 
+const isString = (x: any): x is string => typeof x === 'string';
+const isNumber = (x: any): x is number => typeof x === 'number';
+const isObject = (x: any): x is object => typeof x === 'object';
+const isArray = (x: any): x is unknown[] => Array.isArray(x);
+
 describe('opt', () => {
   it('construction', () => {
     expect(opt(undefined).isEmpty).to.be.true;
@@ -255,6 +260,30 @@ describe('opt', () => {
     expect(some(1).noneIf(lt0).orNull()).to.be.eq(1);
     expect(some(1).noneIf(gt0).orNull()).to.be.null;
     expect(none.noneIf(lt0).orNull()).to.be.null;
+  });
+
+  it('narrow', () => {
+    type SN = string | number;
+    const sn1: SN = 1 as SN;
+    const a: Opt<string> = some(sn1).narrow(isString);
+    expect(a.orNull()).to.eq(null);
+    const b: Opt<number> = some(sn1).narrow(isNumber);
+    expect(b.orNull()).to.eq(1);
+    const noneSN: Opt<SN> = none;
+    const n: Opt<number> = noneSN.narrow(isNumber);
+    expect(n.orNull()).to.be.null;
+
+    type SNAO = string | number | unknown[] | object;
+    const snaoA = [] as SNAO;
+    const fO = (x: object): object => x;
+    const fA = (x: unknown[]): unknown[] => x;
+    expect(opt(snaoA).narrow(isObject).map(fO).narrow(isArray).map(fA).orNull()).to.eql([]);
+
+    // examples from docs
+    const an1: Opt<string> = some('1' as string | number).narrow(isString); // Some('1'): Opt<string>
+    expect(an1.orNull()).to.be.eq('1');
+    const an2: Opt<string> = some(1 as string | number).narrow(isString); // None: Opt<string>
+    expect(an2.orNull()).to.be.null;
   });
 });
 
