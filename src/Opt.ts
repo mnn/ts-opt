@@ -1,6 +1,8 @@
 const someSymbol = Symbol('Some');
 const noneSymbol = Symbol('None');
 
+// Do NOT split to multiple modules - it's not possible, since there would be cyclic dependencies..
+
 /**
  * @typeparam T Wrapped value type.
  */

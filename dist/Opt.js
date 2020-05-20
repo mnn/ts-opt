@@ -20,8 +20,10 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.Opt = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
+// Do NOT split to multiple modules - it's not possible, since there would be cyclic dependencies..
 /**
  * @typeparam T Wrapped value type.
  */
@@ -33,7 +35,7 @@ var Opt = /** @class */ (function () {
          * `false` for [[Some]], `true` for [[None]].
          */
         get: function () { return !this.isEmpty; },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(Opt.prototype, "length", {
@@ -41,7 +43,7 @@ var Opt = /** @class */ (function () {
          * `1` for [[Some]], `0` for [[None]].
          */
         get: function () { return this.isEmpty ? 0 : 1; },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     /**
@@ -107,7 +109,7 @@ var None = /** @class */ (function (_super) {
     }
     Object.defineProperty(None.prototype, "isEmpty", {
         get: function () { return true; },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     None.prototype.toArray = function () { return []; };
@@ -150,7 +152,7 @@ var Some = /** @class */ (function (_super) {
     }
     Object.defineProperty(Some.prototype, "isEmpty", {
         get: function () { return false; },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Some.prototype.toArray = function () { return [this._value]; };
