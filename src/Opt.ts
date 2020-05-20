@@ -542,6 +542,42 @@ class Some<T> extends Opt<T> {
   }
 }
 
+const someSerializedType = 'Opt/Some';
+const noneSerializedType = 'Opt/None';
+type OptSerialized = {
+  type: typeof noneSerializedType;
+} | {
+  type: typeof someSerializedType,
+  value: any
+};
+
+export class ReduxDevtoolsCompatibilityHelper {
+  static replacer(_key: unknown, value: any): any | OptSerialized {
+    if (isOpt(value)) {
+      const res: OptSerialized =
+        value.isEmpty ? {type: noneSerializedType} as const : {
+          type: someSerializedType,
+          value: value.orCrash('failed to extract value from Some')
+        } as const;
+      return res;
+    } else {
+      return value;
+    }
+  }
+
+  static reviver(_key: unknown, value: any): any {
+    if (!value || typeof value !== 'object') { return value; }
+    switch (value.type) {
+      case noneSerializedType:
+        return none;
+      case someSerializedType:
+        return some(value.value);
+      default:
+        return value;
+    }
+  }
+}
+
 const isNoneValue = (x: any): boolean => {
   return x === undefined || x === null || Number.isNaN(x);
 };

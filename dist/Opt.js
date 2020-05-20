@@ -20,7 +20,7 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.Opt = void 0;
+exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 // Do NOT split to multiple modules - it's not possible, since there would be cyclic dependencies..
@@ -232,6 +232,39 @@ var Some = /** @class */ (function (_super) {
     };
     return Some;
 }(Opt));
+var someSerializedType = 'Opt/Some';
+var noneSerializedType = 'Opt/None';
+var ReduxDevtoolsCompatibilityHelper = /** @class */ (function () {
+    function ReduxDevtoolsCompatibilityHelper() {
+    }
+    ReduxDevtoolsCompatibilityHelper.replacer = function (_key, value) {
+        if (exports.isOpt(value)) {
+            var res = value.isEmpty ? { type: noneSerializedType } : {
+                type: someSerializedType,
+                value: value.orCrash('failed to extract value from Some')
+            };
+            return res;
+        }
+        else {
+            return value;
+        }
+    };
+    ReduxDevtoolsCompatibilityHelper.reviver = function (_key, value) {
+        if (!value || typeof value !== 'object') {
+            return value;
+        }
+        switch (value.type) {
+            case noneSerializedType:
+                return exports.none;
+            case someSerializedType:
+                return exports.some(value.value);
+            default:
+                return value;
+        }
+    };
+    return ReduxDevtoolsCompatibilityHelper;
+}());
+exports.ReduxDevtoolsCompatibilityHelper = ReduxDevtoolsCompatibilityHelper;
 var isNoneValue = function (x) {
     return x === undefined || x === null || Number.isNaN(x);
 };

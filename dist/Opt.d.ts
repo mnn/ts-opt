@@ -400,6 +400,18 @@ declare class Some<T> extends Opt<T> {
     narrow<U>(guard: (value: any) => value is U): Opt<U>;
     print(tag?: string): Opt<T>;
 }
+declare const someSerializedType = "Opt/Some";
+declare const noneSerializedType = "Opt/None";
+declare type OptSerialized = {
+    type: typeof noneSerializedType;
+} | {
+    type: typeof someSerializedType;
+    value: any;
+};
+export declare class ReduxDevtoolsCompatibilityHelper {
+    static replacer(_key: unknown, value: any): any | OptSerialized;
+    static reviver(_key: unknown, value: any): any;
+}
 /**
  * Single global instance of [[None]].
  */

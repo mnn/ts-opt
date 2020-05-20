@@ -17,6 +17,7 @@ import {
   optEmptyString,
   optFalsy,
   optZero,
+  ReduxDevtoolsCompatibilityHelper,
   some
 } from '../src/Opt';
 
@@ -555,5 +556,44 @@ describe('examples', () => {
     expect(g(1)).to.be.eq('Worf MERCER');
     expect(f(2)).to.be.eq(null);
     expect(g(2)).to.be.eq(null);
+  });
+});
+
+describe('ReduxDevtoolsCompatibilityHelper', () => {
+  it('replacer', () => {
+    const f = ReduxDevtoolsCompatibilityHelper.replacer;
+    expect(f('a', 0)).to.eq(0);
+    expect(f('a', null)).to.eq(null);
+    expect(f('a', undefined)).to.eq(undefined);
+    expect(f('a', NaN)).to.eql(NaN);
+    expect(f('a', false)).to.eq(false);
+    expect(f('a', true)).to.eq(true);
+    expect(f('a', [])).to.eql([]);
+    expect(f('b', {})).to.eql({});
+    expect(f('a', {type: 'x'})).to.be.eql({type: 'x'});
+    expect(f('a', none)).to.be.eql({type: 'Opt/None'});
+    expect(f('a', some(1))).to.be.eql({type: 'Opt/Some', value: 1});
+    expect(f('a', opt('Kirok'))).to.be.eql({type: 'Opt/Some', value: 'Kirok'});
+    expect(f('a', opt({name: 'rigel'}))).to.be.eql({type: 'Opt/Some', value: {name: 'rigel'}});
+  });
+
+  it('reviver', () => {
+    const f = ReduxDevtoolsCompatibilityHelper.reviver;
+    expect(f('b', 0)).to.eq(0);
+    expect(f('b', null)).to.eq(null);
+    expect(f('b', undefined)).to.eq(undefined);
+    expect(f('b', NaN)).to.eql(NaN);
+    expect(f('b', false)).to.eq(false);
+    expect(f('b', true)).to.eq(true);
+    expect(f('b', [])).to.eql([]);
+    expect(f('b', {})).to.eql({});
+    expect(f('b', {type: null})).to.be.eql({type: null});
+    expect(f('b', {type: 'x'})).to.be.eql({type: 'x'});
+    const noneRevived = f('a', {type: 'Opt/None'});
+    expect(noneRevived.orNull()).to.be.null;
+    const someRevived = f('a', {type: 'Opt/Some', value: 248});
+    expect(someRevived.orNull()).to.be.eq(248);
+    const someUndefRevived = f('a', {type: 'Opt/Some'});
+    expect(someUndefRevived.orNull()).to.be.eq(undefined);
   });
 });
