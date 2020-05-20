@@ -133,18 +133,22 @@ describe('opt', () => {
   it('onNone', () => {
     const cb = chai.spy();
     cb.should.have.not.been.called();
-    some(1).onNone(cb);
+    const resSome = some(1).onNone(cb);
+    expect(resSome.orNull()).to.be.eq(1);
     cb.should.have.not.been.called();
-    none.onNone(cb);
+    const resNone = none.onNone(cb);
+    expect(resNone.orNull()).to.be.null;
     cb.should.have.been.called.once;
   });
 
   it('onSome', () => {
     const cb = chai.spy();
     cb.should.have.not.been.called();
-    none.onSome(cb);
+    const resNone = none.onSome(cb);
+    expect(resNone.orNull()).to.be.null;
     cb.should.have.not.been.called();
-    some(1).onSome(cb);
+    const resSome = some(1).onSome(cb);
+    expect(resSome.orNull()).to.eq(1);
     cb.should.have.been.called.once;
     cb.should.have.been.called.with.exactly(1);
   });

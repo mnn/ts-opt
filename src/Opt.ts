@@ -158,13 +158,13 @@ export abstract class Opt<T> {
    * Calls `f` on [[Some]] with its value, does nothing for [[None]].
    * @param f
    */
-  abstract onSome(f: (x: T) => void): void;
+  abstract onSome(f: (x: T) => void): Opt<T>;
 
   /**
    * Calls `f` on [[None]], does nothing for [[Some]].
    * @param f
    */
-  abstract onNone(f: () => void): void;
+  abstract onNone(f: () => void): Opt<T>;
 
   /**
    * Applies passed function to this instance and returns function result.
@@ -352,9 +352,12 @@ class None<T> extends Opt<T> {
     return onNone();
   }
 
-  onNone(f: () => void): void { f(); }
+  onNone(f: () => void): Opt<T> {
+    f();
+    return this;
+  }
 
-  onSome(_f: (x: T) => void): void { }
+  onSome(_f: (x: T) => void): Opt<T> { return this; }
 
   contains(_x: T): boolean { return false; }
 
@@ -417,9 +420,12 @@ class Some<T> extends Opt<T> {
 
   forAll(p: (x: T) => boolean): boolean { return p(this._value); }
 
-  onNone(_f: () => void): void { }
+  onNone(_f: () => void): Opt<T> { return this; }
 
-  onSome(f: (x: T) => void): void { f(this._value); }
+  onSome(f: (x: T) => void): Opt<T> {
+    f(this._value);
+    return this;
+  }
 
   orElse(_def: T): T { return this._value; }
 

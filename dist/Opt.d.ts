@@ -139,12 +139,12 @@ export declare abstract class Opt<T> {
      * Calls `f` on [[Some]] with its value, does nothing for [[None]].
      * @param f
      */
-    abstract onSome(f: (x: T) => void): void;
+    abstract onSome(f: (x: T) => void): Opt<T>;
     /**
      * Calls `f` on [[None]], does nothing for [[Some]].
      * @param f
      */
-    abstract onNone(f: () => void): void;
+    abstract onNone(f: () => void): Opt<T>;
     /**
      * Applies passed function to this instance and returns function result.
      * Also known as a function application, `|>` or pipe operator.
@@ -302,8 +302,8 @@ declare class None<T> extends Opt<T> {
     orTrue(): true | T;
     orNaN(): number | T;
     caseOf<R>(_onSome: (x: T) => R, onNone: () => R): R;
-    onNone(f: () => void): void;
-    onSome(_f: (x: T) => void): void;
+    onNone(f: () => void): Opt<T>;
+    onSome(_f: (x: T) => void): Opt<T>;
     contains(_x: T): boolean;
     exists(_p: (x: T) => boolean): boolean;
     forAll(_p: (x: T) => boolean): boolean;
@@ -334,8 +334,8 @@ declare class Some<T> extends Opt<T> {
     contains(x: T): boolean;
     exists(p: (x: T) => boolean): boolean;
     forAll(p: (x: T) => boolean): boolean;
-    onNone(_f: () => void): void;
-    onSome(f: (x: T) => void): void;
+    onNone(_f: () => void): Opt<T>;
+    onSome(f: (x: T) => void): Opt<T>;
     orElse(_def: T): T;
     orElseOpt(_def: Opt<T>): Opt<T>;
     bimap<U>(someF: (_: T) => U, _noneF: () => U): Opt<U>;

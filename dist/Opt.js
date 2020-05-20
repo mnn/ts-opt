@@ -122,8 +122,11 @@ var None = /** @class */ (function (_super) {
     None.prototype.caseOf = function (_onSome, onNone) {
         return onNone();
     };
-    None.prototype.onNone = function (f) { f(); };
-    None.prototype.onSome = function (_f) { };
+    None.prototype.onNone = function (f) {
+        f();
+        return this;
+    };
+    None.prototype.onSome = function (_f) { return this; };
     None.prototype.contains = function (_x) { return false; };
     None.prototype.exists = function (_p) { return false; };
     None.prototype.forAll = function (_p) { return true; };
@@ -167,8 +170,11 @@ var Some = /** @class */ (function (_super) {
     Some.prototype.contains = function (x) { return this._value === x; };
     Some.prototype.exists = function (p) { return p(this._value); };
     Some.prototype.forAll = function (p) { return p(this._value); };
-    Some.prototype.onNone = function (_f) { };
-    Some.prototype.onSome = function (f) { f(this._value); };
+    Some.prototype.onNone = function (_f) { return this; };
+    Some.prototype.onSome = function (f) {
+        f(this._value);
+        return this;
+    };
     Some.prototype.orElse = function (_def) { return this._value; };
     Some.prototype.orElseOpt = function (_def) { return this; };
     Some.prototype.bimap = function (someF, _noneF) { return exports.opt(someF(this._value)); };
