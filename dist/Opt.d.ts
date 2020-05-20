@@ -308,6 +308,16 @@ export declare abstract class Opt<T> {
      * @param guard
      */
     abstract narrow<U>(guard: (value: any) => value is U): Opt<U>;
+    /**
+     * Print value to console.
+     * ```ts
+     * opt(1).print() // logs 'Some:', '1'; returns Some(1)
+     * opt(1).print('test') // logs '[test]', 'Some:', '1'; returns Some(1)
+     * none.print('x') // logs '[x]', 'None'; returns None
+     * ```
+     * @param tag
+     */
+    abstract print(tag?: string): Opt<T>;
 }
 declare class None<T> extends Opt<T> {
     readonly '@@type': symbol;
@@ -337,6 +347,7 @@ declare class None<T> extends Opt<T> {
     zip3<X, Y>(_x: Opt<X>, _y: Opt<Y>): Opt<[T, X, Y]>;
     filter(_predicate: (_: T) => boolean): Opt<T>;
     narrow<U>(_guard: (value: any) => value is U): Opt<U>;
+    print(tag?: string): Opt<T>;
 }
 declare class Some<T> extends Opt<T> {
     private _value;
@@ -368,6 +379,7 @@ declare class Some<T> extends Opt<T> {
     zip3<X, Y>(x: Opt<X>, y: Opt<Y>): Opt<[T, X, Y]>;
     filter(predicate: (_: T) => boolean): Opt<T>;
     narrow<U>(guard: (value: any) => value is U): Opt<U>;
+    print(tag?: string): Opt<T>;
 }
 /**
  * Single global instance of [[None]].

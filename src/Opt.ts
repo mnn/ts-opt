@@ -347,6 +347,17 @@ export abstract class Opt<T> {
    * @param guard
    */
   abstract narrow<U>(guard: (value: any) => value is U): Opt<U>;
+
+  /**
+   * Print value to console.
+   * ```ts
+   * opt(1).print() // logs 'Some:', '1'; returns Some(1)
+   * opt(1).print('test') // logs '[test]', 'Some:', '1'; returns Some(1)
+   * none.print('x') // logs '[x]', 'None'; returns None
+   * ```
+   * @param tag
+   */
+  abstract print(tag?: string): Opt<T>;
 }
 
 class None<T> extends Opt<T> {
@@ -408,6 +419,12 @@ class None<T> extends Opt<T> {
   filter(_predicate: (_: T) => boolean): Opt<T> { return none; }
 
   narrow<U>(_guard: (value: any) => value is U): Opt<U> { return this as unknown as Opt<U>; }
+
+  print(tag?: string): Opt<T> {
+    // tslint:disable-next-line:no-console
+    console.log(...[...opt(tag).map(x => [`[${x}]`]).orElse([]), 'None']);
+    return this;
+  }
 }
 
 class Some<T> extends Opt<T> {
@@ -481,6 +498,12 @@ class Some<T> extends Opt<T> {
 
   narrow<U>(guard: (value: any) => value is U): Opt<U> {
     return guard(this._value) ? this as unknown as Opt<U> : none;
+  }
+
+  print(tag?: string): Opt<T> {
+    // tslint:disable-next-line:no-console
+    console.log(...[...opt(tag).map(x => [`[${x}]`]).orElse([]), 'Some:', this._value]);
+    return this;
   }
 }
 

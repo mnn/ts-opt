@@ -1,4 +1,4 @@
-/* tslint:disable:no-unused-expression */
+/* tslint:disable:no-unused-expression no-console */
 
 import * as chai from 'chai';
 import * as spies from 'chai-spies';
@@ -23,6 +23,7 @@ import {
 chai.use(spies);
 const {expect} = chai;
 chai.should();
+const sandbox = chai.spy.sandbox();
 
 const add1 = (x: number) => x + 1;
 const gt0 = (x: number): boolean => x > 0;
@@ -36,6 +37,14 @@ const isObject = (x: any): x is object => typeof x === 'object';
 const isArray = (x: any): x is unknown[] => Array.isArray(x);
 
 describe('opt', () => {
+  beforeEach(() => {
+    sandbox.on(console, ['log']);
+  });
+
+  afterEach(() => {
+    sandbox.restore();
+  });
+
   it('construction', () => {
     expect(opt(undefined).isEmpty).to.be.true;
     expect(opt(NaN).isEmpty).to.be.true;
@@ -284,6 +293,24 @@ describe('opt', () => {
     expect(an1.orNull()).to.be.eq('1');
     const an2: Opt<string> = some(1 as string | number).narrow(isString); // None: Opt<string>
     expect(an2.orNull()).to.be.null;
+  });
+
+  it('print', () => {
+    opt(1).print();
+    expect(console.log).to.have.been.called.exactly(1);
+    expect(console.log).to.have.been.called.with('Some:', 1);
+
+    opt(null).print();
+    expect(console.log).to.have.been.called.exactly(2);
+    expect(console.log).to.have.been.called.with('None');
+
+    opt(2).print('>>');
+    expect(console.log).to.have.been.called.exactly(3);
+    expect(console.log).to.have.been.called.with('[>>]', 'Some:', 2);
+
+    opt(null).print('<<');
+    expect(console.log).to.have.been.called.exactly(4);
+    expect(console.log).to.have.been.called.with('[<<]', 'None');
   });
 });
 

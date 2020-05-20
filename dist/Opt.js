@@ -142,6 +142,11 @@ var None = /** @class */ (function (_super) {
     None.prototype.zip3 = function (_x, _y) { return exports.none; };
     None.prototype.filter = function (_predicate) { return exports.none; };
     None.prototype.narrow = function (_guard) { return this; };
+    None.prototype.print = function (tag) {
+        // tslint:disable-next-line:no-console
+        console.log.apply(console, __spreadArrays(exports.opt(tag).map(function (x) { return ["[" + x + "]"]; }).orElse([]), ['None']));
+        return this;
+    };
     return None;
 }(Opt));
 var Some = /** @class */ (function (_super) {
@@ -201,6 +206,11 @@ var Some = /** @class */ (function (_super) {
     Some.prototype.filter = function (predicate) { return predicate(this._value) ? this : exports.none; };
     Some.prototype.narrow = function (guard) {
         return guard(this._value) ? this : exports.none;
+    };
+    Some.prototype.print = function (tag) {
+        // tslint:disable-next-line:no-console
+        console.log.apply(console, __spreadArrays(exports.opt(tag).map(function (x) { return ["[" + x + "]"]; }).orElse([]), ['Some:', this._value]));
+        return this;
     };
     return Some;
 }(Opt));

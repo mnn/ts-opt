@@ -16,7 +16,7 @@
     "declaration": true,
     "outDir": "./dist",
     "stripInternal": true,
-    "lib": ["es2015"]
+    "lib": ["es2015", "dom"]
   },
   "exclude": [
     "node_modules",

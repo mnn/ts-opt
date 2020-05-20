@@ -142,6 +142,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_opt_.opt.html#ortrue" class="tsd-kind-icon">or<wbr>True</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_opt_.opt.html#orundef" class="tsd-kind-icon">or<wbr>Undef</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="_opt_.opt.html#pipe" class="tsd-kind-icon">pipe</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_opt_.opt.html#print" class="tsd-kind-icon">print</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_opt_.opt.html#toarray" class="tsd-kind-icon">to<wbr>Array</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_opt_.opt.html#tostring" class="tsd-kind-icon">to<wbr>String</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="_opt_.opt.html#zip" class="tsd-kind-icon">zip</a></li>
@@ -1364,6 +1365,39 @@ none.pipe(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="print" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> print</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">print<span class="tsd-signature-symbol">(</span>tag<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_opt_.opt.html" class="tsd-signature-type">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in Opt.ts:360</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Print value to console.</p>
+									<pre><code class="language-ts">opt(<span class="hljs-number">1</span>).print() <span class="hljs-comment">// logs 'Some:', '1'; returns Some(1)</span>
+opt(<span class="hljs-number">1</span>).print(<span class="hljs-string">'test'</span>) <span class="hljs-comment">// logs '[test]', 'Some:', '1'; returns Some(1)</span>
+none.print(<span class="hljs-string">'x'</span>) <span class="hljs-comment">// logs '[x]', 'None'; returns None</span></code></pre>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> tag: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="_opt_.opt.html" class="tsd-signature-type">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="toarray" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> to<wbr>Array</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -1639,6 +1673,9 @@ Opt.fromArray([<span class="hljs-number">1</span>]) <span class="hljs-comment">/
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
 								<a href="_opt_.opt.html#pipe" class="tsd-kind-icon">pipe</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_opt_.opt.html#print" class="tsd-kind-icon">print</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_opt_.opt.html#toarray" class="tsd-kind-icon">to<wbr>Array</a>
