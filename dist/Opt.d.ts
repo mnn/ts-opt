@@ -79,6 +79,17 @@ export declare abstract class Opt<T> {
      */
     abstract orCrash(msg: string): T;
     /**
+     * Crash when called on [[None]], pass [[Opt]] instance on [[Some]].
+     *
+     * ```ts
+     * some(1).optOrCrash('fail') // Some(1)
+     * none.optOrCrash('fail') // throws
+     * ```
+     *
+     * @param msg
+     */
+    abstract optOrCrash(msg: string): Opt<T>;
+    /**
      * Returns value for [[Some]] or `undefined` for [[None]].
      *
      * ```ts
@@ -296,6 +307,7 @@ declare class None<T> extends Opt<T> {
     flatMap<U>(_f: (_: T) => Opt<U>): Opt<U>;
     map<U>(): Opt<U>;
     orCrash(msg: string): T;
+    optOrCrash(msg: string): Opt<T>;
     orNull(): T | null;
     orUndef(): T | undefined;
     orFalse(): false | T;
@@ -325,6 +337,7 @@ declare class Some<T> extends Opt<T> {
     flatMap<U>(f: (_: T) => Opt<U>): Opt<U>;
     map<U>(f: (_: T) => U): Opt<U>;
     orCrash(_msg: string): T;
+    optOrCrash(_msg: string): Opt<T>;
     orNull(): T | null;
     orUndef(): T | undefined;
     orFalse(): false | T;
@@ -387,6 +400,10 @@ export declare const optEmptyObject: <T extends object>(x: T | null | undefined)
  * @param x
  */
 export declare const optEmptyString: <T>(x: "" | T | null | undefined) => Opt<T>;
+/**
+ * For a number `0` returns [[None]], otherwise acts same as [[opt]].
+ */
+export declare const optZero: <T>(x: 0 | T | null | undefined) => Opt<T>;
 /**
  * Is given value an instance of [[Opt]]?
  * @param x

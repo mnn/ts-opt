@@ -20,7 +20,7 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.Opt = void 0;
+exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.Opt = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 // Do NOT split to multiple modules - it's not possible, since there would be cyclic dependencies..
@@ -116,6 +116,7 @@ var None = /** @class */ (function (_super) {
     None.prototype.flatMap = function (_f) { return exports.none; };
     None.prototype.map = function () { return exports.none; };
     None.prototype.orCrash = function (msg) { throw new Error(msg); };
+    None.prototype.optOrCrash = function (msg) { throw new Error(msg); };
     None.prototype.orNull = function () { return null; };
     None.prototype.orUndef = function () { return undefined; };
     None.prototype.orFalse = function () { return false; };
@@ -163,6 +164,7 @@ var Some = /** @class */ (function (_super) {
         return new Some(f(this._value));
     };
     Some.prototype.orCrash = function (_msg) { return this._value; };
+    Some.prototype.optOrCrash = function (_msg) { return this; };
     Some.prototype.orNull = function () { return this._value; };
     Some.prototype.orUndef = function () { return this._value; };
     Some.prototype.orFalse = function () { return this._value; };
@@ -245,6 +247,10 @@ exports.optEmptyObject = function (x) {
  * @param x
  */
 exports.optEmptyString = function (x) { return x === '' ? exports.none : exports.opt(x); };
+/**
+ * For a number `0` returns [[None]], otherwise acts same as [[opt]].
+ */
+exports.optZero = function (x) { return x === 0 ? exports.none : exports.opt(x); };
 /**
  * Is given value an instance of [[Opt]]?
  * @param x

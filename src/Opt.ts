@@ -94,6 +94,18 @@ export abstract class Opt<T> {
   abstract orCrash(msg: string): T;
 
   /**
+   * Crash when called on [[None]], pass [[Opt]] instance on [[Some]].
+   *
+   * ```ts
+   * some(1).optOrCrash('fail') // Some(1)
+   * none.optOrCrash('fail') // throws
+   * ```
+   *
+   * @param msg
+   */
+  abstract optOrCrash(msg: string): Opt<T>;
+
+  /**
    * Returns value for [[Some]] or `undefined` for [[None]].
    *
    * ```ts
@@ -340,6 +352,8 @@ class None<T> extends Opt<T> {
 
   orCrash(msg: string): T { throw new Error(msg); }
 
+  optOrCrash(msg: string): Opt<T> { throw new Error(msg); }
+
   orNull(): T | null { return null; }
 
   orUndef(): T | undefined { return undefined; }
@@ -403,6 +417,8 @@ class Some<T> extends Opt<T> {
   }
 
   orCrash(_msg: string): T { return this._value; }
+
+  optOrCrash(_msg: string): Opt<T> { return this; }
 
   orNull(): T | null { return this._value; }
 

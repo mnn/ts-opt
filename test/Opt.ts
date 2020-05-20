@@ -13,8 +13,10 @@ import {
   opt,
   Opt,
   optEmptyArray,
-  optEmptyObject, optEmptyString,
-  optFalsy, optZero,
+  optEmptyObject,
+  optEmptyString,
+  optFalsy,
+  optZero,
   some
 } from '../src/Opt';
 
@@ -85,6 +87,12 @@ describe('opt', () => {
     expect(() => opt(null).orCrash('')).to.throw();
     expect(opt(0).orCrash('')).to.eq(0);
     expect(opt([]).orCrash('')).to.eql([]);
+  });
+
+  it('optOrCrash', () => {
+    expect(() => opt(null).optOrCrash('')).to.throw();
+    expect(opt(0).optOrCrash('').orNull()).to.be.eq(0);
+    expect(opt([]).optOrCrash('').orNull()).to.be.eql([]);
   });
 
   it('map', () => {
