@@ -1,5 +1,10 @@
 ts-opt
 ===
+
+[![pipeline status](https://gitlab.com/monnef/ts-opt/badges/master/pipeline.svg)](https://gitlab.com/monnef/ts-opt/-/commits/master)
+[![coverage report](https://gitlab.com/monnef/ts-opt/badges/master/coverage.svg)](https://gitlab.com/monnef/ts-opt/-/commits/master)
+[![minified + gzipped size](https://badgen.net/bundlephobia/minzip/ts-opt)](https://bundlephobia.com/result?p=ts-opt)
+
 Typed Option/Maybe for TypeScript and JavaScript (based on Scala, Haskell and Sanctuary), created to simplify code involving optional values.
 
 Features
