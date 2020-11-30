@@ -79,9 +79,10 @@
 								<li class="tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter tsd-is-not-exported"><a href="../classes/_opt_.some.html" class="tsd-kind-icon">Some</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section tsd-is-not-exported">
+						<section class="tsd-index-section ">
 							<h3>Type aliases</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="_opt_.html#equalityfunction" class="tsd-kind-icon">Equality<wbr>Function</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-module tsd-is-not-exported"><a href="_opt_.html#optserialized" class="tsd-kind-icon">Opt<wbr>Serialized</a></li>
 							</ul>
 						</section>
@@ -110,21 +111,62 @@
 								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="_opt_.html#optemptystring" class="tsd-kind-icon">opt<wbr>Empty<wbr>String</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="_opt_.html#optfalsy" class="tsd-kind-icon">opt<wbr>Falsy</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="_opt_.html#optzero" class="tsd-kind-icon">opt<wbr>Zero</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter tsd-is-not-exported"><a href="_opt_.html#refcmp" class="tsd-kind-icon">ref<wbr>Cmp</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="_opt_.html#some-1" class="tsd-kind-icon">some</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Type aliases</h2>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module">
+					<a name="equalityfunction" class="tsd-anchor"></a>
+					<h3>Equality<wbr>Function</h3>
+					<div class="tsd-signature tsd-kind-icon">Equality<wbr>Function<span class="tsd-signature-symbol">:</span> &lt;T&gt;<span class="tsd-signature-symbol">(</span>a<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span>, b<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in Opt.ts:6</li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-signature">
+								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-alias tsd-has-type-parameter">
+									<li class="tsd-signature tsd-kind-icon">&lt;T&gt;<span class="tsd-signature-symbol">(</span>a<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span>, b<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+								</ul>
+								<ul class="tsd-descriptions">
+									<li class="tsd-description">
+										<h4 class="tsd-type-parameters-title">Type parameters</h4>
+										<ul class="tsd-type-parameters">
+											<li>
+												<h4>T</h4>
+											</li>
+										</ul>
+										<h4 class="tsd-parameters-title">Parameters</h4>
+										<ul class="tsd-parameters">
+											<li>
+												<h5>a: <span class="tsd-signature-type">T</span></h5>
+											</li>
+											<li>
+												<h5>b: <span class="tsd-signature-type">T</span></h5>
+											</li>
+										</ul>
+										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module tsd-is-not-exported">
 					<a name="optserialized" class="tsd-anchor"></a>
 					<h3>Opt<wbr>Serialized</h3>
 					<div class="tsd-signature tsd-kind-icon">Opt<wbr>Serialized<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>type<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">typeof </span><a href="_opt_.html#noneserializedtype" class="tsd-signature-type">noneSerializedType</a><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{ </span>type<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">typeof </span><a href="_opt_.html#someserializedtype" class="tsd-signature-type">someSerializedType</a><span class="tsd-signature-symbol">; </span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> }</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in Opt.ts:547</li>
+							<li>Defined in Opt.ts:580</li>
 						</ul>
 					</aside>
 				</section>
@@ -137,7 +179,7 @@
 					<div class="tsd-signature tsd-kind-icon">none<span class="tsd-signature-symbol">:</span> <a href="../classes/_opt_.none.html" class="tsd-signature-type">None</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = Object.freeze(new None())</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in Opt.ts:588</li>
+							<li>Defined in Opt.ts:621</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -152,7 +194,7 @@
 					<div class="tsd-signature tsd-kind-icon">none<wbr>Serialized<wbr>Type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"Opt/None"</span><span class="tsd-signature-symbol"> = &quot;Opt/None&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in Opt.ts:546</li>
+							<li>Defined in Opt.ts:579</li>
 						</ul>
 					</aside>
 				</section>
@@ -172,7 +214,7 @@
 					<div class="tsd-signature tsd-kind-icon">some<wbr>Serialized<wbr>Type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"Opt/Some"</span><span class="tsd-signature-symbol"> = &quot;Opt/Some&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in Opt.ts:545</li>
+							<li>Defined in Opt.ts:578</li>
 						</ul>
 					</aside>
 				</section>
@@ -199,7 +241,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:660</li>
+									<li>Defined in Opt.ts:693</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -247,7 +289,7 @@ ap(none)(none) <span class="hljs-comment">// None</span></code></pre>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:675</li>
+									<li>Defined in Opt.ts:708</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -311,7 +353,7 @@ apFn(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:684</li>
+									<li>Defined in Opt.ts:717</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -350,7 +392,7 @@ apFn(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:581</li>
+									<li>Defined in Opt.ts:614</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -373,7 +415,7 @@ apFn(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:644</li>
+									<li>Defined in Opt.ts:677</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -405,7 +447,7 @@ apFn(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:694</li>
+									<li>Defined in Opt.ts:727</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -465,7 +507,7 @@ apFn(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:602</li>
+									<li>Defined in Opt.ts:635</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -504,7 +546,7 @@ apFn(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:620</li>
+									<li>Defined in Opt.ts:653</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -542,7 +584,7 @@ apFn(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:626</li>
+									<li>Defined in Opt.ts:659</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -580,7 +622,7 @@ apFn(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:633</li>
+									<li>Defined in Opt.ts:666</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -618,7 +660,7 @@ apFn(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:614</li>
+									<li>Defined in Opt.ts:647</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -660,7 +702,7 @@ optFalsy(<span class="hljs-literal">NaN</span>); <span class="hljs-comment">// N
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:638</li>
+									<li>Defined in Opt.ts:671</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -684,6 +726,38 @@ optFalsy(<span class="hljs-literal">NaN</span>); <span class="hljs-comment">// N
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter tsd-is-not-exported">
+					<a name="refcmp" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> ref<wbr>Cmp</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">ref<wbr>Cmp&lt;T&gt;<span class="tsd-signature-symbol">(</span>a<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span>, b<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in Opt.ts:8</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>T</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>a: <span class="tsd-signature-type">T</span></h5>
+								</li>
+								<li>
+									<h5>b: <span class="tsd-signature-type">T</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
 					<a name="some-1" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagConst">Const</span> some</h3>
@@ -694,7 +768,7 @@ optFalsy(<span class="hljs-literal">NaN</span>); <span class="hljs-comment">// N
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:595</li>
+									<li>Defined in Opt.ts:628</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -752,6 +826,9 @@ optFalsy(<span class="hljs-literal">NaN</span>); <span class="hljs-comment">// N
 					<li class=" tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter tsd-is-not-exported">
 						<a href="../classes/_opt_.some.html" class="tsd-kind-icon">Some</a>
 					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="_opt_.html#equalityfunction" class="tsd-kind-icon">Equality<wbr>Function</a>
+					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-module tsd-is-not-exported">
 						<a href="_opt_.html#optserialized" class="tsd-kind-icon">Opt<wbr>Serialized</a>
 					</li>
@@ -805,6 +882,9 @@ optFalsy(<span class="hljs-literal">NaN</span>); <span class="hljs-comment">// N
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
 						<a href="_opt_.html#optzero" class="tsd-kind-icon">opt<wbr>Zero</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter tsd-is-not-exported">
+						<a href="_opt_.html#refcmp" class="tsd-kind-icon">ref<wbr>Cmp</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
 						<a href="_opt_.html#some-1" class="tsd-kind-icon">some</a>

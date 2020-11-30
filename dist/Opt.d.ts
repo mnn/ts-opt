@@ -1,3 +1,4 @@
+export declare type EqualityFunction = <T>(a: T, b: T) => boolean;
 /**
  * @typeparam T Wrapped value type.
  */
@@ -218,9 +219,9 @@ export declare abstract class Opt<T> {
      * Return `this` for [[Some]], `def` for [[None]].
      *
      * ```ts
-     * some(1).orElse(some(2)) // Some(1)
-     * none.orElse(some(2)) // Some(2)
-     * none.orElse(none) // None
+     * some(1).orElseOpt(some(2)) // Some(1)
+     * none.orElseOpt(some(2)) // Some(2)
+     * none.orElseOpt(none) // None
      * ```
      * @param def
      */
@@ -333,6 +334,25 @@ export declare abstract class Opt<T> {
      * @param tag
      */
     abstract print(tag?: string): Opt<T>;
+    /**
+     * Is a value of this instance and given `other` instance the same?
+     * Default comparator function is `===` (referential equality).
+     *
+     * ```ts
+     * none.equals(none) // true
+     * some(1).equals(none) // false
+     * some(1).equals(some(1)) // true
+     * some(1).equals(some(2)) // false
+     * some({a: 1}).equals(some({a: 1})) // false (different objects)
+     * some(1).equals(some(2), (x, y) => true) // true (custom comparator function)
+     *
+     * const jsonCmp = <T>(a: T, b: T): boolean => JSON.stringify(a) === JSON.stringify(b);
+     * some({a: 1}).equals(some({a: 1}), jsonCmp) // true (comparing values converted to JSON)
+     * ```
+     * @param other
+     * @param comparator
+     */
+    abstract equals(other: Opt<T>, comparator?: EqualityFunction): boolean;
 }
 declare class None<T> extends Opt<T> {
     readonly '@@type': symbol;
@@ -365,6 +385,7 @@ declare class None<T> extends Opt<T> {
     filter(_predicate: (_: T) => boolean): Opt<T>;
     narrow<U>(_guard: (value: any) => value is U): Opt<U>;
     print(tag?: string): Opt<T>;
+    equals(other: Opt<T>, _comparator?: EqualityFunction): boolean;
 }
 declare class Some<T> extends Opt<T> {
     private _value;
@@ -399,6 +420,7 @@ declare class Some<T> extends Opt<T> {
     filter(predicate: (_: T) => boolean): Opt<T>;
     narrow<U>(guard: (value: any) => value is U): Opt<U>;
     print(tag?: string): Opt<T>;
+    equals(other: Opt<T>, comparator?: EqualityFunction): boolean;
 }
 declare const someSerializedType = "Opt/Some";
 declare const noneSerializedType = "Opt/None";

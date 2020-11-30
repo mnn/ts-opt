@@ -18,7 +18,7 @@ import {
   optFalsy,
   optZero,
   ReduxDevtoolsCompatibilityHelper,
-  some
+  some,
 } from '../src/Opt';
 
 chai.use(spies);
@@ -333,6 +333,18 @@ describe('opt', () => {
     expect(console.log).to.have.been.called.exactly(4);
     expect(console.log).to.have.been.called.with('[<<]', 'None');
   });
+
+  it('equals', () => {
+    expect(none.equals(none)).to.be.true;
+    expect(opt(1).equals(opt(1))).to.be.true;
+    expect(opt(1).equals(none)).to.be.false;
+    expect(none.equals(opt(1))).to.be.false;
+    expect(opt(1).equals(opt(2), () => true)).to.be.true;
+    expect(opt({a: 1}).equals(opt({a: 1}))).to.be.false;
+    const jsonCmp = <T>(a: T, b: T): boolean => JSON.stringify(a) === JSON.stringify(b);
+    expect(opt({a: 1}).equals(opt({a: 1}), jsonCmp)).to.be.true;
+    expect(none.equals(none, jsonCmp)).to.be.true;
+  });
 });
 
 describe('helper functions', () => {
@@ -500,7 +512,7 @@ describe('examples', () => {
   it('caseOf', () => {
     const console = {
       logHistory: [] as string[],
-      log(x: string) { this.logHistory.push(x); }
+      log(x: string) { this.logHistory.push(x); },
     };
 
     // tslint:disable-next-line:no-console
@@ -523,7 +535,7 @@ describe('examples', () => {
   it('more advanced', () => {
     const db: Db = {
       0: {name: 'John', surname: null},
-      1: {name: 'Worf', surname: 'Mercer'}
+      1: {name: 'Worf', surname: 'Mercer'},
     };
 
     // without

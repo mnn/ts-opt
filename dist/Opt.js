@@ -23,7 +23,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
-// Do NOT split to multiple modules - it's not possible, since there would be cyclic dependencies..
+var refCmp = function (a, b) { return a === b; };
 /**
  * @typeparam T Wrapped value type.
  */
@@ -149,6 +149,10 @@ var None = /** @class */ (function (_super) {
         console.log.apply(console, __spreadArrays(exports.opt(tag).map(function (x) { return ["[" + x + "]"]; }).orElse([]), ['None']));
         return this;
     };
+    None.prototype.equals = function (other, _comparator) {
+        if (_comparator === void 0) { _comparator = refCmp; }
+        return other.isEmpty;
+    };
     return None;
 }(Opt));
 var Some = /** @class */ (function (_super) {
@@ -229,6 +233,13 @@ var Some = /** @class */ (function (_super) {
         // tslint:disable-next-line:no-console
         console.log.apply(console, __spreadArrays(exports.opt(tag).map(function (x) { return ["[" + x + "]"]; }).orElse([]), ['Some:', this._value]));
         return this;
+    };
+    Some.prototype.equals = function (other, comparator) {
+        if (comparator === void 0) { comparator = refCmp; }
+        if (other.isEmpty) {
+            return false;
+        }
+        return comparator(this._value, other.orCrash('Some expected'));
     };
     return Some;
 }(Opt));

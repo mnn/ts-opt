@@ -122,6 +122,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="_opt_.opt.html#chain" class="tsd-kind-icon">chain</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="_opt_.opt.html#chaintoopt" class="tsd-kind-icon">chain<wbr>ToOpt</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_opt_.opt.html#contains" class="tsd-kind-icon">contains</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_opt_.opt.html#equals" class="tsd-kind-icon">equals</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_opt_.opt.html#exists" class="tsd-kind-icon">exists</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_opt_.opt.html#filter" class="tsd-kind-icon">filter</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="_opt_.opt.html#flatbimap" class="tsd-kind-icon">flat<wbr>Bimap</a></li>
@@ -167,7 +168,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:13</li>
+									<li>Defined in Opt.ts:17</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -189,7 +190,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:23</li>
+									<li>Defined in Opt.ts:27</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -211,7 +212,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:18</li>
+									<li>Defined in Opt.ts:22</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -236,7 +237,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:268</li>
+									<li>Defined in Opt.ts:272</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -307,7 +308,7 @@ none.bimap(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;<
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:169</li>
+									<li>Defined in Opt.ts:173</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -382,7 +383,7 @@ none.caseOf(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:76</li>
+									<li>Defined in Opt.ts:80</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -436,7 +437,7 @@ none.caseOf(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:88</li>
+									<li>Defined in Opt.ts:92</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -492,7 +493,7 @@ some(<span class="hljs-number">2</span>).chainToOpt(<span class="hljs-function">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:207</li>
+									<li>Defined in Opt.ts:211</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -516,6 +517,49 @@ none.contains(<span class="hljs-literal">undefined</span>) <span class="hljs-com
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="equals" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> equals</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">equals<span class="tsd-signature-symbol">(</span>other<span class="tsd-signature-symbol">: </span><a href="_opt_.opt.html" class="tsd-signature-type">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span>, comparator<span class="tsd-signature-symbol">?: </span><a href="../modules/_opt_.html#equalityfunction" class="tsd-signature-type">EqualityFunction</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in Opt.ts:401</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Is a value of this instance and given <code>other</code> instance the same?
+									Default comparator function is <code>===</code> (referential equality).</p>
+								</div>
+								<pre><code class="language-ts">none.equals(none) <span class="hljs-comment">// true</span>
+some(<span class="hljs-number">1</span>).equals(none) <span class="hljs-comment">// false</span>
+some(<span class="hljs-number">1</span>).equals(some(<span class="hljs-number">1</span>)) <span class="hljs-comment">// true</span>
+some(<span class="hljs-number">1</span>).equals(some(<span class="hljs-number">2</span>)) <span class="hljs-comment">// false</span>
+some({a: <span class="hljs-number">1</span>}).equals(some({a: <span class="hljs-number">1</span>})) <span class="hljs-comment">// false (different objects)</span>
+some(<span class="hljs-number">1</span>).equals(some(<span class="hljs-number">2</span>), <span class="hljs-function">(<span class="hljs-params">x, y</span>) =&gt;</span> <span class="hljs-literal">true</span>) <span class="hljs-comment">// true (custom comparator function)</span>
+
+<span class="hljs-keyword">const</span> jsonCmp = &lt;T&gt;(a: T, b: T): <span class="hljs-function"><span class="hljs-params">boolean</span> =&gt;</span> <span class="hljs-built_in">JSON</span>.stringify(a) === <span class="hljs-built_in">JSON</span>.stringify(b);
+some({a: <span class="hljs-number">1</span>}).equals(some({a: <span class="hljs-number">1</span>}), jsonCmp) <span class="hljs-comment">// true (comparing values converted to JSON)</span></code></pre>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>other: <a href="_opt_.opt.html" class="tsd-signature-type">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> comparator: <a href="../modules/_opt_.html#equalityfunction" class="tsd-signature-type">EqualityFunction</a></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="exists" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> exists</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -525,7 +569,7 @@ none.contains(<span class="hljs-literal">undefined</span>) <span class="hljs-com
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:220</li>
+									<li>Defined in Opt.ts:224</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -577,7 +621,7 @@ none.exists(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:343</li>
+									<li>Defined in Opt.ts:347</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -632,7 +676,7 @@ opt(<span class="hljs-number">-1</span>).filter(<span class="hljs-function"><spa
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:281</li>
+									<li>Defined in Opt.ts:285</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -704,7 +748,7 @@ some(<span class="hljs-number">5</span>).flat<span class="hljs-constructor">Bima
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:70</li>
+									<li>Defined in Opt.ts:74</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -761,7 +805,7 @@ none.flat<span class="hljs-constructor">Map(<span class="hljs-params">x</span> =
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:232</li>
+									<li>Defined in Opt.ts:236</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -813,7 +857,7 @@ none.<span class="hljs-keyword">for</span><span class="hljs-constructor">All(<sp
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:57</li>
+									<li>Defined in Opt.ts:61</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -869,7 +913,7 @@ none.map(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</s
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:366</li>
+									<li>Defined in Opt.ts:370</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -925,7 +969,7 @@ some(<span class="hljs-number">1</span> <span class="hljs-keyword">as</span> <sp
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:354</li>
+									<li>Defined in Opt.ts:358</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -980,7 +1024,7 @@ opt(<span class="hljs-number">-1</span>).noneIf(<span class="hljs-function"><spa
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:181</li>
+									<li>Defined in Opt.ts:185</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1022,7 +1066,7 @@ opt(<span class="hljs-number">-1</span>).noneIf(<span class="hljs-function"><spa
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:175</li>
+									<li>Defined in Opt.ts:179</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1070,7 +1114,7 @@ opt(<span class="hljs-number">-1</span>).noneIf(<span class="hljs-function"><spa
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:106</li>
+									<li>Defined in Opt.ts:110</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1102,7 +1146,7 @@ none.optOrCrash(<span class="hljs-string">'fail'</span>) <span class="hljs-comme
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:94</li>
+									<li>Defined in Opt.ts:98</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1133,7 +1177,7 @@ none.optOrCrash(<span class="hljs-string">'fail'</span>) <span class="hljs-comme
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:244</li>
+									<li>Defined in Opt.ts:248</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1166,16 +1210,16 @@ none.orElse(<span class="hljs-number">2</span>) <span class="hljs-comment">// 2<
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:256</li>
+									<li>Defined in Opt.ts:260</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Return <code>this</code> for <a href="_opt_.some.html">Some</a>, <code>def</code> for <a href="_opt_.none.html">None</a>.</p>
 								</div>
-								<pre><code class="language-ts">some(<span class="hljs-number">1</span>).orElse(some(<span class="hljs-number">2</span>)) <span class="hljs-comment">// Some(1)</span>
-none.orElse(some(<span class="hljs-number">2</span>)) <span class="hljs-comment">// Some(2)</span>
-none.orElse(none) <span class="hljs-comment">// None</span></code></pre>
+								<pre><code class="language-ts">some(<span class="hljs-number">1</span>).orElseOpt(some(<span class="hljs-number">2</span>)) <span class="hljs-comment">// Some(1)</span>
+none.orElseOpt(some(<span class="hljs-number">2</span>)) <span class="hljs-comment">// Some(2)</span>
+none.orElseOpt(none) <span class="hljs-comment">// None</span></code></pre>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -1199,7 +1243,7 @@ none.orElse(none) <span class="hljs-comment">// None</span></code></pre>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:136</li>
+									<li>Defined in Opt.ts:140</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1223,7 +1267,7 @@ none.orFalse() <span class="hljs-comment">// false</span></code></pre>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:156</li>
+									<li>Defined in Opt.ts:160</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1247,7 +1291,7 @@ none.orNaN() <span class="hljs-comment">// NaN</span></code></pre>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:126</li>
+									<li>Defined in Opt.ts:130</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1271,7 +1315,7 @@ none.orNull() <span class="hljs-comment">// null</span></code></pre>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:146</li>
+									<li>Defined in Opt.ts:150</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1295,7 +1339,7 @@ none.orTrue() <span class="hljs-comment">// true</span></code></pre>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:116</li>
+									<li>Defined in Opt.ts:120</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1319,7 +1363,7 @@ none.orUndef() <span class="hljs-comment">// undefined</span></code></pre>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:194</li>
+									<li>Defined in Opt.ts:198</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1376,7 +1420,7 @@ none.pipe(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:377</li>
+									<li>Defined in Opt.ts:381</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1409,7 +1453,7 @@ none.print(<span class="hljs-string">'x'</span>) <span class="hljs-comment">// l
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:45</li>
+									<li>Defined in Opt.ts:49</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1433,7 +1477,7 @@ none.toArray() <span class="hljs-comment">// []</span></code></pre>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:291</li>
+									<li>Defined in Opt.ts:295</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1457,7 +1501,7 @@ none.toString() <span class="hljs-comment">// 'None'</span></code></pre>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:304</li>
+									<li>Defined in Opt.ts:308</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1497,7 +1541,7 @@ none.zip(none) <span class="hljs-comment">// None</span></code></pre>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:315</li>
+									<li>Defined in Opt.ts:319</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1541,7 +1585,7 @@ none.zip3(some(<span class="hljs-number">1</span>), some(<span class="hljs-numbe
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:323</li>
+									<li>Defined in Opt.ts:327</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1589,7 +1633,7 @@ none.zip3(some(<span class="hljs-number">1</span>), some(<span class="hljs-numbe
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:332</li>
+									<li>Defined in Opt.ts:336</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1643,7 +1687,7 @@ none.zip3(some(<span class="hljs-number">1</span>), some(<span class="hljs-numbe
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:35</li>
+									<li>Defined in Opt.ts:39</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1717,6 +1761,9 @@ Opt.fromArray([<span class="hljs-number">1</span>]) <span class="hljs-comment">/
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_opt_.opt.html#contains" class="tsd-kind-icon">contains</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_opt_.opt.html#equals" class="tsd-kind-icon">equals</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_opt_.opt.html#exists" class="tsd-kind-icon">exists</a>
@@ -1812,6 +1859,9 @@ Opt.fromArray([<span class="hljs-number">1</span>]) <span class="hljs-comment">/
 					<li class=" tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter tsd-is-not-exported">
 						<a href="_opt_.some.html" class="tsd-kind-icon">Some</a>
 					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="../modules/_opt_.html#equalityfunction" class="tsd-kind-icon">Equality<wbr>Function</a>
+					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-module tsd-is-not-exported">
 						<a href="../modules/_opt_.html#optserialized" class="tsd-kind-icon">Opt<wbr>Serialized</a>
 					</li>
@@ -1865,6 +1915,9 @@ Opt.fromArray([<span class="hljs-number">1</span>]) <span class="hljs-comment">/
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
 						<a href="../modules/_opt_.html#optzero" class="tsd-kind-icon">opt<wbr>Zero</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter tsd-is-not-exported">
+						<a href="../modules/_opt_.html#refcmp" class="tsd-kind-icon">ref<wbr>Cmp</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
 						<a href="../modules/_opt_.html#some-1" class="tsd-kind-icon">some</a>

@@ -3,6 +3,10 @@ const noneSymbol = Symbol('None');
 
 // Do NOT split to multiple modules - it's not possible, since there would be cyclic dependencies..
 
+export type EqualityFunction = <T>(a: T, b: T) => boolean;
+
+const refCmp: EqualityFunction = <T>(a: T, b: T): boolean => a === b;
+
 /**
  * @typeparam T Wrapped value type.
  */
@@ -247,9 +251,9 @@ export abstract class Opt<T> {
    * Return `this` for [[Some]], `def` for [[None]].
    *
    * ```ts
-   * some(1).orElse(some(2)) // Some(1)
-   * none.orElse(some(2)) // Some(2)
-   * none.orElse(none) // None
+   * some(1).orElseOpt(some(2)) // Some(1)
+   * none.orElseOpt(some(2)) // Some(2)
+   * none.orElseOpt(none) // None
    * ```
    * @param def
    */
@@ -375,6 +379,26 @@ export abstract class Opt<T> {
    * @param tag
    */
   abstract print(tag?: string): Opt<T>;
+
+  /**
+   * Is a value of this instance and given `other` instance the same?
+   * Default comparator function is `===` (referential equality).
+   *
+   * ```ts
+   * none.equals(none) // true
+   * some(1).equals(none) // false
+   * some(1).equals(some(1)) // true
+   * some(1).equals(some(2)) // false
+   * some({a: 1}).equals(some({a: 1})) // false (different objects)
+   * some(1).equals(some(2), (x, y) => true) // true (custom comparator function)
+   *
+   * const jsonCmp = <T>(a: T, b: T): boolean => JSON.stringify(a) === JSON.stringify(b);
+   * some({a: 1}).equals(some({a: 1}), jsonCmp) // true (comparing values converted to JSON)
+   * ```
+   * @param other
+   * @param comparator
+   */
+  abstract equals(other: Opt<T>, comparator?: EqualityFunction): boolean;
 }
 
 class None<T> extends Opt<T> {
@@ -445,6 +469,10 @@ class None<T> extends Opt<T> {
     // tslint:disable-next-line:no-console
     console.log(...[...opt(tag).map(x => [`[${x}]`]).orElse([]), 'None']);
     return this;
+  }
+
+  equals(other: Opt<T>, _comparator: EqualityFunction = refCmp): boolean {
+    return other.isEmpty;
   }
 }
 
@@ -539,6 +567,11 @@ class Some<T> extends Opt<T> {
     // tslint:disable-next-line:no-console
     console.log(...[...opt(tag).map(x => [`[${x}]`]).orElse([]), 'Some:', this._value]);
     return this;
+  }
+
+  equals(other: Opt<T>, comparator: EqualityFunction = refCmp): boolean {
+    if (other.isEmpty) { return false; }
+    return comparator(this._value, other.orCrash('Some expected'));
   }
 }
 
