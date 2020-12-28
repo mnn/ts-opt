@@ -12,6 +12,14 @@ export declare abstract class Opt<T> {
      */
     get nonEmpty(): boolean;
     /**
+     * Is this instance of [[Some]]?
+     */
+    isSome(): this is Some<T>;
+    /**
+     * Is this instance of [[None]]?
+     */
+    isNone(): this is None<T>;
+    /**
      * `1` for [[Some]], `0` for [[None]].
      */
     get length(): number;
@@ -392,6 +400,7 @@ declare class Some<T> extends Opt<T> {
     readonly '@@type': symbol;
     constructor(_value: T);
     get isEmpty(): boolean;
+    get value(): T;
     toArray(): [] | [T];
     flatMap<U>(f: (_: T) => Opt<U>): Opt<U>;
     map<U>(f: (_: T) => U): Opt<U>;

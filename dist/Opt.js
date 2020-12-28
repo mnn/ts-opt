@@ -38,6 +38,14 @@ var Opt = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
+    /**
+     * Is this instance of [[Some]]?
+     */
+    Opt.prototype.isSome = function () { return this.nonEmpty; };
+    /**
+     * Is this instance of [[None]]?
+     */
+    Opt.prototype.isNone = function () { return this.isEmpty; };
     Object.defineProperty(Opt.prototype, "length", {
         /**
          * `1` for [[Some]], `0` for [[None]].
@@ -168,6 +176,11 @@ var Some = /** @class */ (function (_super) {
         enumerable: false,
         configurable: true
     });
+    Object.defineProperty(Some.prototype, "value", {
+        get: function () { return this._value; },
+        enumerable: false,
+        configurable: true
+    });
     Some.prototype.toArray = function () { return [this._value]; };
     Some.prototype.flatMap = function (f) {
         return f(this._value);
@@ -252,7 +265,7 @@ var ReduxDevtoolsCompatibilityHelper = /** @class */ (function () {
         if (exports.isOpt(value)) {
             var res = value.isEmpty ? { type: noneSerializedType } : {
                 type: someSerializedType,
-                value: value.orCrash('failed to extract value from Some')
+                value: value.orCrash('failed to extract value from Some'),
             };
             return res;
         }
