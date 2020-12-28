@@ -22,6 +22,16 @@ export abstract class Opt<T> {
   get nonEmpty(): boolean { return !this.isEmpty; }
 
   /**
+   * Is this instance of [[Some]]?
+   */
+  isSome(): this is Some<T> { return this.nonEmpty; }
+
+  /**
+   * Is this instance of [[None]]?
+   */
+  isNone(): this is None<T> { return this.isEmpty; }
+
+  /**
    * `1` for [[Some]], `0` for [[None]].
    */
   get length(): number { return this.isEmpty ? 0 : 1; }
@@ -483,6 +493,8 @@ class Some<T> extends Opt<T> {
 
   get isEmpty(): boolean { return false; }
 
+  get value(): T { return this._value; }
+
   toArray(): [] | [T] { return [this._value]; }
 
   flatMap<U>(f: (_: T) => Opt<U>): Opt<U> {
@@ -581,7 +593,7 @@ type OptSerialized = {
   type: typeof noneSerializedType;
 } | {
   type: typeof someSerializedType,
-  value: any
+  value: any,
 };
 
 export class ReduxDevtoolsCompatibilityHelper {
@@ -590,7 +602,7 @@ export class ReduxDevtoolsCompatibilityHelper {
       const res: OptSerialized =
         value.isEmpty ? {type: noneSerializedType} as const : {
           type: someSerializedType,
-          value: value.orCrash('failed to extract value from Some')
+          value: value.orCrash('failed to extract value from Some'),
         } as const;
       return res;
     } else {

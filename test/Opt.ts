@@ -71,6 +71,33 @@ describe('opt', () => {
     expect(opt(0).nonEmpty).to.be.true;
   });
 
+  it('isSome', () => {
+    const f = (a: Opt<number>) => {
+      if (a.isSome()) {
+        expect(a.value).to.eq(4);
+      } else {
+        // @ts-expect-error
+        expect(a.value).to.be.undefined;
+      }
+    };
+    f(none);
+    f(opt(4));
+  });
+
+  it('isNone', () => {
+    const f = (a: Opt<number>) => {
+      if (a.isNone()) {
+        // @ts-expect-error
+        expect(a.value).to.be.undefined;
+      } else {
+        // this doesn't work - Opt is not a union (there are several usability issues preventing conversion)
+        // expect(a.value).to.eq(4);
+      }
+    };
+    f(none);
+    f(opt(4));
+  });
+
   it('length', () => {
     expect(opt(null).length).to.eq(0);
     expect(opt(0).length).to.eq(1);
