@@ -366,7 +366,9 @@ export declare abstract class Opt<T> {
     /**
      * Widen union (typically union of strings to string).
      * Experimental. May be removed if it is later found out it's unsafe and unfixable.
+     * ```ts
      * opt(someValueOfUnionType).widen<SuperOfThatUnion>() // :Opt<SuperOfThatUnion>
+     * ```
      */
     widen<U, R extends SuperUnionOf<U, T> = SuperUnionOf<U, T>>(): Opt<R>;
     /**

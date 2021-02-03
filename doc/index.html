@@ -7,6 +7,7 @@
 	<meta name="description" content="Documentation for ts-opt">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="assets/css/main.css">
+	<script async src="assets/js/search.js" id="search-script"></script>
 </head>
 <body>
 <header>
@@ -40,8 +41,6 @@
 							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
 							<input type="checkbox" id="tsd-filter-externals" checked />
 							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
-							<input type="checkbox" id="tsd-filter-only-exported" />
-							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
 						</div>
 					</div>
 					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
@@ -51,11 +50,6 @@
 	</div>
 	<div class="tsd-page-title">
 		<div class="container">
-			<ul class="tsd-breadcrumb">
-				<li>
-					<a href="globals.html">Globals</a>
-				</li>
-			</ul>
 			<h1>ts-opt</h1>
 		</div>
 	</div>
@@ -83,82 +77,87 @@
 				<a href="#installation" id="installation" style="color: inherit; text-decoration: none;">
 					<h1>Installation</h1>
 				</a>
-				<pre><code class="language-sh">npm i -S ts-opt</code></pre>
+				<pre><code class="language-sh"><span style="color: #000000">npm i -S ts-opt</span>
+</code></pre>
 				<a href="#examples" id="examples" style="color: inherit; text-decoration: none;">
 					<h1>Examples</h1>
 				</a>
 				<p>In all examples <code>opt</code> import is presumed to be present:</p>
-				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { opt } <span class="hljs-keyword">from</span> <span class="hljs-string">'ts-opt'</span>;</code></pre>
+				<pre><code class="language-typescript"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">opt</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;ts-opt&#039;</span><span style="color: #000000">;</span>
+</code></pre>
 				<a href="#basic-use" id="basic-use" style="color: inherit; text-decoration: none;">
 					<h2>Basic use</h2>
 				</a>
-				<pre><code class="language-typescript">    <span class="hljs-comment">// without</span>
-    <span class="hljs-keyword">const</span> f = <span class="hljs-function">(<span class="hljs-params">name: <span class="hljs-built_in">string</span> | <span class="hljs-literal">undefined</span></span>) =&gt;</span> {
-      <span class="hljs-keyword">if</span> (!name || name === <span class="hljs-string">''</span>) { <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Missing name.'</span>); }
-      <span class="hljs-keyword">return</span> name[<span class="hljs-number">0</span>];
-    };
+				<pre><code class="language-typescript"><span style="color: #000000">    </span><span style="color: #008000">// without</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #795E26">f</span><span style="color: #000000"> = (</span><span style="color: #001080">name</span><span style="color: #000000">: </span><span style="color: #267F99">string</span><span style="color: #000000"> | </span><span style="color: #267F99">undefined</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">      </span><span style="color: #AF00DB">if</span><span style="color: #000000"> (!</span><span style="color: #001080">name</span><span style="color: #000000"> || </span><span style="color: #001080">name</span><span style="color: #000000"> === </span><span style="color: #A31515">&#039;&#039;</span><span style="color: #000000">) { </span><span style="color: #AF00DB">throw</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #267F99">Error</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;Missing name.&#039;</span><span style="color: #000000">); }</span>
+<span style="color: #000000">      </span><span style="color: #AF00DB">return</span><span style="color: #000000"> </span><span style="color: #001080">name</span><span style="color: #000000">[</span><span style="color: #098658">0</span><span style="color: #000000">];</span>
+<span style="color: #000000">    };</span>
 
-    <span class="hljs-comment">// with</span>
-    <span class="hljs-keyword">const</span> g = <span class="hljs-function">(<span class="hljs-params">name: <span class="hljs-built_in">string</span> | <span class="hljs-literal">undefined</span></span>) =&gt;</span> opt(name).orCrash(<span class="hljs-string">'Missing name.'</span>)[<span class="hljs-number">0</span>];
+<span style="color: #000000">    </span><span style="color: #008000">// with</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #795E26">g</span><span style="color: #000000"> = (</span><span style="color: #001080">name</span><span style="color: #000000">: </span><span style="color: #267F99">string</span><span style="color: #000000"> | </span><span style="color: #267F99">undefined</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #001080">name</span><span style="color: #000000">).</span><span style="color: #795E26">orCrash</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;Missing name.&#039;</span><span style="color: #000000">)[</span><span style="color: #098658">0</span><span style="color: #000000">];</span>
 
-    f(<span class="hljs-string">'Riker'</span>); <span class="hljs-comment">// 'R'</span>
-    g(<span class="hljs-string">'Riker'</span>); <span class="hljs-comment">// 'R'</span>
+<span style="color: #000000">    </span><span style="color: #795E26">f</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;Riker&#039;</span><span style="color: #000000">); </span><span style="color: #008000">// &#039;R&#039;</span>
+<span style="color: #000000">    </span><span style="color: #795E26">g</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;Riker&#039;</span><span style="color: #000000">); </span><span style="color: #008000">// &#039;R&#039;</span>
 
-    f(<span class="hljs-literal">undefined</span>); <span class="hljs-comment">// exception thrown</span>
-    g(<span class="hljs-literal">undefined</span>); <span class="hljs-comment">// exception thrown</span></code></pre>
+<span style="color: #000000">    </span><span style="color: #795E26">f</span><span style="color: #000000">(</span><span style="color: #0000FF">undefined</span><span style="color: #000000">); </span><span style="color: #008000">// exception thrown</span>
+<span style="color: #000000">    </span><span style="color: #795E26">g</span><span style="color: #000000">(</span><span style="color: #0000FF">undefined</span><span style="color: #000000">); </span><span style="color: #008000">// exception thrown</span>
+</code></pre>
 				<a href="#caseof" id="caseof" style="color: inherit; text-decoration: none;">
 					<h2>caseOf</h2>
 				</a>
-				<pre><code class="language-typescript">    <span class="hljs-keyword">const</span> fireMissiles = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> { <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'FIRING!'</span>); };
-    <span class="hljs-keyword">const</span> printSuccess = <span class="hljs-function">(<span class="hljs-params">x: <span class="hljs-built_in">string</span></span>) =&gt;</span> { <span class="hljs-built_in">console</span>.log(x); };
+				<pre><code class="language-typescript"><span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #795E26">fireMissiles</span><span style="color: #000000"> = () </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> { </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;FIRING!&#039;</span><span style="color: #000000">); };</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #795E26">printSuccess</span><span style="color: #000000"> = (</span><span style="color: #001080">x</span><span style="color: #000000">: </span><span style="color: #267F99">string</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> { </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000">); };</span>
 
-    <span class="hljs-keyword">const</span> handleMoveVanilla = (usersMove?: <span class="hljs-built_in">string</span>): <span class="hljs-function"><span class="hljs-params">void</span> =&gt;</span> usersMove ? printSuccess(usersMove) : fireMissiles();
-    <span class="hljs-keyword">const</span> handleMove = (usersMove?: <span class="hljs-built_in">string</span>): <span class="hljs-function"><span class="hljs-params">void</span> =&gt;</span> opt(usersMove).caseOf(printSuccess, fireMissiles);
+<span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #795E26">handleMoveVanilla</span><span style="color: #000000"> = (</span><span style="color: #001080">usersMove</span><span style="color: #000000">?: </span><span style="color: #267F99">string</span><span style="color: #000000">): </span><span style="color: #267F99">void</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">usersMove</span><span style="color: #000000"> ? </span><span style="color: #795E26">printSuccess</span><span style="color: #000000">(</span><span style="color: #001080">usersMove</span><span style="color: #000000">) : </span><span style="color: #795E26">fireMissiles</span><span style="color: #000000">();</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #795E26">handleMove</span><span style="color: #000000"> = (</span><span style="color: #001080">usersMove</span><span style="color: #000000">?: </span><span style="color: #267F99">string</span><span style="color: #000000">): </span><span style="color: #267F99">void</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #001080">usersMove</span><span style="color: #000000">).</span><span style="color: #795E26">caseOf</span><span style="color: #000000">(</span><span style="color: #001080">printSuccess</span><span style="color: #000000">, </span><span style="color: #001080">fireMissiles</span><span style="color: #000000">);</span>
 
-    handleMoveVanilla(); <span class="hljs-comment">// prints FIRING!</span>
-    handleMove(); <span class="hljs-comment">// prints FIRING!</span>
-    handleMoveVanilla(<span class="hljs-string">'Build a pylon.'</span>); <span class="hljs-comment">// prints Build a pylon.</span>
-    handleMove(<span class="hljs-string">'Build a pylon.'</span>); <span class="hljs-comment">// prints Build a pylon.</span></code></pre>
+<span style="color: #000000">    </span><span style="color: #795E26">handleMoveVanilla</span><span style="color: #000000">(); </span><span style="color: #008000">// prints FIRING!</span>
+<span style="color: #000000">    </span><span style="color: #795E26">handleMove</span><span style="color: #000000">(); </span><span style="color: #008000">// prints FIRING!</span>
+<span style="color: #000000">    </span><span style="color: #795E26">handleMoveVanilla</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;Build a pylon.&#039;</span><span style="color: #000000">); </span><span style="color: #008000">// prints Build a pylon.</span>
+<span style="color: #000000">    </span><span style="color: #795E26">handleMove</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;Build a pylon.&#039;</span><span style="color: #000000">); </span><span style="color: #008000">// prints Build a pylon.</span>
+</code></pre>
 				<a href="#more-advanced" id="more-advanced" style="color: inherit; text-decoration: none;">
 					<h2>More advanced</h2>
 				</a>
-				<pre><code class="language-typescript"><span class="hljs-keyword">interface</span> Person {
-  name: <span class="hljs-built_in">string</span>;
-  surname: <span class="hljs-built_in">string</span> | <span class="hljs-literal">null</span>;
-}
+				<pre><code class="language-typescript"><span style="color: #0000FF">interface</span><span style="color: #000000"> </span><span style="color: #267F99">Person</span><span style="color: #000000"> {</span>
+<span style="color: #000000">  </span><span style="color: #001080">name</span><span style="color: #000000">: </span><span style="color: #267F99">string</span><span style="color: #000000">;</span>
+<span style="color: #000000">  </span><span style="color: #001080">surname</span><span style="color: #000000">: </span><span style="color: #267F99">string</span><span style="color: #000000"> | </span><span style="color: #267F99">null</span><span style="color: #000000">;</span>
+<span style="color: #000000">}</span>
 
-<span class="hljs-keyword">type</span> Db = { [_: <span class="hljs-built_in">string</span>]: Person };
+<span style="color: #0000FF">type</span><span style="color: #000000"> </span><span style="color: #267F99">Db</span><span style="color: #000000"> = { [</span><span style="color: #001080">_</span><span style="color: #000000">: </span><span style="color: #267F99">string</span><span style="color: #000000">]: </span><span style="color: #267F99">Person</span><span style="color: #000000"> };</span>
 
-<span class="hljs-comment">/* ... */</span>
+<span style="color: #008000">/* ... */</span>
 
-    <span class="hljs-keyword">const</span> db: Db = {
-      <span class="hljs-string">'0'</span>: {name: <span class="hljs-string">'John'</span>, surname: <span class="hljs-literal">null</span>},
-      <span class="hljs-string">'1'</span>: {name: <span class="hljs-string">'Worf'</span>, surname: <span class="hljs-string">'Mercer'</span>}
-    };
+<span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">db</span><span style="color: #000000">: </span><span style="color: #267F99">Db</span><span style="color: #000000"> = {</span>
+<span style="color: #000000">      </span><span style="color: #A31515">&#039;0&#039;</span><span style="color: #001080">:</span><span style="color: #000000"> {</span><span style="color: #001080">name:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;John&#039;</span><span style="color: #000000">, </span><span style="color: #001080">surname:</span><span style="color: #000000"> </span><span style="color: #0000FF">null</span><span style="color: #000000">},</span>
+<span style="color: #000000">      </span><span style="color: #A31515">&#039;1&#039;</span><span style="color: #001080">:</span><span style="color: #000000"> {</span><span style="color: #001080">name:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;Worf&#039;</span><span style="color: #000000">, </span><span style="color: #001080">surname:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;Mercer&#039;</span><span style="color: #000000">}</span>
+<span style="color: #000000">    };</span>
 
-    <span class="hljs-comment">// without</span>
-    <span class="hljs-keyword">const</span> f = (id: <span class="hljs-built_in">number</span> | <span class="hljs-literal">undefined</span>): <span class="hljs-built_in">string</span> | <span class="hljs-function"><span class="hljs-params">null</span> =&gt;</span> {
-      <span class="hljs-keyword">if</span> (id === <span class="hljs-literal">undefined</span>) { <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; }
-      <span class="hljs-keyword">const</span> item = db[id];
-      <span class="hljs-keyword">if</span> (!item) { <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; }
-      <span class="hljs-keyword">const</span> surname = item.surname ? item.surname.toUpperCase() : <span class="hljs-string">'&lt;missing&gt;'</span>;
-      <span class="hljs-keyword">return</span> item.name + <span class="hljs-string">' '</span> + surname;
-    };
+<span style="color: #000000">    </span><span style="color: #008000">// without</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #795E26">f</span><span style="color: #000000"> = (</span><span style="color: #001080">id</span><span style="color: #000000">: </span><span style="color: #267F99">number</span><span style="color: #000000"> | </span><span style="color: #267F99">undefined</span><span style="color: #000000">): </span><span style="color: #267F99">string</span><span style="color: #000000"> | </span><span style="color: #267F99">null</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">      </span><span style="color: #AF00DB">if</span><span style="color: #000000"> (</span><span style="color: #001080">id</span><span style="color: #000000"> === </span><span style="color: #0000FF">undefined</span><span style="color: #000000">) { </span><span style="color: #AF00DB">return</span><span style="color: #000000"> </span><span style="color: #0000FF">null</span><span style="color: #000000">; }</span>
+<span style="color: #000000">      </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">item</span><span style="color: #000000"> = </span><span style="color: #001080">db</span><span style="color: #000000">[</span><span style="color: #001080">id</span><span style="color: #000000">];</span>
+<span style="color: #000000">      </span><span style="color: #AF00DB">if</span><span style="color: #000000"> (!</span><span style="color: #001080">item</span><span style="color: #000000">) { </span><span style="color: #AF00DB">return</span><span style="color: #000000"> </span><span style="color: #0000FF">null</span><span style="color: #000000">; }</span>
+<span style="color: #000000">      </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">surname</span><span style="color: #000000"> = </span><span style="color: #001080">item</span><span style="color: #000000">.</span><span style="color: #001080">surname</span><span style="color: #000000"> ? </span><span style="color: #001080">item</span><span style="color: #000000">.</span><span style="color: #001080">surname</span><span style="color: #000000">.</span><span style="color: #795E26">toUpperCase</span><span style="color: #000000">() : </span><span style="color: #A31515">&#039;&lt;missing&gt;&#039;</span><span style="color: #000000">;</span>
+<span style="color: #000000">      </span><span style="color: #AF00DB">return</span><span style="color: #000000"> </span><span style="color: #001080">item</span><span style="color: #000000">.</span><span style="color: #001080">name</span><span style="color: #000000"> + </span><span style="color: #A31515">&#039; &#039;</span><span style="color: #000000"> + </span><span style="color: #001080">surname</span><span style="color: #000000">;</span>
+<span style="color: #000000">    };</span>
 
-    <span class="hljs-comment">// with</span>
-    <span class="hljs-keyword">const</span> g = (id: <span class="hljs-built_in">number</span> | <span class="hljs-literal">undefined</span>): <span class="hljs-built_in">string</span> | <span class="hljs-function"><span class="hljs-params">null</span> =&gt;</span> opt(id)
-      .chainToOpt(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> db[x])
-      .map(<span class="hljs-function"><span class="hljs-params">item</span> =&gt;</span> item.name + <span class="hljs-string">' '</span> + opt(item.surname).map(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x.toUpperCase()).orElse(<span class="hljs-string">'&lt;missing&gt;'</span>))
-      .orNull();
+<span style="color: #000000">    </span><span style="color: #008000">// with</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #795E26">g</span><span style="color: #000000"> = (</span><span style="color: #001080">id</span><span style="color: #000000">: </span><span style="color: #267F99">number</span><span style="color: #000000"> | </span><span style="color: #267F99">undefined</span><span style="color: #000000">): </span><span style="color: #267F99">string</span><span style="color: #000000"> | </span><span style="color: #267F99">null</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #001080">id</span><span style="color: #000000">)</span>
+<span style="color: #000000">      .</span><span style="color: #795E26">chainToOpt</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">db</span><span style="color: #000000">[</span><span style="color: #001080">x</span><span style="color: #000000">])</span>
+<span style="color: #000000">      .</span><span style="color: #795E26">map</span><span style="color: #000000">(</span><span style="color: #001080">item</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">item</span><span style="color: #000000">.</span><span style="color: #001080">name</span><span style="color: #000000"> + </span><span style="color: #A31515">&#039; &#039;</span><span style="color: #000000"> + </span><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #001080">item</span><span style="color: #000000">.</span><span style="color: #001080">surname</span><span style="color: #000000">).</span><span style="color: #795E26">map</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">x</span><span style="color: #000000">.</span><span style="color: #795E26">toUpperCase</span><span style="color: #000000">()).</span><span style="color: #795E26">orElse</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;&lt;missing&gt;&#039;</span><span style="color: #000000">))</span>
+<span style="color: #000000">      .</span><span style="color: #795E26">orNull</span><span style="color: #000000">();</span>
 
-    f(<span class="hljs-number">0</span>); <span class="hljs-comment">// 'John &lt;missing&gt;'</span>
-    g(<span class="hljs-number">0</span>); <span class="hljs-comment">// 'John &lt;missing&gt;'</span>
+<span style="color: #000000">    </span><span style="color: #795E26">f</span><span style="color: #000000">(</span><span style="color: #098658">0</span><span style="color: #000000">); </span><span style="color: #008000">// &#039;John &lt;missing&gt;&#039;</span>
+<span style="color: #000000">    </span><span style="color: #795E26">g</span><span style="color: #000000">(</span><span style="color: #098658">0</span><span style="color: #000000">); </span><span style="color: #008000">// &#039;John &lt;missing&gt;&#039;</span>
 
-    f(<span class="hljs-number">1</span>); <span class="hljs-comment">// 'Worf MERCER'</span>
-    g(<span class="hljs-number">1</span>); <span class="hljs-comment">// 'Worf MERCER'</span>
-
-    f(<span class="hljs-number">2</span>); <span class="hljs-comment">// null</span>
-    g(<span class="hljs-number">2</span>); <span class="hljs-comment">// null</span></code></pre>
+<span style="color: #000000">    </span><span style="color: #795E26">f</span><span style="color: #000000">(</span><span style="color: #098658">1</span><span style="color: #000000">); </span><span style="color: #008000">// &#039;Worf MERCER&#039;</span>
+<span style="color: #000000">    </span><span style="color: #795E26">g</span><span style="color: #000000">(</span><span style="color: #098658">1</span><span style="color: #000000">); </span><span style="color: #008000">// &#039;Worf MERCER&#039;</span>
+<span style="color: #000000">    </span>
+<span style="color: #000000">    </span><span style="color: #795E26">f</span><span style="color: #000000">(</span><span style="color: #098658">2</span><span style="color: #000000">); </span><span style="color: #008000">// null</span>
+<span style="color: #000000">    </span><span style="color: #795E26">g</span><span style="color: #000000">(</span><span style="color: #098658">2</span><span style="color: #000000">); </span><span style="color: #008000">// null</span>
+</code></pre>
 				<a href="#documentation" id="documentation" style="color: inherit; text-decoration: none;">
 					<h1>Documentation</h1>
 				</a>
@@ -176,16 +175,64 @@
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 			<nav class="tsd-navigation primary">
 				<ul>
-					<li class="globals  ">
-						<a href="globals.html"><em>Globals</em></a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/_opt_.html">&quot;<wbr>Opt&quot;</a>
+					<li class=" ">
+						<a href="modules.html">Exports</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/opt.html" class="tsd-kind-icon">Opt</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/reduxdevtoolscompatibilityhelper.html" class="tsd-kind-icon">Redux<wbr>Devtools<wbr>Compatibility<wbr>Helper</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="modules.html#equalityfunction" class="tsd-kind-icon">Equality<wbr>Function</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="modules.html#none" class="tsd-kind-icon">none</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="modules.html#ap" class="tsd-kind-icon">ap</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="modules.html#apfn" class="tsd-kind-icon">ap<wbr>Fn</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="modules.html#catopts" class="tsd-kind-icon">cat<wbr>Opts</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="modules.html#isopt" class="tsd-kind-icon">is<wbr>Opt</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="modules.html#joinopt" class="tsd-kind-icon">join<wbr>Opt</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="modules.html#mapopt" class="tsd-kind-icon">map<wbr>Opt</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="modules.html#opt" class="tsd-kind-icon">opt</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="modules.html#optemptyarray" class="tsd-kind-icon">opt<wbr>Empty<wbr>Array</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="modules.html#optemptyobject" class="tsd-kind-icon">opt<wbr>Empty<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="modules.html#optemptystring" class="tsd-kind-icon">opt<wbr>Empty<wbr>String</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="modules.html#optfalsy" class="tsd-kind-icon">opt<wbr>Falsy</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="modules.html#optzero" class="tsd-kind-icon">opt<wbr>Zero</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="modules.html#some" class="tsd-kind-icon">some</a>
+					</li>
 				</ul>
 			</nav>
 		</div>
@@ -196,15 +243,11 @@
 		<h2>Legend</h2>
 		<div class="tsd-legend-group">
 			<ul class="tsd-legend">
-				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
-				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
-				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
-				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
-				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
 			</ul>
 			<ul class="tsd-legend">
-				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
-				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
 			</ul>
 		</div>
 	</div>
@@ -214,6 +257,5 @@
 </div>
 <div class="overlay"></div>
 <script src="assets/js/main.js"></script>
-<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
 </body>
 </html>

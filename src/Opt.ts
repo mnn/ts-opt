@@ -412,7 +412,9 @@ export abstract class Opt<T> {
   /**
    * Widen union (typically union of strings to string).
    * Experimental. May be removed if it is later found out it's unsafe and unfixable.
+   * ```ts
    * opt(someValueOfUnionType).widen<SuperOfThatUnion>() // :Opt<SuperOfThatUnion>
+   * ```
    */
   widen<U, R extends SuperUnionOf<U, T> = SuperUnionOf<U, T>>(): Opt<R> {
     return this as unknown as Opt<R>;
@@ -748,9 +750,11 @@ export const catOpts = <A>(xs: Opt<A>[]): A[] =>
  */
 export const mapOpt = <A, B>(f: (_: A) => Opt<B>) => (xs: A[]): B[] => catOpts(xs.map(f));
 /**
- * Unwraps one level of nested [[Opt]]s. Similar to "flatten" in other libraries or languages.
+ * Unwraps one level of nested [[Opt]]s. Similar to `flatten` in other libraries or languages.
+ * ```ts
  * joinOpt(some(none)) // None
  * joinOpt(some(some(1))) // Some(1)
+ * ```
  * @param x
  */
 export const joinOpt = <T>(x: Opt<Opt<T>>): Opt<T> => x.caseOf<Opt<T>>(y => y, () => none);

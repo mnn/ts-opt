@@ -3,7 +3,7 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
@@ -109,7 +109,9 @@ var Opt = /** @class */ (function () {
     /**
      * Widen union (typically union of strings to string).
      * Experimental. May be removed if it is later found out it's unsafe and unfixable.
+     * ```ts
      * opt(someValueOfUnionType).widen<SuperOfThatUnion>() // :Opt<SuperOfThatUnion>
+     * ```
      */
     Opt.prototype.widen = function () {
         return this;
@@ -312,13 +314,15 @@ exports.none = Object.freeze(new None());
  * Usually it is [[opt]] you are looking for (only in rare cases you want to have for example `Some(undefined)`).
  * @param x
  */
-exports.some = function (x) { return Object.freeze(new Some(x)); };
+var some = function (x) { return Object.freeze(new Some(x)); };
+exports.some = some;
 /**
  * Main constructor function - for `undefined`, `null` and `NaN` returns [[None]].
  * Anything else is wrapped into [[Some]].
  * @param x
  */
-exports.opt = function (x) { return isNoneValue(x) ? exports.none : new Some(x); };
+var opt = function (x) { return isNoneValue(x) ? exports.none : new Some(x); };
+exports.opt = opt;
 /**
  * For falsy values returns [[None]], otherwise acts same as [[opt]].
  * ```ts
@@ -329,33 +333,39 @@ exports.opt = function (x) { return isNoneValue(x) ? exports.none : new Some(x);
  * ```
  * @param x
  */
-exports.optFalsy = function (x) { return x ? new Some(x) : exports.none; };
+var optFalsy = function (x) { return x ? new Some(x) : exports.none; };
+exports.optFalsy = optFalsy;
 /**
  * For empty array (`[]`) returns [[None]], otherwise acts same as [[opt]].
  * @param x
  */
-exports.optEmptyArray = function (x) { return exports.opt(x).filter(function (y) { return y.length > 0; }); };
+var optEmptyArray = function (x) { return exports.opt(x).filter(function (y) { return y.length > 0; }); };
+exports.optEmptyArray = optEmptyArray;
 /**
  * For empty object (`{}`) returns [[None]], otherwise acts same as [[opt]].
  * @param x
  */
-exports.optEmptyObject = function (x) {
+var optEmptyObject = function (x) {
     return exports.opt(x).filter(function (y) { return Object.keys(y).length !== 0; });
 };
+exports.optEmptyObject = optEmptyObject;
 /**
  * For empty string (`''`) returns [[None]], otherwise acts same as [[opt]].
  * @param x
  */
-exports.optEmptyString = function (x) { return x === '' ? exports.none : exports.opt(x); };
+var optEmptyString = function (x) { return x === '' ? exports.none : exports.opt(x); };
+exports.optEmptyString = optEmptyString;
 /**
  * For a number `0` returns [[None]], otherwise acts same as [[opt]].
  */
-exports.optZero = function (x) { return x === 0 ? exports.none : exports.opt(x); };
+var optZero = function (x) { return x === 0 ? exports.none : exports.opt(x); };
+exports.optZero = optZero;
 /**
  * Is given value an instance of [[Opt]]?
  * @param x
  */
-exports.isOpt = function (x) { return x instanceof Opt; };
+var isOpt = function (x) { return x instanceof Opt; };
+exports.isOpt = isOpt;
 /**
  * ```ts
  * <A, B>(of: Opt<(_: A) => B>) => (oa: Opt<A>): Opt<B>
@@ -370,9 +380,10 @@ exports.isOpt = function (x) { return x instanceof Opt; };
  * @typeparam A input of function inside `of`
  * @typeparam B output of function inside `of`
  */
-exports.ap = function (of) { return function (oa) {
+var ap = function (of) { return function (oa) {
     return oa.caseOf(function (a) { return of.map(function (f) { return f(a); }); }, function () { return exports.none; });
 }; };
+exports.ap = ap;
 /**
  * ```ts
  * <A, B>(f: (_: A) => B) => (oa: Opt<A>): Opt<B>
@@ -385,7 +396,8 @@ exports.ap = function (of) { return function (oa) {
  * @typeparam A input of function `f`
  * @typeparam B output of function `f`
  */
-exports.apFn = function (f) { return function (oa) { return exports.ap(exports.opt(f))(oa); }; };
+var apFn = function (f) { return function (oa) { return exports.ap(exports.opt(f))(oa); }; };
+exports.apFn = apFn;
 /**
  * Transforms array of opts into an array where [[None]]s are omitted and [[Some]]s are unwrapped.
  * ```ts
@@ -393,9 +405,10 @@ exports.apFn = function (f) { return function (oa) { return exports.ap(exports.o
  * ```
  * @param xs
  */
-exports.catOpts = function (xs) {
+var catOpts = function (xs) {
     return xs.reduce(function (acc, x) { return x.caseOf(function (y) { return __spreadArrays(acc, [y]); }, function () { return acc; }); }, []);
 };
+exports.catOpts = catOpts;
 /**
  * Similar to `Array.map`, but also allows omitting elements.
  * ```ts
@@ -403,12 +416,14 @@ exports.catOpts = function (xs) {
  * ```
  * @param f
  */
-exports.mapOpt = function (f) { return function (xs) { return exports.catOpts(xs.map(f)); }; };
+var mapOpt = function (f) { return function (xs) { return exports.catOpts(xs.map(f)); }; };
+exports.mapOpt = mapOpt;
 /**
  * Unwraps one level of nested [[Opt]]s. Similar to "flatten" in other libraries or languages.
  * joinOpt(some(none)) // None
  * joinOpt(some(some(1))) // Some(1)
  * @param x
  */
-exports.joinOpt = function (x) { return x.caseOf(function (y) { return y; }, function () { return exports.none; }); };
+var joinOpt = function (x) { return x.caseOf(function (y) { return y; }, function () { return exports.none; }); };
+exports.joinOpt = joinOpt;
 //# sourceMappingURL=Opt.js.map
