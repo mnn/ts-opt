@@ -1,13 +1,9 @@
 // Do NOT split to multiple modules - it's not possible, since there would be cyclic dependencies..
-
 const someSymbol = Symbol('Some');
 const noneSymbol = Symbol('None');
-
 export type EqualityFunction = <T>(a: T, b: T) => boolean;
-
 type NotObject<T> = T extends object ? never : T;
 type SuperUnionOf<T, U> = Exclude<U, T> extends never ? NotObject<T> : never;
-
 const refCmp: EqualityFunction = <T>(a: T, b: T): boolean => a === b;
 
 /**
@@ -421,6 +417,17 @@ export abstract class Opt<T> {
   widen<U, R extends SuperUnionOf<U, T> = SuperUnionOf<U, T>>(): Opt<R> {
     return this as unknown as Opt<R>;
   }
+
+  /**
+   * Maps property of a wrapped object.
+   *
+   * ```ts
+   * const a = {x: 1};
+   * const xValue = opt(a).prop('x').orCrash('missing prop x'); // 1
+   * ```
+   * @param key
+   */
+  abstract prop<K extends (T extends object ? keyof T : never)>(key: K): Opt<T[K]>;
 }
 
 class None<T> extends Opt<T> {
@@ -496,6 +503,8 @@ class None<T> extends Opt<T> {
   equals(other: Opt<T>, _comparator: EqualityFunction = refCmp): boolean {
     return other.isEmpty;
   }
+
+  prop<K extends (T extends object ? keyof T : never)>(_key: K): Opt<T[K]> { return none; }
 }
 
 class Some<T> extends Opt<T> {
@@ -597,6 +606,8 @@ class Some<T> extends Opt<T> {
     if (other.isEmpty) { return false; }
     return comparator(this._value, other.orCrash('Some expected'));
   }
+
+  prop<K extends (T extends object ? keyof T : never)>(key: K): Opt<T[K]> { return opt(this._value[key]); }
 }
 
 const someSerializedType = 'Opt/Some';
@@ -638,26 +649,22 @@ export class ReduxDevtoolsCompatibilityHelper {
 const isNoneValue = (x: any): boolean => {
   return x === undefined || x === null || Number.isNaN(x);
 };
-
 /**
  * Single global instance of [[None]].
  */
 export const none: None<any> = Object.freeze(new None());
-
 /**
  * Constructs [[Some]].
  * Usually it is [[opt]] you are looking for (only in rare cases you want to have for example `Some(undefined)`).
  * @param x
  */
 export const some = <T>(x: T) => Object.freeze(new Some(x));
-
 /**
  * Main constructor function - for `undefined`, `null` and `NaN` returns [[None]].
  * Anything else is wrapped into [[Some]].
  * @param x
  */
 export const opt = <T>(x: T | undefined | null): Opt<T> => isNoneValue(x) ? none : new Some(x as T);
-
 /**
  * For falsy values returns [[None]], otherwise acts same as [[opt]].
  * ```ts
@@ -669,37 +676,31 @@ export const opt = <T>(x: T | undefined | null): Opt<T> => isNoneValue(x) ? none
  * @param x
  */
 export const optFalsy = <T>(x: T | undefined | null | '' | false | 0): Opt<T> => x ? new Some(x as T) : none;
-
 /**
  * For empty array (`[]`) returns [[None]], otherwise acts same as [[opt]].
  * @param x
  */
 export const optEmptyArray = <T>(x: T[] | undefined | null): Opt<T[]> => opt(x).filter(y => y.length > 0);
-
 /**
  * For empty object (`{}`) returns [[None]], otherwise acts same as [[opt]].
  * @param x
  */
 export const optEmptyObject = <T extends object>(x: T | undefined | null): Opt<T> =>
   opt(x).filter(y => Object.keys(y).length !== 0);
-
 /**
  * For empty string (`''`) returns [[None]], otherwise acts same as [[opt]].
  * @param x
  */
 export const optEmptyString = <T>(x: T | undefined | null | ''): Opt<T> => x === '' ? none : opt(x);
-
 /**
  * For a number `0` returns [[None]], otherwise acts same as [[opt]].
  */
 export const optZero = <T>(x: T | undefined | null | 0): Opt<T> => x === 0 ? none : opt(x);
-
 /**
  * Is given value an instance of [[Opt]]?
  * @param x
  */
 export const isOpt = (x: unknown): x is Opt<unknown> => x instanceof Opt;
-
 /**
  * ```ts
  * <A, B>(of: Opt<(_: A) => B>) => (oa: Opt<A>): Opt<B>
@@ -716,7 +717,6 @@ export const isOpt = (x: unknown): x is Opt<unknown> => x instanceof Opt;
  */
 export const ap = <A, B>(of: Opt<(_: A) => B>) => (oa: Opt<A>): Opt<B> =>
   oa.caseOf(a => of.map(f => f(a)), () => none as Opt<B>);
-
 /**
  * ```ts
  * <A, B>(f: (_: A) => B) => (oa: Opt<A>): Opt<B>
@@ -730,7 +730,6 @@ export const ap = <A, B>(of: Opt<(_: A) => B>) => (oa: Opt<A>): Opt<B> =>
  * @typeparam B output of function `f`
  */
 export const apFn = <A, B>(f: (_: A) => B) => (oa: Opt<A>): Opt<B> => ap(opt(f))(oa);
-
 /**
  * Transforms array of opts into an array where [[None]]s are omitted and [[Some]]s are unwrapped.
  * ```ts
@@ -740,7 +739,6 @@ export const apFn = <A, B>(f: (_: A) => B) => (oa: Opt<A>): Opt<B> => ap(opt(f))
  */
 export const catOpts = <A>(xs: Opt<A>[]): A[] =>
   xs.reduce((acc, x) => x.caseOf(y => [...acc, y], () => acc), [] as A[]);
-
 /**
  * Similar to `Array.map`, but also allows omitting elements.
  * ```ts
@@ -749,7 +747,6 @@ export const catOpts = <A>(xs: Opt<A>[]): A[] =>
  * @param f
  */
 export const mapOpt = <A, B>(f: (_: A) => Opt<B>) => (xs: A[]): B[] => catOpts(xs.map(f));
-
 /**
  * Unwraps one level of nested [[Opt]]s. Similar to "flatten" in other libraries or languages.
  * joinOpt(some(none)) // None

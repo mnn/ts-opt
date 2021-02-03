@@ -369,6 +369,16 @@ export declare abstract class Opt<T> {
      * opt(someValueOfUnionType).widen<SuperOfThatUnion>() // :Opt<SuperOfThatUnion>
      */
     widen<U, R extends SuperUnionOf<U, T> = SuperUnionOf<U, T>>(): Opt<R>;
+    /**
+     * Maps property of a wrapped object.
+     *
+     * ```ts
+     * const a = {x: 1};
+     * const xValue = opt(a).prop('x').orCrash('missing prop x'); // 1
+     * ```
+     * @param key
+     */
+    abstract prop<K extends (T extends object ? keyof T : never)>(key: K): Opt<T[K]>;
 }
 declare class None<T> extends Opt<T> {
     readonly '@@type': symbol;
@@ -402,6 +412,7 @@ declare class None<T> extends Opt<T> {
     narrow<U>(_guard: (value: any) => value is U): Opt<U>;
     print(tag?: string): Opt<T>;
     equals(other: Opt<T>, _comparator?: EqualityFunction): boolean;
+    prop<K extends (T extends object ? keyof T : never)>(_key: K): Opt<T[K]>;
 }
 declare class Some<T> extends Opt<T> {
     private _value;
@@ -438,6 +449,7 @@ declare class Some<T> extends Opt<T> {
     narrow<U>(guard: (value: any) => value is U): Opt<U>;
     print(tag?: string): Opt<T>;
     equals(other: Opt<T>, comparator?: EqualityFunction): boolean;
+    prop<K extends (T extends object ? keyof T : never)>(key: K): Opt<T[K]>;
 }
 declare const someSerializedType = "Opt/Some";
 declare const noneSerializedType = "Opt/None";

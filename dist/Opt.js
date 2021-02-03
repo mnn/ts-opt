@@ -1,5 +1,4 @@
 "use strict";
-// Do NOT split to multiple modules - it's not possible, since there would be cyclic dependencies..
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -22,6 +21,7 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = void 0;
+// Do NOT split to multiple modules - it's not possible, since there would be cyclic dependencies..
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 var refCmp = function (a, b) { return a === b; };
@@ -170,6 +170,7 @@ var None = /** @class */ (function (_super) {
         if (_comparator === void 0) { _comparator = refCmp; }
         return other.isEmpty;
     };
+    None.prototype.prop = function (_key) { return exports.none; };
     return None;
 }(Opt));
 var Some = /** @class */ (function (_super) {
@@ -263,6 +264,7 @@ var Some = /** @class */ (function (_super) {
         }
         return comparator(this._value, other.orCrash('Some expected'));
     };
+    Some.prototype.prop = function (key) { return exports.opt(this._value[key]); };
     return Some;
 }(Opt));
 var someSerializedType = 'Opt/Some';

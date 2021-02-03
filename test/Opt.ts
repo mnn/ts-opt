@@ -415,6 +415,17 @@ describe('opt', () => {
     const className = opt(labelSize).widen<string>().chainToOpt(x => styles[`labelSize${capitalize(x)}`]).orUndef();
     expect(className).to.be.eq('S');
   });
+
+  it('prop', () => {
+    const oab: ObjAB = {a: false, b: -1};
+    expect(opt(oab).prop('a').orNull()).to.be.false;
+    expect((none as Opt<ObjAB>).prop('a').orNull()).to.be.null;
+    // @ts-expect-error
+    opt(oab).prop('X');
+    const a = {x: 1};
+    const xValue = opt(a).prop('x').orCrash('missing prop x'); // 1
+    expect(xValue).to.be.eq(1);
+  });
 });
 
 describe('helper functions', () => {
