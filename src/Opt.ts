@@ -737,3 +737,11 @@ export const catOpts = <A>(xs: Opt<A>[]): A[] =>
  * @param f
  */
 export const mapOpt = <A, B>(f: (_: A) => Opt<B>) => (xs: A[]): B[] => catOpts(xs.map(f));
+
+/**
+ * Unwraps one level of nested [[Opt]]s. Similar to "flatten" in other libraries or languages.
+ * joinOpt(some(none)) // None
+ * joinOpt(some(some(1))) // Some(1)
+ * @param x
+ */
+export const joinOpt = <T>(x: Opt<Opt<T>>): Opt<T> => x.caseOf<Opt<T>>(y => y, () => none);

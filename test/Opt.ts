@@ -8,6 +8,7 @@ import {
   apFn,
   catOpts,
   isOpt,
+  joinOpt,
   mapOpt,
   none,
   opt,
@@ -634,5 +635,13 @@ describe('ReduxDevtoolsCompatibilityHelper', () => {
     expect(someRevived.orNull()).to.be.eq(248);
     const someUndefRevived = f('a', {type: 'Opt/Some'});
     expect(someUndefRevived.orNull()).to.be.eq(undefined);
+  });
+});
+
+describe('joinOpt', () => {
+  it('joins', () => {
+    expect(joinOpt(some(none)).orNull()).to.eql(null);
+    expect(joinOpt(some(some(1))).orNull()).to.eql(1);
+    expect(joinOpt(none).orNull()).to.eql(null);
   });
 });
