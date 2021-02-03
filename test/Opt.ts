@@ -40,6 +40,23 @@ const isArray = (x: any): x is unknown[] => Array.isArray(x);
 
 type EnumAB = 'a' | 'b';
 type Enum12 = 1 | 2;
+type EnumABC = 'a' | 'b' | 'c';
+type ObjA = { a: boolean };
+type ObjB = { b: number };
+type ObjAB = ObjA & ObjB;
+
+interface WidenPBase<T> {
+  labelSize?: 'small' | 'big',
+  otherStuff: T
+}
+
+type WidenPProps<T> = WidenPBase<T> & { moreStuff: T };
+
+class WidenFakeComponent<P extends WidenPProps<T>, T> {
+  constructor(public props: P) { }
+}
+
+const suppressUnused = (...xs: unknown[]) => expect(xs).to.be.eq(xs);
 
 describe('opt', () => {
   beforeEach(() => {
@@ -372,6 +389,31 @@ describe('opt', () => {
     const jsonCmp = <T>(a: T, b: T): boolean => JSON.stringify(a) === JSON.stringify(b);
     expect(opt({a: 1}).equals(opt({a: 1}), jsonCmp)).to.be.true;
     expect(none.equals(none, jsonCmp)).to.be.true;
+  });
+
+  it('widen', () => {
+    const ab = 'a' as EnumAB;
+    const abc = 'c' as EnumABC;
+    const correctWiden: Opt<EnumABC> = opt(ab).widen<EnumABC>(); // AB -> ABC: Ok
+    const wrongWiden: Opt<never> = opt(abc).widen<EnumAB>(); // ABC -> AB: Not Ok, C is not in AB
+    // incorrect uses
+    // @ts-expect-error
+    const wrongWiden2 = opt(abc).widen<EnumAB, EnumAB>();
+    // @ts-expect-error
+    opt(abc).widen<EnumAB, EnumABC>();
+    // disallowed use with objects (unsafe)
+    const oa: ObjA = {a: true};
+    const oab: ObjAB = {a: false, b: -1};
+    const wrongWiden3: Opt<never> = opt(oa).widen<ObjAB>();
+    const wrongWiden4: Opt<never> = opt(oab).widen<ObjA>();
+    suppressUnused(correctWiden, wrongWiden, wrongWiden2, wrongWiden3, wrongWiden4);
+    // real-world-ish (most likely used to be an issue with type-inference of TypeScript, currently seems to be fixed)
+    const comp = new WidenFakeComponent<WidenPProps<ObjA>, ObjA>({otherStuff: {a: true}, moreStuff: {a: false}, labelSize: 'small'});
+    const {labelSize} = comp.props;
+    const capitalize = (x: string): string => x.replace(/^\w/, c => c.toUpperCase());
+    const styles: Record<string, string | undefined> = {labelSizeSmall: 'S', labelSizeBig: 'B'};
+    const className = opt(labelSize).widen<string>().chainToOpt(x => styles[`labelSize${capitalize(x)}`]).orUndef();
+    expect(className).to.be.eq('S');
   });
 });
 

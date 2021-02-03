@@ -1,4 +1,5 @@
 "use strict";
+// Do NOT split to multiple modules - it's not possible, since there would be cyclic dependencies..
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -20,7 +21,7 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = void 0;
+exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 var refCmp = function (a, b) { return a === b; };
@@ -104,6 +105,14 @@ var Opt = /** @class */ (function () {
      */
     Opt.prototype.noneIf = function (predicate) {
         return this.filter(function (x) { return !predicate(x); });
+    };
+    /**
+     * Widen union (typically union of strings to string).
+     * Experimental. May be removed if it is later found out it's unsafe and unfixable.
+     * opt(someValueOfUnionType).widen<SuperOfThatUnion>() // :Opt<SuperOfThatUnion>
+     */
+    Opt.prototype.widen = function () {
+        return this;
     };
     return Opt;
 }());
@@ -393,4 +402,11 @@ exports.catOpts = function (xs) {
  * @param f
  */
 exports.mapOpt = function (f) { return function (xs) { return exports.catOpts(xs.map(f)); }; };
+/**
+ * Unwraps one level of nested [[Opt]]s. Similar to "flatten" in other libraries or languages.
+ * joinOpt(some(none)) // None
+ * joinOpt(some(some(1))) // Some(1)
+ * @param x
+ */
+exports.joinOpt = function (x) { return x.caseOf(function (y) { return y; }, function () { return exports.none; }); };
 //# sourceMappingURL=Opt.js.map

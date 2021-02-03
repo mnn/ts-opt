@@ -1,9 +1,12 @@
+// Do NOT split to multiple modules - it's not possible, since there would be cyclic dependencies..
+
 const someSymbol = Symbol('Some');
 const noneSymbol = Symbol('None');
 
-// Do NOT split to multiple modules - it's not possible, since there would be cyclic dependencies..
-
 export type EqualityFunction = <T>(a: T, b: T) => boolean;
+
+type NotObject<T> = T extends object ? never : T;
+type SuperUnionOf<T, U> = Exclude<U, T> extends never ? NotObject<T> : never;
 
 const refCmp: EqualityFunction = <T>(a: T, b: T): boolean => a === b;
 
@@ -409,6 +412,15 @@ export abstract class Opt<T> {
    * @param comparator
    */
   abstract equals(other: Opt<T>, comparator?: EqualityFunction): boolean;
+
+  /**
+   * Widen union (typically union of strings to string).
+   * Experimental. May be removed if it is later found out it's unsafe and unfixable.
+   * opt(someValueOfUnionType).widen<SuperOfThatUnion>() // :Opt<SuperOfThatUnion>
+   */
+  widen<U, R extends SuperUnionOf<U, T> = SuperUnionOf<U, T>>(): Opt<R> {
+    return this as unknown as Opt<R>;
+  }
 }
 
 class None<T> extends Opt<T> {

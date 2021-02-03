@@ -1,4 +1,6 @@
 export declare type EqualityFunction = <T>(a: T, b: T) => boolean;
+declare type NotObject<T> = T extends object ? never : T;
+declare type SuperUnionOf<T, U> = Exclude<U, T> extends never ? NotObject<T> : never;
 /**
  * @typeparam T Wrapped value type.
  */
@@ -361,6 +363,12 @@ export declare abstract class Opt<T> {
      * @param comparator
      */
     abstract equals(other: Opt<T>, comparator?: EqualityFunction): boolean;
+    /**
+     * Widen union (typically union of strings to string).
+     * Experimental. May be removed if it is later found out it's unsafe and unfixable.
+     * opt(someValueOfUnionType).widen<SuperOfThatUnion>() // :Opt<SuperOfThatUnion>
+     */
+    widen<U, R extends SuperUnionOf<U, T> = SuperUnionOf<U, T>>(): Opt<R>;
 }
 declare class None<T> extends Opt<T> {
     readonly '@@type': symbol;
@@ -538,4 +546,11 @@ export declare const catOpts: <A>(xs: Opt<A>[]) => A[];
  * @param f
  */
 export declare const mapOpt: <A, B>(f: (_: A) => Opt<B>) => (xs: A[]) => B[];
+/**
+ * Unwraps one level of nested [[Opt]]s. Similar to "flatten" in other libraries or languages.
+ * joinOpt(some(none)) // None
+ * joinOpt(some(some(1))) // Some(1)
+ * @param x
+ */
+export declare const joinOpt: <T>(x: Opt<Opt<T>>) => Opt<T>;
 export {};
