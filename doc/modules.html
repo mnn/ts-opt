@@ -64,8 +64,10 @@
 						<section class="tsd-index-section ">
 							<h3>Classes</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-class tsd-has-type-parameter"><a href="classes/none.html" class="tsd-kind-icon">None</a></li>
 								<li class="tsd-kind-class tsd-has-type-parameter"><a href="classes/opt.html" class="tsd-kind-icon">Opt</a></li>
 								<li class="tsd-kind-class"><a href="classes/reduxdevtoolscompatibilityhelper.html" class="tsd-kind-icon">Redux<wbr>Devtools<wbr>Compatibility<wbr>Helper</a></li>
+								<li class="tsd-kind-class tsd-has-type-parameter"><a href="classes/some.html" class="tsd-kind-icon">Some</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -149,15 +151,15 @@
 				<section class="tsd-panel tsd-member tsd-kind-variable">
 					<a name="none" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagConst">Const</span> none</h3>
-					<div class="tsd-signature tsd-kind-icon">none<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">None</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = ...</span></div>
+					<div class="tsd-signature tsd-kind-icon">none<span class="tsd-signature-symbol">:</span> <a href="classes/none.html" class="tsd-signature-type" data-tsd-kind="Class">None</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = ...</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in Opt.ts:658</li>
+							<li>Defined in Opt.ts:668</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Single global instance of [[None]].</p>
+							<p>Single global instance of <a href="classes/none.html">None</a>.</p>
 						</div>
 					</div>
 				</section>
@@ -174,14 +176,14 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:721</li>
+									<li>Defined in Opt.ts:731</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<pre><code class="language-ts"><span style="color: #000000">&lt;</span><span style="color: #267F99">A</span><span style="color: #000000">, </span><span style="color: #267F99">B</span><span style="color: #000000">&gt;(</span><span style="color: #001080">of</span><span style="color: #000000">: </span><span style="color: #267F99">Opt</span><span style="color: #000000">&lt;(</span><span style="color: #001080">_</span><span style="color: #000000">: </span><span style="color: #267F99">A</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #267F99">B</span><span style="color: #000000">&gt;) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> (</span><span style="color: #001080">oa</span><span style="color: #000000">: </span><span style="color: #267F99">Opt</span><span style="color: #000000">&lt;</span><span style="color: #267F99">A</span><span style="color: #000000">&gt;): </span><span style="color: #267F99">Opt</span><span style="color: #000000">&lt;</span><span style="color: #267F99">B</span><span style="color: #000000">&gt;</span>
 </code></pre>
-									<p>Apply <code>oa</code> to function <code>of</code>. If any argument is [[None]] then result is [[None]].</p>
+									<p>Apply <code>oa</code> to function <code>of</code>. If any argument is <a href="classes/none.html">None</a> then result is <a href="classes/none.html">None</a>.</p>
 									<pre><code class="language-ts"><span style="color: #795E26">ap</span><span style="color: #000000">(</span><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">x</span><span style="color: #000000"> &gt; </span><span style="color: #098658">0</span><span style="color: #000000">))(</span><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #098658">1</span><span style="color: #000000">)) </span><span style="color: #008000">// Opt(true)</span>
 <span style="color: #795E26">ap</span><span style="color: #000000">(</span><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">x</span><span style="color: #000000"> &gt; </span><span style="color: #098658">0</span><span style="color: #000000">))(</span><span style="color: #001080">none</span><span style="color: #000000">) </span><span style="color: #008000">// None</span>
 <span style="color: #795E26">ap</span><span style="color: #000000">(</span><span style="color: #001080">none</span><span style="color: #000000">)(</span><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #098658">1</span><span style="color: #000000">)) </span><span style="color: #008000">// None</span>
@@ -242,14 +244,14 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:735</li>
+									<li>Defined in Opt.ts:745</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<pre><code class="language-ts"><span style="color: #000000">&lt;</span><span style="color: #267F99">A</span><span style="color: #000000">, </span><span style="color: #267F99">B</span><span style="color: #000000">&gt;(</span><span style="color: #795E26">f</span><span style="color: #000000">: (</span><span style="color: #001080">_</span><span style="color: #000000">: </span><span style="color: #267F99">A</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #267F99">B</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> (</span><span style="color: #001080">oa</span><span style="color: #000000">: </span><span style="color: #267F99">Opt</span><span style="color: #000000">&lt;</span><span style="color: #267F99">A</span><span style="color: #000000">&gt;): </span><span style="color: #267F99">Opt</span><span style="color: #000000">&lt;</span><span style="color: #267F99">B</span><span style="color: #000000">&gt;</span>
 </code></pre>
-									<p>Apply <code>oa</code> to function <code>f</code>. If argument is [[None]] then result is [[None]].</p>
+									<p>Apply <code>oa</code> to function <code>f</code>. If argument is <a href="classes/none.html">None</a> then result is <a href="classes/none.html">None</a>.</p>
 									<pre><code class="language-ts"><span style="color: #795E26">apFn</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">x</span><span style="color: #000000"> &gt; </span><span style="color: #098658">0</span><span style="color: #000000">)(</span><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #098658">1</span><span style="color: #000000">)) </span><span style="color: #008000">// Opt(true)</span>
 <span style="color: #795E26">apFn</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">x</span><span style="color: #000000"> &gt; </span><span style="color: #098658">0</span><span style="color: #000000">)(</span><span style="color: #001080">none</span><span style="color: #000000">) </span><span style="color: #008000">// None</span>
 </code></pre>
@@ -326,12 +328,12 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:743</li>
+									<li>Defined in Opt.ts:753</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Transforms array of opts into an array where [[None]]s are omitted and [[Some]]s are unwrapped.</p>
+									<p>Transforms array of opts into an array where <a href="classes/none.html">None</a>s are omitted and <a href="classes/some.html">Some</a>s are unwrapped.</p>
 									<pre><code class="language-ts"><span style="color: #795E26">catOpts</span><span style="color: #000000">([</span><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #098658">1</span><span style="color: #000000">), </span><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #0000FF">null</span><span style="color: #000000">)]) </span><span style="color: #008000">// [1]</span>
 </code></pre>
 								</div>
@@ -364,7 +366,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:706</li>
+									<li>Defined in Opt.ts:716</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -394,7 +396,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:761</li>
+									<li>Defined in Opt.ts:771</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -433,7 +435,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:752</li>
+									<li>Defined in Opt.ts:762</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -510,13 +512,13 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:670</li>
+									<li>Defined in Opt.ts:680</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Main constructor function - for <code>undefined</code>, <code>null</code> and <code>NaN</code> returns [[None]].
-									Anything else is wrapped into [[Some]].</p>
+									<p>Main constructor function - for <code>undefined</code>, <code>null</code> and <code>NaN</code> returns <a href="classes/none.html">None</a>.
+									Anything else is wrapped into <a href="classes/some.html">Some</a>.</p>
 								</div>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -547,12 +549,12 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:686</li>
+									<li>Defined in Opt.ts:696</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>For empty array (<code>[]</code>) returns [[None]], otherwise acts same as <a href="modules.html#opt">opt</a>.</p>
+									<p>For empty array (<code>[]</code>) returns <a href="classes/none.html">None</a>, otherwise acts same as <a href="modules.html#opt">opt</a>.</p>
 								</div>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -583,12 +585,12 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:691</li>
+									<li>Defined in Opt.ts:701</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>For empty object (<code>{}</code>) returns [[None]], otherwise acts same as <a href="modules.html#opt">opt</a>.</p>
+									<p>For empty object (<code>{}</code>) returns <a href="classes/none.html">None</a>, otherwise acts same as <a href="modules.html#opt">opt</a>.</p>
 								</div>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -619,12 +621,12 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:697</li>
+									<li>Defined in Opt.ts:707</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>For empty string (<code>&#39;&#39;</code>) returns [[None]], otherwise acts same as <a href="modules.html#opt">opt</a>.</p>
+									<p>For empty string (<code>&#39;&#39;</code>) returns <a href="classes/none.html">None</a>, otherwise acts same as <a href="modules.html#opt">opt</a>.</p>
 								</div>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -655,12 +657,12 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:681</li>
+									<li>Defined in Opt.ts:691</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>For falsy values returns [[None]], otherwise acts same as <a href="modules.html#opt">opt</a>.</p>
+									<p>For falsy values returns <a href="classes/none.html">None</a>, otherwise acts same as <a href="modules.html#opt">opt</a>.</p>
 									<pre><code class="language-ts"><span style="color: #795E26">optFalsy</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;&#039;</span><span style="color: #000000">); </span><span style="color: #008000">// None</span>
 <span style="color: #795E26">optFalsy</span><span style="color: #000000">(</span><span style="color: #098658">0</span><span style="color: #000000">); </span><span style="color: #008000">// None</span>
 <span style="color: #795E26">optFalsy</span><span style="color: #000000">(</span><span style="color: #0000FF">false</span><span style="color: #000000">); </span><span style="color: #008000">// None</span>
@@ -696,12 +698,12 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:701</li>
+									<li>Defined in Opt.ts:711</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>For a number <code>0</code> returns [[None]], otherwise acts same as <a href="modules.html#opt">opt</a>.</p>
+									<p>For a number <code>0</code> returns <a href="classes/none.html">None</a>, otherwise acts same as <a href="modules.html#opt">opt</a>.</p>
 								</div>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -724,18 +726,18 @@
 					<a name="some" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagConst">Const</span> some</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-has-type-parameter">
-						<li class="tsd-signature tsd-kind-icon">some&lt;T&gt;<span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Readonly</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Some</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">some&lt;T&gt;<span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Readonly</span><span class="tsd-signature-symbol">&lt;</span><a href="classes/some.html" class="tsd-signature-type" data-tsd-kind="Class">Some</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:664</li>
+									<li>Defined in Opt.ts:674</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Constructs [[Some]].
+									<p>Constructs <a href="classes/some.html">Some</a>.
 									Usually it is <a href="modules.html#opt">opt</a> you are looking for (only in rare cases you want to have for example <code>Some(undefined)</code>).</p>
 								</div>
 							</div>
@@ -753,7 +755,7 @@
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Readonly</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Some</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Readonly</span><span class="tsd-signature-symbol">&lt;</span><a href="classes/some.html" class="tsd-signature-type" data-tsd-kind="Class">Some</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -770,10 +772,16 @@
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/none.html" class="tsd-kind-icon">None</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
 						<a href="classes/opt.html" class="tsd-kind-icon">Opt</a>
 					</li>
 					<li class=" tsd-kind-class">
 						<a href="classes/reduxdevtoolscompatibilityhelper.html" class="tsd-kind-icon">Redux<wbr>Devtools<wbr>Compatibility<wbr>Helper</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/some.html" class="tsd-kind-icon">Some</a>
 					</li>
 					<li class=" tsd-kind-type-alias">
 						<a href="modules.html#equalityfunction" class="tsd-kind-icon">Equality<wbr>Function</a>
@@ -831,7 +839,11 @@
 		<div class="tsd-legend-group">
 			<ul class="tsd-legend">
 				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
 				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
