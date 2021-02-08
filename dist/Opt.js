@@ -419,9 +419,11 @@ exports.catOpts = catOpts;
 var mapOpt = function (f) { return function (xs) { return exports.catOpts(xs.map(f)); }; };
 exports.mapOpt = mapOpt;
 /**
- * Unwraps one level of nested [[Opt]]s. Similar to "flatten" in other libraries or languages.
+ * Unwraps one level of nested [[Opt]]s. Similar to `flatten` in other libraries or languages.
+ * ```ts
  * joinOpt(some(none)) // None
  * joinOpt(some(some(1))) // Some(1)
+ * ```
  * @param x
  */
 var joinOpt = function (x) { return x.caseOf(function (y) { return y; }, function () { return exports.none; }); };

@@ -1,6 +1,7 @@
 export declare type EqualityFunction = <T>(a: T, b: T) => boolean;
 declare type NotObject<T> = T extends object ? never : T;
 declare type SuperUnionOf<T, U> = Exclude<U, T> extends never ? NotObject<T> : never;
+declare type WithoutOptValues<T> = NonNullable<T>;
 /**
  * @typeparam T Wrapped value type.
  */
@@ -380,7 +381,7 @@ export declare abstract class Opt<T> {
      * ```
      * @param key
      */
-    abstract prop<K extends (T extends object ? keyof T : never)>(key: K): Opt<T[K]>;
+    abstract prop<K extends (T extends object ? keyof T : never)>(key: K): Opt<WithoutOptValues<T[K]>>;
 }
 declare class None<T> extends Opt<T> {
     readonly '@@type': symbol;
@@ -414,7 +415,7 @@ declare class None<T> extends Opt<T> {
     narrow<U>(_guard: (value: any) => value is U): Opt<U>;
     print(tag?: string): Opt<T>;
     equals(other: Opt<T>, _comparator?: EqualityFunction): boolean;
-    prop<K extends (T extends object ? keyof T : never)>(_key: K): Opt<T[K]>;
+    prop<K extends (T extends object ? keyof T : never)>(_key: K): Opt<WithoutOptValues<T[K]>>;
 }
 declare class Some<T> extends Opt<T> {
     private _value;
@@ -451,7 +452,7 @@ declare class Some<T> extends Opt<T> {
     narrow<U>(guard: (value: any) => value is U): Opt<U>;
     print(tag?: string): Opt<T>;
     equals(other: Opt<T>, comparator?: EqualityFunction): boolean;
-    prop<K extends (T extends object ? keyof T : never)>(key: K): Opt<T[K]>;
+    prop<K extends (T extends object ? keyof T : never)>(key: K): Opt<WithoutOptValues<T[K]>>;
 }
 declare const someSerializedType = "Opt/Some";
 declare const noneSerializedType = "Opt/None";
@@ -561,9 +562,11 @@ export declare const catOpts: <A>(xs: Opt<A>[]) => A[];
  */
 export declare const mapOpt: <A, B>(f: (_: A) => Opt<B>) => (xs: A[]) => B[];
 /**
- * Unwraps one level of nested [[Opt]]s. Similar to "flatten" in other libraries or languages.
+ * Unwraps one level of nested [[Opt]]s. Similar to `flatten` in other libraries or languages.
+ * ```ts
  * joinOpt(some(none)) // None
  * joinOpt(some(some(1))) // Some(1)
+ * ```
  * @param x
  */
 export declare const joinOpt: <T>(x: Opt<Opt<T>>) => Opt<T>;

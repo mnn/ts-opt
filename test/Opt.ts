@@ -38,6 +38,9 @@ const isNumber = (x: any): x is number => typeof x === 'number';
 const isObject = (x: any): x is object => typeof x === 'object';
 const isArray = (x: any): x is unknown[] => Array.isArray(x);
 
+const head = <T>(xs: T[]): undefined | T => xs[0];
+const eq = (a: unknown) => (b: unknown) => a === b;
+
 type EnumAB = 'a' | 'b';
 type Enum12 = 1 | 2;
 type EnumABC = 'a' | 'b' | 'c';
@@ -54,6 +57,10 @@ type WidenPProps<T> = WidenPBase<T> & { moreStuff: T };
 
 class WidenFakeComponent<P extends WidenPProps<T>, T> {
   constructor(public props: P) { }
+}
+
+export interface FilterPart {
+  values?: string[];
 }
 
 const suppressUnused = (...xs: unknown[]) => expect(xs).to.be.eq(xs);
@@ -425,6 +432,10 @@ describe('opt', () => {
     const a = {x: 1};
     const xValue = opt(a).prop('x').orCrash('missing prop x'); // 1
     expect(xValue).to.be.eq(1);
+    // removing of "opty" values from type parameter of result
+    const getValue2 = (filter?: FilterPart): boolean | null => opt(filter).prop('values').map(xs => xs[0] === 'true').orNull();
+    const getValue3 = (filter?: FilterPart): boolean | null => opt(filter).prop('values').map(head).map(eq('true')).orNull();
+    suppressUnused(getValue2, getValue3);
   });
 });
 

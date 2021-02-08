@@ -5,6 +5,7 @@ export type EqualityFunction = <T>(a: T, b: T) => boolean;
 type NotObject<T> = T extends object ? never : T;
 type SuperUnionOf<T, U> = Exclude<U, T> extends never ? NotObject<T> : never;
 const refCmp: EqualityFunction = <T>(a: T, b: T): boolean => a === b;
+type WithoutOptValues<T> = NonNullable<T>;
 
 /**
  * @typeparam T Wrapped value type.
@@ -429,7 +430,7 @@ export abstract class Opt<T> {
    * ```
    * @param key
    */
-  abstract prop<K extends (T extends object ? keyof T : never)>(key: K): Opt<T[K]>;
+  abstract prop<K extends (T extends object ? keyof T : never)>(key: K): Opt<WithoutOptValues<T[K]>>;
 }
 
 class None<T> extends Opt<T> {
@@ -506,7 +507,7 @@ class None<T> extends Opt<T> {
     return other.isEmpty;
   }
 
-  prop<K extends (T extends object ? keyof T : never)>(_key: K): Opt<T[K]> { return none; }
+  prop<K extends (T extends object ? keyof T : never)>(_key: K): Opt<WithoutOptValues<T[K]>> { return none; }
 }
 
 class Some<T> extends Opt<T> {
@@ -609,7 +610,7 @@ class Some<T> extends Opt<T> {
     return comparator(this._value, other.orCrash('Some expected'));
   }
 
-  prop<K extends (T extends object ? keyof T : never)>(key: K): Opt<T[K]> { return opt(this._value[key]); }
+  prop<K extends (T extends object ? keyof T : never)>(key: K): Opt<WithoutOptValues<T[K]>> { return opt(this._value[key]) as Opt<WithoutOptValues<T[K]>>; }
 }
 
 const someSerializedType = 'Opt/Some';
@@ -718,7 +719,7 @@ export const isOpt = (x: unknown): x is Opt<unknown> => x instanceof Opt;
  * @typeparam B output of function inside `of`
  */
 export const ap = <A, B>(of: Opt<(_: A) => B>) => (oa: Opt<A>): Opt<B> =>
-  oa.caseOf(a => of.map(f => f(a)), () => none as Opt<B>);
+  oa.caseOf(a => of.map(f => f(a)), () => none as unknown as Opt<B>);
 /**
  * ```ts
  * <A, B>(f: (_: A) => B) => (oa: Opt<A>): Opt<B>
