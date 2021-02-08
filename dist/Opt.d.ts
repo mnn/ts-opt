@@ -383,6 +383,11 @@ export declare abstract class Opt<T> {
      */
     abstract prop<K extends (T extends object ? keyof T : never)>(key: K): Opt<WithoutOptValues<T[K]>>;
 }
+/**
+ * Empty [[Opt]].
+ * @notExported
+ * @see [[Opt]]
+ */
 declare class None<T> extends Opt<T> {
     readonly '@@type': symbol;
     get isEmpty(): boolean;
@@ -417,6 +422,11 @@ declare class None<T> extends Opt<T> {
     equals(other: Opt<T>, _comparator?: EqualityFunction): boolean;
     prop<K extends (T extends object ? keyof T : never)>(_key: K): Opt<WithoutOptValues<T[K]>>;
 }
+/**
+ * [[Opt]] with a value inside.
+ * @notExported
+ * @see [[Opt]]
+ */
 declare class Some<T> extends Opt<T> {
     private _value;
     readonly '@@type': symbol;

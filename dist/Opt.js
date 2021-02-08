@@ -119,6 +119,11 @@ var Opt = /** @class */ (function () {
     return Opt;
 }());
 exports.Opt = Opt;
+/**
+ * Empty [[Opt]].
+ * @notExported
+ * @see [[Opt]]
+ */
 var None = /** @class */ (function (_super) {
     __extends(None, _super);
     function None() {
@@ -175,6 +180,11 @@ var None = /** @class */ (function (_super) {
     None.prototype.prop = function (_key) { return exports.none; };
     return None;
 }(Opt));
+/**
+ * [[Opt]] with a value inside.
+ * @notExported
+ * @see [[Opt]]
+ */
 var Some = /** @class */ (function (_super) {
     __extends(Some, _super);
     function Some(_value) {
