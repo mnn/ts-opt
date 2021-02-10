@@ -520,8 +520,21 @@ export declare const optEmptyObject: <T extends object>(x: T | null | undefined)
 export declare const optEmptyString: <T>(x: "" | T | null | undefined) => Opt<T>;
 /**
  * For a number `0` returns [[None]], otherwise acts same as [[opt]].
+ * @param x
  */
 export declare const optZero: <T>(x: 0 | T | null | undefined) => Opt<T>;
+/**
+ * For numbers lesser than `0` returns [[None]], otherwise acts same as [[opt]].
+ * Useful for strange functions which return `-1` or other negative numbers on failure.
+ * ```ts
+ * optNegative(undefined) // None
+ * optNegative(1) // Some(1)
+ * optNegative(0) // Some(0)
+ * optNegative(-1) // None
+ * ```
+ * @param x
+ */
+export declare const optNegative: (x: number | undefined | null) => Opt<number>;
 /**
  * Is given value an instance of [[Opt]]?
  * @param x

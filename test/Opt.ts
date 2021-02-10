@@ -17,6 +17,7 @@ import {
   optEmptyObject,
   optEmptyString,
   optFalsy,
+  optNegative,
   optZero,
   ReduxDevtoolsCompatibilityHelper,
   some,
@@ -533,6 +534,22 @@ describe('optZero', () => {
     expect(optZero('a').isEmpty).to.be.false;
     expect(optZero({}).isEmpty).to.be.false;
     expect(optZero([]).isEmpty).to.be.false;
+  });
+});
+
+describe('optNegative', () => {
+  it('construction', () => {
+    expect(optNegative(undefined).isEmpty).to.be.true;
+    expect(optNegative(NaN).isEmpty).to.be.true;
+    expect(optNegative(null).isEmpty).to.be.true;
+    expect(optNegative(-1).isEmpty).to.be.true;
+    expect(optNegative(-0.0001).isEmpty).to.be.true;
+    expect(optNegative(-10000).isEmpty).to.be.true;
+    expect(optNegative(0).isEmpty).to.be.false;
+    expect(optNegative(0).orNull()).to.be.eq(0);
+    expect(optNegative(1).isEmpty).to.be.false;
+    expect(optNegative(1).orNull()).to.be.eq(1);
+    expect(optNegative(10000).isEmpty).to.be.false;
   });
 });
 

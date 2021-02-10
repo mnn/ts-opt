@@ -1,4 +1,5 @@
 "use strict";
+// Do NOT split to multiple modules - it's not possible, since there would be cyclic dependencies..
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -20,8 +21,7 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = void 0;
-// Do NOT split to multiple modules - it's not possible, since there would be cyclic dependencies..
+exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 var refCmp = function (a, b) { return a === b; };
@@ -367,9 +367,23 @@ var optEmptyString = function (x) { return x === '' ? exports.none : exports.opt
 exports.optEmptyString = optEmptyString;
 /**
  * For a number `0` returns [[None]], otherwise acts same as [[opt]].
+ * @param x
  */
 var optZero = function (x) { return x === 0 ? exports.none : exports.opt(x); };
 exports.optZero = optZero;
+/**
+ * For numbers lesser than `0` returns [[None]], otherwise acts same as [[opt]].
+ * Useful for strange functions which return `-1` or other negative numbers on failure.
+ * ```ts
+ * optNegative(undefined) // None
+ * optNegative(1) // Some(1)
+ * optNegative(0) // Some(0)
+ * optNegative(-1) // None
+ * ```
+ * @param x
+ */
+var optNegative = function (x) { return typeof x === 'number' && x < 0 ? exports.none : exports.opt(x); };
+exports.optNegative = optNegative;
 /**
  * Is given value an instance of [[Opt]]?
  * @param x
