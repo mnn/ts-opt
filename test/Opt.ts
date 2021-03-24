@@ -21,6 +21,12 @@ import {
   optZero,
   ReduxDevtoolsCompatibilityHelper,
   some,
+  orCrash,
+  map,
+  flatMap,
+  fromArray,
+  toArray,
+  chainToOpt,
 } from '../src/Opt';
 
 chai.use(spies);
@@ -41,6 +47,7 @@ const isArray = (x: any): x is unknown[] => Array.isArray(x);
 
 const head = <T>(xs: T[]): undefined | T => xs[0];
 const eq = (a: unknown) => (b: unknown) => a === b;
+const id = <T>(x: T): T => x;
 
 type EnumAB = 'a' | 'b';
 type Enum12 = 1 | 2;
@@ -65,6 +72,8 @@ export interface FilterPart {
 }
 
 const suppressUnused = (...xs: unknown[]) => expect(xs).to.be.eq(xs);
+
+const flow2: <A, B, C>(f: (_: A) => B, g: (_: B) => C) => ((_: A) => C) = (f, g) => x => g(f(x));
 
 describe('opt', () => {
   beforeEach(() => {
@@ -724,5 +733,115 @@ describe('joinOpt', () => {
     expect(joinOpt(some(none)).orNull()).to.eql(null);
     expect(joinOpt(some(some(1))).orNull()).to.eql(1);
     expect(joinOpt(none).orNull()).to.eql(null);
+  });
+});
+
+describe('fromArray', () => {
+  it('creates opt from array', () => {
+    expect(fromArray([7]).orNull()).to.be.eq(7);
+    expect(fromArray([]).orNull()).to.be.eq(null);
+  });
+});
+
+describe('toArray', () => {
+  it('converts opt to array', () => {
+    expect(toArray(opt(1))).to.be.eql([1]);
+    expect(toArray(none)).to.be.eql([]);
+  });
+});
+
+describe('orCrash', () => {
+  const f = flow2(opt, orCrash('msg'));
+  it('crashes on none', () => {
+    expect(() => f(null)).to.throw;
+  });
+  it('returns value on some', () => {
+    expect(f(1)).to.eq(1);
+  });
+});
+
+describe('map', () => {
+  it('is correctly typed', () => {
+    expect(map((x: number) => x)([])).to.eql([]);
+    // ---
+    const r1: number[] = map((x: number) => x + 1)([1]);
+    // @ts-expect-error
+    const r1Fail: Opt<number> = map((x: number) => x + 1)([1]);
+    suppressUnused(r1Fail);
+    expect(r1).to.eql([2]);
+    expect(map((_x: number) => false)(none).orNull()).to.be.null;
+    expect(map((x: number) => x + 1)(some(1)).orNull()).to.eq(2);
+    // ---
+    const r2: Opt<number> = map((x: number) => x + 1)(opt(1));
+    // @ts-expect-error
+    const r2Fail: number[] = map((x: number) => x + 1)(opt(1));
+    suppressUnused(r2Fail);
+    expect(r2.orNull()).to.eq(2);
+  });
+
+  it('works with flow', () => {
+    const r1 = flow2(id, id)([]);
+    expect(r1).to.be.eql([]);
+    // ---
+    const r2 = flow2(map(add1), id)([1, 2]);
+    expect(r2).to.be.eql([2, 3]);
+    // ---
+    const r3 = flow2(map(add1), id)(opt(1));
+    expect(r3.orNull()).to.be.eq(2);
+    // ---
+    const r4 = flow2(id, id)(opt(1));
+    expect(r4.orNull()).to.be.eq(1);
+    // ---
+    const r5 = flow2(map(add1), id)(opt(1));
+    expect(r5.orNull()).to.be.eq(2);
+    // ---
+    const r6 = flow2(map(add1), map(gt0))(opt(1));
+    expect(r6.orNull()).to.be.true;
+  });
+});
+
+describe('flatMap', () => {
+  it('is correctly typed', () => {
+    expect(flatMap((x: number) => [x])([])).to.eql([]);
+    // ---
+    const r1: number[] = flatMap((x: number) => [x + 1])([1]);
+    // @ts-expect-error
+    const r1Fail: Opt<number> = flatMap((x: number) => [x + 1])([1]);
+    suppressUnused(r1Fail);
+    expect(r1).to.eql([2]);
+    expect(flatMap((_x: number) => none)(none).orNull()).to.be.null;
+    expect(flatMap((x: number) => opt(x + 1))(some(1)).orNull()).to.eq(2);
+    // ---
+    const r2: Opt<number> = flatMap((x: number) => opt(x + 1))(opt(1));
+    // @ts-expect-error
+    const r2Fail: number[] = flatMap((x: number) => opt(x + 1))(opt(1));
+    suppressUnused(r2Fail);
+    expect(r2.orNull()).to.eq(2);
+  });
+
+  it('works with flow', () => {
+    const r1 = flow2(flatMap((x: number) => [x, x * 10]), id)([1, 2]);
+    expect(r1).to.eql([1, 10, 2, 20]);
+    // ---
+    const r2 = flow2((x: number[]) => x, flatMap(x => [x, x * 10]))([1, 2, 3]);
+    expect(r2).to.eql([1, 10, 2, 20, 3, 30]);
+  });
+
+  describe('works with arrays', () => {
+    it('longer than one item', () => {
+      const r1: number[] = flatMap((x: number) => [x, x * 2])([1, 2, 3]);
+      expect(r1).to.eql([1, 2, 2, 4, 3, 6]);
+    });
+    it('removing and adding', () => {
+      const r1: number[] = flatMap((x: number) => x > 2 ? [] : [x, x + 10])([1, 2, 3]);
+      expect(r1).to.eql([1, 11, 2, 12]);
+    });
+  });
+});
+
+describe('chainToOpt', () => {
+  it('chains to opt', () => {
+    expect(chainToOpt(_x => undefined)(opt(1)).orNull()).to.be.null;
+    expect(chainToOpt(_x => 'x')(opt(1)).orNull()).to.be.eq('x');
   });
 });

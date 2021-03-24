@@ -801,3 +801,45 @@ export const mapOpt = <A, B>(f: (_: A) => Opt<B>) => (xs: A[]): B[] => catOpts(x
  * @param x
  */
 export const joinOpt = <T>(x: Opt<Opt<T>>): Opt<T> => x.caseOf<Opt<T>>(y => y, () => none);
+
+/**
+ * @see [[Opt#orCrash]]
+ */
+export const orCrash = <T>(msg: string) => (x: Opt<T>): T => x.orCrash(msg);
+
+/**
+ * @see [[Opt#fromArray]]
+ */
+export const fromArray = Opt.fromArray;
+
+/**
+ * @see [[Opt#toArray]]
+ */
+export const toArray = <T>(x: Opt<T>): [] | [T] => x.toArray();
+
+type MapFn = <T, U>(f: (_: T) => U) => <I extends (Opt<T> | T[]), O extends (I extends Opt<T> ? Opt<U> : U[])>(x: I) => O;
+
+/**
+ * @see [[Opt#map]]
+ */
+export const map: MapFn = (f: any) => (x: any) => x.map(f);
+
+// type FlatMapFn = <T, U, O extends (Opt<U> | U[])>(f: (_: T) => O) => <I extends (O extends Opt<U> ? Opt<T> : T[])>(x: I) => O;
+interface FlatMapFn {
+  <T, U>(f: (_: T) => U[]): (x: T[]) => U[];
+  <T, U>(f: (_: T) => Opt<U>): (x: Opt<T>) => Opt<U>;
+}
+/**
+ * @see [[Opt#flatMap]]
+ */
+export const flatMap: FlatMapFn = (f: any) => (x: any) => isOpt(x) ? x.flatMap(f) : x.map(f).flat();
+
+/**
+ * @see [[Opt#flatMap]]
+ */
+export const chain = flatMap;
+
+/**
+ * @see [[Opt#chainToOpt]]
+ */
+export const chainToOpt = <T, U>(f: (_: T) => U | undefined | null) => (x: Opt<T>): Opt<U> => x.chainToOpt(f);
