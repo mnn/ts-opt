@@ -593,4 +593,37 @@ export declare const mapOpt: <A, B>(f: (_: A) => Opt<B>) => (xs: A[]) => B[];
  * @param x
  */
 export declare const joinOpt: <T>(x: Opt<Opt<T>>) => Opt<T>;
+/**
+ * @see [[Opt#orCrash]]
+ */
+export declare const orCrash: <T>(msg: string) => (x: Opt<T>) => T;
+/**
+ * @see [[Opt#fromArray]]
+ */
+export declare const fromArray: typeof Opt.fromArray;
+/**
+ * @see [[Opt#toArray]]
+ */
+export declare const toArray: <T>(x: Opt<T>) => [] | [T];
+declare type MapFn = <T, U>(f: (_: T) => U) => <I extends (Opt<T> | T[]), O extends (I extends Opt<T> ? Opt<U> : U[])>(x: I) => O;
+/**
+ * @see [[Opt#map]]
+ */
+export declare const map: MapFn;
+interface FlatMapFn {
+    <T, U>(f: (_: T) => U[]): (x: T[]) => U[];
+    <T, U>(f: (_: T) => Opt<U>): (x: Opt<T>) => Opt<U>;
+}
+/**
+ * @see [[Opt#flatMap]]
+ */
+export declare const flatMap: FlatMapFn;
+/**
+ * @see [[Opt#flatMap]]
+ */
+export declare const chain: FlatMapFn;
+/**
+ * @see [[Opt#chainToOpt]]
+ */
+export declare const chainToOpt: <T, U>(f: (_: T) => U | null | undefined) => (x: Opt<T>) => Opt<U>;
 export {};

@@ -27,6 +27,19 @@ import {
   fromArray,
   toArray,
   chainToOpt,
+  orUndef,
+  orNull,
+  caseOf,
+  contains,
+  exists,
+  forAll,
+  orElse,
+  orElseOpt,
+  bimap,
+  zip,
+  zip3,
+  zip4,
+  zip5,
 } from '../src/Opt';
 
 chai.use(spies);
@@ -73,7 +86,7 @@ export interface FilterPart {
 
 const suppressUnused = (...xs: unknown[]) => expect(xs).to.be.eq(xs);
 
-const flow2: <A, B, C>(f: (_: A) => B, g: (_: B) => C) => ((_: A) => C) = (f, g) => x => g(f(x));
+const flow2: <A, B = unknown, C = unknown>(f: (_: A) => B, g: (_: B) => C) => ((_: A) => C) = (f, g) => x => g(f(x));
 
 describe('opt', () => {
   beforeEach(() => {
@@ -843,5 +856,156 @@ describe('chainToOpt', () => {
   it('chains to opt', () => {
     expect(chainToOpt(_x => undefined)(opt(1)).orNull()).to.be.null;
     expect(chainToOpt(_x => 'x')(opt(1)).orNull()).to.be.eq('x');
+  });
+});
+
+describe('orUndef', () => {
+  it('returns value', () => {
+    expect(orUndef(opt(1))).to.be.eq(1);
+  });
+  it('returns undefined on none', () => {
+    expect(orUndef(none)).to.be.undefined;
+  });
+});
+
+describe('orNull', () => {
+  it('returns value', () => {
+    expect(orNull(opt(1))).to.be.eq(1);
+  });
+  it('returns null on none', () => {
+    expect(orNull(none)).to.be.null;
+  });
+});
+
+describe('caseOf', () => {
+  it('uses onSome with some', () => {
+    expect(caseOf(add1)(() => 7)(opt(1))).to.be.eq(2);
+  });
+  it('uses onNone with none', () => {
+    expect(caseOf(add1)(() => 7)(none)).to.be.eq(7);
+  });
+});
+
+describe('contains', () => {
+  it('positive', () => {
+    expect(contains(1)(opt(1))).to.be.true;
+  });
+  it('negative', () => {
+    expect(contains(2)(opt(1))).to.be.false;
+    expect(contains(2)(none)).to.be.false;
+  });
+});
+
+describe('exists', () => {
+  it('positive', () => {
+    expect(exists(eq(1))(opt(1))).to.be.true;
+  });
+  it('negative', () => {
+    expect(exists(eq(2))(opt(1))).to.be.false;
+    expect(exists(eq(2))(none)).to.be.false;
+  });
+});
+
+describe('forAll', () => {
+  it('positive', () => {
+    expect(forAll(eq(1))(opt(1))).to.be.true;
+    expect(forAll(eq(2))(none)).to.be.true;
+  });
+  it('negative', () => {
+    expect(forAll(eq(2))(opt(1))).to.be.false;
+  });
+});
+
+describe('orElse', () => {
+  it('returns value on some', () => {
+    expect(orElse(0)(opt(1))).to.be.eq(1);
+  });
+  it('returns default value on none', () => {
+    expect(orElse(0)(none)).to.be.eq(0);
+  });
+});
+
+describe('orElseOpt', () => {
+  it('returns value on some', () => {
+    expect(orElseOpt(opt(0))(opt(1)).orNull()).to.be.eq(1);
+  });
+  it('returns default value on none', () => {
+    expect(orElseOpt(opt(0))(none).orNull()).to.be.eq(0);
+  });
+});
+
+describe('bimap', () => {
+  it('uses onSome with some', () => {
+    expect(bimap(add1)(() => 7)(opt(1)).orNull()).to.be.eq(2);
+  });
+  it('uses onNone with none', () => {
+    expect(bimap(add1)(() => 7)(none).orNull()).to.be.eq(7);
+  });
+});
+
+describe('zip', () => {
+  describe('checks types', () => {
+    it('opt', () => {
+      const a: Opt<[boolean, number]> = zip(opt(1))(opt(true));
+      // @ts-expect-error
+      const aFail: Opt<[number, boolean]> = zip(opt(1))(opt(true));
+      suppressUnused(a, aFail);
+    });
+    it('array', () => {
+      const a: [boolean, number][] = zip([1, 2])([true, false]);
+      // @ts-expect-error
+      const aFail: [number, boolean][] = zip(opt(1))(opt(true));
+      suppressUnused(a, aFail);
+    });
+    it('mixing', () => {
+      // @ts-expect-error
+      const aFail: [boolean, number][] = zip(opt(1))(opt(true));
+      suppressUnused(aFail);
+    });
+  });
+
+  it('opt', () => {
+    expect(zip(opt(2))(opt(1)).orNull()).to.be.eql([1, 2]);
+    expect(zip(opt(1))(none).orNull()).to.be.eql(null);
+    expect(zip(none)(opt(2)).orNull()).to.be.eql(null);
+    expect(zip(none)(none).orNull()).to.be.eql(null);
+  });
+
+  describe('array', () => {
+    it('empty', () => {
+      expect(zip([])([])).to.be.eql([]);
+    });
+    it('same length', () => {
+      expect(zip([2])([1])).to.be.eql([[1, 2]]);
+    });
+    it('different length', () => {
+      expect(zip([3])([1, 2])).to.be.eql([[1, 3]]);
+      expect(zip([3, 4])([1])).to.be.eql([[1, 3]]);
+    });
+  });
+
+  it('works with flow', () => {
+    const a: Opt<[number, string]> = flow2((x: Opt<number>) => x, zip(opt('x')))(opt(2));
+    expect(a.orNull()).to.be.eql([2, 'x']);
+    const b: Opt<[number, string]> = flow2(zip(opt('x')), id)(opt(2));
+    expect(b.orNull()).to.be.eql([2, 'x']);
+  });
+});
+
+describe('zip3', () => {
+  it('zips', () => {
+    expect(zip3(opt(1))(opt(2))(opt(3)).orNull()).to.be.eql([3, 1, 2]);
+  });
+});
+
+describe('zip4', () => {
+  it('zips', () => {
+    expect(zip4(opt(1))(opt(2))(opt(3))(opt(4)).orNull()).to.be.eql([4, 1, 2, 3]);
+  });
+});
+
+describe('zip5', () => {
+  it('zips', () => {
+    expect(zip5(opt(1))(opt(2))(opt(3))(opt(4))(opt(5)).orNull()).to.be.eql([5, 1, 2, 3, 4]);
   });
 });
