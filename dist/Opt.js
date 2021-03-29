@@ -21,7 +21,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from) {
     return to;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.chainToOpt = exports.chain = exports.flatMap = exports.map = exports.toArray = exports.fromArray = exports.orCrash = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = void 0;
+exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.bimap = exports.orElseOpt = exports.orElse = exports.forAll = exports.exists = exports.contains = exports.caseOf = exports.orNull = exports.orUndef = exports.orCrash = exports.chainToOpt = exports.chain = exports.flatMap = exports.map = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 var refCmp = function (a, b) { return a === b; };
@@ -453,36 +453,77 @@ exports.mapOpt = mapOpt;
 var joinOpt = function (x) { return x.caseOf(function (y) { return y; }, function () { return exports.none; }); };
 exports.joinOpt = joinOpt;
 /**
- * @see [[Opt#orCrash]]
- */
-var orCrash = function (msg) { return function (x) { return x.orCrash(msg); }; };
-exports.orCrash = orCrash;
-/**
- * @see [[Opt#fromArray]]
+ * @see [[Opt.fromArray]]
  */
 exports.fromArray = Opt.fromArray;
 /**
- * @see [[Opt#toArray]]
+ * @see [[Opt.toArray]]
  */
 var toArray = function (x) { return x.toArray(); };
 exports.toArray = toArray;
 /**
- * @see [[Opt#map]]
+ * Same as [[Opt.map]], but also support arrays.
+ * @see [[Opt.map]]
  */
 var map = function (f) { return function (x) { return x.map(f); }; };
 exports.map = map;
 /**
- * @see [[Opt#flatMap]]
+ * Same as [[Opt.flatMap]], but also support arrays.
+ * @see [[Opt.flatMap]]
  */
 var flatMap = function (f) { return function (x) { return exports.isOpt(x) ? x.flatMap(f) : x.map(f).flat(); }; };
 exports.flatMap = flatMap;
-/**
- * @see [[Opt#flatMap]]
- */
+/** @see [[Opt.flatMap]] */
 exports.chain = exports.flatMap;
-/**
- * @see [[Opt#chainToOpt]]
- */
+/** @see [[Opt.chainToOpt]] */
 var chainToOpt = function (f) { return function (x) { return x.chainToOpt(f); }; };
 exports.chainToOpt = chainToOpt;
+/** @see [[Opt.orCrash]] */
+var orCrash = function (msg) { return function (x) { return x.orCrash(msg); }; };
+exports.orCrash = orCrash;
+/** @see [[Opt.orUndef]] */
+var orUndef = function (x) { return x.orUndef(); };
+exports.orUndef = orUndef;
+/** @see [[Opt.orNull]] */
+var orNull = function (x) { return x.orNull(); };
+exports.orNull = orNull;
+/** @see [[Opt.caseOf]] */
+var caseOf = function (onSome) { return function (onNone) { return function (x) { return x.caseOf(onSome, onNone); }; }; };
+exports.caseOf = caseOf;
+/** @see [[Opt.contains]] */
+var contains = function (y) { return function (x) { return x.contains(y); }; };
+exports.contains = contains;
+/** @see [[Opt.exists]] */
+var exists = function (y) { return function (x) { return x.exists(y); }; };
+exports.exists = exists;
+/** @see [[Opt.forAll]] */
+var forAll = function (p) { return function (x) { return x.forAll(p); }; };
+exports.forAll = forAll;
+/** @see [[Opt.orElse]] */
+var orElse = function (e) { return function (x) { return x.orElse(e); }; };
+exports.orElse = orElse;
+/** @see [[Opt.orElseOpt]] */
+var orElseOpt = function (def) { return function (x) { return x.orElseOpt(def); }; };
+exports.orElseOpt = orElseOpt;
+/** @see [[Opt.bimap]] */
+var bimap = function (someF) { return function (noneF) { return function (x) { return x.bimap(someF, noneF); }; }; };
+exports.bimap = bimap;
+var zipArray = function (a, b) { return __spreadArray([], Array(Math.min(b.length, a.length))).map(function (_, i) { return [a[i], b[i]]; }); };
+/**
+ * Same as [[Opt.zip]], but also support arrays.
+ * @see [[Opt.zip]]
+ */
+var zip = function (other) { return function (x) { return exports.isOpt(x) ? x.zip(other) : zipArray(x, other); }; };
+exports.zip = zip;
+/** @see [[Opt.zip3]] */
+var zip3 = function (a) { return function (b) { return function (x) { return x.zip3(a, b); }; }; };
+exports.zip3 = zip3;
+/** @see [[Opt.zip4]] */
+var zip4 = function (a) { return function (b) { return function (c) { return function (x) { return x.zip4(a, b, c); }; }; }; };
+exports.zip4 = zip4;
+/** @see [[Opt.zip5]] */
+var zip5 = function (a) { return function (b) { return function (c) { return function (d) { return function (x) {
+    return x.zip5(a, b, c, d);
+}; }; }; }; };
+exports.zip5 = zip5;
 //# sourceMappingURL=Opt.js.map

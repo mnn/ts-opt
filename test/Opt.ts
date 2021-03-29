@@ -40,6 +40,9 @@ import {
   zip3,
   zip4,
   zip5,
+  filter,
+  narrow,
+  print,
 } from '../src/Opt';
 
 chai.use(spies);
@@ -1007,5 +1010,56 @@ describe('zip4', () => {
 describe('zip5', () => {
   it('zips', () => {
     expect(zip5(opt(1))(opt(2))(opt(3))(opt(4))(opt(5)).orNull()).to.be.eql([5, 1, 2, 3, 4]);
+  });
+});
+
+describe('filter', () => {
+  it('checks types', () => {
+    const a: Opt<number> = filter(gt0)(opt(1));
+    // @ts-expect-error
+    const aFail: number[] = filter(gt0)(opt(1));
+    suppressUnused(a, aFail);
+    // ---
+    const b: number[] = filter(gt0)([7]);
+    // @ts-expect-error
+    const bFail: Opt<number> = filter(gt0)([]);
+    suppressUnused(b, bFail);
+    // ---
+  });
+  describe('filters', () => {
+    it('opt', () => {
+      expect(filter((x: number) => x > 1)(opt(1)).orNull()).to.be.null;
+      expect(filter(gt0)(opt(1)).orNull()).to.be.eq(1);
+    });
+    it('array', () => {
+      expect(filter((x: number) => x > 1)([1])).to.be.eql([]);
+      expect(filter(gt0)([-1, 0, 1])).to.be.eql([1]);
+    });
+  });
+});
+
+describe('narrow', () => {
+  it('narrows', () => {
+    const a: Opt<string> = narrow(isString)(opt(1));
+    expect(a.orNull()).to.eq(null);
+    const b: Opt<number> = narrow(isNumber)(opt(1));
+    expect(b.orNull()).to.eq(1);
+  });
+});
+
+describe('print', () => {
+  beforeEach(() => {
+    sandbox.on(console, ['log']);
+  });
+
+  afterEach(() => {
+    sandbox.restore();
+  });
+
+  it('prints', () => {
+    expect(console.log).to.have.been.called.exactly(0);
+    print()(opt(1));
+    expect(console.log).to.have.been.called.exactly(1);
+    expect(console.log).to.have.been.called.with('Some:', 1);
   });
 });
