@@ -908,3 +908,10 @@ export const narrow = <U>(guard: (value: any) => value is U) => <T>(x: Opt<T>): 
 
 /** @see [[Opt.print]] */
 export const print = (tag?: string) => <T>(x: Opt<T>): Opt<T> => x.print(tag);
+
+/** @see [[Opt.prop]] */
+export const prop = <
+    T extends object,
+    K extends (T extends object ? keyof T : never) = T extends object ? keyof T : never
+  >(key: K) => (x: Opt<T>): Opt<WithoutOptValues<T[K]>> =>
+    x.prop(key);

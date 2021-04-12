@@ -43,6 +43,7 @@ import {
   filter,
   narrow,
   print,
+  prop,
 } from '../src/Opt';
 
 chai.use(spies);
@@ -1061,5 +1062,19 @@ describe('print', () => {
     print()(opt(1));
     expect(console.log).to.have.been.called.exactly(1);
     expect(console.log).to.have.been.called.with('Some:', 1);
+  });
+});
+
+describe('prop', () => {
+  it('pos', () => {
+    const a: ObjA = {a: true};
+    expect(prop<ObjA>('a')(opt(a)).orNull()).to.be.true;
+    flow2((x: Opt<ObjA>) => x, prop('a'))(opt(a));
+  });
+
+  it('neg', () => {
+    expect(prop<ObjA>('a')(none).orNull()).to.be.null;
+    // @ts-expect-error
+    prop<ObjA>('b');
   });
 });

@@ -603,7 +603,7 @@ export declare const fromArray: typeof Opt.fromArray;
 export declare const toArray: <T>(x: Opt<T>) => [] | [T];
 declare type MapFn = <T, U>(f: (_: T) => U) => <I extends (Opt<T> | T[]), O extends (I extends Opt<T> ? Opt<U> : U[])>(x: I) => O;
 /**
- * Same as [[Opt.map]], but also support arrays.
+ * Same as [[Opt.map]], but also supports arrays.
  * @see [[Opt.map]]
  */
 export declare const map: MapFn;
@@ -612,7 +612,7 @@ interface FlatMapFn {
     <T, U>(f: (_: T) => Opt<U>): (x: Opt<T>) => Opt<U>;
 }
 /**
- * Same as [[Opt.flatMap]], but also support arrays.
+ * Same as [[Opt.flatMap]], but also supports arrays.
  * @see [[Opt.flatMap]]
  */
 export declare const flatMap: FlatMapFn;
@@ -645,7 +645,7 @@ interface ZipFn {
     <U>(other: U[]): <T>(x: T[]) => [T, U][];
 }
 /**
- * Same as [[Opt.zip]], but also support arrays.
+ * Same as [[Opt.zip]], but also supports arrays.
  * @see [[Opt.zip]]
  */
 export declare const zip: ZipFn;
@@ -655,4 +655,14 @@ export declare const zip3: <A>(a: Opt<A>) => <B>(b: Opt<B>) => <T>(x: Opt<T>) =>
 export declare const zip4: <A>(a: Opt<A>) => <B>(b: Opt<B>) => <C>(c: Opt<C>) => <T>(x: Opt<T>) => Opt<[T, A, B, C]>;
 /** @see [[Opt.zip5]] */
 export declare const zip5: <A>(a: Opt<A>) => <B>(b: Opt<B>) => <C>(c: Opt<C>) => <D>(d: Opt<D>) => <T>(x: Opt<T>) => Opt<[T, A, B, C, D]>;
+declare type FilterFn = <T>(p: (_: T) => boolean) => <U extends Opt<T> | T[]>(x: U) => U extends Opt<T> ? Opt<T> : T[];
+/**
+ * Same as [[Opt.filter]], but also supports arrays.
+ * @see [[Opt.filter]]
+ */
+export declare const filter: FilterFn;
+/** @see [[Opt.narrow]] */
+export declare const narrow: <U>(guard: (value: any) => value is U) => <T>(x: Opt<T>) => Opt<U>;
+/** @see [[Opt.print]] */
+export declare const print: (tag?: string | undefined) => <T>(x: Opt<T>) => Opt<T>;
 export {};

@@ -94,6 +94,7 @@
 								<li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#chaintoopt" class="tsd-kind-icon">chain<wbr>ToOpt</a></li>
 								<li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#contains" class="tsd-kind-icon">contains</a></li>
 								<li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#exists" class="tsd-kind-icon">exists</a></li>
+								<li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#filter" class="tsd-kind-icon">filter</a></li>
 								<li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#flatmap" class="tsd-kind-icon">flat<wbr>Map</a></li>
 								<li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#forall" class="tsd-kind-icon">for<wbr>All</a></li>
 								<li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#fromarray" class="tsd-kind-icon">from<wbr>Array</a></li>
@@ -101,6 +102,7 @@
 								<li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#joinopt" class="tsd-kind-icon">join<wbr>Opt</a></li>
 								<li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#map" class="tsd-kind-icon">map</a></li>
 								<li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#mapopt" class="tsd-kind-icon">map<wbr>Opt</a></li>
+								<li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#narrow" class="tsd-kind-icon">narrow</a></li>
 								<li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#opt" class="tsd-kind-icon">opt</a></li>
 								<li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#optemptyarray" class="tsd-kind-icon">opt<wbr>Empty<wbr>Array</a></li>
 								<li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#optemptyobject" class="tsd-kind-icon">opt<wbr>Empty<wbr>Object</a></li>
@@ -113,6 +115,7 @@
 								<li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#orelseopt" class="tsd-kind-icon">or<wbr>Else<wbr>Opt</a></li>
 								<li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#ornull" class="tsd-kind-icon">or<wbr>Null</a></li>
 								<li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#orundef" class="tsd-kind-icon">or<wbr>Undef</a></li>
+								<li class="tsd-kind-function"><a href="modules.html#print" class="tsd-kind-icon">print</a></li>
 								<li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#some" class="tsd-kind-icon">some</a></li>
 								<li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#toarray" class="tsd-kind-icon">to<wbr>Array</a></li>
 								<li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#zip" class="tsd-kind-icon">zip</a></li>
@@ -931,6 +934,87 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-has-type-parameter">
+					<a name="filter" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> filter</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">filter&lt;T&gt;<span class="tsd-signature-symbol">(</span>p<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>_<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span>&lt;U&gt;<span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol"> extends </span><a href="classes/opt.html" class="tsd-signature-type" data-tsd-kind="Class">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> ? </span><a href="classes/opt.html" class="tsd-signature-type" data-tsd-kind="Class">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> : </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in Opt.ts:904</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Same as <a href="classes/opt.html#filter">Opt.filter</a>, but also supports arrays.</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>see</dt>
+									<dd><p><a href="classes/opt.html#filter">Opt.filter</a></p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>T</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>p: <span class="tsd-signature-symbol">(</span>_<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-signature">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>_<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>_: <span class="tsd-signature-type">T</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns &lt;U&gt;<span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol"> extends </span><a href="classes/opt.html" class="tsd-signature-type" data-tsd-kind="Class">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> ? </span><a href="classes/opt.html" class="tsd-signature-type" data-tsd-kind="Class">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> : </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span></h4>
+							<ul class="tsd-parameters">
+								<li class="tsd-parameter-signature">
+									<ul class="tsd-signatures tsd-kind-type-literal tsd-has-type-parameter">
+										<li class="tsd-signature tsd-kind-icon">&lt;U&gt;<span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol"> extends </span><a href="classes/opt.html" class="tsd-signature-type" data-tsd-kind="Class">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> ? </span><a href="classes/opt.html" class="tsd-signature-type" data-tsd-kind="Class">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> : </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span></li>
+									</ul>
+									<ul class="tsd-descriptions">
+										<li class="tsd-description">
+											<h4 class="tsd-type-parameters-title">Type parameters</h4>
+											<ul class="tsd-type-parameters">
+												<li>
+													<h4>U<span class="tsd-signature-symbol">: </span><a href="classes/opt.html" class="tsd-signature-type" data-tsd-kind="Class">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span></h4>
+												</li>
+											</ul>
+											<h4 class="tsd-parameters-title">Parameters</h4>
+											<ul class="tsd-parameters">
+												<li>
+													<h5>x: <span class="tsd-signature-type">U</span></h5>
+												</li>
+											</ul>
+											<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">U</span><span class="tsd-signature-symbol"> extends </span><a href="classes/opt.html" class="tsd-signature-type" data-tsd-kind="Class">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> ? </span><a href="classes/opt.html" class="tsd-signature-type" data-tsd-kind="Class">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> : </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span></h4>
+										</li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-has-type-parameter">
 					<a name="flatmap" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagConst">Const</span> flat<wbr>Map</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-has-type-parameter">
@@ -946,7 +1030,7 @@
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Same as <a href="classes/opt.html#flatmap">Opt.flatMap</a>, but also support arrays.</p>
+									<p>Same as <a href="classes/opt.html#flatmap">Opt.flatMap</a>, but also supports arrays.</p>
 								</div>
 								<dl class="tsd-comment-tags">
 									<dt>see</dt>
@@ -1015,7 +1099,7 @@
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Same as <a href="classes/opt.html#flatmap">Opt.flatMap</a>, but also support arrays.</p>
+									<p>Same as <a href="classes/opt.html#flatmap">Opt.flatMap</a>, but also supports arrays.</p>
 								</div>
 								<dl class="tsd-comment-tags">
 									<dt>see</dt>
@@ -1270,7 +1354,7 @@
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Same as <a href="classes/opt.html#map">Opt.map</a>, but also support arrays.</p>
+									<p>Same as <a href="classes/opt.html#map">Opt.map</a>, but also supports arrays.</p>
 								</div>
 								<dl class="tsd-comment-tags">
 									<dt>see</dt>
@@ -1412,6 +1496,84 @@
 												</li>
 											</ul>
 											<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">B</span><span class="tsd-signature-symbol">[]</span></h4>
+										</li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-has-type-parameter">
+					<a name="narrow" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> narrow</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">narrow&lt;U&gt;<span class="tsd-signature-symbol">(</span>guard<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">value</span><span class="tsd-signature-symbol"> is </span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span>&lt;T&gt;<span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><a href="classes/opt.html" class="tsd-signature-type" data-tsd-kind="Class">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><a href="classes/opt.html" class="tsd-signature-type" data-tsd-kind="Class">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in Opt.ts:907</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<dl class="tsd-comment-tags">
+									<dt>see</dt>
+									<dd><p><a href="classes/opt.html#narrow">Opt.narrow</a></p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>U</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>guard: <span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">value</span><span class="tsd-signature-symbol"> is </span><span class="tsd-signature-type">U</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-signature">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">value</span><span class="tsd-signature-symbol"> is </span><span class="tsd-signature-type">U</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>value: <span class="tsd-signature-type">any</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">value</span><span class="tsd-signature-symbol"> is </span><span class="tsd-signature-type">U</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns &lt;T&gt;<span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><a href="classes/opt.html" class="tsd-signature-type" data-tsd-kind="Class">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><a href="classes/opt.html" class="tsd-signature-type" data-tsd-kind="Class">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<ul class="tsd-parameters">
+								<li class="tsd-parameter-signature">
+									<ul class="tsd-signatures tsd-kind-type-literal tsd-has-type-parameter">
+										<li class="tsd-signature tsd-kind-icon">&lt;T&gt;<span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><a href="classes/opt.html" class="tsd-signature-type" data-tsd-kind="Class">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="classes/opt.html" class="tsd-signature-type" data-tsd-kind="Class">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></li>
+									</ul>
+									<ul class="tsd-descriptions">
+										<li class="tsd-description">
+											<h4 class="tsd-type-parameters-title">Type parameters</h4>
+											<ul class="tsd-type-parameters">
+												<li>
+													<h4>T</h4>
+												</li>
+											</ul>
+											<h4 class="tsd-parameters-title">Parameters</h4>
+											<ul class="tsd-parameters">
+												<li>
+													<h5>x: <a href="classes/opt.html" class="tsd-signature-type" data-tsd-kind="Class">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+												</li>
+											</ul>
+											<h4 class="tsd-returns-title">Returns <a href="classes/opt.html" class="tsd-signature-type" data-tsd-kind="Class">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></h4>
 										</li>
 									</ul>
 								</li>
@@ -1911,6 +2073,60 @@
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function">
+					<a name="print" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> print</h3>
+					<ul class="tsd-signatures tsd-kind-function">
+						<li class="tsd-signature tsd-kind-icon">print<span class="tsd-signature-symbol">(</span>tag<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span>&lt;T&gt;<span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><a href="classes/opt.html" class="tsd-signature-type" data-tsd-kind="Class">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><a href="classes/opt.html" class="tsd-signature-type" data-tsd-kind="Class">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in Opt.ts:910</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<dl class="tsd-comment-tags">
+									<dt>see</dt>
+									<dd><p><a href="classes/opt.html#print">Opt.print</a></p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> tag: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns &lt;T&gt;<span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><a href="classes/opt.html" class="tsd-signature-type" data-tsd-kind="Class">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><a href="classes/opt.html" class="tsd-signature-type" data-tsd-kind="Class">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<ul class="tsd-parameters">
+								<li class="tsd-parameter-signature">
+									<ul class="tsd-signatures tsd-kind-type-literal tsd-has-type-parameter">
+										<li class="tsd-signature tsd-kind-icon">&lt;T&gt;<span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><a href="classes/opt.html" class="tsd-signature-type" data-tsd-kind="Class">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="classes/opt.html" class="tsd-signature-type" data-tsd-kind="Class">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></li>
+									</ul>
+									<ul class="tsd-descriptions">
+										<li class="tsd-description">
+											<h4 class="tsd-type-parameters-title">Type parameters</h4>
+											<ul class="tsd-type-parameters">
+												<li>
+													<h4>T</h4>
+												</li>
+											</ul>
+											<h4 class="tsd-parameters-title">Parameters</h4>
+											<ul class="tsd-parameters">
+												<li>
+													<h5>x: <a href="classes/opt.html" class="tsd-signature-type" data-tsd-kind="Class">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+												</li>
+											</ul>
+											<h4 class="tsd-returns-title">Returns <a href="classes/opt.html" class="tsd-signature-type" data-tsd-kind="Class">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h4>
+										</li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-has-type-parameter">
 					<a name="some" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagConst">Const</span> some</h3>
@@ -2000,7 +2216,7 @@
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Same as <a href="classes/opt.html#zip">Opt.zip</a>, but also support arrays.</p>
+									<p>Same as <a href="classes/opt.html#zip">Opt.zip</a>, but also supports arrays.</p>
 								</div>
 								<dl class="tsd-comment-tags">
 									<dt>see</dt>
@@ -2054,7 +2270,7 @@
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Same as <a href="classes/opt.html#zip">Opt.zip</a>, but also support arrays.</p>
+									<p>Same as <a href="classes/opt.html#zip">Opt.zip</a>, but also supports arrays.</p>
 								</div>
 								<dl class="tsd-comment-tags">
 									<dt>see</dt>
@@ -2484,6 +2700,9 @@
 						<a href="modules.html#exists" class="tsd-kind-icon">exists</a>
 					</li>
 					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="modules.html#filter" class="tsd-kind-icon">filter</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
 						<a href="modules.html#flatmap" class="tsd-kind-icon">flat<wbr>Map</a>
 					</li>
 					<li class=" tsd-kind-function tsd-has-type-parameter">
@@ -2503,6 +2722,9 @@
 					</li>
 					<li class=" tsd-kind-function tsd-has-type-parameter">
 						<a href="modules.html#mapopt" class="tsd-kind-icon">map<wbr>Opt</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="modules.html#narrow" class="tsd-kind-icon">narrow</a>
 					</li>
 					<li class=" tsd-kind-function tsd-has-type-parameter">
 						<a href="modules.html#opt" class="tsd-kind-icon">opt</a>
@@ -2539,6 +2761,9 @@
 					</li>
 					<li class=" tsd-kind-function tsd-has-type-parameter">
 						<a href="modules.html#orundef" class="tsd-kind-icon">or<wbr>Undef</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="modules.html#print" class="tsd-kind-icon">print</a>
 					</li>
 					<li class=" tsd-kind-function tsd-has-type-parameter">
 						<a href="modules.html#some" class="tsd-kind-icon">some</a>
