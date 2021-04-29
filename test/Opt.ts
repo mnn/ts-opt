@@ -44,6 +44,10 @@ import {
   narrow,
   print,
   prop,
+  someOrCrash,
+  orFalse,
+  orTrue,
+  orNaN, equals,
 } from '../src/Opt';
 
 chai.use(spies);
@@ -871,6 +875,15 @@ describe('chainToOpt', () => {
   });
 });
 
+describe('someOrCrash', () => {
+  it('crashes on none', () => {
+    expect(() => someOrCrash('x')(none)).to.throw('x');
+  });
+  it('returns some on some', () => {
+    expect(someOrCrash('x')(opt(0)).orNull()).to.be.eq(0);
+  });
+});
+
 describe('orUndef', () => {
   it('returns value', () => {
     expect(orUndef(opt(1))).to.be.eq(1);
@@ -886,6 +899,33 @@ describe('orNull', () => {
   });
   it('returns null on none', () => {
     expect(orNull(none)).to.be.null;
+  });
+});
+
+describe('orFalse', () => {
+  it('returns value', () => {
+    expect(orFalse(opt(1))).to.be.eq(1);
+  });
+  it('returns false on none', () => {
+    expect(orFalse(none)).to.be.false;
+  });
+});
+
+describe('orTrue', () => {
+  it('returns value', () => {
+    expect(orTrue(opt(1))).to.be.eq(1);
+  });
+  it('returns false on none', () => {
+    expect(orTrue(none)).to.be.true;
+  });
+});
+
+describe('orNaN', () => {
+  it('returns value', () => {
+    expect(orNaN(opt(1))).to.be.eq(1);
+  });
+  it('returns false on none', () => {
+    expect(orNaN(none)).to.be.NaN;
   });
 });
 
@@ -1070,6 +1110,19 @@ describe('print', () => {
     print()(opt(1));
     expect(console.log).to.have.been.called.exactly(1);
     expect(console.log).to.have.been.called.with('Some:', 1);
+  });
+});
+
+describe('equals', () => {
+  it('pos', () => {
+    expect(equals(opt(1))(opt(1))).to.be.true;
+    expect(equals(none)(none)).to.be.true;
+    expect(equals(opt(1), (_a, _b) => true)(opt(2))).to.be.true;
+  });
+  it('neg', () => {
+    expect(equals(opt(1))(none)).to.be.false;
+    expect(equals(none)(opt(1))).to.be.false;
+    expect(equals(opt(0))(opt(1))).to.be.false;
   });
 });
 

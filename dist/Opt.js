@@ -21,7 +21,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from) {
     return to;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.print = exports.narrow = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.bimap = exports.orElseOpt = exports.orElse = exports.forAll = exports.exists = exports.contains = exports.caseOf = exports.orNull = exports.orUndef = exports.orCrash = exports.chainToOpt = exports.chain = exports.flatMap = exports.map = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = void 0;
+exports.prop = exports.equals = exports.print = exports.narrow = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.bimap = exports.orElseOpt = exports.orElse = exports.forAll = exports.exists = exports.contains = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOpt = exports.chain = exports.flatMap = exports.map = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 var refCmp = function (a, b) { return a === b; };
@@ -140,7 +140,11 @@ var None = /** @class */ (function (_super) {
     None.prototype.flatMap = function (_f) { return exports.none; };
     None.prototype.map = function () { return exports.none; };
     None.prototype.orCrash = function (msg) { throw new Error(msg); };
+    /**
+     * @deprecated Please use [[someOrCrash]] instead
+     */
     None.prototype.optOrCrash = function (msg) { throw new Error(msg); };
+    None.prototype.someOrCrash = function (msg) { throw new Error(msg); };
     None.prototype.orNull = function () { return null; };
     None.prototype.orUndef = function () { return undefined; };
     None.prototype.orFalse = function () { return false; };
@@ -211,7 +215,11 @@ var Some = /** @class */ (function (_super) {
         return new Some(f(this._value));
     };
     Some.prototype.orCrash = function (_msg) { return this._value; };
+    /**
+     * @deprecated Please use [[someOrCrash]] instead
+     */
     Some.prototype.optOrCrash = function (_msg) { return this; };
+    Some.prototype.someOrCrash = function (_msg) { return this; };
     Some.prototype.orNull = function () { return this._value; };
     Some.prototype.orUndef = function () { return this._value; };
     Some.prototype.orFalse = function () { return this._value; };
@@ -478,6 +486,9 @@ exports.chain = exports.flatMap;
 /** @see [[Opt.chainToOpt]] */
 var chainToOpt = function (f) { return function (x) { return x.chainToOpt(f); }; };
 exports.chainToOpt = chainToOpt;
+/** @see [[Opt.someOrCrash]] */
+var someOrCrash = function (msg) { return function (x) { return x.someOrCrash(msg); }; };
+exports.someOrCrash = someOrCrash;
 /** @see [[Opt.orCrash]] */
 var orCrash = function (msg) { return function (x) { return x.orCrash(msg); }; };
 exports.orCrash = orCrash;
@@ -487,6 +498,15 @@ exports.orUndef = orUndef;
 /** @see [[Opt.orNull]] */
 var orNull = function (x) { return x.orNull(); };
 exports.orNull = orNull;
+/** @see [[Opt.orFalse]] */
+var orFalse = function (x) { return x.orFalse(); };
+exports.orFalse = orFalse;
+/** @see [[Opt.orTrue]] */
+var orTrue = function (x) { return x.orTrue(); };
+exports.orTrue = orTrue;
+/** @see [[Opt.orNaN]] */
+var orNaN = function (x) { return x.orNaN(); };
+exports.orNaN = orNaN;
 /** @see [[Opt.caseOf]] */
 var caseOf = function (onSome) { return function (onNone) { return function (x) { return x.caseOf(onSome, onNone); }; }; };
 exports.caseOf = caseOf;
@@ -538,4 +558,17 @@ exports.narrow = narrow;
 /** @see [[Opt.print]] */
 var print = function (tag) { return function (x) { return x.print(tag); }; };
 exports.print = print;
+/** @see [[Opt.equals]] */
+var equals = function (other, comparator) {
+    if (comparator === void 0) { comparator = refCmp; }
+    return function (x) {
+        return x.equals(other, comparator);
+    };
+};
+exports.equals = equals;
+/** @see [[Opt.prop]] */
+var prop = function (key) { return function (x) {
+    return x.prop(key);
+}; };
+exports.prop = prop;
 //# sourceMappingURL=Opt.js.map

@@ -862,6 +862,9 @@ export const chain = flatMap;
 /** @see [[Opt.chainToOpt]] */
 export const chainToOpt = <T, U>(f: (_: T) => U | undefined | null) => (x: Opt<T>): Opt<U> => x.chainToOpt(f);
 
+/** @see [[Opt.someOrCrash]] */
+export const someOrCrash = <T>(msg: string) => (x: Opt<T>): Some<T> => x.someOrCrash(msg);
+
 /** @see [[Opt.orCrash]] */
 export const orCrash = <T>(msg: string) => (x: Opt<T>): T => x.orCrash(msg);
 
@@ -870,6 +873,15 @@ export const orUndef = <T>(x: Opt<T>): T | undefined => x.orUndef();
 
 /** @see [[Opt.orNull]] */
 export const orNull = <T>(x: Opt<T>): T | null => x.orNull();
+
+/** @see [[Opt.orFalse]] */
+export const orFalse = <T>(x: Opt<T>): T | false => x.orFalse();
+
+/** @see [[Opt.orTrue]] */
+export const orTrue = <T>(x: Opt<T>): T | true => x.orTrue();
+
+/** @see [[Opt.orNaN]] */
+export const orNaN = <T>(x: Opt<T>): T | number => x.orNaN();
 
 /** @see [[Opt.caseOf]] */
 export const caseOf = <T, R>(onSome: (x: T) => R) => (onNone: () => R) => (x: Opt<T>): R => x.caseOf(onSome, onNone);
@@ -931,6 +943,10 @@ export const narrow = <U>(guard: (value: any) => value is U) => <T>(x: Opt<T>): 
 
 /** @see [[Opt.print]] */
 export const print = (tag?: string) => <T>(x: Opt<T>): Opt<T> => x.print(tag);
+
+/** @see [[Opt.equals]] */
+export const equals = <T>(other: Opt<T>, comparator: EqualityFunction = refCmp) => (x: Opt<T>): boolean =>
+  x.equals(other, comparator);
 
 /** @see [[Opt.prop]] */
 export const prop = <T extends object,

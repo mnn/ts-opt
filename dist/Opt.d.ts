@@ -99,8 +99,20 @@ export declare abstract class Opt<T> {
      * ```
      *
      * @param msg
+     * @deprecated Please use [[someOrCrash]] instead
      */
     abstract optOrCrash(msg: string): Opt<T>;
+    /**
+     * Crash when called on [[None]], pass [[Opt]] instance on [[Some]].
+     *
+     * ```ts
+     * some(1).someOrCrash('fail') // Some(1)
+     * none.someOrCrash('fail') // throws
+     * ```
+     *
+     * @param msg
+     */
+    abstract someOrCrash(msg: string): Some<T>;
     /**
      * Returns value for [[Some]] or `undefined` for [[None]].
      *
@@ -395,7 +407,11 @@ declare class None<T> extends Opt<T> {
     flatMap<U>(_f: (_: T) => Opt<U>): Opt<U>;
     map<U>(): Opt<U>;
     orCrash(msg: string): T;
+    /**
+     * @deprecated Please use [[someOrCrash]] instead
+     */
     optOrCrash(msg: string): Opt<T>;
+    someOrCrash(msg: string): Some<T>;
     orNull(): T | null;
     orUndef(): T | undefined;
     orFalse(): false | T;
@@ -437,7 +453,11 @@ declare class Some<T> extends Opt<T> {
     flatMap<U>(f: (_: T) => Opt<U>): Opt<U>;
     map<U>(f: (_: T) => U): Opt<U>;
     orCrash(_msg: string): T;
+    /**
+     * @deprecated Please use [[someOrCrash]] instead
+     */
     optOrCrash(_msg: string): Opt<T>;
+    someOrCrash(_msg: string): Some<T>;
     orNull(): T | null;
     orUndef(): T | undefined;
     orFalse(): false | T;
@@ -620,12 +640,20 @@ export declare const flatMap: FlatMapFn;
 export declare const chain: FlatMapFn;
 /** @see [[Opt.chainToOpt]] */
 export declare const chainToOpt: <T, U>(f: (_: T) => U | null | undefined) => (x: Opt<T>) => Opt<U>;
+/** @see [[Opt.someOrCrash]] */
+export declare const someOrCrash: <T>(msg: string) => (x: Opt<T>) => Some<T>;
 /** @see [[Opt.orCrash]] */
 export declare const orCrash: <T>(msg: string) => (x: Opt<T>) => T;
 /** @see [[Opt.orUndef]] */
 export declare const orUndef: <T>(x: Opt<T>) => T | undefined;
 /** @see [[Opt.orNull]] */
 export declare const orNull: <T>(x: Opt<T>) => T | null;
+/** @see [[Opt.orFalse]] */
+export declare const orFalse: <T>(x: Opt<T>) => false | T;
+/** @see [[Opt.orTrue]] */
+export declare const orTrue: <T>(x: Opt<T>) => true | T;
+/** @see [[Opt.orNaN]] */
+export declare const orNaN: <T>(x: Opt<T>) => number | T;
 /** @see [[Opt.caseOf]] */
 export declare const caseOf: <T, R>(onSome: (x: T) => R) => (onNone: () => R) => (x: Opt<T>) => R;
 /** @see [[Opt.contains]] */
@@ -665,4 +693,8 @@ export declare const filter: FilterFn;
 export declare const narrow: <U>(guard: (value: any) => value is U) => <T>(x: Opt<T>) => Opt<U>;
 /** @see [[Opt.print]] */
 export declare const print: (tag?: string | undefined) => <T>(x: Opt<T>) => Opt<T>;
+/** @see [[Opt.equals]] */
+export declare const equals: <T>(other: Opt<T>, comparator?: EqualityFunction) => (x: Opt<T>) => boolean;
+/** @see [[Opt.prop]] */
+export declare const prop: <T extends object, K extends T extends object ? keyof T : never = T extends object ? keyof T : never>(key: K) => (x: Opt<T>) => Opt<NonNullable<T[K]>>;
 export {};
