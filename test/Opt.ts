@@ -47,7 +47,9 @@ import {
   someOrCrash,
   orFalse,
   orTrue,
-  orNaN, equals,
+  orNaN,
+  equals,
+  pipe,
 } from '../src/Opt';
 
 chai.use(spies);
@@ -245,6 +247,15 @@ describe('opt', () => {
   it('pipe', () => {
     expect(some(1).pipe(isOpt)).to.be.true;
     expect(none.pipe(isOpt)).to.be.true;
+    expect(some(1).pipe(x => x.map(add1), x => x.orNull())).to.be.eq(2);
+    expect(some(1).pipe(orElse(7), add1, add1)).to.be.eq(3);
+    expect(some(1).pipe(orElse(7), add1, add1, add1)).to.be.eq(4);
+    expect(some(1).pipe(orElse(7), add1, add1, add1, add1)).to.be.eq(5);
+    expect(some(1).pipe(orElse(7), add1, add1, add1, add1, add1)).to.be.eq(6);
+    expect(some(1).pipe(orElse(7), add1, add1, add1, add1, add1, add1)).to.be.eq(7);
+    expect(some(1).pipe(orElse(7), add1, add1, add1, add1, add1, add1, add1)).to.be.eq(8);
+    expect(some(1).pipe(orElse(7), add1, add1, add1, add1, add1, add1, add1, add1)).to.be.eq(9);
+    expect(some(1).pipe(orElse(7), add1, add1, add1, add1, add1, add1, add1, add1, add1)).to.be.eq(10);
   });
 
   it('onNone', () => {
@@ -935,6 +946,21 @@ describe('caseOf', () => {
   });
   it('uses onNone with none', () => {
     expect(caseOf(add1)(() => 7)(none)).to.be.eq(7);
+  });
+});
+
+describe('pipe', () => {
+  it('pipes', () => {
+    expect(pipe(0, add1)).to.be.eq(1);
+    expect(pipe(0, add1, add1)).to.be.eq(2);
+    expect(pipe(0, add1, add1, add1)).to.be.eq(3);
+    expect(pipe(0, add1, add1, add1, add1)).to.be.eq(4);
+    expect(pipe(0, add1, add1, add1, add1, add1)).to.be.eq(5);
+    expect(pipe(0, add1, add1, add1, add1, add1, add1)).to.be.eq(6);
+    expect(pipe(0, add1, add1, add1, add1, add1, add1, add1)).to.be.eq(7);
+    expect(pipe(0, add1, add1, add1, add1, add1, add1, add1, add1)).to.be.eq(8);
+    expect(pipe(0, add1, add1, add1, add1, add1, add1, add1, add1, add1)).to.be.eq(9);
+    expect(pipe(0, add1, x => x.toString(10), x => x.length)).to.be.eq(1);
   });
 });
 

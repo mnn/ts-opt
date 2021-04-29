@@ -11,6 +11,29 @@ type SuperUnionOf<T, U> = Exclude<U, T> extends never ? NotObject<T> : never;
 
 type WithoutOptValues<T> = NonNullable<T>;
 
+// Don't modify manually, generated via utils/genFlowyThings
+interface PipeInClassFn<T> {
+  <R>(f1: (_: Opt<T>) => R): R;
+
+  <A1, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => R): R;
+
+  <A1, A2, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => A2, f3: (_: A2) => R): R;
+
+  <A1, A2, A3, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => R): R;
+
+  <A1, A2, A3, A4, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => R): R;
+
+  <A1, A2, A3, A4, A5, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => R): R;
+
+  <A1, A2, A3, A4, A5, A6, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => R): R;
+
+  <A1, A2, A3, A4, A5, A6, A7, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => R): R;
+
+  <A1, A2, A3, A4, A5, A6, A7, A8, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => A8, f9: (_: A8) => R): R;
+
+  <A1, A2, A3, A4, A5, A6, A7, A8, A9, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => A8, f9: (_: A8) => A9, f10: (_: A9) => R): R;
+}
+
 /**
  * @typeparam T Wrapped value type.
  */
@@ -220,9 +243,9 @@ export abstract class Opt<T> {
    * none.pipe(x => x.isEmpty) // true
    * ```
    *
-   * @param f
+   * @param fs Functions in call chain
    */
-  pipe<R>(f: (x: Opt<T>) => R): R { return f(this); }
+  pipe: PipeInClassFn<T> = (...fs: any[]) => fs.reduce((acc, x) => x(acc), this);
 
   /**
    * Compares inner value with given value using `===`. Always `false` for [[None]].
@@ -885,6 +908,36 @@ export const orNaN = <T>(x: Opt<T>): T | number => x.orNaN();
 
 /** @see [[Opt.caseOf]] */
 export const caseOf = <T, R>(onSome: (x: T) => R) => (onNone: () => R) => (x: Opt<T>): R => x.caseOf(onSome, onNone);
+
+// Don't modify manually, generated via utils/genFlowyThings
+interface PipeFn {
+  <I, R>(x: I, f1: (_: I) => R): R;
+
+  <I, A1, R>(x: I, f1: (_: I) => A1, f2: (_: A1) => R): R;
+
+  <I, A1, A2, R>(x: I, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => R): R;
+
+  <I, A1, A2, A3, R>(x: I, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => R): R;
+
+  <I, A1, A2, A3, A4, R>(x: I, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => R): R;
+
+  <I, A1, A2, A3, A4, A5, R>(x: I, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => R): R;
+
+  <I, A1, A2, A3, A4, A5, A6, R>(x: I, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => R): R;
+
+  <I, A1, A2, A3, A4, A5, A6, A7, R>(x: I, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => R): R;
+
+  <I, A1, A2, A3, A4, A5, A6, A7, A8, R>(x: I, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => A8, f9: (_: A8) => R): R;
+
+  <I, A1, A2, A3, A4, A5, A6, A7, A8, A9, R>(x: I, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => A8, f9: (_: A8) => A9, f10: (_: A9) => R): R;
+}
+
+/**
+ * Similar to [[Opt.pipe]], but the first argument is the input.
+ * Supports arbitrary input type, not just [[Opt]].
+ * @see [[Opt.pipe]]
+ */
+export const pipe: PipeFn = <I>(x: I, ...fs: any[]) => fs.reduce((acc, y) => y(acc), x);
 
 /** @see [[Opt.contains]] */
 export const contains = <T>(y: T) => (x: Opt<T>): boolean => x.contains(y);
