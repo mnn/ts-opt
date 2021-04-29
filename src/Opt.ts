@@ -120,8 +120,21 @@ export abstract class Opt<T> {
    * ```
    *
    * @param msg
+   * @deprecated Please use [[someOrCrash]] instead
    */
   abstract optOrCrash(msg: string): Opt<T>;
+
+  /**
+   * Crash when called on [[None]], pass [[Opt]] instance on [[Some]].
+   *
+   * ```ts
+   * some(1).someOrCrash('fail') // Some(1)
+   * none.someOrCrash('fail') // throws
+   * ```
+   *
+   * @param msg
+   */
+  abstract someOrCrash(msg: string): Some<T>;
 
   /**
    * Returns value for [[Some]] or `undefined` for [[None]].
@@ -455,7 +468,12 @@ class None<T> extends Opt<T> {
 
   orCrash(msg: string): T { throw new Error(msg); }
 
+  /**
+   * @deprecated Please use [[someOrCrash]] instead
+   */
   optOrCrash(msg: string): Opt<T> { throw new Error(msg); }
+
+  someOrCrash(msg: string): Some<T> { throw new Error(msg); }
 
   orNull(): T | null { return null; }
 
@@ -545,7 +563,12 @@ class Some<T> extends Opt<T> {
 
   orCrash(_msg: string): T { return this._value; }
 
+  /**
+   * @deprecated Please use [[someOrCrash]] instead
+   */
   optOrCrash(_msg: string): Opt<T> { return this; }
+
+  someOrCrash(_msg: string): Some<T> { return this; }
 
   orNull(): T | null { return this._value; }
 
@@ -910,8 +933,6 @@ export const narrow = <U>(guard: (value: any) => value is U) => <T>(x: Opt<T>): 
 export const print = (tag?: string) => <T>(x: Opt<T>): Opt<T> => x.print(tag);
 
 /** @see [[Opt.prop]] */
-export const prop = <
-    T extends object,
-    K extends (T extends object ? keyof T : never) = T extends object ? keyof T : never
-  >(key: K) => (x: Opt<T>): Opt<WithoutOptValues<T[K]>> =>
-    x.prop(key);
+export const prop = <T extends object,
+  K extends (T extends object ? keyof T : never) = T extends object ? keyof T : never>(key: K) => (x: Opt<T>): Opt<WithoutOptValues<T[K]>> =>
+  x.prop(key);

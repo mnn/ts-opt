@@ -192,6 +192,14 @@ describe('opt', () => {
     expect(opt([]).optOrCrash('').orNull()).to.be.eql([]);
   });
 
+  it('someOrCrash', () => {
+    expect(() => opt(null).someOrCrash('')).to.throw();
+    expect(opt(0).someOrCrash('').orNull()).to.be.eq(0);
+    expect(opt([]).someOrCrash('').orNull()).to.be.eql([]);
+    const some0 = opt(0).someOrCrash('');
+    expect(some0.value).to.be.eql(0);
+  });
+
   it('map', () => {
     expect(opt(1).map(add1).orNull()).to.eq(2);
     expect(opt(null as unknown as number).map(add1).orUndef()).to.eq(undefined);
