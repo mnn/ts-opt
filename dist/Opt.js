@@ -8,20 +8,20 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __spreadArrays = (this && this.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = void 0;
+exports.prop = exports.equals = exports.print = exports.narrow = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.bimap = exports.orElseOpt = exports.orElse = exports.forAll = exports.exists = exports.contains = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOpt = exports.chain = exports.flatMap = exports.map = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 var refCmp = function (a, b) { return a === b; };
@@ -140,7 +140,11 @@ var None = /** @class */ (function (_super) {
     None.prototype.flatMap = function (_f) { return exports.none; };
     None.prototype.map = function () { return exports.none; };
     None.prototype.orCrash = function (msg) { throw new Error(msg); };
+    /**
+     * @deprecated Please use [[someOrCrash]] instead
+     */
     None.prototype.optOrCrash = function (msg) { throw new Error(msg); };
+    None.prototype.someOrCrash = function (msg) { throw new Error(msg); };
     None.prototype.orNull = function () { return null; };
     None.prototype.orUndef = function () { return undefined; };
     None.prototype.orFalse = function () { return false; };
@@ -170,7 +174,7 @@ var None = /** @class */ (function (_super) {
     None.prototype.narrow = function (_guard) { return this; };
     None.prototype.print = function (tag) {
         // tslint:disable-next-line:no-console
-        console.log.apply(console, __spreadArrays(exports.opt(tag).map(function (x) { return ["[" + x + "]"]; }).orElse([]), ['None']));
+        console.log.apply(console, __spreadArray(__spreadArray([], exports.opt(tag).map(function (x) { return ["[" + x + "]"]; }).orElse([])), ['None']));
         return this;
     };
     None.prototype.equals = function (other, _comparator) {
@@ -211,7 +215,11 @@ var Some = /** @class */ (function (_super) {
         return new Some(f(this._value));
     };
     Some.prototype.orCrash = function (_msg) { return this._value; };
+    /**
+     * @deprecated Please use [[someOrCrash]] instead
+     */
     Some.prototype.optOrCrash = function (_msg) { return this; };
+    Some.prototype.someOrCrash = function (_msg) { return this; };
     Some.prototype.orNull = function () { return this._value; };
     Some.prototype.orUndef = function () { return this._value; };
     Some.prototype.orFalse = function () { return this._value; };
@@ -266,7 +274,7 @@ var Some = /** @class */ (function (_super) {
     };
     Some.prototype.print = function (tag) {
         // tslint:disable-next-line:no-console
-        console.log.apply(console, __spreadArrays(exports.opt(tag).map(function (x) { return ["[" + x + "]"]; }).orElse([]), ['Some:', this._value]));
+        console.log.apply(console, __spreadArray(__spreadArray([], exports.opt(tag).map(function (x) { return ["[" + x + "]"]; }).orElse([])), ['Some:', this._value]));
         return this;
     };
     Some.prototype.equals = function (other, comparator) {
@@ -430,7 +438,7 @@ exports.apFn = apFn;
  * @param xs
  */
 var catOpts = function (xs) {
-    return xs.reduce(function (acc, x) { return x.caseOf(function (y) { return __spreadArrays(acc, [y]); }, function () { return acc; }); }, []);
+    return xs.reduce(function (acc, x) { return x.caseOf(function (y) { return __spreadArray(__spreadArray([], acc), [y]); }, function () { return acc; }); }, []);
 };
 exports.catOpts = catOpts;
 /**
@@ -452,4 +460,115 @@ exports.mapOpt = mapOpt;
  */
 var joinOpt = function (x) { return x.caseOf(function (y) { return y; }, function () { return exports.none; }); };
 exports.joinOpt = joinOpt;
+/**
+ * @see [[Opt.fromArray]]
+ */
+exports.fromArray = Opt.fromArray;
+/**
+ * @see [[Opt.toArray]]
+ */
+var toArray = function (x) { return x.toArray(); };
+exports.toArray = toArray;
+/**
+ * Same as [[Opt.map]], but also supports arrays.
+ * @see [[Opt.map]]
+ */
+var map = function (f) { return function (x) { return x.map(f); }; };
+exports.map = map;
+/**
+ * Same as [[Opt.flatMap]], but also supports arrays.
+ * @see [[Opt.flatMap]]
+ */
+var flatMap = function (f) { return function (x) { return exports.isOpt(x) ? x.flatMap(f) : x.map(f).flat(); }; };
+exports.flatMap = flatMap;
+/** @see [[Opt.flatMap]] */
+exports.chain = exports.flatMap;
+/** @see [[Opt.chainToOpt]] */
+var chainToOpt = function (f) { return function (x) { return x.chainToOpt(f); }; };
+exports.chainToOpt = chainToOpt;
+/** @see [[Opt.someOrCrash]] */
+var someOrCrash = function (msg) { return function (x) { return x.someOrCrash(msg); }; };
+exports.someOrCrash = someOrCrash;
+/** @see [[Opt.orCrash]] */
+var orCrash = function (msg) { return function (x) { return x.orCrash(msg); }; };
+exports.orCrash = orCrash;
+/** @see [[Opt.orUndef]] */
+var orUndef = function (x) { return x.orUndef(); };
+exports.orUndef = orUndef;
+/** @see [[Opt.orNull]] */
+var orNull = function (x) { return x.orNull(); };
+exports.orNull = orNull;
+/** @see [[Opt.orFalse]] */
+var orFalse = function (x) { return x.orFalse(); };
+exports.orFalse = orFalse;
+/** @see [[Opt.orTrue]] */
+var orTrue = function (x) { return x.orTrue(); };
+exports.orTrue = orTrue;
+/** @see [[Opt.orNaN]] */
+var orNaN = function (x) { return x.orNaN(); };
+exports.orNaN = orNaN;
+/** @see [[Opt.caseOf]] */
+var caseOf = function (onSome) { return function (onNone) { return function (x) { return x.caseOf(onSome, onNone); }; }; };
+exports.caseOf = caseOf;
+/** @see [[Opt.contains]] */
+var contains = function (y) { return function (x) { return x.contains(y); }; };
+exports.contains = contains;
+/** @see [[Opt.exists]] */
+var exists = function (y) { return function (x) { return x.exists(y); }; };
+exports.exists = exists;
+/** @see [[Opt.forAll]] */
+var forAll = function (p) { return function (x) { return x.forAll(p); }; };
+exports.forAll = forAll;
+/** @see [[Opt.orElse]] */
+var orElse = function (e) { return function (x) { return x.orElse(e); }; };
+exports.orElse = orElse;
+/** @see [[Opt.orElseOpt]] */
+var orElseOpt = function (def) { return function (x) { return x.orElseOpt(def); }; };
+exports.orElseOpt = orElseOpt;
+/** @see [[Opt.bimap]] */
+var bimap = function (someF) { return function (noneF) { return function (x) { return x.bimap(someF, noneF); }; }; };
+exports.bimap = bimap;
+var zipArray = function (a, b) { return __spreadArray([], Array(Math.min(b.length, a.length))).map(function (_, i) { return [a[i], b[i]]; }); };
+/**
+ * Same as [[Opt.zip]], but also supports arrays.
+ * @see [[Opt.zip]]
+ */
+var zip = function (other) { return function (x) { return exports.isOpt(x) ? x.zip(other) : zipArray(x, other); }; };
+exports.zip = zip;
+/** @see [[Opt.zip3]] */
+var zip3 = function (a) { return function (b) { return function (x) { return x.zip3(a, b); }; }; };
+exports.zip3 = zip3;
+/** @see [[Opt.zip4]] */
+var zip4 = function (a) { return function (b) { return function (c) { return function (x) { return x.zip4(a, b, c); }; }; }; };
+exports.zip4 = zip4;
+/** @see [[Opt.zip5]] */
+var zip5 = function (a) { return function (b) { return function (c) { return function (d) { return function (x) {
+    return x.zip5(a, b, c, d);
+}; }; }; }; };
+exports.zip5 = zip5;
+/**
+ * Same as [[Opt.filter]], but also supports arrays.
+ * @see [[Opt.filter]]
+ */
+var filter = function (p) { return function (x) { return x.filter(p); }; };
+exports.filter = filter;
+/** @see [[Opt.narrow]] */
+var narrow = function (guard) { return function (x) { return x.narrow(guard); }; };
+exports.narrow = narrow;
+/** @see [[Opt.print]] */
+var print = function (tag) { return function (x) { return x.print(tag); }; };
+exports.print = print;
+/** @see [[Opt.equals]] */
+var equals = function (other, comparator) {
+    if (comparator === void 0) { comparator = refCmp; }
+    return function (x) {
+        return x.equals(other, comparator);
+    };
+};
+exports.equals = equals;
+/** @see [[Opt.prop]] */
+var prop = function (key) { return function (x) {
+    return x.prop(key);
+}; };
+exports.prop = prop;
 //# sourceMappingURL=Opt.js.map

@@ -21,6 +21,33 @@ import {
   optZero,
   ReduxDevtoolsCompatibilityHelper,
   some,
+  orCrash,
+  map,
+  flatMap,
+  fromArray,
+  toArray,
+  chainToOpt,
+  orUndef,
+  orNull,
+  caseOf,
+  contains,
+  exists,
+  forAll,
+  orElse,
+  orElseOpt,
+  bimap,
+  zip,
+  zip3,
+  zip4,
+  zip5,
+  filter,
+  narrow,
+  print,
+  prop,
+  someOrCrash,
+  orFalse,
+  orTrue,
+  orNaN, equals,
 } from '../src/Opt';
 
 chai.use(spies);
@@ -41,6 +68,7 @@ const isArray = (x: any): x is unknown[] => Array.isArray(x);
 
 const head = <T>(xs: T[]): undefined | T => xs[0];
 const eq = (a: unknown) => (b: unknown) => a === b;
+const id = <T>(x: T): T => x;
 
 type EnumAB = 'a' | 'b';
 type Enum12 = 1 | 2;
@@ -65,6 +93,8 @@ export interface FilterPart {
 }
 
 const suppressUnused = (...xs: unknown[]) => expect(xs).to.be.eq(xs);
+
+const flow2: <A, B = unknown, C = unknown>(f: (_: A) => B, g: (_: B) => C) => ((_: A) => C) = (f, g) => x => g(f(x));
 
 describe('opt', () => {
   beforeEach(() => {
@@ -164,6 +194,14 @@ describe('opt', () => {
     expect(() => opt(null).optOrCrash('')).to.throw();
     expect(opt(0).optOrCrash('').orNull()).to.be.eq(0);
     expect(opt([]).optOrCrash('').orNull()).to.be.eql([]);
+  });
+
+  it('someOrCrash', () => {
+    expect(() => opt(null).someOrCrash('')).to.throw();
+    expect(opt(0).someOrCrash('').orNull()).to.be.eq(0);
+    expect(opt([]).someOrCrash('').orNull()).to.be.eql([]);
+    const some0 = opt(0).someOrCrash('');
+    expect(some0.value).to.be.eql(0);
   });
 
   it('map', () => {
@@ -724,5 +762,380 @@ describe('joinOpt', () => {
     expect(joinOpt(some(none)).orNull()).to.eql(null);
     expect(joinOpt(some(some(1))).orNull()).to.eql(1);
     expect(joinOpt(none).orNull()).to.eql(null);
+  });
+});
+
+describe('fromArray', () => {
+  it('creates opt from array', () => {
+    expect(fromArray([7]).orNull()).to.be.eq(7);
+    expect(fromArray([]).orNull()).to.be.eq(null);
+  });
+});
+
+describe('toArray', () => {
+  it('converts opt to array', () => {
+    expect(toArray(opt(1))).to.be.eql([1]);
+    expect(toArray(none)).to.be.eql([]);
+  });
+});
+
+describe('orCrash', () => {
+  const f = flow2(opt, orCrash('msg'));
+  it('crashes on none', () => {
+    expect(() => f(null)).to.throw;
+  });
+  it('returns value on some', () => {
+    expect(f(1)).to.eq(1);
+  });
+});
+
+describe('map', () => {
+  it('is correctly typed', () => {
+    expect(map((x: number) => x)([])).to.eql([]);
+    // ---
+    const r1: number[] = map((x: number) => x + 1)([1]);
+    // @ts-expect-error
+    const r1Fail: Opt<number> = map((x: number) => x + 1)([1]);
+    suppressUnused(r1Fail);
+    expect(r1).to.eql([2]);
+    expect(map((_x: number) => false)(none).orNull()).to.be.null;
+    expect(map((x: number) => x + 1)(some(1)).orNull()).to.eq(2);
+    // ---
+    const r2: Opt<number> = map((x: number) => x + 1)(opt(1));
+    // @ts-expect-error
+    const r2Fail: number[] = map((x: number) => x + 1)(opt(1));
+    suppressUnused(r2Fail);
+    expect(r2.orNull()).to.eq(2);
+  });
+
+  it('works with flow', () => {
+    const r1 = flow2(id, id)([]);
+    expect(r1).to.be.eql([]);
+    // ---
+    const r2 = flow2(map(add1), id)([1, 2]);
+    expect(r2).to.be.eql([2, 3]);
+    // ---
+    const r3 = flow2(map(add1), id)(opt(1));
+    expect(r3.orNull()).to.be.eq(2);
+    // ---
+    const r4 = flow2(id, id)(opt(1));
+    expect(r4.orNull()).to.be.eq(1);
+    // ---
+    const r5 = flow2(map(add1), id)(opt(1));
+    expect(r5.orNull()).to.be.eq(2);
+    // ---
+    const r6 = flow2(map(add1), map(gt0))(opt(1));
+    expect(r6.orNull()).to.be.true;
+  });
+});
+
+describe('flatMap', () => {
+  it('is correctly typed', () => {
+    expect(flatMap((x: number) => [x])([])).to.eql([]);
+    // ---
+    const r1: number[] = flatMap((x: number) => [x + 1])([1]);
+    // @ts-expect-error
+    const r1Fail: Opt<number> = flatMap((x: number) => [x + 1])([1]);
+    suppressUnused(r1Fail);
+    expect(r1).to.eql([2]);
+    expect(flatMap((_x: number) => none)(none).orNull()).to.be.null;
+    expect(flatMap((x: number) => opt(x + 1))(some(1)).orNull()).to.eq(2);
+    // ---
+    const r2: Opt<number> = flatMap((x: number) => opt(x + 1))(opt(1));
+    // @ts-expect-error
+    const r2Fail: number[] = flatMap((x: number) => opt(x + 1))(opt(1));
+    suppressUnused(r2Fail);
+    expect(r2.orNull()).to.eq(2);
+  });
+
+  it('works with flow', () => {
+    const r1 = flow2(flatMap((x: number) => [x, x * 10]), id)([1, 2]);
+    expect(r1).to.eql([1, 10, 2, 20]);
+    // ---
+    const r2 = flow2((x: number[]) => x, flatMap(x => [x, x * 10]))([1, 2, 3]);
+    expect(r2).to.eql([1, 10, 2, 20, 3, 30]);
+  });
+
+  describe('works with arrays', () => {
+    it('longer than one item', () => {
+      const r1: number[] = flatMap((x: number) => [x, x * 2])([1, 2, 3]);
+      expect(r1).to.eql([1, 2, 2, 4, 3, 6]);
+    });
+    it('removing and adding', () => {
+      const r1: number[] = flatMap((x: number) => x > 2 ? [] : [x, x + 10])([1, 2, 3]);
+      expect(r1).to.eql([1, 11, 2, 12]);
+    });
+  });
+});
+
+describe('chainToOpt', () => {
+  it('chains to opt', () => {
+    expect(chainToOpt(_x => undefined)(opt(1)).orNull()).to.be.null;
+    expect(chainToOpt(_x => 'x')(opt(1)).orNull()).to.be.eq('x');
+  });
+});
+
+describe('someOrCrash', () => {
+  it('crashes on none', () => {
+    expect(() => someOrCrash('x')(none)).to.throw('x');
+  });
+  it('returns some on some', () => {
+    expect(someOrCrash('x')(opt(0)).orNull()).to.be.eq(0);
+  });
+});
+
+describe('orUndef', () => {
+  it('returns value', () => {
+    expect(orUndef(opt(1))).to.be.eq(1);
+  });
+  it('returns undefined on none', () => {
+    expect(orUndef(none)).to.be.undefined;
+  });
+});
+
+describe('orNull', () => {
+  it('returns value', () => {
+    expect(orNull(opt(1))).to.be.eq(1);
+  });
+  it('returns null on none', () => {
+    expect(orNull(none)).to.be.null;
+  });
+});
+
+describe('orFalse', () => {
+  it('returns value', () => {
+    expect(orFalse(opt(1))).to.be.eq(1);
+  });
+  it('returns false on none', () => {
+    expect(orFalse(none)).to.be.false;
+  });
+});
+
+describe('orTrue', () => {
+  it('returns value', () => {
+    expect(orTrue(opt(1))).to.be.eq(1);
+  });
+  it('returns false on none', () => {
+    expect(orTrue(none)).to.be.true;
+  });
+});
+
+describe('orNaN', () => {
+  it('returns value', () => {
+    expect(orNaN(opt(1))).to.be.eq(1);
+  });
+  it('returns false on none', () => {
+    expect(orNaN(none)).to.be.NaN;
+  });
+});
+
+describe('caseOf', () => {
+  it('uses onSome with some', () => {
+    expect(caseOf(add1)(() => 7)(opt(1))).to.be.eq(2);
+  });
+  it('uses onNone with none', () => {
+    expect(caseOf(add1)(() => 7)(none)).to.be.eq(7);
+  });
+});
+
+describe('contains', () => {
+  it('positive', () => {
+    expect(contains(1)(opt(1))).to.be.true;
+  });
+  it('negative', () => {
+    expect(contains(2)(opt(1))).to.be.false;
+    expect(contains(2)(none)).to.be.false;
+  });
+});
+
+describe('exists', () => {
+  it('positive', () => {
+    expect(exists(eq(1))(opt(1))).to.be.true;
+  });
+  it('negative', () => {
+    expect(exists(eq(2))(opt(1))).to.be.false;
+    expect(exists(eq(2))(none)).to.be.false;
+  });
+});
+
+describe('forAll', () => {
+  it('positive', () => {
+    expect(forAll(eq(1))(opt(1))).to.be.true;
+    expect(forAll(eq(2))(none)).to.be.true;
+  });
+  it('negative', () => {
+    expect(forAll(eq(2))(opt(1))).to.be.false;
+  });
+});
+
+describe('orElse', () => {
+  it('returns value on some', () => {
+    expect(orElse(0)(opt(1))).to.be.eq(1);
+  });
+  it('returns default value on none', () => {
+    expect(orElse(0)(none)).to.be.eq(0);
+  });
+});
+
+describe('orElseOpt', () => {
+  it('returns value on some', () => {
+    expect(orElseOpt(opt(0))(opt(1)).orNull()).to.be.eq(1);
+  });
+  it('returns default value on none', () => {
+    expect(orElseOpt(opt(0))(none).orNull()).to.be.eq(0);
+  });
+});
+
+describe('bimap', () => {
+  it('uses onSome with some', () => {
+    expect(bimap(add1)(() => 7)(opt(1)).orNull()).to.be.eq(2);
+  });
+  it('uses onNone with none', () => {
+    expect(bimap(add1)(() => 7)(none).orNull()).to.be.eq(7);
+  });
+});
+
+describe('zip', () => {
+  describe('checks types', () => {
+    it('opt', () => {
+      const a: Opt<[boolean, number]> = zip(opt(1))(opt(true));
+      // @ts-expect-error
+      const aFail: Opt<[number, boolean]> = zip(opt(1))(opt(true));
+      suppressUnused(a, aFail);
+    });
+    it('array', () => {
+      const a: [boolean, number][] = zip([1, 2])([true, false]);
+      // @ts-expect-error
+      const aFail: [number, boolean][] = zip(opt(1))(opt(true));
+      suppressUnused(a, aFail);
+    });
+    it('mixing', () => {
+      // @ts-expect-error
+      const aFail: [boolean, number][] = zip(opt(1))(opt(true));
+      suppressUnused(aFail);
+    });
+  });
+
+  it('opt', () => {
+    expect(zip(opt(2))(opt(1)).orNull()).to.be.eql([1, 2]);
+    expect(zip(opt(1))(none).orNull()).to.be.eql(null);
+    expect(zip(none)(opt(2)).orNull()).to.be.eql(null);
+    expect(zip(none)(none).orNull()).to.be.eql(null);
+  });
+
+  describe('array', () => {
+    it('empty', () => {
+      expect(zip([])([])).to.be.eql([]);
+    });
+    it('same length', () => {
+      expect(zip([2])([1])).to.be.eql([[1, 2]]);
+    });
+    it('different length', () => {
+      expect(zip([3])([1, 2])).to.be.eql([[1, 3]]);
+      expect(zip([3, 4])([1])).to.be.eql([[1, 3]]);
+    });
+  });
+
+  it('works with flow', () => {
+    const a: Opt<[number, string]> = flow2((x: Opt<number>) => x, zip(opt('x')))(opt(2));
+    expect(a.orNull()).to.be.eql([2, 'x']);
+    const b: Opt<[number, string]> = flow2(zip(opt('x')), id)(opt(2));
+    expect(b.orNull()).to.be.eql([2, 'x']);
+  });
+});
+
+describe('zip3', () => {
+  it('zips', () => {
+    expect(zip3(opt(1))(opt(2))(opt(3)).orNull()).to.be.eql([3, 1, 2]);
+  });
+});
+
+describe('zip4', () => {
+  it('zips', () => {
+    expect(zip4(opt(1))(opt(2))(opt(3))(opt(4)).orNull()).to.be.eql([4, 1, 2, 3]);
+  });
+});
+
+describe('zip5', () => {
+  it('zips', () => {
+    expect(zip5(opt(1))(opt(2))(opt(3))(opt(4))(opt(5)).orNull()).to.be.eql([5, 1, 2, 3, 4]);
+  });
+});
+
+describe('filter', () => {
+  it('checks types', () => {
+    const a: Opt<number> = filter(gt0)(opt(1));
+    // @ts-expect-error
+    const aFail: number[] = filter(gt0)(opt(1));
+    suppressUnused(a, aFail);
+    // ---
+    const b: number[] = filter(gt0)([7]);
+    // @ts-expect-error
+    const bFail: Opt<number> = filter(gt0)([]);
+    suppressUnused(b, bFail);
+    // ---
+  });
+  describe('filters', () => {
+    it('opt', () => {
+      expect(filter((x: number) => x > 1)(opt(1)).orNull()).to.be.null;
+      expect(filter(gt0)(opt(1)).orNull()).to.be.eq(1);
+    });
+    it('array', () => {
+      expect(filter((x: number) => x > 1)([1])).to.be.eql([]);
+      expect(filter(gt0)([-1, 0, 1])).to.be.eql([1]);
+    });
+  });
+});
+
+describe('narrow', () => {
+  it('narrows', () => {
+    const a: Opt<string> = narrow(isString)(opt(1));
+    expect(a.orNull()).to.eq(null);
+    const b: Opt<number> = narrow(isNumber)(opt(1));
+    expect(b.orNull()).to.eq(1);
+  });
+});
+
+describe('print', () => {
+  beforeEach(() => {
+    sandbox.on(console, ['log']);
+  });
+
+  afterEach(() => {
+    sandbox.restore();
+  });
+
+  it('prints', () => {
+    expect(console.log).to.have.been.called.exactly(0);
+    print()(opt(1));
+    expect(console.log).to.have.been.called.exactly(1);
+    expect(console.log).to.have.been.called.with('Some:', 1);
+  });
+});
+
+describe('equals', () => {
+  it('pos', () => {
+    expect(equals(opt(1))(opt(1))).to.be.true;
+    expect(equals(none)(none)).to.be.true;
+    expect(equals(opt(1), (_a, _b) => true)(opt(2))).to.be.true;
+  });
+  it('neg', () => {
+    expect(equals(opt(1))(none)).to.be.false;
+    expect(equals(none)(opt(1))).to.be.false;
+    expect(equals(opt(0))(opt(1))).to.be.false;
+  });
+});
+
+describe('prop', () => {
+  it('pos', () => {
+    const a: ObjA = {a: true};
+    expect(prop<ObjA>('a')(opt(a)).orNull()).to.be.true;
+    flow2((x: Opt<ObjA>) => x, prop('a'))(opt(a));
+  });
+
+  it('neg', () => {
+    expect(prop<ObjA>('a')(none).orNull()).to.be.null;
+    // @ts-expect-error
+    prop<ObjA>('b');
   });
 });

@@ -120,8 +120,21 @@ export abstract class Opt<T> {
    * ```
    *
    * @param msg
+   * @deprecated Please use [[someOrCrash]] instead
    */
   abstract optOrCrash(msg: string): Opt<T>;
+
+  /**
+   * Crash when called on [[None]], pass [[Opt]] instance on [[Some]].
+   *
+   * ```ts
+   * some(1).someOrCrash('fail') // Some(1)
+   * none.someOrCrash('fail') // throws
+   * ```
+   *
+   * @param msg
+   */
+  abstract someOrCrash(msg: string): Some<T>;
 
   /**
    * Returns value for [[Some]] or `undefined` for [[None]].
@@ -455,7 +468,12 @@ class None<T> extends Opt<T> {
 
   orCrash(msg: string): T { throw new Error(msg); }
 
+  /**
+   * @deprecated Please use [[someOrCrash]] instead
+   */
   optOrCrash(msg: string): Opt<T> { throw new Error(msg); }
+
+  someOrCrash(msg: string): Some<T> { throw new Error(msg); }
 
   orNull(): T | null { return null; }
 
@@ -545,7 +563,12 @@ class Some<T> extends Opt<T> {
 
   orCrash(_msg: string): T { return this._value; }
 
+  /**
+   * @deprecated Please use [[someOrCrash]] instead
+   */
   optOrCrash(_msg: string): Opt<T> { return this; }
+
+  someOrCrash(_msg: string): Some<T> { return this; }
 
   orNull(): T | null { return this._value; }
 
@@ -801,3 +824,131 @@ export const mapOpt = <A, B>(f: (_: A) => Opt<B>) => (xs: A[]): B[] => catOpts(x
  * @param x
  */
 export const joinOpt = <T>(x: Opt<Opt<T>>): Opt<T> => x.caseOf<Opt<T>>(y => y, () => none);
+
+/**
+ * @see [[Opt.fromArray]]
+ */
+export const fromArray = Opt.fromArray;
+
+/**
+ * @see [[Opt.toArray]]
+ */
+export const toArray = <T>(x: Opt<T>): [] | [T] => x.toArray();
+
+type MapFn = <T, U>(f: (_: T) => U) => <I extends (Opt<T> | T[]), O extends (I extends Opt<T> ? Opt<U> : U[])>(x: I) => O;
+
+/**
+ * Same as [[Opt.map]], but also supports arrays.
+ * @see [[Opt.map]]
+ */
+export const map: MapFn = (f: any) => (x: any) => x.map(f);
+
+// type FlatMapFn = <T, U, O extends (Opt<U> | U[])>(f: (_: T) => O) => <I extends (O extends Opt<U> ? Opt<T> : T[])>(x: I) => O;
+interface FlatMapFn {
+  <T, U>(f: (_: T) => U[]): (x: T[]) => U[];
+
+  <T, U>(f: (_: T) => Opt<U>): (x: Opt<T>) => Opt<U>;
+}
+
+/**
+ * Same as [[Opt.flatMap]], but also supports arrays.
+ * @see [[Opt.flatMap]]
+ */
+export const flatMap: FlatMapFn = (f: any) => (x: any) => isOpt(x) ? x.flatMap(f) : x.map(f).flat();
+
+/** @see [[Opt.flatMap]] */
+export const chain = flatMap;
+
+/** @see [[Opt.chainToOpt]] */
+export const chainToOpt = <T, U>(f: (_: T) => U | undefined | null) => (x: Opt<T>): Opt<U> => x.chainToOpt(f);
+
+/** @see [[Opt.someOrCrash]] */
+export const someOrCrash = <T>(msg: string) => (x: Opt<T>): Some<T> => x.someOrCrash(msg);
+
+/** @see [[Opt.orCrash]] */
+export const orCrash = <T>(msg: string) => (x: Opt<T>): T => x.orCrash(msg);
+
+/** @see [[Opt.orUndef]] */
+export const orUndef = <T>(x: Opt<T>): T | undefined => x.orUndef();
+
+/** @see [[Opt.orNull]] */
+export const orNull = <T>(x: Opt<T>): T | null => x.orNull();
+
+/** @see [[Opt.orFalse]] */
+export const orFalse = <T>(x: Opt<T>): T | false => x.orFalse();
+
+/** @see [[Opt.orTrue]] */
+export const orTrue = <T>(x: Opt<T>): T | true => x.orTrue();
+
+/** @see [[Opt.orNaN]] */
+export const orNaN = <T>(x: Opt<T>): T | number => x.orNaN();
+
+/** @see [[Opt.caseOf]] */
+export const caseOf = <T, R>(onSome: (x: T) => R) => (onNone: () => R) => (x: Opt<T>): R => x.caseOf(onSome, onNone);
+
+/** @see [[Opt.contains]] */
+export const contains = <T>(y: T) => (x: Opt<T>): boolean => x.contains(y);
+
+/** @see [[Opt.exists]] */
+export const exists = <T>(y: (_: T) => boolean) => (x: Opt<T>): boolean => x.exists(y);
+
+/** @see [[Opt.forAll]] */
+export const forAll = <T>(p: (_: T) => boolean) => (x: Opt<T>): boolean => x.forAll(p);
+
+/** @see [[Opt.orElse]] */
+export const orElse = <T>(e: T) => (x: Opt<T>): T => x.orElse(e);
+
+/** @see [[Opt.orElseOpt]] */
+export const orElseOpt = <T>(def: Opt<T>) => (x: Opt<T>): Opt<T> => x.orElseOpt(def);
+
+/** @see [[Opt.bimap]] */
+export const bimap = <T, U>(someF: (_: T) => U) => (noneF: () => U) => (x: Opt<T>): Opt<U> => x.bimap(someF, noneF);
+
+interface ZipFn {
+  <U>(other: Opt<U>): <T>(x: Opt<T>) => Opt<[T, U]>;
+
+  <U>(other: U[]): <T>(x: T[]) => [T, U][];
+}
+
+const zipArray = <T, U>(a: T[], b: U[]): [T, U][] => [...Array(Math.min(b.length, a.length))].map((_, i) => [a[i], b[i]]);
+
+/**
+ * Same as [[Opt.zip]], but also supports arrays.
+ * @see [[Opt.zip]]
+ */
+export const zip: ZipFn = (other: any) => (x: any): any => isOpt(x) ? x.zip(other) : zipArray(x, other);
+
+/** @see [[Opt.zip3]] */
+export const zip3 = <A>(a: Opt<A>) => <B>(b: Opt<B>) => <T>(x: Opt<T>): Opt<[T, A, B]> => x.zip3(a, b);
+
+/** @see [[Opt.zip4]] */
+export const zip4 =
+  <A>(a: Opt<A>) => <B>(b: Opt<B>) => <C>(c: Opt<C>) => <T>(x: Opt<T>): Opt<[T, A, B, C]> => x.zip4(a, b, c);
+
+/** @see [[Opt.zip5]] */
+export const zip5 =
+  <A>(a: Opt<A>) => <B>(b: Opt<B>) => <C>(c: Opt<C>) => <D>(d: Opt<D>) => <T>(x: Opt<T>): Opt<[T, A, B, C, D]> =>
+    x.zip5(a, b, c, d);
+
+type FilterFn = <T>(p: (_: T) => boolean) => <U extends Opt<T> | T[]>(x: U) => U extends Opt<T> ? Opt<T> : T[];
+
+/**
+ * Same as [[Opt.filter]], but also supports arrays.
+ * @see [[Opt.filter]]
+ */
+export const filter: FilterFn = (p: any) => (x: any) => x.filter(p);
+
+/** @see [[Opt.narrow]] */
+export const narrow = <U>(guard: (value: any) => value is U) => <T>(x: Opt<T>): Opt<U> => x.narrow(guard);
+
+/** @see [[Opt.print]] */
+export const print = (tag?: string) => <T>(x: Opt<T>): Opt<T> => x.print(tag);
+
+/** @see [[Opt.equals]] */
+export const equals = <T>(other: Opt<T>, comparator: EqualityFunction = refCmp) => (x: Opt<T>): boolean =>
+  x.equals(other, comparator);
+
+/** @see [[Opt.prop]] */
+export const prop = <T extends object,
+  K extends (T extends object ? keyof T : never) = T extends object ? keyof T : never>(key: K) => (x: Opt<T>): Opt<WithoutOptValues<T[K]>> =>
+  x.prop(key);
