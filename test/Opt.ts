@@ -50,6 +50,7 @@ import {
   orNaN,
   equals,
   pipe,
+  mapFlow,
 } from '../src/Opt';
 
 chai.use(spies);
@@ -209,6 +210,16 @@ describe('opt', () => {
   it('map', () => {
     expect(opt(1).map(add1).orNull()).to.eq(2);
     expect(opt(null as unknown as number).map(add1).orUndef()).to.eq(undefined);
+  });
+
+  it('mapFlow', () => {
+    expect(opt(1).mapFlow(id).orNull()).to.be.eq(1);
+    expect(opt(null).mapFlow(id).orNull()).to.be.null;
+    expect(opt(1).mapFlow(id, id, id, add1).orNull()).to.be.eq(2);
+    expect(opt<number>(null).mapFlow(id, id, id, add1).orNull()).to.be.null;
+    const sq = (x: number) => x * x;
+    const dec = (x: number) => x - 1;
+    expect(opt(4).mapFlow(sq, dec).orNull()).to.be.eq(15);
   });
 
   it('flatMap', () => {
@@ -838,6 +849,13 @@ describe('map', () => {
     const r6 = flow2(map(add1), map(gt0))(opt(1));
     expect(r6.orNull()).to.be.true;
   });
+});
+
+describe('mapFlow', () => {
+  expect(mapFlow(opt(1), id).orNull()).to.be.eq(1);
+  expect(mapFlow(opt(null), id).orNull()).to.be.null;
+  expect(mapFlow(opt(1), id, id, id, add1).orNull()).to.be.eq(2);
+  expect(mapFlow(opt<number>(null), id, id, id, add1).orNull()).to.be.null;
 });
 
 describe('flatMap', () => {

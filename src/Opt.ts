@@ -34,6 +34,29 @@ interface PipeInClassFn<T> {
   <A1, A2, A3, A4, A5, A6, A7, A8, A9, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => A8, f9: (_: A8) => A9, f10: (_: A9) => R): R;
 }
 
+// Don't modify manually, generated via utils/genFlowyThings
+interface MapFlowInClassFn<T> {
+  <R>(f1: (_: T) => R): Opt<R>;
+
+  <A1, R>(f1: (_: T) => A1, f2: (_: A1) => R): Opt<R>;
+
+  <A1, A2, R>(f1: (_: T) => A1, f2: (_: A1) => A2, f3: (_: A2) => R): Opt<R>;
+
+  <A1, A2, A3, R>(f1: (_: T) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => R): Opt<R>;
+
+  <A1, A2, A3, A4, R>(f1: (_: T) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => R): Opt<R>;
+
+  <A1, A2, A3, A4, A5, R>(f1: (_: T) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => R): Opt<R>;
+
+  <A1, A2, A3, A4, A5, A6, R>(f1: (_: T) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => R): Opt<R>;
+
+  <A1, A2, A3, A4, A5, A6, A7, R>(f1: (_: T) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => R): Opt<R>;
+
+  <A1, A2, A3, A4, A5, A6, A7, A8, R>(f1: (_: T) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => A8, f9: (_: A8) => R): Opt<R>;
+
+  <A1, A2, A3, A4, A5, A6, A7, A8, A9, R>(f1: (_: T) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => A8, f9: (_: A8) => A9, f10: (_: A9) => R): Opt<R>;
+}
+
 /**
  * @typeparam T Wrapped value type.
  */
@@ -96,6 +119,19 @@ export abstract class Opt<T> {
    * @param f
    */
   abstract map<U>(f: (_: T) => U): Opt<U>;
+
+  /**
+   * Similar to [[map]], but supports more functions which are called in succession, each on a result of a previous one.
+   *
+   * ```
+   * const sq = (x: number) => x * x;
+   * const dec = (x: number) => x - 1;
+   * opt(4).mapFlow(sq, dec) // Some(15)
+   * opt(null).mapFlow(sq, dec) // None
+   * ```
+   * @param fs
+   */
+  mapFlow: MapFlowInClassFn<T> = (...fs: any[]) => fs.reduce((acc, x) => acc.map(x), this);
 
   /**
    * Similar to [[map]], but function is expected to return [[Opt]] which will be returned.
@@ -865,6 +901,23 @@ type MapFn = <T, U>(f: (_: T) => U) => <I extends (Opt<T> | T[]), O extends (I e
  * @see [[Opt.map]]
  */
 export const map: MapFn = (f: any) => (x: any) => x.map(f);
+
+// Don't modify manually, generated via utils/genFlowyThings
+interface MapFlowFn {
+  <I, R>(x: Opt<I>, f1: (_: I) => R): Opt<R>;
+  <I, A1, R>(x: Opt<I>, f1: (_: I) => A1, f2: (_: A1) => R): Opt<R>;
+  <I, A1, A2, R>(x: Opt<I>, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => R): Opt<R>;
+  <I, A1, A2, A3, R>(x: Opt<I>, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => R): Opt<R>;
+  <I, A1, A2, A3, A4, R>(x: Opt<I>, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => R): Opt<R>;
+  <I, A1, A2, A3, A4, A5, R>(x: Opt<I>, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => R): Opt<R>;
+  <I, A1, A2, A3, A4, A5, A6, R>(x: Opt<I>, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => R): Opt<R>;
+  <I, A1, A2, A3, A4, A5, A6, A7, R>(x: Opt<I>, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => R): Opt<R>;
+  <I, A1, A2, A3, A4, A5, A6, A7, A8, R>(x: Opt<I>, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => A8, f9: (_: A8) => R): Opt<R>;
+  <I, A1, A2, A3, A4, A5, A6, A7, A8, A9, R>(x: Opt<I>, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => A8, f9: (_: A8) => A9, f10: (_: A9) => R): Opt<R>;
+}
+
+/** @see [[Opt.mapFlow]] */
+export const mapFlow: MapFlowFn = <T>(x: Opt<T>, ...fs: any[]) => fs.reduce((acc, x) => acc.map(x), x);
 
 // type FlatMapFn = <T, U, O extends (Opt<U> | U[])>(f: (_: T) => O) => <I extends (O extends Opt<U> ? Opt<T> : T[])>(x: I) => O;
 interface FlatMapFn {

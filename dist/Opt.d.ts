@@ -2,6 +2,18 @@ export declare type EqualityFunction = <T>(a: T, b: T) => boolean;
 declare type NotObject<T> = T extends object ? never : T;
 declare type SuperUnionOf<T, U> = Exclude<U, T> extends never ? NotObject<T> : never;
 declare type WithoutOptValues<T> = NonNullable<T>;
+interface PipeInClassFn<T> {
+    <R>(f1: (_: Opt<T>) => R): R;
+    <A1, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => R): R;
+    <A1, A2, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => A2, f3: (_: A2) => R): R;
+    <A1, A2, A3, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => R): R;
+    <A1, A2, A3, A4, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => R): R;
+    <A1, A2, A3, A4, A5, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => R): R;
+    <A1, A2, A3, A4, A5, A6, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => R): R;
+    <A1, A2, A3, A4, A5, A6, A7, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => R): R;
+    <A1, A2, A3, A4, A5, A6, A7, A8, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => A8, f9: (_: A8) => R): R;
+    <A1, A2, A3, A4, A5, A6, A7, A8, A9, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => A8, f9: (_: A8) => A9, f10: (_: A9) => R): R;
+}
 /**
  * @typeparam T Wrapped value type.
  */
@@ -189,9 +201,9 @@ export declare abstract class Opt<T> {
      * none.pipe(x => x.isEmpty) // true
      * ```
      *
-     * @param f
+     * @param fs Functions in call chain
      */
-    pipe<R>(f: (x: Opt<T>) => R): R;
+    pipe: PipeInClassFn<T>;
     /**
      * Compares inner value with given value using `===`. Always `false` for [[None]].
      *
@@ -656,6 +668,24 @@ export declare const orTrue: <T>(x: Opt<T>) => true | T;
 export declare const orNaN: <T>(x: Opt<T>) => number | T;
 /** @see [[Opt.caseOf]] */
 export declare const caseOf: <T, R>(onSome: (x: T) => R) => (onNone: () => R) => (x: Opt<T>) => R;
+interface PipeFn {
+    <I, R>(x: I, f1: (_: I) => R): R;
+    <I, A1, R>(x: I, f1: (_: I) => A1, f2: (_: A1) => R): R;
+    <I, A1, A2, R>(x: I, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => R): R;
+    <I, A1, A2, A3, R>(x: I, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => R): R;
+    <I, A1, A2, A3, A4, R>(x: I, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => R): R;
+    <I, A1, A2, A3, A4, A5, R>(x: I, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => R): R;
+    <I, A1, A2, A3, A4, A5, A6, R>(x: I, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => R): R;
+    <I, A1, A2, A3, A4, A5, A6, A7, R>(x: I, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => R): R;
+    <I, A1, A2, A3, A4, A5, A6, A7, A8, R>(x: I, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => A8, f9: (_: A8) => R): R;
+    <I, A1, A2, A3, A4, A5, A6, A7, A8, A9, R>(x: I, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => A8, f9: (_: A8) => A9, f10: (_: A9) => R): R;
+}
+/**
+ * Similar to [[Opt.pipe]], but the first argument is the input.
+ * Supports arbitrary input type, not just [[Opt]].
+ * @see [[Opt.pipe]]
+ */
+export declare const pipe: PipeFn;
 /** @see [[Opt.contains]] */
 export declare const contains: <T>(y: T) => (x: Opt<T>) => boolean;
 /** @see [[Opt.exists]] */

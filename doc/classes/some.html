@@ -114,6 +114,8 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="some.html#__type" class="tsd-kind-icon">@@type</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="some.html#mapflow" class="tsd-kind-icon">map<wbr>Flow</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="some.html#pipe" class="tsd-kind-icon">pipe</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -155,7 +157,6 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="some.html#ornull" class="tsd-kind-icon">or<wbr>Null</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="some.html#ortrue" class="tsd-kind-icon">or<wbr>True</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="some.html#orundef" class="tsd-kind-icon">or<wbr>Undef</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-inherited"><a href="some.html#pipe" class="tsd-kind-icon">pipe</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="some.html#print" class="tsd-kind-icon">print</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-overwrite"><a href="some.html#prop" class="tsd-kind-icon">prop</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="some.html#someorcrash" class="tsd-kind-icon">some<wbr>OrCrash</a></li>
@@ -185,7 +186,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="opt.html">Opt</a>.<a href="opt.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in Opt.ts:546</li>
+									<li>Defined in Opt.ts:605</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -213,9 +214,59 @@
 					<div class="tsd-signature tsd-kind-icon">@@type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">symbol</span><span class="tsd-signature-symbol"> = ...</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in Opt.ts:545</li>
+							<li>Defined in Opt.ts:604</li>
 						</ul>
 					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="mapflow" class="tsd-anchor"></a>
+					<h3>map<wbr>Flow</h3>
+					<div class="tsd-signature tsd-kind-icon">map<wbr>Flow<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">MapFlowInClassFn</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = ...</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="opt.html">Opt</a>.<a href="opt.html#mapflow">mapFlow</a></p>
+						<ul>
+							<li>Defined in Opt.ts:134</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Similar to <a href="some.html#map">map</a>, but supports more functions which are called in succession, each on a result of a previous one.</p>
+						</div>
+						<pre><code><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #795E26">sq</span><span style="color: #000000"> = (</span><span style="color: #001080">x</span><span style="color: #000000">: </span><span style="color: #267F99">number</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">x</span><span style="color: #000000"> * </span><span style="color: #001080">x</span><span style="color: #000000">;</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #795E26">dec</span><span style="color: #000000"> = (</span><span style="color: #001080">x</span><span style="color: #000000">: </span><span style="color: #267F99">number</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">x</span><span style="color: #000000"> - </span><span style="color: #098658">1</span><span style="color: #000000">;</span>
+<span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #098658">4</span><span style="color: #000000">).</span><span style="color: #795E26">mapFlow</span><span style="color: #000000">(</span><span style="color: #001080">sq</span><span style="color: #000000">, </span><span style="color: #001080">dec</span><span style="color: #000000">) </span><span style="color: #008000">// Some(15)</span>
+<span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #0000FF">null</span><span style="color: #000000">).</span><span style="color: #795E26">mapFlow</span><span style="color: #000000">(</span><span style="color: #001080">sq</span><span style="color: #000000">, </span><span style="color: #001080">dec</span><span style="color: #000000">) </span><span style="color: #008000">// None</span>
+</code></pre>
+						<dl class="tsd-comment-tags">
+							<dt>param</dt>
+							<dd></dd>
+						</dl>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="pipe" class="tsd-anchor"></a>
+					<h3>pipe</h3>
+					<div class="tsd-signature tsd-kind-icon">pipe<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">PipeInClassFn</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = ...</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="opt.html">Opt</a>.<a href="opt.html#pipe">pipe</a></p>
+						<ul>
+							<li>Defined in Opt.ts:284</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Applies passed function to this instance and returns function result.
+							Also known as a function application, <code>|&gt;</code> or pipe operator.</p>
+						</div>
+						<pre><code class="language-ts"><span style="color: #795E26">some</span><span style="color: #000000">(</span><span style="color: #098658">1</span><span style="color: #000000">).</span><span style="color: #795E26">pipe</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">x</span><span style="color: #000000">.</span><span style="color: #001080">isEmpty</span><span style="color: #000000">) </span><span style="color: #008000">// false</span>
+<span style="color: #001080">none</span><span style="color: #000000">.</span><span style="color: #795E26">pipe</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">x</span><span style="color: #000000">.</span><span style="color: #001080">isEmpty</span><span style="color: #000000">) </span><span style="color: #008000">// true</span>
+</code></pre>
+						<dl class="tsd-comment-tags">
+							<dt>param</dt>
+							<dd><p>Functions in call chain</p>
+							</dd>
+						</dl>
+					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
@@ -230,7 +281,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:550</li>
+									<li>Defined in Opt.ts:609</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -247,7 +298,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:41</li>
+									<li>Defined in Opt.ts:87</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -269,7 +320,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:26</li>
+									<li>Defined in Opt.ts:72</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -291,7 +342,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:552</li>
+									<li>Defined in Opt.ts:611</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span></h4>
@@ -312,7 +363,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="opt.html">Opt</a>.<a href="opt.html#bimap">bimap</a></p>
 								<ul>
-									<li>Defined in Opt.ts:602</li>
+									<li>Defined in Opt.ts:661</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -375,7 +426,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="opt.html">Opt</a>.<a href="opt.html#caseof">caseOf</a></p>
 								<ul>
-									<li>Defined in Opt.ts:583</li>
+									<li>Defined in Opt.ts:642</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -438,7 +489,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="opt.html">Opt</a>.<a href="opt.html#chain">chain</a></p>
 								<ul>
-									<li>Defined in Opt.ts:94</li>
+									<li>Defined in Opt.ts:153</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -493,7 +544,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="opt.html">Opt</a>.<a href="opt.html#chaintoopt">chainToOpt</a></p>
 								<ul>
-									<li>Defined in Opt.ts:106</li>
+									<li>Defined in Opt.ts:165</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -551,7 +602,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="opt.html">Opt</a>.<a href="opt.html#contains">contains</a></p>
 								<ul>
-									<li>Defined in Opt.ts:585</li>
+									<li>Defined in Opt.ts:644</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -575,7 +626,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="opt.html">Opt</a>.<a href="opt.html#equals">equals</a></p>
 								<ul>
-									<li>Defined in Opt.ts:645</li>
+									<li>Defined in Opt.ts:704</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -602,7 +653,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="opt.html">Opt</a>.<a href="opt.html#exists">exists</a></p>
 								<ul>
-									<li>Defined in Opt.ts:587</li>
+									<li>Defined in Opt.ts:646</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -644,7 +695,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="opt.html">Opt</a>.<a href="opt.html#filter">filter</a></p>
 								<ul>
-									<li>Defined in Opt.ts:633</li>
+									<li>Defined in Opt.ts:692</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -686,7 +737,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="opt.html">Opt</a>.<a href="opt.html#flatbimap">flatBimap</a></p>
 								<ul>
-									<li>Defined in Opt.ts:604</li>
+									<li>Defined in Opt.ts:663</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -749,7 +800,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="opt.html">Opt</a>.<a href="opt.html#flatmap">flatMap</a></p>
 								<ul>
-									<li>Defined in Opt.ts:556</li>
+									<li>Defined in Opt.ts:615</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -797,7 +848,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="opt.html">Opt</a>.<a href="opt.html#forall">forAll</a></p>
 								<ul>
-									<li>Defined in Opt.ts:589</li>
+									<li>Defined in Opt.ts:648</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -839,7 +890,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="opt.html">Opt</a>.<a href="opt.html#isnone">isNone</a></p>
 								<ul>
-									<li>Defined in Opt.ts:36</li>
+									<li>Defined in Opt.ts:82</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -862,7 +913,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="opt.html">Opt</a>.<a href="opt.html#issome">isSome</a></p>
 								<ul>
-									<li>Defined in Opt.ts:31</li>
+									<li>Defined in Opt.ts:77</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -885,7 +936,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="opt.html">Opt</a>.<a href="opt.html#map">map</a></p>
 								<ul>
-									<li>Defined in Opt.ts:560</li>
+									<li>Defined in Opt.ts:619</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -933,7 +984,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="opt.html">Opt</a>.<a href="opt.html#narrow">narrow</a></p>
 								<ul>
-									<li>Defined in Opt.ts:635</li>
+									<li>Defined in Opt.ts:694</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -981,7 +1032,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="opt.html">Opt</a>.<a href="opt.html#noneif">noneIf</a></p>
 								<ul>
-									<li>Defined in Opt.ts:385</li>
+									<li>Defined in Opt.ts:444</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1038,7 +1089,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="opt.html">Opt</a>.<a href="opt.html#onnone">onNone</a></p>
 								<ul>
-									<li>Defined in Opt.ts:591</li>
+									<li>Defined in Opt.ts:650</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1074,7 +1125,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="opt.html">Opt</a>.<a href="opt.html#onsome">onSome</a></p>
 								<ul>
-									<li>Defined in Opt.ts:593</li>
+									<li>Defined in Opt.ts:652</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1116,7 +1167,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="opt.html">Opt</a>.<a href="opt.html#optorcrash">optOrCrash</a></p>
 								<ul>
-									<li>Defined in Opt.ts:569</li>
+									<li>Defined in Opt.ts:628</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1147,7 +1198,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="opt.html">Opt</a>.<a href="opt.html#orcrash">orCrash</a></p>
 								<ul>
-									<li>Defined in Opt.ts:564</li>
+									<li>Defined in Opt.ts:623</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1171,7 +1222,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="opt.html">Opt</a>.<a href="opt.html#orelse">orElse</a></p>
 								<ul>
-									<li>Defined in Opt.ts:598</li>
+									<li>Defined in Opt.ts:657</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1195,7 +1246,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="opt.html">Opt</a>.<a href="opt.html#orelseopt">orElseOpt</a></p>
 								<ul>
-									<li>Defined in Opt.ts:600</li>
+									<li>Defined in Opt.ts:659</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1219,7 +1270,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="opt.html">Opt</a>.<a href="opt.html#orfalse">orFalse</a></p>
 								<ul>
-									<li>Defined in Opt.ts:577</li>
+									<li>Defined in Opt.ts:636</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">T</span></h4>
@@ -1237,7 +1288,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="opt.html">Opt</a>.<a href="opt.html#ornan">orNaN</a></p>
 								<ul>
-									<li>Defined in Opt.ts:581</li>
+									<li>Defined in Opt.ts:640</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">T</span></h4>
@@ -1255,7 +1306,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="opt.html">Opt</a>.<a href="opt.html#ornull">orNull</a></p>
 								<ul>
-									<li>Defined in Opt.ts:573</li>
+									<li>Defined in Opt.ts:632</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">T</span></h4>
@@ -1273,7 +1324,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="opt.html">Opt</a>.<a href="opt.html#ortrue">orTrue</a></p>
 								<ul>
-									<li>Defined in Opt.ts:579</li>
+									<li>Defined in Opt.ts:638</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">T</span></h4>
@@ -1291,69 +1342,10 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="opt.html">Opt</a>.<a href="opt.html#orundef">orUndef</a></p>
 								<ul>
-									<li>Defined in Opt.ts:575</li>
+									<li>Defined in Opt.ts:634</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">T</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-inherited">
-					<a name="pipe" class="tsd-anchor"></a>
-					<h3>pipe</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">pipe&lt;R&gt;<span class="tsd-signature-symbol">(</span>f<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><a href="opt.html" class="tsd-signature-type" data-tsd-kind="Class">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">R</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">R</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<p>Inherited from <a href="opt.html">Opt</a>.<a href="opt.html#pipe">pipe</a></p>
-								<ul>
-									<li>Defined in Opt.ts:225</li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Applies passed function to this instance and returns function result.
-									Also known as a function application, <code>|&gt;</code> or pipe operator.</p>
-								</div>
-								<pre><code class="language-ts"><span style="color: #795E26">some</span><span style="color: #000000">(</span><span style="color: #098658">1</span><span style="color: #000000">).</span><span style="color: #795E26">pipe</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">x</span><span style="color: #000000">.</span><span style="color: #001080">isEmpty</span><span style="color: #000000">) </span><span style="color: #008000">// false</span>
-<span style="color: #001080">none</span><span style="color: #000000">.</span><span style="color: #795E26">pipe</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">x</span><span style="color: #000000">.</span><span style="color: #001080">isEmpty</span><span style="color: #000000">) </span><span style="color: #008000">// true</span>
-</code></pre>
-							</div>
-							<h4 class="tsd-type-parameters-title">Type parameters</h4>
-							<ul class="tsd-type-parameters">
-								<li>
-									<h4>R</h4>
-								</li>
-							</ul>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>f: <span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><a href="opt.html" class="tsd-signature-type" data-tsd-kind="Class">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">R</span></h5>
-									<div class="tsd-comment tsd-typography">
-									</div>
-									<ul class="tsd-parameters">
-										<li class="tsd-parameter-signature">
-											<ul class="tsd-signatures tsd-kind-type-literal">
-												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><a href="opt.html" class="tsd-signature-type" data-tsd-kind="Class">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">R</span></li>
-											</ul>
-											<ul class="tsd-descriptions">
-												<li class="tsd-description">
-													<h4 class="tsd-parameters-title">Parameters</h4>
-													<ul class="tsd-parameters">
-														<li>
-															<h5>x: <a href="opt.html" class="tsd-signature-type" data-tsd-kind="Class">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
-														</li>
-													</ul>
-													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">R</span></h4>
-												</li>
-											</ul>
-										</li>
-									</ul>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">R</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -1368,7 +1360,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="opt.html">Opt</a>.<a href="opt.html#print">print</a></p>
 								<ul>
-									<li>Defined in Opt.ts:639</li>
+									<li>Defined in Opt.ts:698</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1392,7 +1384,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="opt.html">Opt</a>.<a href="opt.html#prop">prop</a></p>
 								<ul>
-									<li>Defined in Opt.ts:650</li>
+									<li>Defined in Opt.ts:709</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1422,7 +1414,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="opt.html">Opt</a>.<a href="opt.html#someorcrash">someOrCrash</a></p>
 								<ul>
-									<li>Defined in Opt.ts:571</li>
+									<li>Defined in Opt.ts:630</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1446,7 +1438,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="opt.html">Opt</a>.<a href="opt.html#toarray">toArray</a></p>
 								<ul>
-									<li>Defined in Opt.ts:554</li>
+									<li>Defined in Opt.ts:613</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">[</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">]</span></h4>
@@ -1464,7 +1456,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="opt.html">Opt</a>.<a href="opt.html#tostring">toString</a></p>
 								<ul>
-									<li>Defined in Opt.ts:606</li>
+									<li>Defined in Opt.ts:665</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -1482,7 +1474,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="opt.html">Opt</a>.<a href="opt.html#widen">widen</a></p>
 								<ul>
-									<li>Defined in Opt.ts:437</li>
+									<li>Defined in Opt.ts:496</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1517,7 +1509,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="opt.html">Opt</a>.<a href="opt.html#zip">zip</a></p>
 								<ul>
-									<li>Defined in Opt.ts:608</li>
+									<li>Defined in Opt.ts:667</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1547,7 +1539,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="opt.html">Opt</a>.<a href="opt.html#zip3">zip3</a></p>
 								<ul>
-									<li>Defined in Opt.ts:613</li>
+									<li>Defined in Opt.ts:672</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1583,7 +1575,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="opt.html">Opt</a>.<a href="opt.html#zip4">zip4</a></p>
 								<ul>
-									<li>Defined in Opt.ts:619</li>
+									<li>Defined in Opt.ts:678</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1625,7 +1617,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="opt.html">Opt</a>.<a href="opt.html#zip5">zip5</a></p>
 								<ul>
-									<li>Defined in Opt.ts:626</li>
+									<li>Defined in Opt.ts:685</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1673,7 +1665,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="opt.html">Opt</a>.<a href="opt.html#fromarray">fromArray</a></p>
 								<ul>
-									<li>Defined in Opt.ts:53</li>
+									<li>Defined in Opt.ts:99</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1724,6 +1716,12 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="some.html#__type" class="tsd-kind-icon">@@type</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="some.html#mapflow" class="tsd-kind-icon">map<wbr>Flow</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="some.html#pipe" class="tsd-kind-icon">pipe</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
 								<a href="some.html#isempty" class="tsd-kind-icon">is<wbr>Empty</a>
@@ -1818,9 +1816,6 @@
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="some.html#orundef" class="tsd-kind-icon">or<wbr>Undef</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-inherited">
-								<a href="some.html#pipe" class="tsd-kind-icon">pipe</a>
-							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="some.html#print" class="tsd-kind-icon">print</a>
 							</li>
@@ -1873,6 +1868,7 @@
 				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
 			</ul>
 			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
 				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
 			</ul>
 			<ul class="tsd-legend">

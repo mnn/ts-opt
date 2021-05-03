@@ -21,7 +21,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from) {
     return to;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.prop = exports.equals = exports.print = exports.narrow = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.bimap = exports.orElseOpt = exports.orElse = exports.forAll = exports.exists = exports.contains = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOpt = exports.chain = exports.flatMap = exports.map = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = void 0;
+exports.prop = exports.equals = exports.print = exports.narrow = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.bimap = exports.orElseOpt = exports.orElse = exports.forAll = exports.exists = exports.contains = exports.pipe = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOpt = exports.chain = exports.flatMap = exports.map = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 var refCmp = function (a, b) { return a === b; };
@@ -30,6 +30,25 @@ var refCmp = function (a, b) { return a === b; };
  */
 var Opt = /** @class */ (function () {
     function Opt() {
+        var _this = this;
+        /**
+         * Applies passed function to this instance and returns function result.
+         * Also known as a function application, `|>` or pipe operator.
+         *
+         * ```ts
+         * some(1).pipe(x => x.isEmpty) // false
+         * none.pipe(x => x.isEmpty) // true
+         * ```
+         *
+         * @param fs Functions in call chain
+         */
+        this.pipe = function () {
+            var fs = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                fs[_i] = arguments[_i];
+            }
+            return fs.reduce(function (acc, x) { return x(acc); }, _this);
+        };
     }
     Object.defineProperty(Opt.prototype, "nonEmpty", {
         /**
@@ -82,18 +101,6 @@ var Opt = /** @class */ (function () {
      * @param f
      */
     Opt.prototype.chainToOpt = function (f) { return this.flatMap(function (x) { return exports.opt(f(x)); }); };
-    /**
-     * Applies passed function to this instance and returns function result.
-     * Also known as a function application, `|>` or pipe operator.
-     *
-     * ```ts
-     * some(1).pipe(x => x.isEmpty) // false
-     * none.pipe(x => x.isEmpty) // true
-     * ```
-     *
-     * @param f
-     */
-    Opt.prototype.pipe = function (f) { return f(this); };
     /**
      * Returns [[None]] if predicate holds, otherwise passes same instance of [[Opt]].
      * ```ts
@@ -510,6 +517,19 @@ exports.orNaN = orNaN;
 /** @see [[Opt.caseOf]] */
 var caseOf = function (onSome) { return function (onNone) { return function (x) { return x.caseOf(onSome, onNone); }; }; };
 exports.caseOf = caseOf;
+/**
+ * Similar to [[Opt.pipe]], but the first argument is the input.
+ * Supports arbitrary input type, not just [[Opt]].
+ * @see [[Opt.pipe]]
+ */
+var pipe = function (x) {
+    var fs = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        fs[_i - 1] = arguments[_i];
+    }
+    return fs.reduce(function (acc, y) { return y(acc); }, x);
+};
+exports.pipe = pipe;
 /** @see [[Opt.contains]] */
 var contains = function (y) { return function (x) { return x.contains(y); }; };
 exports.contains = contains;
