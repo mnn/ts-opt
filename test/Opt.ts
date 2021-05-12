@@ -53,6 +53,8 @@ import {
   mapFlow,
   act,
   chainFlow,
+  actToOpt,
+  chainToOptFlow,
 } from '../src/Opt';
 
 chai.use(spies);
@@ -244,13 +246,25 @@ describe('opt', () => {
     expect(f(1, 2)).to.be.eq(null);
     expect(f(0, '2')).to.be.eq(null);
     expect(opt(1).chainFlow(opt).orNull()).to.be.eq(1);
-    // example
+    // examples
     const r = opt(0).act( // Some(0)
       f1(-2), // Some(-2)
       f2, // Some(-2)
       optNegative, // None
     ); // None
     expect(r.orNull()).to.be.null;
+    const r2 = opt(0).act( // Some(0)
+      f1(1), // Some(1)
+      f2, // None
+      optNegative, // won't get called, still None
+    ); // None
+    expect(r2.orNull()).to.be.null;
+    const r3 = opt(3).act( // Some(3)
+      f1(1), // Some(4)
+      f2, // Some(4)
+      optNegative, // Some(4)
+    ); // Some(4)
+    expect(r3.orNull()).to.be.eq(4);
   });
 
   it('toArray', () => {
@@ -383,6 +397,12 @@ describe('opt', () => {
   it('chainToOpt', () => {
     expect(some(1).chainToOpt(x => x === 1 ? null : x + 1).orUndef()).to.be.eq(undefined);
     expect(some(2).chainToOpt(x => x === 1 ? null : x + 1).orUndef()).to.be.eq(3);
+  });
+
+  it('actToOpt', () => {
+    expect(some(1).actToOpt(id).orNull()).to.be.eq(1);
+    expect(none.chainToOptFlow(id, id).orNull()).to.be.null;
+    expect(opt(1).actToOpt(id, add1, add1).orNull()).to.be.eq(3);
   });
 
   it('zip', () => {
@@ -940,6 +960,28 @@ describe('chainToOpt', () => {
   it('chains to opt', () => {
     expect(chainToOpt(_x => undefined)(opt(1)).orNull()).to.be.null;
     expect(chainToOpt(_x => 'x')(opt(1)).orNull()).to.be.eq('x');
+  });
+});
+
+interface ActToOptTest {
+  f?: boolean;
+  a?: { b?: number, c?: number }[];
+}
+
+describe('actToOpt', () => {
+  it('acts and wraps in opt', () => {
+    expect(actToOpt(id)(some(1)).orNull()).to.be.eq(1);
+    expect(chainToOptFlow(id, id)(none).orNull()).to.be.null;
+    expect(actToOpt((x: number) => x, add1, add1)(opt(1)).orNull()).to.be.eq(3);
+    const find = <T>(pred: (_: T) => boolean) => (xs: T[]): T | undefined => xs.find(pred);
+
+    const data: ActToOptTest[] = [{}, {f: true, a: [{b: 7, c: 1}]}, {a: [{}]}];
+    const r = opt(data).actToOpt(
+      find(x => Boolean(x?.f)), // {f: true, a: [{b: 7, c: 1}]}
+      x => x?.a, // [{b: 7, c: 1}]
+      find(x => x.b === 8), // undefined
+    ); // None
+    expect(r.isEmpty).to.be.eq(true, r.toString());
   });
 });
 

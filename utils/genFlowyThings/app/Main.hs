@@ -22,3 +22,4 @@ main = do
   gen genPipe 10
   gen genMapFlow 10
   gen genAct 10
+  gen genActToOpt 10

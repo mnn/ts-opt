@@ -1,6 +1,6 @@
 // Do NOT split to multiple modules - it's not possible, since there would be cyclic dependencies..
 
-import { ActFn, ActInClassFn, MapFlowInClassFn, MapFlowFn, PipeInClassFn, PipeFn } from './FlowLike';
+import { ActFn, ActInClassFn, MapFlowInClassFn, MapFlowFn, PipeInClassFn, PipeFn, ActToOptInClassFn, ActToOptFn } from './FlowLike';
 
 const someSymbol = Symbol('Some');
 const noneSymbol = Symbol('None');
@@ -110,16 +110,32 @@ export abstract class Opt<T> {
 
   /**
    * Similar to [[chain]] (in other languages called `bind` or `>>=`), but supports more functions passed at once (resembles `do` notation in Haskell).
-   * It is used to model a sequence of operations where each operation can fail (returns [[None]]).
+   * It is used to model a sequence of operations where each operation can fail (can return [[None]]).
    *
    * ```ts
-   * const f1 = (x: string | number) => (y: number) => opt(x).narrow(isNumber).map(z => z + y);
+   * // does addition when first argument is number
+   * const f1 =
+   *   (x: string | number) => (y: number) => opt(x).narrow(isNumber).map(z => z + y);
+   * // passes only even numbers
    * const f2 = (x: number): Opt<number> => x % 2 === 0 ? opt(x) : none;
+   *
    * opt(0).act( // Some(0)
    *   f1(-2), // Some(-2)
    *   f2, // Some(-2)
    *   optNegative, // None
    * ); // None
+   *
+   * opt(0).act( // Some(0)
+   *   f1(1), // Some(1)
+   *   f2, // None
+   *   optNegative, // won't get called, still None
+   * ); // None
+   *
+   * opt(3).act( // Some(3)
+   *   f1(1), // Some(4)
+   *   f2, // Some(4)
+   *   optNegative, // Some(4)
+   * ); // Some(4)
    * ```
    *
    * @param fs
@@ -143,6 +159,29 @@ export abstract class Opt<T> {
    * @param f
    */
   chainToOpt<U>(f: (_: T) => U | undefined | null): Opt<U> { return this.flatMap(x => opt(f(x))); }
+
+  /**
+   * Similar to [[act]], but functions return empty values instead of [[Opt]].
+   * It is useful for typical JavaScript functions (e.g. lodash), properly handles `undefined`/`null`/`NaN` at any point of the chain.
+   *
+   * ```ts
+   * const data = [{}, {f: true, a: [{b: 7, c: 1}]}, {a: [{}]}];
+   * opt(data).actToOpt(
+   *   find(x => Boolean(x?.f)), // {f: true, a: [{b: 7, c: 1}]}
+   *   x => x?.a, // [{b: 7, c: 1}]
+   *   find(x => x.b === 8) // undefined
+   * ); // None
+   * ```
+   *
+   * @param fs
+   */
+  actToOpt: ActToOptInClassFn<T> = (...fs: any[]) => fs.reduce((acc, x) => acc.chainToOpt(x), this);
+
+  /**
+   * Alias of [[actToOpt]].
+   * @param args
+   */
+  chainToOptFlow: ActToOptInClassFn<T> = (...args: any[]) => (this.act as any)(...args);
 
   /**
    * Returns value when [[Some]], throws error with `msg` otherwise.
@@ -252,7 +291,7 @@ export abstract class Opt<T> {
 
   /**
    * Applies passed function to this instance and returns function result.
-   * Also known as a function application, `|>`, `&`, `#` or pipe operator.
+   * Also known as a reverse function application, `|>` (Reason/ReScript, F#, OCaml), `&` (Haskell), `#` (PureScript) or a pipe operator.
    *
    * ```ts
    * some(1).pipe(x => x.isEmpty) // false
@@ -918,6 +957,12 @@ export const chainFlow: ActFn = act;
 
 /** @see [[Opt.chainToOpt]] */
 export const chainToOpt = <T, U>(f: (_: T) => U | undefined | null) => (x: Opt<T>): Opt<U> => x.chainToOpt(f);
+
+/** @see [[Opt.actToOpt]] */
+export const actToOpt: ActToOptFn = <I>(...fs: any[]) => (x: Opt<I>) => fs.reduce((acc, x) => acc.chainToOpt(x), x);
+
+/** @see [[Opt.chainToOptFlow]] */
+export const chainToOptFlow: ActToOptFn = actToOpt;
 
 /** @see [[Opt.someOrCrash]] */
 export const someOrCrash = <T>(msg: string) => (x: Opt<T>): Some<T> => x.someOrCrash(msg);

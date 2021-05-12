@@ -1,4 +1,4 @@
-import { ActFn, ActInClassFn, MapFlowInClassFn, MapFlowFn, PipeInClassFn, PipeFn } from './FlowLike';
+import { ActFn, ActInClassFn, MapFlowInClassFn, MapFlowFn, PipeInClassFn, PipeFn, ActToOptInClassFn, ActToOptFn } from './FlowLike';
 export declare type EqualityFunction = <T>(a: T, b: T) => boolean;
 declare type NotObject<T> = T extends object ? never : T;
 declare type SuperUnionOf<T, U> = Exclude<U, T> extends never ? NotObject<T> : never;
@@ -88,7 +88,8 @@ export declare abstract class Opt<T> {
      */
     chain<U>(f: (_: T) => Opt<U>): Opt<U>;
     /**
-     * Similar to chain (in other languages called bind), but supports more functions passed at once (resembles do notation in Haskell).
+     * Similar to [[chain]] (in other languages called `bind` or `>>=`), but supports more functions passed at once (resembles `do` notation in Haskell).
+     * It is used to model a sequence of operations where each operation can fail (returns [[None]]).
      *
      * ```ts
      * const f1 = (x: string | number) => (y: number) => opt(x).narrow(isNumber).map(z => z + y);
@@ -119,6 +120,27 @@ export declare abstract class Opt<T> {
      * @param f
      */
     chainToOpt<U>(f: (_: T) => U | undefined | null): Opt<U>;
+    /**
+     * Similar to [[act]], but functions return empty values instead of [[Opt]].
+     * It is useful for typical js functions (e.g. lodash), properly handles `undefined`/`null`/`NaN` at any point of the chain.
+     *
+     * ```ts
+     * const data = [{}, {f: true, a: [{b: 7, c: 1}]}, {a: [{}]}];
+     * opt(data).actToOpt(
+     *   find(x => Boolean(x?.f)), // {f: true, a: [{b: 7, c: 1}]}
+     *   x => x?.a, // [{b: 7, c: 1}]
+     *   find(x => x.b === 8) // undefined
+     * ); // None
+     * ```
+     *
+     * @param fs
+     */
+    actToOpt: ActToOptInClassFn<T>;
+    /**
+     * Alias of [[actToOpt]].
+     * @param args
+     */
+    chainToOptFlow: ActToOptInClassFn<T>;
     /**
      * Returns value when [[Some]], throws error with `msg` otherwise.
      * @param msg Error message.
@@ -216,11 +238,20 @@ export declare abstract class Opt<T> {
     abstract onNone(f: () => void): Opt<T>;
     /**
      * Applies passed function to this instance and returns function result.
-     * Also known as a function application, `|>` or pipe operator.
+     * Also known as a function application, `|>`, `&`, `#` or pipe operator.
      *
      * ```ts
      * some(1).pipe(x => x.isEmpty) // false
      * none.pipe(x => x.isEmpty) // true
+     * ```
+     *
+     * Supports multiple functions.
+     *
+     * ```ts
+     * opt(1).pipe( // Some(1)
+     *   x => x.isEmpty, // false
+     *   x => !x, // true
+     * ) // true
      * ```
      *
      * @param fs Functions in call chain
@@ -674,9 +705,16 @@ interface FlatMapFn {
 export declare const flatMap: FlatMapFn;
 /** @see [[Opt.flatMap]] */
 export declare const chain: FlatMapFn;
+/** @see [[Opt.act]] */
 export declare const act: ActFn;
+/** @see [[Opt.chainFlow]] */
+export declare const chainFlow: ActFn;
 /** @see [[Opt.chainToOpt]] */
 export declare const chainToOpt: <T, U>(f: (_: T) => U | null | undefined) => (x: Opt<T>) => Opt<U>;
+/** @see [[Opt.actToOpt]] */
+export declare const actToOpt: ActToOptFn;
+/** @see [[Opt.chainToOptFlow]] */
+export declare const chainToOptFlow: ActToOptFn;
 /** @see [[Opt.someOrCrash]] */
 export declare const someOrCrash: <T>(msg: string) => (x: Opt<T>) => Some<T>;
 /** @see [[Opt.orCrash]] */

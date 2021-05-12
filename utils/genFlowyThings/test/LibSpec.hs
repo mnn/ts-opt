@@ -71,3 +71,22 @@ test_genAct = do
 }|]
   let r3' = f InterfaceIsNotInClass 3
   assertEqualVerbose [qq|exp:$nl$exp3'{nl}got:$nl$r3'|] exp3' r3'
+
+test_genActToOpt :: IO ()
+test_genActToOpt = do
+  let f = genActToOpt
+  let exp3 = [q|export interface ActToOptInClassFn<T> {
+  <R>(f1: (_: T) => R | undefined | null): Opt<R>;
+  <A1, R>(f1: (_: T) => A1 | undefined | null, f2: (_: A1) => R | undefined | null): Opt<R>;
+  <A1, A2, R>(f1: (_: T) => A1 | undefined | null, f2: (_: A1) => A2 | undefined | null, f3: (_: A2) => R | undefined | null): Opt<R>;
+}|]
+  let r3 = f InterfaceIsInClass 3
+  assertEqualVerbose [qq|exp:$nl$exp3{nl}got:$nl$r3|] exp3 r3
+  ---
+  let exp3' = [q|export interface ActToOptFn {
+  <I, R>(f1: (_: I) => R | undefined | null): (x: Opt<I>) => Opt<R>;
+  <I, A1, R>(f1: (_: I) => A1 | undefined | null, f2: (_: A1) => R | undefined | null): (x: Opt<I>) => Opt<R>;
+  <I, A1, A2, R>(f1: (_: I) => A1 | undefined | null, f2: (_: A1) => A2 | undefined | null, f3: (_: A2) => R | undefined | null): (x: Opt<I>) => Opt<R>;
+}|]
+  let r3' = f InterfaceIsNotInClass 3
+  assertEqualVerbose [qq|exp:$nl$exp3'{nl}got:$nl$r3'|] exp3' r3'

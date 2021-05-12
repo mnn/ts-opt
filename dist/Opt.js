@@ -21,7 +21,8 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from) {
     return to;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.prop = exports.equals = exports.print = exports.narrow = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.bimap = exports.orElseOpt = exports.orElse = exports.forAll = exports.exists = exports.contains = exports.pipe = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOpt = exports.act = exports.chain = exports.flatMap = exports.mapFlow = exports.map = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = void 0;
+exports.print = exports.narrow = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.bimap = exports.orElseOpt = exports.orElse = exports.forAll = exports.exists = exports.contains = exports.pipe = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOptFlow = exports.actToOpt = exports.chainToOpt = exports.chainFlow = exports.act = exports.chain = exports.flatMap = exports.mapFlow = exports.map = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = void 0;
+exports.prop = exports.equals = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 var refCmp = function (a, b) { return a === b; };
@@ -50,7 +51,8 @@ var Opt = /** @class */ (function () {
             return fs.reduce(function (acc, x) { return acc.map(x); }, _this);
         };
         /**
-         * Similar to chain (in other languages called bind), but supports more functions passed at once (resembles do notation in Haskell).
+         * Similar to [[chain]] (in other languages called `bind` or `>>=`), but supports more functions passed at once (resembles `do` notation in Haskell).
+         * It is used to model a sequence of operations where each operation can fail (returns [[None]]).
          *
          * ```ts
          * const f1 = (x: string | number) => (y: number) => opt(x).narrow(isNumber).map(z => z + y);
@@ -83,12 +85,54 @@ var Opt = /** @class */ (function () {
             return _this.act.apply(_this, args);
         };
         /**
+         * Similar to [[act]], but functions return empty values instead of [[Opt]].
+         * It is useful for typical js functions (e.g. lodash), properly handles `undefined`/`null`/`NaN` at any point of the chain.
+         *
+         * ```ts
+         * const data = [{}, {f: true, a: [{b: 7, c: 1}]}, {a: [{}]}];
+         * opt(data).actToOpt(
+         *   find(x => Boolean(x?.f)), // {f: true, a: [{b: 7, c: 1}]}
+         *   x => x?.a, // [{b: 7, c: 1}]
+         *   find(x => x.b === 8) // undefined
+         * ); // None
+         * ```
+         *
+         * @param fs
+         */
+        this.actToOpt = function () {
+            var fs = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                fs[_i] = arguments[_i];
+            }
+            return fs.reduce(function (acc, x) { return acc.chainToOpt(x); }, _this);
+        };
+        /**
+         * Alias of [[actToOpt]].
+         * @param args
+         */
+        this.chainToOptFlow = function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i] = arguments[_i];
+            }
+            return _this.act.apply(_this, args);
+        };
+        /**
          * Applies passed function to this instance and returns function result.
-         * Also known as a function application, `|>` or pipe operator.
+         * Also known as a function application, `|>`, `&`, `#` or pipe operator.
          *
          * ```ts
          * some(1).pipe(x => x.isEmpty) // false
          * none.pipe(x => x.isEmpty) // true
+         * ```
+         *
+         * Supports multiple functions.
+         *
+         * ```ts
+         * opt(1).pipe( // Some(1)
+         *   x => x.isEmpty, // false
+         *   x => !x, // true
+         * ) // true
          * ```
          *
          * @param fs Functions in call chain
@@ -534,12 +578,12 @@ exports.toArray = toArray;
 var map = function (f) { return function (x) { return x.map(f); }; };
 exports.map = map;
 /** @see [[Opt.mapFlow]] */
-var mapFlow = function (x) {
+var mapFlow = function () {
     var fs = [];
-    for (var _i = 1; _i < arguments.length; _i++) {
-        fs[_i - 1] = arguments[_i];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        fs[_i] = arguments[_i];
     }
-    return fs.reduce(function (acc, x) { return acc.map(x); }, x);
+    return function (x) { return fs.reduce(function (acc, x) { return acc.map(x); }, x); };
 };
 exports.mapFlow = mapFlow;
 /**
@@ -550,10 +594,31 @@ var flatMap = function (f) { return function (x) { return exports.isOpt(x) ? x.f
 exports.flatMap = flatMap;
 /** @see [[Opt.flatMap]] */
 exports.chain = exports.flatMap;
-exports.act = 0;
+/** @see [[Opt.act]] */
+var act = function () {
+    var fs = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        fs[_i] = arguments[_i];
+    }
+    return function (x) { return fs.reduce(function (acc, x) { return acc.chain(x); }, x); };
+};
+exports.act = act;
+/** @see [[Opt.chainFlow]] */
+exports.chainFlow = exports.act;
 /** @see [[Opt.chainToOpt]] */
 var chainToOpt = function (f) { return function (x) { return x.chainToOpt(f); }; };
 exports.chainToOpt = chainToOpt;
+/** @see [[Opt.actToOpt]] */
+var actToOpt = function () {
+    var fs = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        fs[_i] = arguments[_i];
+    }
+    return function (x) { return fs.reduce(function (acc, x) { return acc.chainToOpt(x); }, x); };
+};
+exports.actToOpt = actToOpt;
+/** @see [[Opt.chainToOptFlow]] */
+exports.chainToOptFlow = exports.actToOpt;
 /** @see [[Opt.someOrCrash]] */
 var someOrCrash = function (msg) { return function (x) { return x.someOrCrash(msg); }; };
 exports.someOrCrash = someOrCrash;

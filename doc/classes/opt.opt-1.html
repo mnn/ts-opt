@@ -111,7 +111,9 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="opt.opt-1.html#act" class="tsd-kind-icon">act</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="opt.opt-1.html#acttoopt" class="tsd-kind-icon">act<wbr>ToOpt</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="opt.opt-1.html#chainflow" class="tsd-kind-icon">chain<wbr>Flow</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="opt.opt-1.html#chaintooptflow" class="tsd-kind-icon">chain<wbr>ToOpt<wbr>Flow</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="opt.opt-1.html#mapflow" class="tsd-kind-icon">map<wbr>Flow</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="opt.opt-1.html#pipe" class="tsd-kind-icon">pipe</a></li>
 							</ul>
@@ -201,20 +203,63 @@
 					<div class="tsd-signature tsd-kind-icon">act<span class="tsd-signature-symbol">:</span> <a href="../interfaces/flowlike.actinclassfn.html" class="tsd-signature-type" data-tsd-kind="Interface">ActInClassFn</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = ...</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in Opt.ts:127</li>
+							<li>Defined in Opt.ts:143</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>Similar to <a href="opt.opt-1.html#chain">chain</a> (in other languages called <code>bind</code> or <code>&gt;&gt;=</code>), but supports more functions passed at once (resembles <code>do</code> notation in Haskell).
-							It is used to model a sequence of operations where each operation can fail (returns <a href="none.html">None</a>).</p>
+							It is used to model a sequence of operations where each operation can fail (can return <a href="none.html">None</a>).</p>
 						</div>
-						<pre><code class="language-ts"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #795E26">f1</span><span style="color: #000000"> = (</span><span style="color: #001080">x</span><span style="color: #000000">: </span><span style="color: #267F99">string</span><span style="color: #000000"> | </span><span style="color: #267F99">number</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> (</span><span style="color: #001080">y</span><span style="color: #000000">: </span><span style="color: #267F99">number</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000">).</span><span style="color: #795E26">narrow</span><span style="color: #000000">(</span><span style="color: #001080">isNumber</span><span style="color: #000000">).</span><span style="color: #795E26">map</span><span style="color: #000000">(</span><span style="color: #001080">z</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">z</span><span style="color: #000000"> + </span><span style="color: #001080">y</span><span style="color: #000000">);</span>
+						<pre><code class="language-ts"><span style="color: #008000">// does addition when first argument is number</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">f1</span><span style="color: #000000"> =</span>
+<span style="color: #000000">  (</span><span style="color: #001080">x</span><span style="color: #000000">: </span><span style="color: #267F99">string</span><span style="color: #000000"> | </span><span style="color: #267F99">number</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> (</span><span style="color: #001080">y</span><span style="color: #000000">: </span><span style="color: #267F99">number</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000">).</span><span style="color: #795E26">narrow</span><span style="color: #000000">(</span><span style="color: #001080">isNumber</span><span style="color: #000000">).</span><span style="color: #795E26">map</span><span style="color: #000000">(</span><span style="color: #001080">z</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">z</span><span style="color: #000000"> + </span><span style="color: #001080">y</span><span style="color: #000000">);</span>
+<span style="color: #008000">// passes only even numbers</span>
 <span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #795E26">f2</span><span style="color: #000000"> = (</span><span style="color: #001080">x</span><span style="color: #000000">: </span><span style="color: #267F99">number</span><span style="color: #000000">): </span><span style="color: #267F99">Opt</span><span style="color: #000000">&lt;</span><span style="color: #267F99">number</span><span style="color: #000000">&gt; </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">x</span><span style="color: #000000"> % </span><span style="color: #098658">2</span><span style="color: #000000"> === </span><span style="color: #098658">0</span><span style="color: #000000"> ? </span><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000">) : </span><span style="color: #001080">none</span><span style="color: #000000">;</span>
+
 <span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #098658">0</span><span style="color: #000000">).</span><span style="color: #795E26">act</span><span style="color: #000000">( </span><span style="color: #008000">// Some(0)</span>
 <span style="color: #000000">  </span><span style="color: #795E26">f1</span><span style="color: #000000">(-</span><span style="color: #098658">2</span><span style="color: #000000">), </span><span style="color: #008000">// Some(-2)</span>
 <span style="color: #000000">  </span><span style="color: #001080">f2</span><span style="color: #000000">, </span><span style="color: #008000">// Some(-2)</span>
 <span style="color: #000000">  </span><span style="color: #001080">optNegative</span><span style="color: #000000">, </span><span style="color: #008000">// None</span>
+<span style="color: #000000">); </span><span style="color: #008000">// None</span>
+
+<span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #098658">0</span><span style="color: #000000">).</span><span style="color: #795E26">act</span><span style="color: #000000">( </span><span style="color: #008000">// Some(0)</span>
+<span style="color: #000000">  </span><span style="color: #795E26">f1</span><span style="color: #000000">(</span><span style="color: #098658">1</span><span style="color: #000000">), </span><span style="color: #008000">// Some(1)</span>
+<span style="color: #000000">  </span><span style="color: #001080">f2</span><span style="color: #000000">, </span><span style="color: #008000">// None</span>
+<span style="color: #000000">  </span><span style="color: #001080">optNegative</span><span style="color: #000000">, </span><span style="color: #008000">// won&#039;t get called, still None</span>
+<span style="color: #000000">); </span><span style="color: #008000">// None</span>
+
+<span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #098658">3</span><span style="color: #000000">).</span><span style="color: #795E26">act</span><span style="color: #000000">( </span><span style="color: #008000">// Some(3)</span>
+<span style="color: #000000">  </span><span style="color: #795E26">f1</span><span style="color: #000000">(</span><span style="color: #098658">1</span><span style="color: #000000">), </span><span style="color: #008000">// Some(4)</span>
+<span style="color: #000000">  </span><span style="color: #001080">f2</span><span style="color: #000000">, </span><span style="color: #008000">// Some(4)</span>
+<span style="color: #000000">  </span><span style="color: #001080">optNegative</span><span style="color: #000000">, </span><span style="color: #008000">// Some(4)</span>
+<span style="color: #000000">); </span><span style="color: #008000">// Some(4)</span>
+</code></pre>
+						<dl class="tsd-comment-tags">
+							<dt>param</dt>
+							<dd></dd>
+						</dl>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="acttoopt" class="tsd-anchor"></a>
+					<h3>act<wbr>ToOpt</h3>
+					<div class="tsd-signature tsd-kind-icon">act<wbr>ToOpt<span class="tsd-signature-symbol">:</span> <a href="../interfaces/flowlike.acttooptinclassfn.html" class="tsd-signature-type" data-tsd-kind="Interface">ActToOptInClassFn</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = ...</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in Opt.ts:178</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Similar to <a href="opt.opt-1.html#act">act</a>, but functions return empty values instead of <a href="opt.opt-1.html">Opt</a>.
+							It is useful for typical JavaScript functions (e.g. lodash), properly handles <code>undefined</code>/<code>null</code>/<code>NaN</code> at any point of the chain.</p>
+						</div>
+						<pre><code class="language-ts"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">data</span><span style="color: #000000"> = [{}, {</span><span style="color: #001080">f:</span><span style="color: #000000"> </span><span style="color: #0000FF">true</span><span style="color: #000000">, </span><span style="color: #001080">a:</span><span style="color: #000000"> [{</span><span style="color: #001080">b:</span><span style="color: #000000"> </span><span style="color: #098658">7</span><span style="color: #000000">, </span><span style="color: #001080">c:</span><span style="color: #000000"> </span><span style="color: #098658">1</span><span style="color: #000000">}]}, {</span><span style="color: #001080">a:</span><span style="color: #000000"> [{}]}];</span>
+<span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #001080">data</span><span style="color: #000000">).</span><span style="color: #795E26">actToOpt</span><span style="color: #000000">(</span>
+<span style="color: #000000">  </span><span style="color: #795E26">find</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #267F99">Boolean</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000">?.</span><span style="color: #001080">f</span><span style="color: #000000">)), </span><span style="color: #008000">// {f: true, a: [{b: 7, c: 1}]}</span>
+<span style="color: #000000">  </span><span style="color: #001080">x</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">x</span><span style="color: #000000">?.</span><span style="color: #001080">a</span><span style="color: #000000">, </span><span style="color: #008000">// [{b: 7, c: 1}]</span>
+<span style="color: #000000">  </span><span style="color: #795E26">find</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">x</span><span style="color: #000000">.</span><span style="color: #001080">b</span><span style="color: #000000"> === </span><span style="color: #098658">8</span><span style="color: #000000">) </span><span style="color: #008000">// undefined</span>
 <span style="color: #000000">); </span><span style="color: #008000">// None</span>
 </code></pre>
 						<dl class="tsd-comment-tags">
@@ -229,12 +274,31 @@
 					<div class="tsd-signature tsd-kind-icon">chain<wbr>Flow<span class="tsd-signature-symbol">:</span> <a href="../interfaces/flowlike.actinclassfn.html" class="tsd-signature-type" data-tsd-kind="Interface">ActInClassFn</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = ...</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in Opt.ts:133</li>
+							<li>Defined in Opt.ts:149</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>Alias of <a href="opt.opt-1.html#act">act</a></p>
+						</div>
+						<dl class="tsd-comment-tags">
+							<dt>param</dt>
+							<dd></dd>
+						</dl>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="chaintooptflow" class="tsd-anchor"></a>
+					<h3>chain<wbr>ToOpt<wbr>Flow</h3>
+					<div class="tsd-signature tsd-kind-icon">chain<wbr>ToOpt<wbr>Flow<span class="tsd-signature-symbol">:</span> <a href="../interfaces/flowlike.acttooptinclassfn.html" class="tsd-signature-type" data-tsd-kind="Interface">ActToOptInClassFn</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = ...</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in Opt.ts:184</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Alias of <a href="opt.opt-1.html#acttoopt">actToOpt</a>.</p>
 						</div>
 						<dl class="tsd-comment-tags">
 							<dt>param</dt>
@@ -272,13 +336,13 @@
 					<div class="tsd-signature tsd-kind-icon">pipe<span class="tsd-signature-symbol">:</span> <a href="../interfaces/flowlike.pipeinclassfn.html" class="tsd-signature-type" data-tsd-kind="Interface">PipeInClassFn</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = ...</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in Opt.ts:273</li>
+							<li>Defined in Opt.ts:312</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>Applies passed function to this instance and returns function result.
-							Also known as a function application, <code>|&gt;</code>, <code>&amp;</code>, <code>#</code> or pipe operator.</p>
+							Also known as a reverse function application, <code>|&gt;</code> (Reason/ReScript, F#, OCaml), <code>&amp;</code> (Haskell), <code>#</code> (PureScript) or a pipe operator.</p>
 						</div>
 						<pre><code class="language-ts"><span style="color: #795E26">some</span><span style="color: #000000">(</span><span style="color: #098658">1</span><span style="color: #000000">).</span><span style="color: #795E26">pipe</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">x</span><span style="color: #000000">.</span><span style="color: #001080">isEmpty</span><span style="color: #000000">) </span><span style="color: #008000">// false</span>
 <span style="color: #001080">none</span><span style="color: #000000">.</span><span style="color: #795E26">pipe</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">x</span><span style="color: #000000">.</span><span style="color: #001080">isEmpty</span><span style="color: #000000">) </span><span style="color: #008000">// true</span>
@@ -378,7 +442,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:347</li>
+									<li>Defined in Opt.ts:386</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -450,7 +514,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:239</li>
+									<li>Defined in Opt.ts:278</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -580,7 +644,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:145</li>
+									<li>Defined in Opt.ts:161</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -637,7 +701,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:286</li>
+									<li>Defined in Opt.ts:325</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -671,7 +735,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:476</li>
+									<li>Defined in Opt.ts:515</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -715,7 +779,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:299</li>
+									<li>Defined in Opt.ts:338</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -768,7 +832,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:422</li>
+									<li>Defined in Opt.ts:461</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -824,7 +888,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:360</li>
+									<li>Defined in Opt.ts:399</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -955,7 +1019,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:311</li>
+									<li>Defined in Opt.ts:350</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1109,7 +1173,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:445</li>
+									<li>Defined in Opt.ts:484</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1166,7 +1230,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:433</li>
+									<li>Defined in Opt.ts:472</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1222,7 +1286,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:251</li>
+									<li>Defined in Opt.ts:290</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1264,7 +1328,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:245</li>
+									<li>Defined in Opt.ts:284</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1312,7 +1376,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:164</li>
+									<li>Defined in Opt.ts:203</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1348,7 +1412,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:151</li>
+									<li>Defined in Opt.ts:190</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1379,7 +1443,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:323</li>
+									<li>Defined in Opt.ts:362</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1413,7 +1477,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:335</li>
+									<li>Defined in Opt.ts:374</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1447,7 +1511,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:206</li>
+									<li>Defined in Opt.ts:245</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1472,7 +1536,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:226</li>
+									<li>Defined in Opt.ts:265</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1497,7 +1561,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:196</li>
+									<li>Defined in Opt.ts:235</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1522,7 +1586,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:216</li>
+									<li>Defined in Opt.ts:255</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1547,7 +1611,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:186</li>
+									<li>Defined in Opt.ts:225</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1572,7 +1636,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:456</li>
+									<li>Defined in Opt.ts:495</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1606,7 +1670,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:498</li>
+									<li>Defined in Opt.ts:537</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1645,7 +1709,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:176</li>
+									<li>Defined in Opt.ts:215</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1703,7 +1767,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:370</li>
+									<li>Defined in Opt.ts:409</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1728,7 +1792,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:485</li>
+									<li>Defined in Opt.ts:524</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1762,7 +1826,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:383</li>
+									<li>Defined in Opt.ts:422</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1803,7 +1867,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:394</li>
+									<li>Defined in Opt.ts:433</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1848,7 +1912,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:402</li>
+									<li>Defined in Opt.ts:441</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1896,7 +1960,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:411</li>
+									<li>Defined in Opt.ts:450</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -2009,7 +2073,13 @@
 								<a href="opt.opt-1.html#act" class="tsd-kind-icon">act</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="opt.opt-1.html#acttoopt" class="tsd-kind-icon">act<wbr>ToOpt</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="opt.opt-1.html#chainflow" class="tsd-kind-icon">chain<wbr>Flow</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="opt.opt-1.html#chaintooptflow" class="tsd-kind-icon">chain<wbr>ToOpt<wbr>Flow</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="opt.opt-1.html#mapflow" class="tsd-kind-icon">map<wbr>Flow</a>

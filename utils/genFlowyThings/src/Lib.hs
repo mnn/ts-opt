@@ -51,12 +51,19 @@ genInterface name hasTypeParam inCls casesCount caseMaker =
 wrapInOpt :: Text -> Text
 wrapInOpt x = [qq|Opt<$x>|]
 
-mkCaseFn :: (Int -> [Text]) -> Bool -> Int -> Int -> Text
-mkCaseFn mkArgsTypes' resIsOpt n j =
+wrapInNullable :: Text -> Text
+wrapInNullable x = [qq|$x | undefined | null|]
+
+data ResGenType = ResIsRaw | ResIsOpt | ResIsNullable
+
+mkCaseFn :: (Int -> [Text]) -> ResGenType -> Int -> Int -> Text
+mkCaseFn mkArgsTypes' resGenType n j =
   let argNames = mkArgsTypes' n
       args = argNames & windowed 2 & (\x -> atDef ["?", "??"] x (j - 1))
-      wrapRes = bool id wrapInOpt resIsOpt
-   in [qq|f$j: (_: {args !! 0}) => {wrapRes $ args !! 1}|]
+      processRes ResIsRaw = id
+      processRes ResIsOpt = wrapInOpt
+      processRes ResIsNullable = wrapInNullable
+   in [qq|f$j: (_: {args !! 0}) => {processRes resGenType $ args !! 1}|]
 
 renderFunction :: [Text] -> [Text] -> Text -> Text
 renderFunction typeArgs args ret = [qq|$rTypeArgs($rArgs): $ret|]
@@ -78,7 +85,7 @@ genPipe inCls n = genInterface "Pipe" (intWithTtoHasTypeParam inCls) inCls n mkC
     isInClass' = isInClass inCls
     mkArgsTypes' = mkArgsTypes (Just $ bool "I" "Opt<T>" isInClass')
     mkCase i =
-      let fParts = [1 .. i] <&> mkCaseFn mkArgsTypes' False i & joinComma
+      let fParts = [1 .. i] <&> mkCaseFn mkArgsTypes' ResIsRaw i & joinComma
           prefix = "<" <> joinComma (mkArgsTypes' i & bool id tail isInClass') <> ">"
           firstArg = bool "x: I, " "" isInClass' :: Text
        in [qq|$prefix($firstArg$fParts): R;|]
@@ -89,7 +96,7 @@ genMapFlow inCls n = genInterface "MapFlow" (intWithTtoHasTypeParam inCls) inCls
     isInClass' = isInClass inCls
     mkArgsTypes' = mkArgsTypes (Just $ bool "I" "T" isInClass')
     mkCase i =
-      let fParts = [1 .. i] <&> mkCaseFn mkArgsTypes' False i & joinComma
+      let fParts = [1 .. i] <&> mkCaseFn mkArgsTypes' ResIsRaw i & joinComma
           prefix = "<" <> joinComma (mkArgsTypes' i & bool id tail isInClass') <> ">"
           retType :: Text = bool "(x: Opt<I>) => " "" isInClass' <> "Opt<R>"
        in [qq|$prefix($fParts): $retType;|]
@@ -100,7 +107,18 @@ genAct inCls n = genInterface "Act" (intWithTtoHasTypeParam inCls) inCls n mkCas
     isInClass' = isInClass inCls
     mkArgsTypes' = mkArgsTypes (Just $ bool "I" "T" isInClass')
     mkCase i =
-      let fParts = [1 .. i] <&> mkCaseFn mkArgsTypes' True i & joinComma
+      let fParts = [1 .. i] <&> mkCaseFn mkArgsTypes' ResIsOpt i & joinComma
+          prefix = "<" <> joinComma (mkArgsTypes' i & bool id tail isInClass') <> ">"
+          retType :: Text = bool "(x: Opt<I>) => " "" isInClass' <> "Opt<R>"
+       in [qq|$prefix($fParts): $retType;|]
+
+genActToOpt :: InterfaceInClass -> Int -> Text
+genActToOpt inCls n = genInterface "ActToOpt" (intWithTtoHasTypeParam inCls) inCls n mkCase
+  where
+    isInClass' = isInClass inCls
+    mkArgsTypes' = mkArgsTypes (Just $ bool "I" "T" isInClass')
+    mkCase i =
+      let fParts = [1 .. i] <&> mkCaseFn mkArgsTypes' ResIsNullable i & joinComma
           prefix = "<" <> joinComma (mkArgsTypes' i & bool id tail isInClass') <> ">"
           retType :: Text = bool "(x: Opt<I>) => " "" isInClass' <> "Opt<R>"
        in [qq|$prefix($fParts): $retType;|]
