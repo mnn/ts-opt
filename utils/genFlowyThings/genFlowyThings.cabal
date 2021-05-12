@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: d0777444307e34330cc33029a136222246baffcc4a4c6a672e9855b43384fc63
+-- hash: aeebfd23c16fc86d7f453a0cf7d5708cc5884cb6d09344f21f847fcb01f0894e
 
 name:           genFlowyThings
 version:        0.1.0.0
@@ -22,7 +22,9 @@ library
   hs-source-dirs:
       src
   build-depends:
-      base >=4.7 && <5
+      HTF
+    , HUnit
+    , base >=4.7 && <5
     , interpolatedstring-perl6
     , safe
     , string-conv
@@ -37,7 +39,9 @@ executable genFlowyThings-exe
       app
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      HTF
+    , HUnit
+    , base >=4.7 && <5
     , genFlowyThings
     , interpolatedstring-perl6
     , safe
@@ -49,12 +53,15 @@ test-suite genFlowyThings-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      LibSpec
       Paths_genFlowyThings
   hs-source-dirs:
       test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      HTF
+    , HUnit
+    , base >=4.7 && <5
     , genFlowyThings
     , interpolatedstring-perl6
     , safe

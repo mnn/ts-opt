@@ -10,7 +10,8 @@ dependencies:
   - interpolatedstring-perl6
   - string-conv
   - safe
-
+  - HTF
+  - HUnit
 
 library:
   source-dirs: src

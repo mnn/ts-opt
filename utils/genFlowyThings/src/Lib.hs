@@ -23,48 +23,84 @@ windowed size ls@(x : xs) =
 mkArgsTypes :: Maybe Text -> Int -> [Text]
 mkArgsTypes firstArg n = [1 .. n - 1] <&> (\x -> [qq|A$x|]) & (<> ["R"]) & (maybeToList firstArg <>)
 
---  <R>(f1: (_: Opt<T>) => R): R;
---  <A1, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => R): R;
+nl :: Text
+nl = "\n"
 
 joinNl :: [Text] -> Text
-joinNl = T.intercalate "\n"
+joinNl = T.intercalate nl
 
 joinComma :: [Text] -> Text
 joinComma = T.intercalate ", "
 
-genInterface :: Text -> Bool -> [Text] -> Text
-genInterface name hasT cases = [header, cases <&> ("  " <>) & joinNl, footer] & joinNl
+mkInterfaceName :: Bool -> Text -> Text
+mkInterfaceName inCls prefix = prefix <> bool "" "InClass" inCls <> "Fn"
+
+data InterfaceHasTypeParam = InterfaceWithoutT | InterfaceWithT deriving (Eq, Show)
+
+data InterfaceInClass = InterfaceIsInClass | InterfaceIsNotInClass deriving (Eq, Show)
+
+genInterface :: Text -> InterfaceHasTypeParam -> InterfaceInClass -> Int -> (Int -> Text) -> Text
+genInterface name hasTypeParam inCls casesCount caseMaker =
+  [header, [1 .. casesCount] <&> caseMaker <&> ("  " <>) & joinNl, footer] & joinNl
   where
-    tPart = bool "" "<T>" hasT :: Text
-    header = [qq|interface $name$tPart \{|]
+    tPart = bool "" "<T>" (hasTypeParam == InterfaceWithT) :: Text
+    fullName = mkInterfaceName (inCls == InterfaceIsInClass) name
+    header = [qq|export interface {fullName}$tPart \{|]
     footer = "}"
 
-mkCaseFn :: (Int -> [Text]) -> Int -> Int -> Text
-mkCaseFn mkArgsTypes' n j =
+wrapInOpt :: Text -> Text
+wrapInOpt x = [qq|Opt<$x>|]
+
+mkCaseFn :: (Int -> [Text]) -> Bool -> Int -> Int -> Text
+mkCaseFn mkArgsTypes' resIsOpt n j =
   let argNames = mkArgsTypes' n
       args = argNames & windowed 2 & (\x -> atDef ["?", "??"] x (j - 1))
-   in [qq|f$j: (_: {args !! 0}) => {args !! 1}|]
+      wrapRes = bool id wrapInOpt resIsOpt
+   in [qq|f$j: (_: {args !! 0}) => {wrapRes $ args !! 1}|]
 
-genPipeFn :: Bool -> Int -> Text
-genPipeFn inCls n = genInterface header inCls cases
+renderFunction :: [Text] -> [Text] -> Text -> Text
+renderFunction typeArgs args ret = [qq|$rTypeArgs($rArgs): $ret|]
   where
-    header = "Pipe" <> bool "" "InClass" inCls <> "Fn"
-    cases = [1 .. n] <&> mkCase
-    mkArgsTypes' = mkArgsTypes (Just $ bool "I" "Opt<T>" inCls)
+    rTypeArgs = bool ("<" <> joinComma typeArgs <> ">") "" (null typeArgs)
+    rArgs = joinComma args
+
+intWithTtoHasTypeParam :: InterfaceInClass -> InterfaceHasTypeParam
+intWithTtoHasTypeParam InterfaceIsInClass = InterfaceWithT
+intWithTtoHasTypeParam InterfaceIsNotInClass = InterfaceWithoutT
+
+isInClass :: InterfaceInClass -> Bool
+isInClass InterfaceIsInClass = True
+isInClass InterfaceIsNotInClass = False
+
+genPipe :: InterfaceInClass -> Int -> Text
+genPipe inCls n = genInterface "Pipe" (intWithTtoHasTypeParam inCls) inCls n mkCase
+  where
+    isInClass' = isInClass inCls
+    mkArgsTypes' = mkArgsTypes (Just $ bool "I" "Opt<T>" isInClass')
     mkCase i =
-      let fParts = [1 .. i] <&> mkCaseFn mkArgsTypes' i & joinComma
-          prefix = "<" <> joinComma (mkArgsTypes' i & bool id tail inCls) <> ">"
-          firstArg = bool "x: I, " "" inCls :: Text
+      let fParts = [1 .. i] <&> mkCaseFn mkArgsTypes' False i & joinComma
+          prefix = "<" <> joinComma (mkArgsTypes' i & bool id tail isInClass') <> ">"
+          firstArg = bool "x: I, " "" isInClass' :: Text
        in [qq|$prefix($firstArg$fParts): R;|]
 
-genMapFlow :: Bool -> Int -> Text
-genMapFlow inCls n = genInterface header inCls cases
+genMapFlow :: InterfaceInClass -> Int -> Text
+genMapFlow inCls n = genInterface "MapFlow" (intWithTtoHasTypeParam inCls) inCls n mkCase
   where
-    header = "MapFlow" <> bool "" "InClass" inCls <> "Fn"
-    cases = [1 .. n] <&> mkCase
-    mkArgsTypes' = mkArgsTypes (Just $ bool "I" "T" inCls)
+    isInClass' = isInClass inCls
+    mkArgsTypes' = mkArgsTypes (Just $ bool "I" "T" isInClass')
     mkCase i =
-      let fParts = [1 .. i] <&> mkCaseFn mkArgsTypes' i & joinComma
-          prefix = "<" <> joinComma (mkArgsTypes' i & bool id tail inCls) <> ">"
-          firstArg = bool "x: Opt<I>, " "" inCls :: Text
-       in [qq|$prefix($firstArg$fParts): Opt<R>;|]
+      let fParts = [1 .. i] <&> mkCaseFn mkArgsTypes' False i & joinComma
+          prefix = "<" <> joinComma (mkArgsTypes' i & bool id tail isInClass') <> ">"
+          retType :: Text = bool "(x: Opt<I>) => " "" isInClass' <> "Opt<R>"
+       in [qq|$prefix($fParts): $retType;|]
+
+genAct :: InterfaceInClass -> Int -> Text
+genAct inCls n = genInterface "Act" (intWithTtoHasTypeParam inCls) inCls n mkCase
+  where
+    isInClass' = isInClass inCls
+    mkArgsTypes' = mkArgsTypes (Just $ bool "I" "T" isInClass')
+    mkCase i =
+      let fParts = [1 .. i] <&> mkCaseFn mkArgsTypes' True i & joinComma
+          prefix = "<" <> joinComma (mkArgsTypes' i & bool id tail isInClass') <> ">"
+          retType :: Text = bool "(x: Opt<I>) => " "" isInClass' <> "Opt<R>"
+       in [qq|$prefix($fParts): $retType;|]

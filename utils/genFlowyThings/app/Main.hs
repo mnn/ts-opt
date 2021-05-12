@@ -1,16 +1,24 @@
 module Main where
 
-import qualified Data.Text as T
+import Data.Text (Text)
 import qualified Data.Text.IO as TIO
 import Lib
 
+gen :: (InterfaceInClass -> Int -> Text) -> Int -> IO ()
+gen f n = do
+  TIO.putStrLn $ f InterfaceIsInClass n
+  putStrLn ""
+  TIO.putStrLn $ f InterfaceIsNotInClass n
+  putStrLn ""
+
 main :: IO ()
 main = do
-  TIO.putStrLn $ genPipeFn True 10
+  putStrLn "// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  putStrLn "// Don't modify manually, generated via utils/genFlowyThings  !!"
+  putStrLn "// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
   putStrLn ""
-  TIO.putStrLn $ genPipeFn False 10
+  putStrLn "import { Opt } from './Opt';"
   putStrLn ""
-  TIO.putStrLn $ genMapFlow True 10
-  putStrLn ""
-  TIO.putStrLn $ genMapFlow False 10
-  putStrLn ""
+  gen genPipe 10
+  gen genMapFlow 10
+  gen genAct 10

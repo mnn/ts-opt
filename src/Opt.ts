@@ -1,5 +1,7 @@
 // Do NOT split to multiple modules - it's not possible, since there would be cyclic dependencies..
 
+import { ActFn, ActInClassFn, MapFlowInClassFn, MapFlowFn, PipeInClassFn, PipeFn } from './FlowLike';
+
 const someSymbol = Symbol('Some');
 const noneSymbol = Symbol('None');
 
@@ -10,52 +12,6 @@ type NotObject<T> = T extends object ? never : T;
 type SuperUnionOf<T, U> = Exclude<U, T> extends never ? NotObject<T> : never;
 
 type WithoutOptValues<T> = NonNullable<T>;
-
-// Don't modify manually, generated via utils/genFlowyThings
-interface PipeInClassFn<T> {
-  <R>(f1: (_: Opt<T>) => R): R;
-
-  <A1, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => R): R;
-
-  <A1, A2, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => A2, f3: (_: A2) => R): R;
-
-  <A1, A2, A3, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => R): R;
-
-  <A1, A2, A3, A4, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => R): R;
-
-  <A1, A2, A3, A4, A5, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => R): R;
-
-  <A1, A2, A3, A4, A5, A6, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => R): R;
-
-  <A1, A2, A3, A4, A5, A6, A7, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => R): R;
-
-  <A1, A2, A3, A4, A5, A6, A7, A8, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => A8, f9: (_: A8) => R): R;
-
-  <A1, A2, A3, A4, A5, A6, A7, A8, A9, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => A8, f9: (_: A8) => A9, f10: (_: A9) => R): R;
-}
-
-// Don't modify manually, generated via utils/genFlowyThings
-interface MapFlowInClassFn<T> {
-  <R>(f1: (_: T) => R): Opt<R>;
-
-  <A1, R>(f1: (_: T) => A1, f2: (_: A1) => R): Opt<R>;
-
-  <A1, A2, R>(f1: (_: T) => A1, f2: (_: A1) => A2, f3: (_: A2) => R): Opt<R>;
-
-  <A1, A2, A3, R>(f1: (_: T) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => R): Opt<R>;
-
-  <A1, A2, A3, A4, R>(f1: (_: T) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => R): Opt<R>;
-
-  <A1, A2, A3, A4, A5, R>(f1: (_: T) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => R): Opt<R>;
-
-  <A1, A2, A3, A4, A5, A6, R>(f1: (_: T) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => R): Opt<R>;
-
-  <A1, A2, A3, A4, A5, A6, A7, R>(f1: (_: T) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => R): Opt<R>;
-
-  <A1, A2, A3, A4, A5, A6, A7, A8, R>(f1: (_: T) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => A8, f9: (_: A8) => R): Opt<R>;
-
-  <A1, A2, A3, A4, A5, A6, A7, A8, A9, R>(f1: (_: T) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => A8, f9: (_: A8) => A9, f10: (_: A9) => R): Opt<R>;
-}
 
 /**
  * @typeparam T Wrapped value type.
@@ -151,6 +107,30 @@ export abstract class Opt<T> {
    * @param f
    */
   chain<U>(f: (_: T) => Opt<U>): Opt<U> { return this.flatMap(f); }
+
+  /**
+   * Similar to [[chain]] (in other languages called `bind` or `>>=`), but supports more functions passed at once (resembles `do` notation in Haskell).
+   * It is used to model a sequence of operations where each operation can fail (returns [[None]]).
+   *
+   * ```ts
+   * const f1 = (x: string | number) => (y: number) => opt(x).narrow(isNumber).map(z => z + y);
+   * const f2 = (x: number): Opt<number> => x % 2 === 0 ? opt(x) : none;
+   * opt(0).act( // Some(0)
+   *   f1(-2), // Some(-2)
+   *   f2, // Some(-2)
+   *   optNegative, // None
+   * ); // None
+   * ```
+   *
+   * @param fs
+   */
+  act: ActInClassFn<T> = (...fs: any[]) => fs.reduce((acc, x) => acc.chain(x), this);
+
+  /**
+   * Alias of [[act]]
+   * @param args
+   */
+  chainFlow: ActInClassFn<T> = (...args: any[]) => (this.act as any)(...args);
 
   /**
    * Combination of [[flatMap]] and [[opt]] functions.
@@ -272,11 +252,20 @@ export abstract class Opt<T> {
 
   /**
    * Applies passed function to this instance and returns function result.
-   * Also known as a function application, `|>` or pipe operator.
+   * Also known as a function application, `|>`, `&`, `#` or pipe operator.
    *
    * ```ts
    * some(1).pipe(x => x.isEmpty) // false
    * none.pipe(x => x.isEmpty) // true
+   * ```
+   *
+   * Supports multiple functions.
+   *
+   * ```ts
+   * opt(1).pipe( // Some(1)
+   *   x => x.isEmpty, // false
+   *   x => !x, // true
+   * ) // true
    * ```
    *
    * @param fs Functions in call chain
@@ -617,7 +606,7 @@ class Some<T> extends Opt<T> {
   }
 
   map<U>(f: (_: T) => U): Opt<U> {
-    return new Some(f(this._value));
+    return some(f(this._value));
   }
 
   orCrash(_msg: string): T { return this._value; }
@@ -766,7 +755,7 @@ export const some = <T>(x: T) => Object.freeze(new Some(x));
  * Anything else is wrapped into [[Some]].
  * @param x
  */
-export const opt = <T>(x: T | undefined | null): Opt<T> => isNoneValue(x) ? none : new Some(x as T);
+export const opt = <T>(x: T | undefined | null): Opt<T> => isNoneValue(x) ? none : some(x as T);
 
 /**
  * For falsy values returns [[None]], otherwise acts same as [[opt]].
@@ -778,7 +767,7 @@ export const opt = <T>(x: T | undefined | null): Opt<T> => isNoneValue(x) ? none
  * ```
  * @param x
  */
-export const optFalsy = <T>(x: T | undefined | null | '' | false | 0): Opt<T> => x ? new Some(x as T) : none;
+export const optFalsy = <T>(x: T | undefined | null | '' | false | 0): Opt<T> => x ? some(x as T) : none;
 
 /**
  * For empty array (`[]`) returns [[None]], otherwise acts same as [[opt]].
@@ -902,22 +891,8 @@ type MapFn = <T, U>(f: (_: T) => U) => <I extends (Opt<T> | T[]), O extends (I e
  */
 export const map: MapFn = (f: any) => (x: any) => x.map(f);
 
-// Don't modify manually, generated via utils/genFlowyThings
-interface MapFlowFn {
-  <I, R>(x: Opt<I>, f1: (_: I) => R): Opt<R>;
-  <I, A1, R>(x: Opt<I>, f1: (_: I) => A1, f2: (_: A1) => R): Opt<R>;
-  <I, A1, A2, R>(x: Opt<I>, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => R): Opt<R>;
-  <I, A1, A2, A3, R>(x: Opt<I>, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => R): Opt<R>;
-  <I, A1, A2, A3, A4, R>(x: Opt<I>, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => R): Opt<R>;
-  <I, A1, A2, A3, A4, A5, R>(x: Opt<I>, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => R): Opt<R>;
-  <I, A1, A2, A3, A4, A5, A6, R>(x: Opt<I>, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => R): Opt<R>;
-  <I, A1, A2, A3, A4, A5, A6, A7, R>(x: Opt<I>, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => R): Opt<R>;
-  <I, A1, A2, A3, A4, A5, A6, A7, A8, R>(x: Opt<I>, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => A8, f9: (_: A8) => R): Opt<R>;
-  <I, A1, A2, A3, A4, A5, A6, A7, A8, A9, R>(x: Opt<I>, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => A8, f9: (_: A8) => A9, f10: (_: A9) => R): Opt<R>;
-}
-
 /** @see [[Opt.mapFlow]] */
-export const mapFlow: MapFlowFn = <T>(x: Opt<T>, ...fs: any[]) => fs.reduce((acc, x) => acc.map(x), x);
+export const mapFlow: MapFlowFn = (...fs: any[]) => <T>(x: Opt<T>) => fs.reduce((acc, x) => acc.map(x), x);
 
 // type FlatMapFn = <T, U, O extends (Opt<U> | U[])>(f: (_: T) => O) => <I extends (O extends Opt<U> ? Opt<T> : T[])>(x: I) => O;
 interface FlatMapFn {
@@ -934,6 +909,12 @@ export const flatMap: FlatMapFn = (f: any) => (x: any) => isOpt(x) ? x.flatMap(f
 
 /** @see [[Opt.flatMap]] */
 export const chain = flatMap;
+
+/** @see [[Opt.act]] */
+export const act: ActFn = <I>(...fs: any[]) => (x: Opt<I>) => fs.reduce((acc, x) => acc.chain(x), x);
+
+/** @see [[Opt.chainFlow]] */
+export const chainFlow: ActFn = act;
 
 /** @see [[Opt.chainToOpt]] */
 export const chainToOpt = <T, U>(f: (_: T) => U | undefined | null) => (x: Opt<T>): Opt<U> => x.chainToOpt(f);
@@ -961,29 +942,6 @@ export const orNaN = <T>(x: Opt<T>): T | number => x.orNaN();
 
 /** @see [[Opt.caseOf]] */
 export const caseOf = <T, R>(onSome: (x: T) => R) => (onNone: () => R) => (x: Opt<T>): R => x.caseOf(onSome, onNone);
-
-// Don't modify manually, generated via utils/genFlowyThings
-interface PipeFn {
-  <I, R>(x: I, f1: (_: I) => R): R;
-
-  <I, A1, R>(x: I, f1: (_: I) => A1, f2: (_: A1) => R): R;
-
-  <I, A1, A2, R>(x: I, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => R): R;
-
-  <I, A1, A2, A3, R>(x: I, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => R): R;
-
-  <I, A1, A2, A3, A4, R>(x: I, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => R): R;
-
-  <I, A1, A2, A3, A4, A5, R>(x: I, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => R): R;
-
-  <I, A1, A2, A3, A4, A5, A6, R>(x: I, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => R): R;
-
-  <I, A1, A2, A3, A4, A5, A6, A7, R>(x: I, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => R): R;
-
-  <I, A1, A2, A3, A4, A5, A6, A7, A8, R>(x: I, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => A8, f9: (_: A8) => R): R;
-
-  <I, A1, A2, A3, A4, A5, A6, A7, A8, A9, R>(x: I, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => A8, f9: (_: A8) => A9, f10: (_: A9) => R): R;
-}
 
 /**
  * Similar to [[Opt.pipe]], but the first argument is the input.

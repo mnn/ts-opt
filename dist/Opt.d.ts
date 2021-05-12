@@ -1,19 +1,8 @@
+import { ActFn, ActInClassFn, MapFlowInClassFn, MapFlowFn, PipeInClassFn, PipeFn } from './FlowLike';
 export declare type EqualityFunction = <T>(a: T, b: T) => boolean;
 declare type NotObject<T> = T extends object ? never : T;
 declare type SuperUnionOf<T, U> = Exclude<U, T> extends never ? NotObject<T> : never;
 declare type WithoutOptValues<T> = NonNullable<T>;
-interface PipeInClassFn<T> {
-    <R>(f1: (_: Opt<T>) => R): R;
-    <A1, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => R): R;
-    <A1, A2, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => A2, f3: (_: A2) => R): R;
-    <A1, A2, A3, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => R): R;
-    <A1, A2, A3, A4, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => R): R;
-    <A1, A2, A3, A4, A5, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => R): R;
-    <A1, A2, A3, A4, A5, A6, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => R): R;
-    <A1, A2, A3, A4, A5, A6, A7, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => R): R;
-    <A1, A2, A3, A4, A5, A6, A7, A8, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => A8, f9: (_: A8) => R): R;
-    <A1, A2, A3, A4, A5, A6, A7, A8, A9, R>(f1: (_: Opt<T>) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => A8, f9: (_: A8) => A9, f10: (_: A9) => R): R;
-}
 /**
  * @typeparam T Wrapped value type.
  */
@@ -70,6 +59,18 @@ export declare abstract class Opt<T> {
      */
     abstract map<U>(f: (_: T) => U): Opt<U>;
     /**
+     * Similar to [[map]], but supports more functions which are called in succession, each on a result of a previous one.
+     *
+     * ```
+     * const sq = (x: number) => x * x;
+     * const dec = (x: number) => x - 1;
+     * opt(4).mapFlow(sq, dec) // Some(15)
+     * opt(null).mapFlow(sq, dec) // None
+     * ```
+     * @param fs
+     */
+    mapFlow: MapFlowInClassFn<T>;
+    /**
      * Similar to [[map]], but function is expected to return [[Opt]] which will be returned.
      * Useful for including steps which may fail or return no value.
      *
@@ -86,6 +87,27 @@ export declare abstract class Opt<T> {
      * @param f
      */
     chain<U>(f: (_: T) => Opt<U>): Opt<U>;
+    /**
+     * Similar to chain (in other languages called bind), but supports more functions passed at once (resembles do notation in Haskell).
+     *
+     * ```ts
+     * const f1 = (x: string | number) => (y: number) => opt(x).narrow(isNumber).map(z => z + y);
+     * const f2 = (x: number): Opt<number> => x % 2 === 0 ? opt(x) : none;
+     * opt(0).act( // Some(0)
+     *   f1(-2), // Some(-2)
+     *   f2, // Some(-2)
+     *   optNegative, // None
+     * ); // None
+     * ```
+     *
+     * @param fs
+     */
+    act: ActInClassFn<T>;
+    /**
+     * Alias of [[act]]
+     * @param args
+     */
+    chainFlow: ActInClassFn<T>;
     /**
      * Combination of [[flatMap]] and [[opt]] functions.
      *
@@ -639,6 +661,8 @@ declare type MapFn = <T, U>(f: (_: T) => U) => <I extends (Opt<T> | T[]), O exte
  * @see [[Opt.map]]
  */
 export declare const map: MapFn;
+/** @see [[Opt.mapFlow]] */
+export declare const mapFlow: MapFlowFn;
 interface FlatMapFn {
     <T, U>(f: (_: T) => U[]): (x: T[]) => U[];
     <T, U>(f: (_: T) => Opt<U>): (x: Opt<T>) => Opt<U>;
@@ -650,6 +674,7 @@ interface FlatMapFn {
 export declare const flatMap: FlatMapFn;
 /** @see [[Opt.flatMap]] */
 export declare const chain: FlatMapFn;
+export declare const act: ActFn;
 /** @see [[Opt.chainToOpt]] */
 export declare const chainToOpt: <T, U>(f: (_: T) => U | null | undefined) => (x: Opt<T>) => Opt<U>;
 /** @see [[Opt.someOrCrash]] */
@@ -668,18 +693,6 @@ export declare const orTrue: <T>(x: Opt<T>) => true | T;
 export declare const orNaN: <T>(x: Opt<T>) => number | T;
 /** @see [[Opt.caseOf]] */
 export declare const caseOf: <T, R>(onSome: (x: T) => R) => (onNone: () => R) => (x: Opt<T>) => R;
-interface PipeFn {
-    <I, R>(x: I, f1: (_: I) => R): R;
-    <I, A1, R>(x: I, f1: (_: I) => A1, f2: (_: A1) => R): R;
-    <I, A1, A2, R>(x: I, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => R): R;
-    <I, A1, A2, A3, R>(x: I, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => R): R;
-    <I, A1, A2, A3, A4, R>(x: I, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => R): R;
-    <I, A1, A2, A3, A4, A5, R>(x: I, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => R): R;
-    <I, A1, A2, A3, A4, A5, A6, R>(x: I, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => R): R;
-    <I, A1, A2, A3, A4, A5, A6, A7, R>(x: I, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => R): R;
-    <I, A1, A2, A3, A4, A5, A6, A7, A8, R>(x: I, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => A8, f9: (_: A8) => R): R;
-    <I, A1, A2, A3, A4, A5, A6, A7, A8, A9, R>(x: I, f1: (_: I) => A1, f2: (_: A1) => A2, f3: (_: A2) => A3, f4: (_: A3) => A4, f5: (_: A4) => A5, f6: (_: A5) => A6, f7: (_: A6) => A7, f8: (_: A7) => A8, f9: (_: A8) => A9, f10: (_: A9) => R): R;
-}
 /**
  * Similar to [[Opt.pipe]], but the first argument is the input.
  * Supports arbitrary input type, not just [[Opt]].

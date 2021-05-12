@@ -1,2 +1,8 @@
+{-# OPTIONS_GHC -F -pgmF htfpp -Wno-unused-top-binds #-}
+
+import {-@ HTF_TESTS @-} LibSpec
+
+import Test.Framework
+
 main :: IO ()
-main = putStrLn "Test suite not yet implemented"
+main = htfMain htf_importedTests

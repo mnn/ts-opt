@@ -6,3 +6,4 @@ node_modules/
 *.iml
 .nyc_output/
 **/.stack-work
+**/.HTF

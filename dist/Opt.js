@@ -21,7 +21,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from) {
     return to;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.prop = exports.equals = exports.print = exports.narrow = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.bimap = exports.orElseOpt = exports.orElse = exports.forAll = exports.exists = exports.contains = exports.pipe = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOpt = exports.chain = exports.flatMap = exports.map = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = void 0;
+exports.prop = exports.equals = exports.print = exports.narrow = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.bimap = exports.orElseOpt = exports.orElse = exports.forAll = exports.exists = exports.contains = exports.pipe = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOpt = exports.act = exports.chain = exports.flatMap = exports.mapFlow = exports.map = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 var refCmp = function (a, b) { return a === b; };
@@ -31,6 +31,57 @@ var refCmp = function (a, b) { return a === b; };
 var Opt = /** @class */ (function () {
     function Opt() {
         var _this = this;
+        /**
+         * Similar to [[map]], but supports more functions which are called in succession, each on a result of a previous one.
+         *
+         * ```
+         * const sq = (x: number) => x * x;
+         * const dec = (x: number) => x - 1;
+         * opt(4).mapFlow(sq, dec) // Some(15)
+         * opt(null).mapFlow(sq, dec) // None
+         * ```
+         * @param fs
+         */
+        this.mapFlow = function () {
+            var fs = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                fs[_i] = arguments[_i];
+            }
+            return fs.reduce(function (acc, x) { return acc.map(x); }, _this);
+        };
+        /**
+         * Similar to chain (in other languages called bind), but supports more functions passed at once (resembles do notation in Haskell).
+         *
+         * ```ts
+         * const f1 = (x: string | number) => (y: number) => opt(x).narrow(isNumber).map(z => z + y);
+         * const f2 = (x: number): Opt<number> => x % 2 === 0 ? opt(x) : none;
+         * opt(0).act( // Some(0)
+         *   f1(-2), // Some(-2)
+         *   f2, // Some(-2)
+         *   optNegative, // None
+         * ); // None
+         * ```
+         *
+         * @param fs
+         */
+        this.act = function () {
+            var fs = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                fs[_i] = arguments[_i];
+            }
+            return fs.reduce(function (acc, x) { return acc.chain(x); }, _this);
+        };
+        /**
+         * Alias of [[act]]
+         * @param args
+         */
+        this.chainFlow = function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i] = arguments[_i];
+            }
+            return _this.act.apply(_this, args);
+        };
         /**
          * Applies passed function to this instance and returns function result.
          * Also known as a function application, `|>` or pipe operator.
@@ -219,7 +270,7 @@ var Some = /** @class */ (function (_super) {
         return f(this._value);
     };
     Some.prototype.map = function (f) {
-        return new Some(f(this._value));
+        return exports.some(f(this._value));
     };
     Some.prototype.orCrash = function (_msg) { return this._value; };
     /**
@@ -346,7 +397,7 @@ exports.some = some;
  * Anything else is wrapped into [[Some]].
  * @param x
  */
-var opt = function (x) { return isNoneValue(x) ? exports.none : new Some(x); };
+var opt = function (x) { return isNoneValue(x) ? exports.none : exports.some(x); };
 exports.opt = opt;
 /**
  * For falsy values returns [[None]], otherwise acts same as [[opt]].
@@ -358,7 +409,7 @@ exports.opt = opt;
  * ```
  * @param x
  */
-var optFalsy = function (x) { return x ? new Some(x) : exports.none; };
+var optFalsy = function (x) { return x ? exports.some(x) : exports.none; };
 exports.optFalsy = optFalsy;
 /**
  * For empty array (`[]`) returns [[None]], otherwise acts same as [[opt]].
@@ -482,6 +533,15 @@ exports.toArray = toArray;
  */
 var map = function (f) { return function (x) { return x.map(f); }; };
 exports.map = map;
+/** @see [[Opt.mapFlow]] */
+var mapFlow = function (x) {
+    var fs = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        fs[_i - 1] = arguments[_i];
+    }
+    return fs.reduce(function (acc, x) { return acc.map(x); }, x);
+};
+exports.mapFlow = mapFlow;
 /**
  * Same as [[Opt.flatMap]], but also supports arrays.
  * @see [[Opt.flatMap]]
@@ -490,6 +550,7 @@ var flatMap = function (f) { return function (x) { return exports.isOpt(x) ? x.f
 exports.flatMap = flatMap;
 /** @see [[Opt.flatMap]] */
 exports.chain = exports.flatMap;
+exports.act = 0;
 /** @see [[Opt.chainToOpt]] */
 var chainToOpt = function (f) { return function (x) { return x.chainToOpt(f); }; };
 exports.chainToOpt = chainToOpt;
