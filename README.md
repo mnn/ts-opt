@@ -110,8 +110,8 @@ Documentation
 ===
 All methods are documented, if you don't see a description please make sure you are reading the base class page - `Opt`.
 
-* Main [Opt](https://glcdn.githack.com/monnef/ts-opt/-/raw/v2.3.0/doc/classes/opt.html) class
-* [Module](https://glcdn.githack.com/monnef/ts-opt/-/raw/v2.3.0/doc/modules.html) (constructors and helper functions)
+* Main [Opt](https://glcdn.githack.com/monnef/ts-opt/-/raw/v2.4.0/doc/classes/opt.html) class
+* [Module](https://glcdn.githack.com/monnef/ts-opt/-/raw/v2.4.0/doc/modules.html) (constructors and helper functions)
 
 License
 ===
