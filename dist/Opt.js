@@ -21,7 +21,8 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from) {
     return to;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.prop = exports.equals = exports.print = exports.narrow = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.bimap = exports.orElseOpt = exports.orElse = exports.forAll = exports.exists = exports.contains = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOpt = exports.chain = exports.flatMap = exports.map = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = void 0;
+exports.print = exports.narrow = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.bimap = exports.orElseOpt = exports.orElse = exports.forAll = exports.exists = exports.contains = exports.pipe = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOptFlow = exports.actToOpt = exports.chainToOpt = exports.chainFlow = exports.act = exports.chain = exports.flatMap = exports.mapFlow = exports.map = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = void 0;
+exports.flow = exports.prop = exports.equals = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 var refCmp = function (a, b) { return a === b; };
@@ -30,6 +31,135 @@ var refCmp = function (a, b) { return a === b; };
  */
 var Opt = /** @class */ (function () {
     function Opt() {
+        var _this = this;
+        /**
+         * Similar to [[map]], but supports more functions which are called in succession, each on a result of a previous one.
+         *
+         * ```
+         * const sq = (x: number) => x * x;
+         * const dec = (x: number) => x - 1;
+         * opt(4).mapFlow(sq, dec) // Some(15)
+         * opt(null).mapFlow(sq, dec) // None
+         * ```
+         * @param fs
+         */
+        this.mapFlow = function () {
+            var fs = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                fs[_i] = arguments[_i];
+            }
+            return fs.reduce(function (acc, x) { return acc.map(x); }, _this);
+        };
+        /**
+         * Similar to [[chain]] (in other languages called `bind` or `>>=`), but supports more functions passed at once (resembles `do` notation in Haskell).
+         * It is used to model a sequence of operations where each operation can fail (can return [[None]]).
+         *
+         * ```ts
+         * // does addition when first argument is number
+         * const f1 =
+         *   (x: string | number) => (y: number) => opt(x).narrow(isNumber).map(z => z + y);
+         * // passes only even numbers
+         * const f2 = (x: number): Opt<number> => x % 2 === 0 ? opt(x) : none;
+         *
+         * opt(0).act( // Some(0)
+         *   f1(-2), // Some(-2)
+         *   f2, // Some(-2)
+         *   optNegative, // None
+         * ); // None
+         *
+         * opt(0).act( // Some(0)
+         *   f1(1), // Some(1)
+         *   f2, // None
+         *   optNegative, // won't get called, still None
+         * ); // None
+         *
+         * opt(3).act( // Some(3)
+         *   f1(1), // Some(4)
+         *   f2, // Some(4)
+         *   optNegative, // Some(4)
+         * ); // Some(4)
+         * ```
+         *
+         * @param fs
+         */
+        this.act = function () {
+            var fs = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                fs[_i] = arguments[_i];
+            }
+            return fs.reduce(function (acc, x) { return acc.chain(x); }, _this);
+        };
+        /**
+         * Alias of [[act]]
+         * @param args
+         */
+        this.chainFlow = function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i] = arguments[_i];
+            }
+            return _this.act.apply(_this, args);
+        };
+        /**
+         * Similar to [[act]], but functions return empty values instead of [[Opt]].
+         * It is useful for typical JavaScript functions (e.g. lodash), properly handles `undefined`/`null`/`NaN` at any point of the chain.
+         *
+         * ```ts
+         * const data = [{}, {f: true, a: [{b: 7, c: 1}]}, {a: [{}]}];
+         * opt(data).actToOpt(
+         *   find(x => Boolean(x?.f)), // {f: true, a: [{b: 7, c: 1}]}
+         *   x => x?.a, // [{b: 7, c: 1}]
+         *   find(x => x.b === 8) // undefined
+         * ); // None
+         * ```
+         *
+         * @param fs
+         */
+        this.actToOpt = function () {
+            var fs = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                fs[_i] = arguments[_i];
+            }
+            return fs.reduce(function (acc, x) { return acc.chainToOpt(x); }, _this);
+        };
+        /**
+         * Alias of [[actToOpt]].
+         * @param args
+         */
+        this.chainToOptFlow = function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i] = arguments[_i];
+            }
+            return _this.act.apply(_this, args);
+        };
+        /**
+         * Applies passed function to this instance and returns function result.
+         * Also known as a reverse function application, `|>` (Reason/ReScript, F#, OCaml), `&` (Haskell), `#` (PureScript) or a pipe operator.
+         *
+         * ```ts
+         * some(1).pipe(x => x.isEmpty) // false
+         * none.pipe(x => x.isEmpty) // true
+         * ```
+         *
+         * Supports multiple functions.
+         *
+         * ```ts
+         * opt(1).pipe( // Some(1)
+         *   x => x.isEmpty, // false
+         *   x => !x, // true
+         * ) // true
+         * ```
+         *
+         * @param fs Functions in call chain
+         */
+        this.pipe = function () {
+            var fs = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                fs[_i] = arguments[_i];
+            }
+            return fs.reduce(function (acc, x) { return x(acc); }, _this);
+        };
     }
     Object.defineProperty(Opt.prototype, "nonEmpty", {
         /**
@@ -82,18 +212,6 @@ var Opt = /** @class */ (function () {
      * @param f
      */
     Opt.prototype.chainToOpt = function (f) { return this.flatMap(function (x) { return exports.opt(f(x)); }); };
-    /**
-     * Applies passed function to this instance and returns function result.
-     * Also known as a function application, `|>` or pipe operator.
-     *
-     * ```ts
-     * some(1).pipe(x => x.isEmpty) // false
-     * none.pipe(x => x.isEmpty) // true
-     * ```
-     *
-     * @param f
-     */
-    Opt.prototype.pipe = function (f) { return f(this); };
     /**
      * Returns [[None]] if predicate holds, otherwise passes same instance of [[Opt]].
      * ```ts
@@ -212,7 +330,7 @@ var Some = /** @class */ (function (_super) {
         return f(this._value);
     };
     Some.prototype.map = function (f) {
-        return new Some(f(this._value));
+        return exports.some(f(this._value));
     };
     Some.prototype.orCrash = function (_msg) { return this._value; };
     /**
@@ -339,7 +457,7 @@ exports.some = some;
  * Anything else is wrapped into [[Some]].
  * @param x
  */
-var opt = function (x) { return isNoneValue(x) ? exports.none : new Some(x); };
+var opt = function (x) { return isNoneValue(x) ? exports.none : exports.some(x); };
 exports.opt = opt;
 /**
  * For falsy values returns [[None]], otherwise acts same as [[opt]].
@@ -351,7 +469,7 @@ exports.opt = opt;
  * ```
  * @param x
  */
-var optFalsy = function (x) { return x ? new Some(x) : exports.none; };
+var optFalsy = function (x) { return x ? exports.some(x) : exports.none; };
 exports.optFalsy = optFalsy;
 /**
  * For empty array (`[]`) returns [[None]], otherwise acts same as [[opt]].
@@ -475,6 +593,15 @@ exports.toArray = toArray;
  */
 var map = function (f) { return function (x) { return x.map(f); }; };
 exports.map = map;
+/** @see [[Opt.mapFlow]] */
+var mapFlow = function () {
+    var fs = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        fs[_i] = arguments[_i];
+    }
+    return function (x) { return fs.reduce(function (acc, x) { return acc.map(x); }, x); };
+};
+exports.mapFlow = mapFlow;
 /**
  * Same as [[Opt.flatMap]], but also supports arrays.
  * @see [[Opt.flatMap]]
@@ -483,9 +610,31 @@ var flatMap = function (f) { return function (x) { return exports.isOpt(x) ? x.f
 exports.flatMap = flatMap;
 /** @see [[Opt.flatMap]] */
 exports.chain = exports.flatMap;
+/** @see [[Opt.act]] */
+var act = function () {
+    var fs = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        fs[_i] = arguments[_i];
+    }
+    return function (x) { return fs.reduce(function (acc, x) { return acc.chain(x); }, x); };
+};
+exports.act = act;
+/** @see [[Opt.chainFlow]] */
+exports.chainFlow = exports.act;
 /** @see [[Opt.chainToOpt]] */
 var chainToOpt = function (f) { return function (x) { return x.chainToOpt(f); }; };
 exports.chainToOpt = chainToOpt;
+/** @see [[Opt.actToOpt]] */
+var actToOpt = function () {
+    var fs = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        fs[_i] = arguments[_i];
+    }
+    return function (x) { return fs.reduce(function (acc, x) { return acc.chainToOpt(x); }, x); };
+};
+exports.actToOpt = actToOpt;
+/** @see [[Opt.chainToOptFlow]] */
+exports.chainToOptFlow = exports.actToOpt;
 /** @see [[Opt.someOrCrash]] */
 var someOrCrash = function (msg) { return function (x) { return x.someOrCrash(msg); }; };
 exports.someOrCrash = someOrCrash;
@@ -510,6 +659,19 @@ exports.orNaN = orNaN;
 /** @see [[Opt.caseOf]] */
 var caseOf = function (onSome) { return function (onNone) { return function (x) { return x.caseOf(onSome, onNone); }; }; };
 exports.caseOf = caseOf;
+/**
+ * Similar to [[Opt.pipe]], but the first argument is the input.
+ * Supports arbitrary input type, not just [[Opt]].
+ * @see [[Opt.pipe]]
+ */
+var pipe = function (x) {
+    var fs = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        fs[_i - 1] = arguments[_i];
+    }
+    return fs.reduce(function (acc, y) { return y(acc); }, x);
+};
+exports.pipe = pipe;
 /** @see [[Opt.contains]] */
 var contains = function (y) { return function (x) { return x.contains(y); }; };
 exports.contains = contains;
@@ -571,4 +733,30 @@ var prop = function (key) { return function (x) {
     return x.prop(key);
 }; };
 exports.prop = prop;
+/**
+ * Takes functions and builds a function which consecutively calls each given function with a result from a previous one.
+ * Similar to [[Opt.pipe]], but doesn't take input directly, instead returns a function which can be called repeatedly with different inputs.
+ *
+ * ```ts
+ * flow( // 63
+ *   add1, // 64
+ *   Math.sqrt, // 8
+ * )(63), // 8
+ * ```
+ * ```ts
+ * const f = flow(add1, Math.sqrt); // (_: number) => number
+ * f(63); // 8
+ * f(3);  // 2
+ * ```
+ *
+ * @param fs
+ */
+var flow = function () {
+    var fs = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        fs[_i] = arguments[_i];
+    }
+    return function (x) { return fs.reduce(function (acc, x) { return x(acc); }, x); };
+};
+exports.flow = flow;
 //# sourceMappingURL=Opt.js.map

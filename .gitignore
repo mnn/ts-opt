@@ -1,7 +1,9 @@
-.idea/*
+**/.idea/*
 coverage/
 *.log
 node_modules/
 *.swp
 *.iml
 .nyc_output/
+**/.stack-work
+**/.HTF

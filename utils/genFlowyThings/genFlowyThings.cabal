@@ -1,0 +1,70 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: aeebfd23c16fc86d7f453a0cf7d5708cc5884cb6d09344f21f847fcb01f0894e
+
+name:           genFlowyThings
+version:        0.1.0.0
+author:         monnef
+maintainer:     monnef
+copyright:      2021 monnef
+license:        AGPL-3
+build-type:     Simple
+
+library
+  exposed-modules:
+      Lib
+  other-modules:
+      Paths_genFlowyThings
+  hs-source-dirs:
+      src
+  build-depends:
+      HTF
+    , HUnit
+    , base >=4.7 && <5
+    , interpolatedstring-perl6
+    , safe
+    , string-conv
+    , text
+  default-language: Haskell2010
+
+executable genFlowyThings-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_genFlowyThings
+  hs-source-dirs:
+      app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      HTF
+    , HUnit
+    , base >=4.7 && <5
+    , genFlowyThings
+    , interpolatedstring-perl6
+    , safe
+    , string-conv
+    , text
+  default-language: Haskell2010
+
+test-suite genFlowyThings-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      LibSpec
+      Paths_genFlowyThings
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      HTF
+    , HUnit
+    , base >=4.7 && <5
+    , genFlowyThings
+    , interpolatedstring-perl6
+    , safe
+    , string-conv
+    , text
+  default-language: Haskell2010

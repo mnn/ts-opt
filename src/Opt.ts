@@ -1,5 +1,17 @@
 // Do NOT split to multiple modules - it's not possible, since there would be cyclic dependencies..
 
+import {
+  ActFn,
+  ActInClassFn,
+  MapFlowInClassFn,
+  MapFlowFn,
+  PipeInClassFn,
+  PipeFn,
+  ActToOptInClassFn,
+  ActToOptFn,
+  FlowFn,
+} from './FlowLike';
+
 const someSymbol = Symbol('Some');
 const noneSymbol = Symbol('None');
 
@@ -75,6 +87,19 @@ export abstract class Opt<T> {
   abstract map<U>(f: (_: T) => U): Opt<U>;
 
   /**
+   * Similar to [[map]], but supports more functions which are called in succession, each on a result of a previous one.
+   *
+   * ```
+   * const sq = (x: number) => x * x;
+   * const dec = (x: number) => x - 1;
+   * opt(4).mapFlow(sq, dec) // Some(15)
+   * opt(null).mapFlow(sq, dec) // None
+   * ```
+   * @param fs
+   */
+  mapFlow: MapFlowInClassFn<T> = (...fs: any[]) => fs.reduce((acc, x) => acc.map(x), this);
+
+  /**
    * Similar to [[map]], but function is expected to return [[Opt]] which will be returned.
    * Useful for including steps which may fail or return no value.
    *
@@ -94,6 +119,46 @@ export abstract class Opt<T> {
   chain<U>(f: (_: T) => Opt<U>): Opt<U> { return this.flatMap(f); }
 
   /**
+   * Similar to [[chain]] (in other languages called `bind` or `>>=`), but supports more functions passed at once (resembles `do` notation in Haskell).
+   * It is used to model a sequence of operations where each operation can fail (can return [[None]]).
+   *
+   * ```ts
+   * // does addition when first argument is number
+   * const f1 =
+   *   (x: string | number) => (y: number) => opt(x).narrow(isNumber).map(z => z + y);
+   * // passes only even numbers
+   * const f2 = (x: number): Opt<number> => x % 2 === 0 ? opt(x) : none;
+   *
+   * opt(0).act( // Some(0)
+   *   f1(-2), // Some(-2)
+   *   f2, // Some(-2)
+   *   optNegative, // None
+   * ); // None
+   *
+   * opt(0).act( // Some(0)
+   *   f1(1), // Some(1)
+   *   f2, // None
+   *   optNegative, // won't get called, still None
+   * ); // None
+   *
+   * opt(3).act( // Some(3)
+   *   f1(1), // Some(4)
+   *   f2, // Some(4)
+   *   optNegative, // Some(4)
+   * ); // Some(4)
+   * ```
+   *
+   * @param fs
+   */
+  act: ActInClassFn<T> = (...fs: any[]) => fs.reduce((acc, x) => acc.chain(x), this);
+
+  /**
+   * Alias of [[act]]
+   * @param args
+   */
+  chainFlow: ActInClassFn<T> = (...args: any[]) => (this.act as any)(...args);
+
+  /**
    * Combination of [[flatMap]] and [[opt]] functions.
    *
    * ```ts
@@ -104,6 +169,29 @@ export abstract class Opt<T> {
    * @param f
    */
   chainToOpt<U>(f: (_: T) => U | undefined | null): Opt<U> { return this.flatMap(x => opt(f(x))); }
+
+  /**
+   * Similar to [[act]], but functions return empty values instead of [[Opt]].
+   * It is useful for typical JavaScript functions (e.g. lodash), properly handles `undefined`/`null`/`NaN` at any point of the chain.
+   *
+   * ```ts
+   * const data = [{}, {f: true, a: [{b: 7, c: 1}]}, {a: [{}]}];
+   * opt(data).actToOpt(
+   *   find(x => Boolean(x?.f)), // {f: true, a: [{b: 7, c: 1}]}
+   *   x => x?.a, // [{b: 7, c: 1}]
+   *   find(x => x.b === 8) // undefined
+   * ); // None
+   * ```
+   *
+   * @param fs
+   */
+  actToOpt: ActToOptInClassFn<T> = (...fs: any[]) => fs.reduce((acc, x) => acc.chainToOpt(x), this);
+
+  /**
+   * Alias of [[actToOpt]].
+   * @param args
+   */
+  chainToOptFlow: ActToOptInClassFn<T> = (...args: any[]) => (this.act as any)(...args);
 
   /**
    * Returns value when [[Some]], throws error with `msg` otherwise.
@@ -213,16 +301,25 @@ export abstract class Opt<T> {
 
   /**
    * Applies passed function to this instance and returns function result.
-   * Also known as a function application, `|>` or pipe operator.
+   * Also known as a reverse function application, `|>` (Reason/ReScript, F#, OCaml), `&` (Haskell), `#` (PureScript) or a pipe operator.
    *
    * ```ts
    * some(1).pipe(x => x.isEmpty) // false
    * none.pipe(x => x.isEmpty) // true
    * ```
    *
-   * @param f
+   * Supports multiple functions.
+   *
+   * ```ts
+   * opt(1).pipe( // Some(1)
+   *   x => x.isEmpty, // false
+   *   x => !x, // true
+   * ) // true
+   * ```
+   *
+   * @param fs Functions in call chain
    */
-  pipe<R>(f: (x: Opt<T>) => R): R { return f(this); }
+  pipe: PipeInClassFn<T> = (...fs: any[]) => fs.reduce((acc, x) => x(acc), this);
 
   /**
    * Compares inner value with given value using `===`. Always `false` for [[None]].
@@ -558,7 +655,7 @@ class Some<T> extends Opt<T> {
   }
 
   map<U>(f: (_: T) => U): Opt<U> {
-    return new Some(f(this._value));
+    return some(f(this._value));
   }
 
   orCrash(_msg: string): T { return this._value; }
@@ -707,7 +804,7 @@ export const some = <T>(x: T) => Object.freeze(new Some(x));
  * Anything else is wrapped into [[Some]].
  * @param x
  */
-export const opt = <T>(x: T | undefined | null): Opt<T> => isNoneValue(x) ? none : new Some(x as T);
+export const opt = <T>(x: T | undefined | null): Opt<T> => isNoneValue(x) ? none : some(x as T);
 
 /**
  * For falsy values returns [[None]], otherwise acts same as [[opt]].
@@ -719,7 +816,7 @@ export const opt = <T>(x: T | undefined | null): Opt<T> => isNoneValue(x) ? none
  * ```
  * @param x
  */
-export const optFalsy = <T>(x: T | undefined | null | '' | false | 0): Opt<T> => x ? new Some(x as T) : none;
+export const optFalsy = <T>(x: T | undefined | null | '' | false | 0): Opt<T> => x ? some(x as T) : none;
 
 /**
  * For empty array (`[]`) returns [[None]], otherwise acts same as [[opt]].
@@ -843,6 +940,9 @@ type MapFn = <T, U>(f: (_: T) => U) => <I extends (Opt<T> | T[]), O extends (I e
  */
 export const map: MapFn = (f: any) => (x: any) => x.map(f);
 
+/** @see [[Opt.mapFlow]] */
+export const mapFlow: MapFlowFn = (...fs: any[]) => <T>(x: Opt<T>) => fs.reduce((acc, x) => acc.map(x), x);
+
 // type FlatMapFn = <T, U, O extends (Opt<U> | U[])>(f: (_: T) => O) => <I extends (O extends Opt<U> ? Opt<T> : T[])>(x: I) => O;
 interface FlatMapFn {
   <T, U>(f: (_: T) => U[]): (x: T[]) => U[];
@@ -859,8 +959,20 @@ export const flatMap: FlatMapFn = (f: any) => (x: any) => isOpt(x) ? x.flatMap(f
 /** @see [[Opt.flatMap]] */
 export const chain = flatMap;
 
+/** @see [[Opt.act]] */
+export const act: ActFn = <I>(...fs: any[]) => (x: Opt<I>) => fs.reduce((acc, x) => acc.chain(x), x);
+
+/** @see [[Opt.chainFlow]] */
+export const chainFlow: ActFn = act;
+
 /** @see [[Opt.chainToOpt]] */
 export const chainToOpt = <T, U>(f: (_: T) => U | undefined | null) => (x: Opt<T>): Opt<U> => x.chainToOpt(f);
+
+/** @see [[Opt.actToOpt]] */
+export const actToOpt: ActToOptFn = <I>(...fs: any[]) => (x: Opt<I>) => fs.reduce((acc, x) => acc.chainToOpt(x), x);
+
+/** @see [[Opt.chainToOptFlow]] */
+export const chainToOptFlow: ActToOptFn = actToOpt;
 
 /** @see [[Opt.someOrCrash]] */
 export const someOrCrash = <T>(msg: string) => (x: Opt<T>): Some<T> => x.someOrCrash(msg);
@@ -885,6 +997,13 @@ export const orNaN = <T>(x: Opt<T>): T | number => x.orNaN();
 
 /** @see [[Opt.caseOf]] */
 export const caseOf = <T, R>(onSome: (x: T) => R) => (onNone: () => R) => (x: Opt<T>): R => x.caseOf(onSome, onNone);
+
+/**
+ * Similar to [[Opt.pipe]], but the first argument is the input.
+ * Supports arbitrary input type, not just [[Opt]].
+ * @see [[Opt.pipe]]
+ */
+export const pipe: PipeFn = <I>(x: I, ...fs: any[]) => fs.reduce((acc, y) => y(acc), x);
 
 /** @see [[Opt.contains]] */
 export const contains = <T>(y: T) => (x: Opt<T>): boolean => x.contains(y);
@@ -952,3 +1071,23 @@ export const equals = <T>(other: Opt<T>, comparator: EqualityFunction = refCmp) 
 export const prop = <T extends object,
   K extends (T extends object ? keyof T : never) = T extends object ? keyof T : never>(key: K) => (x: Opt<T>): Opt<WithoutOptValues<T[K]>> =>
   x.prop(key);
+
+/**
+ * Takes functions and builds a function which consecutively calls each given function with a result from a previous one.
+ * Similar to [[Opt.pipe]], but doesn't take input directly, instead returns a function which can be called repeatedly with different inputs.
+ *
+ * ```ts
+ * flow( // 63
+ *   add1, // 64
+ *   Math.sqrt, // 8
+ * )(63), // 8
+ * ```
+ * ```ts
+ * const f = flow(add1, Math.sqrt); // (_: number) => number
+ * f(63); // 8
+ * f(3);  // 2
+ * ```
+ *
+ * @param fs
+ */
+export const flow: FlowFn = (...fs: any[]) => (x: any) => fs.reduce((acc, x) => x(acc), x);

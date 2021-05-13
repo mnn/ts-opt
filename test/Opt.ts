@@ -47,7 +47,15 @@ import {
   someOrCrash,
   orFalse,
   orTrue,
-  orNaN, equals,
+  orNaN,
+  equals,
+  pipe,
+  mapFlow,
+  act,
+  chainFlow,
+  actToOpt,
+  chainToOptFlow,
+  flow,
 } from '../src/Opt';
 
 chai.use(spies);
@@ -209,11 +217,55 @@ describe('opt', () => {
     expect(opt(null as unknown as number).map(add1).orUndef()).to.eq(undefined);
   });
 
+  it('mapFlow', () => {
+    expect(opt(1).mapFlow(id).orNull()).to.be.eq(1);
+    expect(opt(null).mapFlow(id).orNull()).to.be.null;
+    expect(opt(1).mapFlow(id, id, id, add1).orNull()).to.be.eq(2);
+    expect(opt<number>(null).mapFlow(id, id, id, add1).orNull()).to.be.null;
+    const sq = (x: number) => x * x;
+    const dec = (x: number) => x - 1;
+    expect(opt(4).mapFlow(sq, dec).orNull()).to.be.eq(15);
+  });
+
   it('flatMap', () => {
     expect(opt(1).flatMap(() => some(2)).orNull()).to.eq(2);
     expect(opt(1).flatMap(() => none).orNull()).to.eq(null);
     expect(opt(null).flatMap(() => none).orUndef()).to.eq(undefined);
     expect(opt(null).chain(() => none).orUndef()).to.eq(undefined);
+  });
+
+  it('act', () => {
+    const f1 = (x: string | number) => (y: number) => opt(x).narrow(isNumber).map(z => z + y);
+    const f2 = (x: number): Opt<number> => x % 2 === 0 ? opt(x) : none;
+    const f = (x: number, y: number | string) => opt(x).act(
+      f1(y),
+      f2,
+      optNegative,
+    ).orNull();
+    expect(f(0, 2)).to.be.eq(2);
+    expect(f(0, -2)).to.be.eq(null);
+    expect(f(1, 2)).to.be.eq(null);
+    expect(f(0, '2')).to.be.eq(null);
+    expect(opt(1).chainFlow(opt).orNull()).to.be.eq(1);
+    // examples
+    const r = opt(0).act( // Some(0)
+      f1(-2), // Some(-2)
+      f2, // Some(-2)
+      optNegative, // None
+    ); // None
+    expect(r.orNull()).to.be.null;
+    const r2 = opt(0).act( // Some(0)
+      f1(1), // Some(1)
+      f2, // None
+      optNegative, // won't get called, still None
+    ); // None
+    expect(r2.orNull()).to.be.null;
+    const r3 = opt(3).act( // Some(3)
+      f1(1), // Some(4)
+      f2, // Some(4)
+      optNegative, // Some(4)
+    ); // Some(4)
+    expect(r3.orNull()).to.be.eq(4);
   });
 
   it('toArray', () => {
@@ -245,6 +297,21 @@ describe('opt', () => {
   it('pipe', () => {
     expect(some(1).pipe(isOpt)).to.be.true;
     expect(none.pipe(isOpt)).to.be.true;
+    expect(some(1).pipe(x => x.map(add1), x => x.orNull())).to.be.eq(2);
+    expect(some(1).pipe(orElse(7), add1, add1)).to.be.eq(3);
+    expect(some(1).pipe(orElse(7), add1, add1, add1)).to.be.eq(4);
+    expect(some(1).pipe(orElse(7), add1, add1, add1, add1)).to.be.eq(5);
+    expect(some(1).pipe(orElse(7), add1, add1, add1, add1, add1)).to.be.eq(6);
+    expect(some(1).pipe(orElse(7), add1, add1, add1, add1, add1, add1)).to.be.eq(7);
+    expect(some(1).pipe(orElse(7), add1, add1, add1, add1, add1, add1, add1)).to.be.eq(8);
+    expect(some(1).pipe(orElse(7), add1, add1, add1, add1, add1, add1, add1, add1)).to.be.eq(9);
+    expect(some(1).pipe(orElse(7), add1, add1, add1, add1, add1, add1, add1, add1, add1)).to.be.eq(10);
+    // example
+    expect(opt(1).pipe(
+      x => x.isEmpty,
+      x => !x,
+      ),
+    ).to.be.true;
   });
 
   it('onNone', () => {
@@ -331,6 +398,12 @@ describe('opt', () => {
   it('chainToOpt', () => {
     expect(some(1).chainToOpt(x => x === 1 ? null : x + 1).orUndef()).to.be.eq(undefined);
     expect(some(2).chainToOpt(x => x === 1 ? null : x + 1).orUndef()).to.be.eq(3);
+  });
+
+  it('actToOpt', () => {
+    expect(some(1).actToOpt(id).orNull()).to.be.eq(1);
+    expect(none.chainToOptFlow(id, id).orNull()).to.be.null;
+    expect(opt(1).actToOpt(id, add1, add1).orNull()).to.be.eq(3);
   });
 
   it('zip', () => {
@@ -829,6 +902,13 @@ describe('map', () => {
   });
 });
 
+describe('mapFlow', () => {
+  expect(mapFlow(id)(opt(1)).orNull()).to.be.eq(1);
+  expect(mapFlow(id)(opt(null)).orNull()).to.be.null;
+  expect(mapFlow(add1, id, id, id, id)(opt(1)).orNull()).to.be.eq(2);
+  expect(mapFlow(add1, id, id, id)(opt<number>(null)).orNull()).to.be.null;
+});
+
 describe('flatMap', () => {
   it('is correctly typed', () => {
     expect(flatMap((x: number) => [x])([])).to.eql([]);
@@ -868,10 +948,41 @@ describe('flatMap', () => {
   });
 });
 
+describe('act', () => {
+  it('acts', () => {
+    expect(act(opt)(opt(1)).orNull()).to.be.eq(1);
+    expect(chainFlow(opt)(opt(1)).orNull()).to.be.eq(1);
+    expect(act(opt, opt, opt)(opt(1)).orNull()).to.be.eq(1);
+    expect(act(opt, opt, () => none)(opt(1)).orNull()).to.be.null;
+  });
+});
+
 describe('chainToOpt', () => {
   it('chains to opt', () => {
     expect(chainToOpt(_x => undefined)(opt(1)).orNull()).to.be.null;
     expect(chainToOpt(_x => 'x')(opt(1)).orNull()).to.be.eq('x');
+  });
+});
+
+interface ActToOptTest {
+  f?: boolean;
+  a?: { b?: number, c?: number }[];
+}
+
+describe('actToOpt', () => {
+  it('acts and wraps in opt', () => {
+    expect(actToOpt(id)(some(1)).orNull()).to.be.eq(1);
+    expect(chainToOptFlow(id, id)(none).orNull()).to.be.null;
+    expect(actToOpt((x: number) => x, add1, add1)(opt(1)).orNull()).to.be.eq(3);
+    const find = <T>(pred: (_: T) => boolean) => (xs: T[]): T | undefined => xs.find(pred);
+
+    const data: ActToOptTest[] = [{}, {f: true, a: [{b: 7, c: 1}]}, {a: [{}]}];
+    const r = opt(data).actToOpt(
+      find(x => Boolean(x?.f)), // {f: true, a: [{b: 7, c: 1}]}
+      x => x?.a, // [{b: 7, c: 1}]
+      find(x => x.b === 8), // undefined
+    ); // None
+    expect(r.isEmpty).to.be.eq(true, r.toString());
   });
 });
 
@@ -935,6 +1046,21 @@ describe('caseOf', () => {
   });
   it('uses onNone with none', () => {
     expect(caseOf(add1)(() => 7)(none)).to.be.eq(7);
+  });
+});
+
+describe('pipe', () => {
+  it('pipes', () => {
+    expect(pipe(0, add1)).to.be.eq(1);
+    expect(pipe(0, add1, add1)).to.be.eq(2);
+    expect(pipe(0, add1, add1, add1)).to.be.eq(3);
+    expect(pipe(0, add1, add1, add1, add1)).to.be.eq(4);
+    expect(pipe(0, add1, add1, add1, add1, add1)).to.be.eq(5);
+    expect(pipe(0, add1, add1, add1, add1, add1, add1)).to.be.eq(6);
+    expect(pipe(0, add1, add1, add1, add1, add1, add1, add1)).to.be.eq(7);
+    expect(pipe(0, add1, add1, add1, add1, add1, add1, add1, add1)).to.be.eq(8);
+    expect(pipe(0, add1, add1, add1, add1, add1, add1, add1, add1, add1)).to.be.eq(9);
+    expect(pipe(0, add1, x => x.toString(10), x => x.length)).to.be.eq(1);
   });
 });
 
@@ -1137,5 +1263,27 @@ describe('prop', () => {
     expect(prop<ObjA>('a')(none).orNull()).to.be.null;
     // @ts-expect-error
     prop<ObjA>('b');
+  });
+});
+
+describe('flow', () => {
+  it('flows', () => {
+    expect(flow(id)(1)).to.be.eq(1);
+    expect(flow((x: number) => x, x => -x, id)(1)).to.be.eq(-1);
+    expect(flow(id, x => -x, id)(1)).to.be.eq(-1);
+    expect(flow(add1, id, x => x * x)(1)).to.be.eq(4);
+    expect(
+      flow( // 63
+        add1, // 64
+        Math.sqrt, // 8
+      )(63), // 8
+    ).to.be.eq(8);
+    const f = flow(add1, Math.sqrt); // (_: number) => number
+    expect(
+      f(63), // 8
+    ).to.be.eq(8);
+    expect(
+      f(3),  // 2
+    ).to.be.eq(2);
   });
 });
