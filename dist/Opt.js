@@ -22,7 +22,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.print = exports.narrow = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.bimap = exports.orElseOpt = exports.orElse = exports.forAll = exports.exists = exports.contains = exports.pipe = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOptFlow = exports.actToOpt = exports.chainToOpt = exports.chainFlow = exports.act = exports.chain = exports.flatMap = exports.mapFlow = exports.map = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = void 0;
-exports.prop = exports.equals = void 0;
+exports.flow = exports.prop = exports.equals = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 var refCmp = function (a, b) { return a === b; };
@@ -52,16 +52,32 @@ var Opt = /** @class */ (function () {
         };
         /**
          * Similar to [[chain]] (in other languages called `bind` or `>>=`), but supports more functions passed at once (resembles `do` notation in Haskell).
-         * It is used to model a sequence of operations where each operation can fail (returns [[None]]).
+         * It is used to model a sequence of operations where each operation can fail (can return [[None]]).
          *
          * ```ts
-         * const f1 = (x: string | number) => (y: number) => opt(x).narrow(isNumber).map(z => z + y);
+         * // does addition when first argument is number
+         * const f1 =
+         *   (x: string | number) => (y: number) => opt(x).narrow(isNumber).map(z => z + y);
+         * // passes only even numbers
          * const f2 = (x: number): Opt<number> => x % 2 === 0 ? opt(x) : none;
+         *
          * opt(0).act( // Some(0)
          *   f1(-2), // Some(-2)
          *   f2, // Some(-2)
          *   optNegative, // None
          * ); // None
+         *
+         * opt(0).act( // Some(0)
+         *   f1(1), // Some(1)
+         *   f2, // None
+         *   optNegative, // won't get called, still None
+         * ); // None
+         *
+         * opt(3).act( // Some(3)
+         *   f1(1), // Some(4)
+         *   f2, // Some(4)
+         *   optNegative, // Some(4)
+         * ); // Some(4)
          * ```
          *
          * @param fs
@@ -86,7 +102,7 @@ var Opt = /** @class */ (function () {
         };
         /**
          * Similar to [[act]], but functions return empty values instead of [[Opt]].
-         * It is useful for typical js functions (e.g. lodash), properly handles `undefined`/`null`/`NaN` at any point of the chain.
+         * It is useful for typical JavaScript functions (e.g. lodash), properly handles `undefined`/`null`/`NaN` at any point of the chain.
          *
          * ```ts
          * const data = [{}, {f: true, a: [{b: 7, c: 1}]}, {a: [{}]}];
@@ -119,7 +135,7 @@ var Opt = /** @class */ (function () {
         };
         /**
          * Applies passed function to this instance and returns function result.
-         * Also known as a function application, `|>`, `&`, `#` or pipe operator.
+         * Also known as a reverse function application, `|>` (Reason/ReScript, F#, OCaml), `&` (Haskell), `#` (PureScript) or a pipe operator.
          *
          * ```ts
          * some(1).pipe(x => x.isEmpty) // false
@@ -717,4 +733,30 @@ var prop = function (key) { return function (x) {
     return x.prop(key);
 }; };
 exports.prop = prop;
+/**
+ * Takes functions and builds a function which consecutively calls each given function with a result from a previous one.
+ * Similar to [[Opt.pipe]], but doesn't take input directly, instead returns a function which can be called repeatedly with different inputs.
+ *
+ * ```ts
+ * flow( // 63
+ *   add1, // 64
+ *   Math.sqrt, // 8
+ * )(63), // 8
+ * ```
+ * ```ts
+ * const f = flow(add1, Math.sqrt); // (_: number) => number
+ * f(63); // 8
+ * f(3);  // 2
+ * ```
+ *
+ * @param fs
+ */
+var flow = function () {
+    var fs = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        fs[_i] = arguments[_i];
+    }
+    return function (x) { return fs.reduce(function (acc, x) { return x(acc); }, x); };
+};
+exports.flow = flow;
 //# sourceMappingURL=Opt.js.map

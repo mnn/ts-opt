@@ -122,3 +122,13 @@ genActToOpt inCls n = genInterface "ActToOpt" (intWithTtoHasTypeParam inCls) inC
           prefix = "<" <> joinComma (mkArgsTypes' i & bool id tail isInClass') <> ">"
           retType :: Text = bool "(x: Opt<I>) => " "" isInClass' <> "Opt<R>"
        in [qq|$prefix($fParts): $retType;|]
+
+genFlow :: InterfaceInClass -> Int -> Text
+genFlow inCls n = genInterface "Flow" (intWithTtoHasTypeParam inCls) inCls n mkCase
+  where
+    isInClass' = isInClass inCls
+    mkArgsTypes' = mkArgsTypes (Just "I")
+    mkCase i =
+      let fParts = [1 .. i] <&> mkCaseFn mkArgsTypes' ResIsRaw i & joinComma
+          prefix = "<" <> joinComma (mkArgsTypes' i & bool id tail isInClass') <> ">"
+       in [qq|$prefix($fParts): (x: I) => R;|]

@@ -55,6 +55,7 @@ import {
   chainFlow,
   actToOpt,
   chainToOptFlow,
+  flow,
 } from '../src/Opt';
 
 chai.use(spies);
@@ -1262,5 +1263,27 @@ describe('prop', () => {
     expect(prop<ObjA>('a')(none).orNull()).to.be.null;
     // @ts-expect-error
     prop<ObjA>('b');
+  });
+});
+
+describe('flow', () => {
+  it('flows', () => {
+    expect(flow(id)(1)).to.be.eq(1);
+    expect(flow((x: number) => x, x => -x, id)(1)).to.be.eq(-1);
+    expect(flow(id, x => -x, id)(1)).to.be.eq(-1);
+    expect(flow(add1, id, x => x * x)(1)).to.be.eq(4);
+    expect(
+      flow( // 63
+        add1, // 64
+        Math.sqrt, // 8
+      )(63), // 8
+    ).to.be.eq(8);
+    const f = flow(add1, Math.sqrt); // (_: number) => number
+    expect(
+      f(63), // 8
+    ).to.be.eq(8);
+    expect(
+      f(3),  // 2
+    ).to.be.eq(2);
   });
 });

@@ -1,6 +1,16 @@
 // Do NOT split to multiple modules - it's not possible, since there would be cyclic dependencies..
 
-import { ActFn, ActInClassFn, MapFlowInClassFn, MapFlowFn, PipeInClassFn, PipeFn, ActToOptInClassFn, ActToOptFn } from './FlowLike';
+import {
+  ActFn,
+  ActInClassFn,
+  MapFlowInClassFn,
+  MapFlowFn,
+  PipeInClassFn,
+  PipeFn,
+  ActToOptInClassFn,
+  ActToOptFn,
+  FlowFn,
+} from './FlowLike';
 
 const someSymbol = Symbol('Some');
 const noneSymbol = Symbol('None');
@@ -1061,3 +1071,23 @@ export const equals = <T>(other: Opt<T>, comparator: EqualityFunction = refCmp) 
 export const prop = <T extends object,
   K extends (T extends object ? keyof T : never) = T extends object ? keyof T : never>(key: K) => (x: Opt<T>): Opt<WithoutOptValues<T[K]>> =>
   x.prop(key);
+
+/**
+ * Takes functions and builds a function which consecutively calls each given function with a result from a previous one.
+ * Similar to [[Opt.pipe]], but doesn't take input directly, instead returns a function which can be called repeatedly with different inputs.
+ *
+ * ```ts
+ * flow( // 63
+ *   add1, // 64
+ *   Math.sqrt, // 8
+ * )(63), // 8
+ * ```
+ * ```ts
+ * const f = flow(add1, Math.sqrt); // (_: number) => number
+ * f(63); // 8
+ * f(3);  // 2
+ * ```
+ *
+ * @param fs
+ */
+export const flow: FlowFn = (...fs: any[]) => (x: any) => fs.reduce((acc, x) => x(acc), x);
