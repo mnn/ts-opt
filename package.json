@@ -24,7 +24,7 @@
     "test:no-coverage": "mocha -r ts-node/register test/**/*.ts",
     "doc": "typedoc --out doc --listInvalidSymbolLinks src",
     "build": "tsc --outDir ./dist -p . ",
-    "build-all": "run-s clean build doc",
+    "build-all": "run-s clean gen-flowy build doc",
     "check": "run-s lint test",
     "check-build-all": "run-s check build-all",
     "prepublishOnly": "npm run check-build-all",

@@ -22,7 +22,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.print = exports.narrow = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.bimap = exports.orElseOpt = exports.orElse = exports.forAll = exports.exists = exports.contains = exports.pipe = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOptFlow = exports.actToOpt = exports.chainToOpt = exports.chainFlow = exports.act = exports.chain = exports.flatMap = exports.mapFlow = exports.map = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = void 0;
-exports.flow = exports.prop = exports.equals = void 0;
+exports.compose = exports.flow = exports.prop = exports.equals = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 var refCmp = function (a, b) { return a === b; };
@@ -738,11 +738,15 @@ exports.prop = prop;
  * Similar to [[Opt.pipe]], but doesn't take input directly, instead returns a function which can be called repeatedly with different inputs.
  *
  * ```ts
- * flow( // 63
- *   add1, // 64
- *   Math.sqrt, // 8
- * )(63), // 8
+ * flow( // 1. 63
+ *   add1, // 2. 64
+ *   Math.sqrt, // 3. 8
+ * )(63), // 4. 8
+ *
+ * // gives same result as
+ * Math.sqrt(add1(63)) // 8
  * ```
+ *
  * ```ts
  * const f = flow(add1, Math.sqrt); // (_: number) => number
  * f(63); // 8
@@ -759,4 +763,34 @@ var flow = function () {
     return function (x) { return fs.reduce(function (acc, x) { return x(acc); }, x); };
 };
 exports.flow = flow;
+/**
+ * Composes given functions (in the mathematical sense).
+ *
+ * Unlike [[flow]] and [[pipe]], functions passed to [[compose]] are applied (called) from last to first.
+ *
+ * ```ts
+ * const f = (x: number): number => x * x;
+ * const g = (x: number): string => x.toFixed();
+ * const h = (x: string): boolean => x === '4';
+ *
+ * compose(
+ *   h, // 3. true
+ *   g, // 2. 4
+ *   f, // 1. 2
+ * )(2) // 4. true
+ *
+ * // gives same result as
+ * h(g(f(2))) // true
+ * ```
+ *
+ * @param fs
+ */
+var compose = function () {
+    var fs = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        fs[_i] = arguments[_i];
+    }
+    return function (x) { return fs.reduceRight(function (acc, x) { return x(acc); }, x); };
+};
+exports.compose = compose;
 //# sourceMappingURL=Opt.js.map

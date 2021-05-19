@@ -10,6 +10,7 @@ import {
   ActToOptInClassFn,
   ActToOptFn,
   FlowFn,
+  ComposeFn,
 } from './FlowLike';
 
 const someSymbol = Symbol('Some');
@@ -1077,11 +1078,15 @@ export const prop = <T extends object,
  * Similar to [[Opt.pipe]], but doesn't take input directly, instead returns a function which can be called repeatedly with different inputs.
  *
  * ```ts
- * flow( // 63
- *   add1, // 64
- *   Math.sqrt, // 8
- * )(63), // 8
+ * flow( // 1. 63
+ *   add1, // 2. 64
+ *   Math.sqrt, // 3. 8
+ * )(63), // 4. 8
+ *
+ * // gives same result as
+ * Math.sqrt(add1(63)) // 8
  * ```
+ *
  * ```ts
  * const f = flow(add1, Math.sqrt); // (_: number) => number
  * f(63); // 8
@@ -1091,3 +1096,27 @@ export const prop = <T extends object,
  * @param fs
  */
 export const flow: FlowFn = (...fs: any[]) => (x: any) => fs.reduce((acc, x) => x(acc), x);
+
+/**
+ * Composes given functions (in the mathematical sense).
+ *
+ * Unlike [[flow]] and [[pipe]], functions passed to [[compose]] are applied (called) from last to first.
+ *
+ * ```ts
+ * const f = (x: number): number => x * x;
+ * const g = (x: number): string => x.toFixed();
+ * const h = (x: string): boolean => x === '4';
+ *
+ * compose(
+ *   h, // 3. true
+ *   g, // 2. 4
+ *   f, // 1. 2
+ * )(2) // 4. true
+ *
+ * // gives same result as
+ * h(g(f(2))) // true
+ * ```
+ *
+ * @param fs
+ */
+export const compose: ComposeFn = (...fs: any[]) => (x: any) => fs.reduceRight((acc, x) => x(acc), x);

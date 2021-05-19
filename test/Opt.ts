@@ -56,6 +56,7 @@ import {
   actToOpt,
   chainToOptFlow,
   flow,
+  compose,
 } from '../src/Opt';
 
 chai.use(spies);
@@ -1267,16 +1268,23 @@ describe('prop', () => {
 });
 
 describe('flow', () => {
-  it('flows', () => {
+  it('one function', () => {
     expect(flow(id)(1)).to.be.eq(1);
+  });
+  it('more complex', () => {
     expect(flow((x: number) => x, x => -x, id)(1)).to.be.eq(-1);
     expect(flow(id, x => -x, id)(1)).to.be.eq(-1);
     expect(flow(add1, id, x => x * x)(1)).to.be.eq(4);
+  });
+  it('examples', () => {
     expect(
       flow( // 63
         add1, // 64
         Math.sqrt, // 8
       )(63), // 8
+    ).to.be.eq(8);
+    expect(
+      Math.sqrt(add1(63)),
     ).to.be.eq(8);
     const f = flow(add1, Math.sqrt); // (_: number) => number
     expect(
@@ -1285,5 +1293,30 @@ describe('flow', () => {
     expect(
       f(3),  // 2
     ).to.be.eq(2);
+  });
+});
+
+describe('compose', () => {
+  it('one function', () => {
+    expect(compose(id)(1)).to.be.eq(1);
+  });
+  it('more complex', () => {
+    expect(compose((x: number) => x * 7, add1)(2)).to.be.eq(21);
+    expect(compose((x: number) => x * 7, id, add1)(2)).to.be.eq(21);
+    expect(compose(x => x.length, (x: number) => x.toFixed(0))(678)).to.be.eq(3);
+    expect(compose(id, x => x.length, (x: number) => x.toFixed(0))(678)).to.be.eq(3);
+  });
+  it('example', () => {
+    const f = (x: number): number => x * x;
+    const g = (x: number): string => x.toFixed();
+    const h = (x: string): boolean => x === '4';
+    expect(
+      compose(
+        h, // true
+        g, // 4
+        f, // 2
+      )(2), // true
+    ).to.be.true;
+    expect(h(g(f(2)))).to.be.true;
   });
 });

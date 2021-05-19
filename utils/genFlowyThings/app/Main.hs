@@ -32,3 +32,4 @@ main = do
   gen genAct 10
   gen genActToOpt 10
   genCurried genFlow 10
+  genCurried genCompose 10

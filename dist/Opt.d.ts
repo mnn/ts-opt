@@ -1,4 +1,4 @@
-import { ActFn, ActInClassFn, MapFlowInClassFn, MapFlowFn, PipeInClassFn, PipeFn, ActToOptInClassFn, ActToOptFn, FlowFn } from './FlowLike';
+import { ActFn, ActInClassFn, MapFlowInClassFn, MapFlowFn, PipeInClassFn, PipeFn, ActToOptInClassFn, ActToOptFn, FlowFn, ComposeFn } from './FlowLike';
 export declare type EqualityFunction = <T>(a: T, b: T) => boolean;
 declare type NotObject<T> = T extends object ? never : T;
 declare type SuperUnionOf<T, U> = Exclude<U, T> extends never ? NotObject<T> : never;
@@ -799,11 +799,15 @@ export declare const prop: <T extends object, K extends T extends object ? keyof
  * Similar to [[Opt.pipe]], but doesn't take input directly, instead returns a function which can be called repeatedly with different inputs.
  *
  * ```ts
- * flow( // 63
- *   add1, // 64
- *   Math.sqrt, // 8
- * )(63), // 8
+ * flow( // 1. 63
+ *   add1, // 2. 64
+ *   Math.sqrt, // 3. 8
+ * )(63), // 4. 8
+ *
+ * // gives same result as
+ * Math.sqrt(add1(63)) // 8
  * ```
+ *
  * ```ts
  * const f = flow(add1, Math.sqrt); // (_: number) => number
  * f(63); // 8
@@ -813,4 +817,27 @@ export declare const prop: <T extends object, K extends T extends object ? keyof
  * @param fs
  */
 export declare const flow: FlowFn;
+/**
+ * Composes given functions (in the mathematical sense).
+ *
+ * Unlike [[flow]] and [[pipe]], functions passed to [[compose]] are applied (called) from last to first.
+ *
+ * ```ts
+ * const f = (x: number): number => x * x;
+ * const g = (x: number): string => x.toFixed();
+ * const h = (x: string): boolean => x === '4';
+ *
+ * compose(
+ *   h, // 3. true
+ *   g, // 2. 4
+ *   f, // 1. 2
+ * )(2) // 4. true
+ *
+ * // gives same result as
+ * h(g(f(2))) // true
+ * ```
+ *
+ * @param fs
+ */
+export declare const compose: ComposeFn;
 export {};

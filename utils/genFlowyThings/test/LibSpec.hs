@@ -110,3 +110,15 @@ test_genFlow = do
 }|]
   let r3' = f InterfaceIsNotInClass 3
   assertEqualVerbose [qq|exp:$nl$exp3'{nl}got:$nl$r3'|] exp3' r3'
+
+test_genCompose :: IO ()
+test_genCompose = do
+  let f = genCompose
+  let exp3' =
+        [q|export interface ComposeFn {
+  <I, R>(f1: (_: I) => R): (x: I) => R;
+  <I, A1, R>(f1: (_: A1) => R, f2: (_: I) => A1): (x: I) => R;
+  <I, A1, A2, R>(f1: (_: A2) => R, f2: (_: A1) => A2, f3: (_: I) => A1): (x: I) => R;
+}|]
+  let r3' = f InterfaceIsNotInClass 3
+  assertEqualVerbose [qq|exp:$nl$exp3'{nl}got:$nl$r3'|] exp3' r3'
