@@ -3,6 +3,10 @@ export declare type EqualityFunction = <T>(a: T, b: T) => boolean;
 declare type NotObject<T> = T extends object ? never : T;
 declare type SuperUnionOf<T, U> = Exclude<U, T> extends never ? NotObject<T> : never;
 declare type WithoutOptValues<T> = NonNullable<T>;
+interface ConstInClassFn<T> {
+    (): () => T | null;
+    <E>(emptyValue: E): () => T | E;
+}
 /**
  * @typeparam T Wrapped value type.
  */
@@ -475,6 +479,19 @@ export declare abstract class Opt<T> {
      * @param key
      */
     abstract prop<K extends (T extends object ? keyof T : never)>(key: K): Opt<WithoutOptValues<T[K]>>;
+    /**
+     * Constructs a function which returns a value for [[Some]] or an empty value for [[None]] (default is `null`).
+     * Optionally takes an empty value as a parameter.
+     *
+     * ```ts
+     * opt(1).const()() // 1
+     * opt(undefined).const()() // null
+     *
+     * // custom empty value
+     * opt(NaN).const(undefined)() // undefined
+     * ```
+     */
+    const: ConstInClassFn<T>;
 }
 /**
  * Empty [[Opt]].

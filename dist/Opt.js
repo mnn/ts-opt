@@ -160,6 +160,26 @@ var Opt = /** @class */ (function () {
             }
             return fs.reduce(function (acc, x) { return x(acc); }, _this);
         };
+        /**
+         * Constructs a function which returns a value for [[Some]] or an empty value for [[None]] (default is `null`).
+         * Optionally takes an empty value as a parameter.
+         *
+         * ```ts
+         * opt(1).const()() // 1
+         * opt(undefined).const()() // null
+         *
+         * // custom empty value
+         * opt(NaN).const(undefined)() // undefined
+         * ```
+         */
+        this.const = function () {
+            var _this = this;
+            if (arguments.length === 1) {
+                var e_1 = arguments[0];
+                return function () { return _this.isSome() ? _this.value : e_1; };
+            }
+            return function () { return _this.orNull(); };
+        };
     }
     Object.defineProperty(Opt.prototype, "nonEmpty", {
         /**

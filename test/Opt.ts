@@ -550,6 +550,23 @@ describe('opt', () => {
     const getValue3 = (filter?: FilterPart): boolean | null => opt(filter).prop('values').map(head).map(eq('true')).orNull();
     suppressUnused(getValue2, getValue3);
   });
+
+  it('const', () => {
+    expect(
+      opt(1).const()(), // 1
+    ).to.be.eq(1);
+    const f: () => string | null = opt<string>(null).const();
+    expect(f()).to.be.null;
+    expect(
+      opt(undefined).const()(), // null
+    ).to.be.null;
+    expect(
+      opt(NaN).const(undefined)(), // undefined
+    ).to.be.undefined;
+    expect(opt(2).const(undefined)()).to.be.eq(2);
+    const g: () => number | undefined = opt<number>(null).const(undefined);
+    suppressUnused(g);
+  });
 });
 
 describe('helper functions', () => {
