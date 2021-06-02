@@ -57,6 +57,14 @@ import {
   chainToOptFlow,
   flow,
   compose,
+  curryTuple,
+  uncurryTuple,
+  curryTuple3,
+  uncurryTuple3,
+  curryTuple4,
+  curryTuple5,
+  uncurryTuple4,
+  uncurryTuple5,
 } from '../src/Opt';
 
 chai.use(spies);
@@ -1335,5 +1343,74 @@ describe('compose', () => {
       )(2), // true
     ).to.be.true;
     expect(h(g(f(2)))).to.be.true;
+  });
+});
+
+describe('(un)curry', () => {
+  it('curryTuple', () => {
+    const addPair = ([a, b]: [number, number]) => a + b;
+    const f: (_: number) => (_: number) => number = curryTuple(addPair);
+    expect(f(80)(8)).to.be.eq(88);
+    expect(
+      opt(1) // Some(1)
+        .map(
+          curryTuple(addPair)(4), // same as `(a => b => a + b)(4)`
+        ) // Some(5)
+        .orNull(),
+    ).to.be.eq(5);
+  });
+
+  it('curryTuple3', () => {
+    const f: (_: number) => (_: number) => (_: boolean) => number =
+      curryTuple3(([a, b, c]: [number, number, boolean]) => c ? a - b : 0);
+    expect(f(1)(2)(true)).to.be.eq(-1);
+    expect(f(1)(2)(false)).to.be.eq(0);
+  });
+
+  it('curryTuple4', () => {
+    const f: (_: number) => (_: number) => (_: boolean) => (_: number) => number =
+      curryTuple4(([a, b, c, d]: [number, number, boolean, number]) => c ? a - b : d);
+    expect(f(1)(2)(true)(7)).to.be.eq(-1);
+    expect(f(1)(2)(false)(7)).to.be.eq(7);
+  });
+
+  it('curryTuple5', () => {
+    const f: (_: number) => (_: number) => (_: boolean) => (_: number) => (_: number) => number =
+      curryTuple5(([a, b, c, d, e]: [number, number, boolean, number, number]) => c ? a - b : d * e);
+    expect(f(1)(2)(true)(7)(2)).to.be.eq(-1);
+    expect(f(1)(2)(false)(7)(2)).to.be.eq(14);
+  });
+
+  it('uncurryTuple', () => {
+    const f: (_: [number, number]) => number = uncurryTuple((a: number) => (b: number) => a - b);
+    expect(f([4, 1])).to.be.eq(3);
+    const sub = (x: number) => (y: number) => x - y;
+    expect(
+      opt(4) // Some(4)
+        .zip(opt(1)) // Some([4, 1])
+        .map(uncurryTuple(sub)) // Some(3)
+        .orNull(),
+    ).to.be.eq(3);
+  });
+
+  it('uncurryTuple3', () => {
+    const f: (_: [number, number, boolean]) => number =
+      uncurryTuple3(a => b => c => c ? a - b : 0);
+    expect(opt(1).zip3(opt(2), opt(true)).map(f).orNull()).to.be.eq(-1);
+    expect(opt(1).zip3(opt(2), opt(false)).map(f).orNull()).to.be.eq(0);
+  });
+
+  it('uncurryTuple4', () => {
+    const f: (_: [number, number, boolean, number]) => number =
+      uncurryTuple4(a => b => c => d => c ? a - b : d);
+    expect(opt(1).zip4(opt(2), opt(true), opt(7)).map(f).orNull()).to.be.eq(-1);
+    expect(opt(1).zip4(opt(2), opt(false), opt(7)).map(f).orNull()).to.be.eq(7);
+  });
+
+  it('uncurryTuple5', () => {
+    const f: (_: [number, number, boolean, number, number]) => number =
+      uncurryTuple5(a => b => c => d => e => c ? a - b : d * e);
+    expect(opt(1).zip5(opt(2), opt(true), opt(7), opt(2)).map(f).orNull()).to.be.eq(-1);
+    expect(opt(1).zip5(opt(2), opt(false), opt(7), opt(2)).map(f).orNull()).to.be.eq(14);
   });
 });

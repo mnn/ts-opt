@@ -22,7 +22,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.print = exports.narrow = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.bimap = exports.orElseOpt = exports.orElse = exports.forAll = exports.exists = exports.contains = exports.pipe = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOptFlow = exports.actToOpt = exports.chainToOpt = exports.chainFlow = exports.act = exports.chain = exports.flatMap = exports.mapFlow = exports.map = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = void 0;
-exports.compose = exports.flow = exports.prop = exports.equals = void 0;
+exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.prop = exports.equals = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 var refCmp = function (a, b) { return a === b; };
@@ -813,4 +813,89 @@ var compose = function () {
     return function (x) { return fs.reduceRight(function (acc, x) { return x(acc); }, x); };
 };
 exports.compose = compose;
+/**
+ * Transforms the given function of two arguments from "tuple curried" format to curried one.
+ *
+ * ```ts
+ * const addPair = ([a, b]: [number, number]) => a + b;
+ * opt(1) // Some(1)
+ *   .map(
+ *     curryTuple(addPair)(4) // same as `(a => b => a + b)(4)`
+ *   ) // Some(5)
+ * ```
+ *
+ * @see [[uncurryTuple]]
+ * @param f
+ */
+var curryTuple = function (f) { return function (a) { return function (b) { return f([a, b]); }; }; };
+exports.curryTuple = curryTuple;
+/**
+ * Transforms the given function of three arguments from "tuple curried" format to curried one.
+ * @see [[curryTuple]]
+ * @param f
+ */
+var curryTuple3 = function (f) { return function (a) { return function (b) { return function (c) { return f([a, b, c]); }; }; }; };
+exports.curryTuple3 = curryTuple3;
+/**
+ * Transforms the given function of four arguments from "tuple curried" format to curried one.
+ * @see [[curryTuple]]
+ * @param f
+ */
+var curryTuple4 = function (f) { return function (a) { return function (b) { return function (c) { return function (d) { return f([a, b, c, d]); }; }; }; }; };
+exports.curryTuple4 = curryTuple4;
+/**
+ * Transforms the given function of five arguments from "tuple curried" format to curried one.
+ * @see [[curryTuple]]
+ * @param f
+ */
+var curryTuple5 = function (f) { return function (a) { return function (b) { return function (c) { return function (d) { return function (e) { return f([a, b, c, d, e]); }; }; }; }; }; };
+exports.curryTuple5 = curryTuple5;
+/**
+ * Transforms the given function of two arguments from curried format to "tuple curried" which can be used with [[Opt.zip]].
+ *
+ * ```ts
+ * const sub = (x: number) => (y: number) => x - y;
+ * opt(4) // Some(4)
+ *   .zip(opt(1)) // Some([4, 1])
+ *   .map(uncurryTuple(sub)) // Some(3)
+ * ```
+ *
+ * @see [[curryTuple]]
+ * @param f
+ */
+var uncurryTuple = function (f) { return function (_a) {
+    var a = _a[0], b = _a[1];
+    return f(a)(b);
+}; };
+exports.uncurryTuple = uncurryTuple;
+/**
+ * Transforms the given function of three arguments from curried format to "tuple curried" which can be used with [[Opt.zip3]].
+ * @see [[uncurryTuple]]
+ * @param f
+ */
+var uncurryTuple3 = function (f) { return function (_a) {
+    var a = _a[0], b = _a[1], c = _a[2];
+    return f(a)(b)(c);
+}; };
+exports.uncurryTuple3 = uncurryTuple3;
+/**
+ * Transforms the given function of four arguments from curried format to "tuple curried" which can be used with [[Opt.zip4]].
+ * @see [[uncurryTuple]]
+ * @param f
+ */
+var uncurryTuple4 = function (f) { return function (_a) {
+    var a = _a[0], b = _a[1], c = _a[2], d = _a[3];
+    return f(a)(b)(c)(d);
+}; };
+exports.uncurryTuple4 = uncurryTuple4;
+/**
+ * Transforms the given function of five arguments from curried format to "tuple curried" which can be used with [[Opt.zip5]].
+ * @see [[uncurryTuple]]
+ * @param f
+ */
+var uncurryTuple5 = function (f) { return function (_a) {
+    var a = _a[0], b = _a[1], c = _a[2], d = _a[3], e = _a[4];
+    return f(a)(b)(c)(d)(e);
+}; };
+exports.uncurryTuple5 = uncurryTuple5;
 //# sourceMappingURL=Opt.js.map

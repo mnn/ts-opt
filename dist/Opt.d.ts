@@ -857,4 +857,77 @@ export declare const flow: FlowFn;
  * @param fs
  */
 export declare const compose: ComposeFn;
+declare type CurryTupleFn = <A, B, C>(_: (_: [A, B]) => C) => (_: A) => (_: B) => C;
+/**
+ * Transforms the given function of two arguments from "tuple curried" format to curried one.
+ *
+ * ```ts
+ * const addPair = ([a, b]: [number, number]) => a + b;
+ * opt(1) // Some(1)
+ *   .map(
+ *     curryTuple(addPair)(4) // same as `(a => b => a + b)(4)`
+ *   ) // Some(5)
+ * ```
+ *
+ * @see [[uncurryTuple]]
+ * @param f
+ */
+export declare const curryTuple: CurryTupleFn;
+declare type CurryTuple3Fn = <A, B, C, D>(_: (_: [A, B, C]) => D) => (_: A) => (_: B) => (_: C) => D;
+/**
+ * Transforms the given function of three arguments from "tuple curried" format to curried one.
+ * @see [[curryTuple]]
+ * @param f
+ */
+export declare const curryTuple3: CurryTuple3Fn;
+declare type CurryTuple4Fn = <A, B, C, D, E>(_: (_: [A, B, C, D]) => E) => (_: A) => (_: B) => (_: C) => (_: D) => E;
+/**
+ * Transforms the given function of four arguments from "tuple curried" format to curried one.
+ * @see [[curryTuple]]
+ * @param f
+ */
+export declare const curryTuple4: CurryTuple4Fn;
+declare type CurryTuple5Fn = <A, B, C, D, E, F>(_: (_: [A, B, C, D, E]) => F) => (_: A) => (_: B) => (_: C) => (_: D) => (_: E) => F;
+/**
+ * Transforms the given function of five arguments from "tuple curried" format to curried one.
+ * @see [[curryTuple]]
+ * @param f
+ */
+export declare const curryTuple5: CurryTuple5Fn;
+declare type UncurryTupleFn = <A, B, C>(_: (_: A) => (_: B) => C) => (_: [A, B]) => C;
+/**
+ * Transforms the given function of two arguments from curried format to "tuple curried" which can be used with [[Opt.zip]].
+ *
+ * ```ts
+ * const sub = (x: number) => (y: number) => x - y;
+ * opt(4) // Some(4)
+ *   .zip(opt(1)) // Some([4, 1])
+ *   .map(uncurryTuple(sub)) // Some(3)
+ * ```
+ *
+ * @see [[curryTuple]]
+ * @param f
+ */
+export declare const uncurryTuple: UncurryTupleFn;
+declare type UncurryTuple3Fn = <A, B, C, D>(_: (_: A) => (_: B) => (_: C) => D) => (_: [A, B, C]) => D;
+/**
+ * Transforms the given function of three arguments from curried format to "tuple curried" which can be used with [[Opt.zip3]].
+ * @see [[uncurryTuple]]
+ * @param f
+ */
+export declare const uncurryTuple3: UncurryTuple3Fn;
+declare type UncurryTuple4Fn = <A, B, C, D, E>(_: (_: A) => (_: B) => (_: C) => (_: D) => E) => (_: [A, B, C, D]) => E;
+/**
+ * Transforms the given function of four arguments from curried format to "tuple curried" which can be used with [[Opt.zip4]].
+ * @see [[uncurryTuple]]
+ * @param f
+ */
+export declare const uncurryTuple4: UncurryTuple4Fn;
+declare type UncurryTuple5Fn = <A, B, C, D, E, F>(_: (_: A) => (_: B) => (_: C) => (_: D) => (_: E) => F) => (_: [A, B, C, D, E]) => F;
+/**
+ * Transforms the given function of five arguments from curried format to "tuple curried" which can be used with [[Opt.zip5]].
+ * @see [[uncurryTuple]]
+ * @param f
+ */
+export declare const uncurryTuple5: UncurryTuple5Fn;
 export {};
