@@ -65,6 +65,7 @@ import {
   curryTuple5,
   uncurryTuple4,
   uncurryTuple5,
+  swap,
 } from '../src/Opt';
 
 chai.use(spies);
@@ -574,6 +575,14 @@ describe('opt', () => {
     expect(opt(2).const(undefined)()).to.be.eq(2);
     const g: () => number | undefined = opt<number>(null).const(undefined);
     suppressUnused(g);
+  });
+
+  it('swap', () => {
+    expect(opt(1).swap(true).orNull()).to.be.eq(true);
+    expect(none.swap(true).orNull()).to.be.null;
+    const a: Opt<string> = opt(1).swap('');
+    const b: Opt<string> = none.swap('');
+    suppressUnused(a, b);
   });
 });
 
@@ -1292,6 +1301,16 @@ describe('prop', () => {
     expect(prop<ObjA>('a')(none).orNull()).to.be.null;
     // @ts-expect-error
     prop<ObjA>('b');
+  });
+});
+
+describe('swap', () => {
+  it('swaps', () => {
+    expect(swap(true)(opt(1)).orNull()).to.be.eq(true);
+    expect(swap(true)(none).orNull()).to.be.null;
+    const a: Opt<string> = swap('')(opt(1));
+    const b: Opt<string> = swap('')(none);
+    suppressUnused(a, b);
   });
 });
 

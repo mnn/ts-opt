@@ -577,6 +577,19 @@ export abstract class Opt<T> {
     }
     return () => this.orNull();
   };
+
+  /**
+   * Swaps value inside (for [[None]] it's noop).
+   *
+   * ```ts
+   * opt(1).swap('a') // Some('a')
+   * none.swap('a') // None
+   * ```
+   *
+   * Same as `map(const(newValue))`.
+   * @param newValue
+   */
+  abstract swap<U>(newValue: U): Opt<U>;
 }
 
 /**
@@ -663,6 +676,10 @@ class None<T> extends Opt<T> {
   }
 
   prop<K extends (T extends object ? keyof T : never)>(_key: K): Opt<WithoutOptValues<T[K]>> { return none; }
+
+  swap<U>(_newVal: U): Opt<U> {
+    return none;
+  }
 }
 
 /**
@@ -775,6 +792,10 @@ class Some<T> extends Opt<T> {
   }
 
   prop<K extends (T extends object ? keyof T : never)>(key: K): Opt<WithoutOptValues<T[K]>> { return opt(this._value[key]) as Opt<WithoutOptValues<T[K]>>; }
+
+  swap<U>(newVal: U): Opt<U> {
+    return some(newVal);
+  }
 }
 
 const someSerializedType = 'Opt/Some';
@@ -1111,6 +1132,9 @@ export const equals = <T>(other: Opt<T>, comparator: EqualityFunction = refCmp) 
 export const prop = <T extends object,
   K extends (T extends object ? keyof T : never) = T extends object ? keyof T : never>(key: K) => (x: Opt<T>): Opt<WithoutOptValues<T[K]>> =>
   x.prop(key);
+
+/** @see [[Opt.swap]] */
+export const swap = <U>(newValue: U) => <T>(x: Opt<T>): Opt<U> => x.swap(newValue);
 
 /**
  * Takes functions and builds a function which consecutively calls each given function with a result from a previous one.

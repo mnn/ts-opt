@@ -492,6 +492,18 @@ export declare abstract class Opt<T> {
      * ```
      */
     const: ConstInClassFn<T>;
+    /**
+     * Swaps value inside (for [[None]] it's noop).
+     *
+     * ```ts
+     * opt(1).swap('a') // Some('a')
+     * none.swap('a') // None
+     * ```
+     *
+     * Same as `map(const(newValue))`.
+     * @param newValue
+     */
+    abstract swap<U>(newValue: U): Opt<U>;
 }
 /**
  * Empty [[Opt]].
@@ -535,6 +547,7 @@ declare class None<T> extends Opt<T> {
     print(tag?: string): Opt<T>;
     equals(other: Opt<T>, _comparator?: EqualityFunction): boolean;
     prop<K extends (T extends object ? keyof T : never)>(_key: K): Opt<WithoutOptValues<T[K]>>;
+    swap<U>(_newVal: U): Opt<U>;
 }
 /**
  * [[Opt]] with a value inside.
@@ -581,6 +594,7 @@ declare class Some<T> extends Opt<T> {
     print(tag?: string): Opt<T>;
     equals(other: Opt<T>, comparator?: EqualityFunction): boolean;
     prop<K extends (T extends object ? keyof T : never)>(key: K): Opt<WithoutOptValues<T[K]>>;
+    swap<U>(newVal: U): Opt<U>;
 }
 declare const someSerializedType = "Opt/Some";
 declare const noneSerializedType = "Opt/None";
@@ -814,6 +828,8 @@ export declare const print: (tag?: string | undefined) => <T>(x: T) => T;
 export declare const equals: <T>(other: Opt<T>, comparator?: EqualityFunction) => (x: Opt<T>) => boolean;
 /** @see [[Opt.prop]] */
 export declare const prop: <T extends object, K extends T extends object ? keyof T : never = T extends object ? keyof T : never>(key: K) => (x: Opt<T>) => Opt<NonNullable<T[K]>>;
+/** @see [[Opt.swap]] */
+export declare const swap: <U>(newValue: U) => <T>(x: Opt<T>) => Opt<U>;
 /**
  * Takes functions and builds a function which consecutively calls each given function with a result from a previous one.
  * Similar to [[Opt.pipe]], but doesn't take input directly, instead returns a function which can be called repeatedly with different inputs.

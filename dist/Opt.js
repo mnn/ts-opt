@@ -22,7 +22,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.print = exports.narrow = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.bimap = exports.orElseOpt = exports.orElse = exports.forAll = exports.exists = exports.contains = exports.pipe = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOptFlow = exports.actToOpt = exports.chainToOpt = exports.chainFlow = exports.act = exports.chain = exports.flatMap = exports.mapFlow = exports.map = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = void 0;
-exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.prop = exports.equals = void 0;
+exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.prop = exports.equals = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 var refCmp = function (a, b) { return a === b; };
@@ -327,6 +327,9 @@ var None = /** @class */ (function (_super) {
         return other.isEmpty;
     };
     None.prototype.prop = function (_key) { return exports.none; };
+    None.prototype.swap = function (_newVal) {
+        return exports.none;
+    };
     return None;
 }(Opt));
 /**
@@ -429,6 +432,9 @@ var Some = /** @class */ (function (_super) {
         return comparator(this._value, other.orCrash('Some expected'));
     };
     Some.prototype.prop = function (key) { return exports.opt(this._value[key]); };
+    Some.prototype.swap = function (newVal) {
+        return exports.some(newVal);
+    };
     return Some;
 }(Opt));
 var someSerializedType = 'Opt/Some';
@@ -770,6 +776,9 @@ var prop = function (key) { return function (x) {
     return x.prop(key);
 }; };
 exports.prop = prop;
+/** @see [[Opt.swap]] */
+var swap = function (newValue) { return function (x) { return x.swap(newValue); }; };
+exports.swap = swap;
 /**
  * Takes functions and builds a function which consecutively calls each given function with a result from a previous one.
  * Similar to [[Opt.pipe]], but doesn't take input directly, instead returns a function which can be called repeatedly with different inputs.
