@@ -26,6 +26,14 @@ exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 var refCmp = function (a, b) { return a === b; };
+var debugPrint = function (tag) {
+    var xs = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        xs[_i - 1] = arguments[_i];
+    }
+    // tslint:disable-next-line:no-console
+    console.log.apply(console, __spreadArray(__spreadArray([], exports.opt(tag).map(function (x) { return ["[" + x + "]"]; }).orElse([])), xs));
+};
 /**
  * @typeparam T Wrapped value type.
  */
@@ -311,8 +319,7 @@ var None = /** @class */ (function (_super) {
     None.prototype.filter = function (_predicate) { return exports.none; };
     None.prototype.narrow = function (_guard) { return this; };
     None.prototype.print = function (tag) {
-        // tslint:disable-next-line:no-console
-        console.log.apply(console, __spreadArray(__spreadArray([], exports.opt(tag).map(function (x) { return ["[" + x + "]"]; }).orElse([])), ['None']));
+        debugPrint(tag, 'None');
         return this;
     };
     None.prototype.equals = function (other, _comparator) {
@@ -411,8 +418,7 @@ var Some = /** @class */ (function (_super) {
         return guard(this._value) ? this : exports.none;
     };
     Some.prototype.print = function (tag) {
-        // tslint:disable-next-line:no-console
-        console.log.apply(console, __spreadArray(__spreadArray([], exports.opt(tag).map(function (x) { return ["[" + x + "]"]; }).orElse([])), ['Some:', this._value]));
+        debugPrint(tag, 'Some:', this._value);
         return this;
     };
     Some.prototype.equals = function (other, comparator) {
@@ -737,8 +743,19 @@ exports.filter = filter;
 /** @see [[Opt.narrow]] */
 var narrow = function (guard) { return function (x) { return x.narrow(guard); }; };
 exports.narrow = narrow;
-/** @see [[Opt.print]] */
-var print = function (tag) { return function (x) { return x.print(tag); }; };
+/**
+ * Same as [[Opt.print]], but supports arbitrary argument types.
+ * @see [[Opt.print]]
+ */
+var print = function (tag) { return function (x) {
+    if (exports.isOpt(x)) {
+        x.print(tag);
+    }
+    else {
+        debugPrint(tag, x);
+    }
+    return x;
+}; };
 exports.print = print;
 /** @see [[Opt.equals]] */
 var equals = function (other, comparator) {

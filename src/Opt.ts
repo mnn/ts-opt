@@ -30,6 +30,11 @@ interface ConstInClassFn<T> {
   <E>(emptyValue: E): () => T | E;
 }
 
+const debugPrint = (tag?: string, ...xs: unknown[]) => {
+  // tslint:disable-next-line:no-console
+  console.log(...[...opt(tag).map(x => [`[${x}]`]).orElse([]), ...xs]);
+};
+
 /**
  * @typeparam T Wrapped value type.
  */
@@ -649,8 +654,7 @@ class None<T> extends Opt<T> {
   narrow<U>(_guard: (value: any) => value is U): Opt<U> { return this as unknown as Opt<U>; }
 
   print(tag?: string): Opt<T> {
-    // tslint:disable-next-line:no-console
-    console.log(...[...opt(tag).map(x => [`[${x}]`]).orElse([]), 'None']);
+    debugPrint(tag, 'None');
     return this;
   }
 
@@ -761,8 +765,7 @@ class Some<T> extends Opt<T> {
   }
 
   print(tag?: string): Opt<T> {
-    // tslint:disable-next-line:no-console
-    console.log(...[...opt(tag).map(x => [`[${x}]`]).orElse([]), 'Some:', this._value]);
+    debugPrint(tag, 'Some:', this._value);
     return this;
   }
 
@@ -1087,8 +1090,18 @@ export const filter: FilterFn = (p: any) => (x: any) => x.filter(p);
 /** @see [[Opt.narrow]] */
 export const narrow = <U>(guard: (value: any) => value is U) => <T>(x: Opt<T>): Opt<U> => x.narrow(guard);
 
-/** @see [[Opt.print]] */
-export const print = (tag?: string) => <T>(x: Opt<T>): Opt<T> => x.print(tag);
+/**
+ * Same as [[Opt.print]], but supports arbitrary argument types.
+ * @see [[Opt.print]]
+ */
+export const print = (tag?: string) => <T>(x: T): T => {
+  if (isOpt(x)) {
+    x.print(tag);
+  } else {
+    debugPrint(tag, x);
+  }
+  return x;
+};
 
 /** @see [[Opt.equals]] */
 export const equals = <T>(other: Opt<T>, comparator: EqualityFunction = refCmp) => (x: Opt<T>): boolean =>

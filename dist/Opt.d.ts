@@ -805,8 +805,11 @@ declare type FilterFn = <T>(p: (_: T) => boolean) => <U extends Opt<T> | T[]>(x:
 export declare const filter: FilterFn;
 /** @see [[Opt.narrow]] */
 export declare const narrow: <U>(guard: (value: any) => value is U) => <T>(x: Opt<T>) => Opt<U>;
-/** @see [[Opt.print]] */
-export declare const print: (tag?: string | undefined) => <T>(x: Opt<T>) => Opt<T>;
+/**
+ * Same as [[Opt.print]], but supports arbitrary argument types.
+ * @see [[Opt.print]]
+ */
+export declare const print: (tag?: string | undefined) => <T>(x: T) => T;
 /** @see [[Opt.equals]] */
 export declare const equals: <T>(other: Opt<T>, comparator?: EqualityFunction) => (x: Opt<T>) => boolean;
 /** @see [[Opt.prop]] */

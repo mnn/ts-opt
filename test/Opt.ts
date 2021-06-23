@@ -1262,6 +1262,9 @@ describe('print', () => {
     print()(opt(1));
     expect(console.log).to.have.been.called.exactly(1);
     expect(console.log).to.have.been.called.with('Some:', 1);
+    print('a')(7);
+    expect(console.log).to.have.been.called.exactly(2);
+    expect(console.log).to.have.been.called.with('[a]', 7);
   });
 });
 
