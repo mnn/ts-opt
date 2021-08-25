@@ -3,14 +3,14 @@
 import {
   ActFn,
   ActInClassFn,
-  MapFlowInClassFn,
-  MapFlowFn,
-  PipeInClassFn,
-  PipeFn,
-  ActToOptInClassFn,
   ActToOptFn,
-  FlowFn,
+  ActToOptInClassFn,
   ComposeFn,
+  FlowFn,
+  MapFlowFn,
+  MapFlowInClassFn,
+  PipeFn,
+  PipeInClassFn,
 } from './FlowLike';
 
 const someSymbol = Symbol('Some');
@@ -1265,3 +1265,33 @@ type UncurryTuple5Fn = <A, B, C, D, E, F>(_: (_: A) => (_: B) => (_: C) => (_: D
  * @param f
  */
 export const uncurryTuple5: UncurryTuple5Fn = f => ([a, b, c, d, e]) => f(a)(b)(c)(d)(e);
+
+/**
+ * Similar to `isEmpty` from lodash, but also supports [[Opt]]s.
+ * Returns `true` for [[None]], `[]`, `null`, `undefined`, empty map, empty set, empty object, `''` and `NaN`.
+ * Otherwise returns `false`.
+ *
+ * @example
+ * ```ts
+ * isEmpty(opt(1)) // false
+ * isEmpty(opt(null)) // true
+ * isEmpty([]) // true
+ * isEmpty([1]) // false
+ * isEmpty(null) // true
+ * isEmpty('') // true
+ * ```
+ *
+ * @param x
+ */
+export const isEmpty = (
+  x: Opt<unknown> | unknown[] | null | undefined | Map<unknown, unknown> | Set<unknown> | object | string | number,
+): boolean => {
+  if (isOpt(x)) { return x.isEmpty; }
+  if (Array.isArray(x)) { return x.length === 0; }
+  if (x === null || x === undefined) { return true; }
+  if (x instanceof Map || x instanceof Set) { return x.size === 0; }
+  if (typeof x === 'object') { return Object.getOwnPropertyNames(x).length === 0; }
+  if (typeof x === 'string') { return x === ''; }
+  if (typeof x === 'number') { return Number.isNaN(x); }
+  throw new Error(`Unexpected input type: ${typeof x}`);
+};

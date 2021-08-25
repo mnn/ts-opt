@@ -66,6 +66,7 @@ import {
   uncurryTuple4,
   uncurryTuple5,
   swap,
+  isEmpty,
 } from '../src/Opt';
 
 chai.use(spies);
@@ -446,7 +447,7 @@ describe('opt', () => {
 
   it('zip5', () => {
     expect(some(1).zip5(some(true), some('a'), some('b' as EnumAB), some(2 as Enum12)).orNull())
-      .to.be.eql([1, true, 'a', 'b', 2]);
+    .to.be.eql([1, true, 'a', 'b', 2]);
     expect(some(1).zip5(some(true), some('a'), some('b' as EnumAB), none).orNull()).to.be.null;
     expect(some(1).zip5(some(true), some('a'), none, some(2 as Enum12)).orNull()).to.be.null;
     expect(some(1).zip5(some(true), none, some('b' as EnumAB), some(2 as Enum12)).orNull()).to.be.null;
@@ -733,6 +734,66 @@ describe('mapOpt', () => {
   });
 });
 
+describe('isEmpty', () => {
+  it('opt', () => {
+    expect(isEmpty(opt(1))).to.be.false;
+    expect(isEmpty(opt(null))).to.be.true;
+  });
+  it('array', () => {
+    expect(isEmpty([])).to.be.true;
+    expect(isEmpty([1])).to.be.false;
+    expect(isEmpty([null])).to.be.false;
+  });
+  it('null', () => {
+    expect(isEmpty(null)).to.be.true;
+  });
+  it('undefined', () => {
+    expect(isEmpty(undefined)).to.be.true;
+  });
+  it('Map', () => {
+    expect(isEmpty(new Map())).to.be.true;
+    expect(isEmpty(new Map().set(1, true))).to.be.false;
+  });
+  it('Set', () => {
+    expect(isEmpty(new Set())).to.be.true;
+    expect(isEmpty(new Set().add(2))).to.be.false;
+  });
+  it('object', () => {
+    expect(isEmpty({})).to.be.true;
+    expect(isEmpty({a: 1})).to.be.false;
+
+    class A {
+      a = 4;
+    }
+
+    class B extends A {}
+
+    expect(isEmpty(new B())).to.be.false;
+  });
+  it('string', () => {
+    expect(isEmpty('')).to.be.true;
+    expect(isEmpty(' ')).to.be.false;
+    expect(isEmpty('asddgflhjglůerhlt')).to.be.false;
+  });
+  it('number', () => {
+    expect(isEmpty(NaN)).to.be.true;
+    expect(isEmpty(0)).to.be.false;
+    expect(isEmpty(-5)).to.be.false;
+  });
+  it('throws on invalid type', () => {
+    expect(() => isEmpty(true as any)).to.throw();
+  });
+  it('works with unions', () => {
+    type OptNumMay = Opt<number> | undefined;
+    const a: OptNumMay = undefined as OptNumMay;
+    expect(isEmpty(a)).to.be.true;
+    const b: OptNumMay = opt(null as null | number) as OptNumMay;
+    expect(isEmpty(b)).to.be.true;
+    const c: OptNumMay = opt(3) as OptNumMay;
+    expect(isEmpty(c)).to.be.false;
+  });
+});
+
 interface Person {
   name: string;
   surname: string | null;
@@ -804,9 +865,9 @@ describe('examples', () => {
 
     // with
     const g = (id: number | undefined): string | null => opt(id)
-      .chainToOpt(x => db[x])
-      .map(item => item.name + ' ' + opt(item.surname).map(x => x.toUpperCase()).orElse('<missing>'))
-      .orNull();
+    .chainToOpt(x => db[x])
+    .map(item => item.name + ' ' + opt(item.surname).map(x => x.toUpperCase()).orElse('<missing>'))
+    .orNull();
 
     f(0); // 'John <missing>'
     g(0); // 'John <missing>'
@@ -1375,10 +1436,10 @@ describe('(un)curry', () => {
     expect(f(80)(8)).to.be.eq(88);
     expect(
       opt(1) // Some(1)
-        .map(
-          curryTuple(addPair)(4), // same as `(a => b => a + b)(4)`
-        ) // Some(5)
-        .orNull(),
+      .map(
+        curryTuple(addPair)(4), // same as `(a => b => a + b)(4)`
+      ) // Some(5)
+      .orNull(),
     ).to.be.eq(5);
   });
 
@@ -1409,9 +1470,9 @@ describe('(un)curry', () => {
     const sub = (x: number) => (y: number) => x - y;
     expect(
       opt(4) // Some(4)
-        .zip(opt(1)) // Some([4, 1])
-        .map(uncurryTuple(sub)) // Some(3)
-        .orNull(),
+      .zip(opt(1)) // Some([4, 1])
+      .map(uncurryTuple(sub)) // Some(3)
+      .orNull(),
     ).to.be.eq(3);
   });
 

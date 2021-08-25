@@ -949,4 +949,12 @@ declare type UncurryTuple5Fn = <A, B, C, D, E, F>(_: (_: A) => (_: B) => (_: C) 
  * @param f
  */
 export declare const uncurryTuple5: UncurryTuple5Fn;
+declare type IsEmptyFn = (x: Opt<any> | any[] | null | undefined | Map<any, any> | Set<any> | object | string | number) => boolean;
+/**
+ * Similar to `isEmpty` from lodash, but also supports opts.
+ * Returns `true` for [[None]], `[]`, `null`, `undefined`, empty map, empty set, empty object, `''` and `NaN`.
+ * Otherwise returns `false`.
+ * @param x
+ */
+export declare const isEmpty: IsEmptyFn;
 export {};

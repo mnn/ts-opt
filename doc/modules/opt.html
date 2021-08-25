@@ -115,6 +115,7 @@
 								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="opt.html#flow" class="tsd-kind-icon">flow</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="opt.html#forall" class="tsd-kind-icon">for<wbr>All</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="opt.html#fromarray" class="tsd-kind-icon">from<wbr>Array</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="opt.html#isempty" class="tsd-kind-icon">is<wbr>Empty</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-module"><a href="opt.html#isopt" class="tsd-kind-icon">is<wbr>Opt</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="opt.html#joinopt" class="tsd-kind-icon">join<wbr>Opt</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="opt.html#map" class="tsd-kind-icon">map</a></li>
@@ -12663,6 +12664,49 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="isempty" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> is<wbr>Empty</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Empty<span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><a href="../classes/opt.opt-1.html" class="tsd-signature-type" data-tsd-kind="Class">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in Opt.ts:1286</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Similar to <code>isEmpty</code> from lodash, but also supports <a href="../classes/opt.opt-1.html">Opt</a>s.
+										Returns <code>true</code> for <a href="../classes/none.html">None</a>, <code>[]</code>, <code>null</code>, <code>undefined</code>, empty map, empty set, empty object, <code>&#39;&#39;</code> and <code>NaN</code>.
+									Otherwise returns <code>false</code>.</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>example</dt>
+									<dd><pre><code class="language-ts"><span style="color: #795E26">isEmpty</span><span style="color: #000000">(</span><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #098658">1</span><span style="color: #000000">)) </span><span style="color: #008000">// false</span>
+<span style="color: #795E26">isEmpty</span><span style="color: #000000">(</span><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #0000FF">null</span><span style="color: #000000">)) </span><span style="color: #008000">// true</span>
+<span style="color: #795E26">isEmpty</span><span style="color: #000000">([]) </span><span style="color: #008000">// true</span>
+<span style="color: #795E26">isEmpty</span><span style="color: #000000">([</span><span style="color: #098658">1</span><span style="color: #000000">]) </span><span style="color: #008000">// false</span>
+<span style="color: #795E26">isEmpty</span><span style="color: #000000">(</span><span style="color: #0000FF">null</span><span style="color: #000000">) </span><span style="color: #008000">// true</span>
+<span style="color: #795E26">isEmpty</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;&#039;</span><span style="color: #000000">) </span><span style="color: #008000">// true</span>
+</code></pre>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>x: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><a href="../classes/opt.opt-1.html" class="tsd-signature-type" data-tsd-kind="Class">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
 					<a name="isopt" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagConst">Const</span> is<wbr>Opt</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
@@ -18350,6 +18394,9 @@
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
 						<a href="opt.html#fromarray" class="tsd-kind-icon">from<wbr>Array</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="opt.html#isempty" class="tsd-kind-icon">is<wbr>Empty</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
 						<a href="opt.html#isopt" class="tsd-kind-icon">is<wbr>Opt</a>

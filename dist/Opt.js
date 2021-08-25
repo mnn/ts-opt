@@ -22,7 +22,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.print = exports.narrow = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.bimap = exports.orElseOpt = exports.orElse = exports.forAll = exports.exists = exports.contains = exports.pipe = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOptFlow = exports.actToOpt = exports.chainToOpt = exports.chainFlow = exports.act = exports.chain = exports.flatMap = exports.mapFlow = exports.map = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = void 0;
-exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.prop = exports.equals = void 0;
+exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.prop = exports.equals = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 var refCmp = function (a, b) { return a === b; };
@@ -924,4 +924,35 @@ var uncurryTuple5 = function (f) { return function (_a) {
     return f(a)(b)(c)(d)(e);
 }; };
 exports.uncurryTuple5 = uncurryTuple5;
+/**
+ * Similar to `isEmpty` from lodash, but also supports opts.
+ * Returns `true` for [[None]], `[]`, `null`, `undefined`, empty map, empty set, empty object, `''` and `NaN`.
+ * Otherwise returns `false`.
+ * @param x
+ */
+var isEmpty = function (x) {
+    if (exports.isOpt(x)) {
+        return x.isEmpty;
+    }
+    if (Array.isArray(x)) {
+        return x.length === 0;
+    }
+    if (x === null || x === undefined) {
+        return true;
+    }
+    if (x instanceof Map || x instanceof Set) {
+        return x.size === 0;
+    }
+    if (typeof x === 'object') {
+        return Object.getOwnPropertyNames(x).length === 0;
+    }
+    if (typeof x === 'string') {
+        return x === '';
+    }
+    if (typeof x === 'number') {
+        return Number.isNaN(x);
+    }
+    throw new Error("Unexpected input type: " + typeof x);
+};
+exports.isEmpty = isEmpty;
 //# sourceMappingURL=Opt.js.map
