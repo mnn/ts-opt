@@ -1,5 +1,4 @@
 "use strict";
-// Do NOT split to multiple modules - it's not possible, since there would be cyclic dependencies..
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -22,7 +21,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.print = exports.narrow = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.bimap = exports.orElseOpt = exports.orElse = exports.forAll = exports.exists = exports.contains = exports.pipe = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOptFlow = exports.actToOpt = exports.chainToOpt = exports.chainFlow = exports.act = exports.chain = exports.flatMap = exports.mapFlow = exports.map = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = void 0;
-exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.prop = exports.equals = void 0;
+exports.last = exports.head = exports.at = exports.id = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.prop = exports.equals = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 var refCmp = function (a, b) { return a === b; };
@@ -262,6 +261,28 @@ var Opt = /** @class */ (function () {
     Opt.prototype.widen = function () {
         return this;
     };
+    /**
+     * Get a first item of an array.
+     *
+     * @example
+     * ```ts
+     * opt([1, 2, 3]).head() // Some(1)
+     * opt([]).head() // None
+     * opt(null).head() // None
+     * ```
+     */
+    Opt.prototype.head = function () { return this.at(0); };
+    /**
+     * Get a last item of an array.
+     *
+     * @example
+     * ```ts
+     * opt([1, 2, 3]).last() // Some(3)
+     * opt([]).last() // None
+     * opt(null).last() // None
+     * ```
+     */
+    Opt.prototype.last = function () { return this.at(-1); };
     return Opt;
 }());
 exports.Opt = Opt;
@@ -328,6 +349,9 @@ var None = /** @class */ (function (_super) {
     };
     None.prototype.prop = function (_key) { return exports.none; };
     None.prototype.swap = function (_newVal) {
+        return exports.none;
+    };
+    None.prototype.at = function (_index) {
         return exports.none;
     };
     return None;
@@ -434,6 +458,16 @@ var Some = /** @class */ (function (_super) {
     Some.prototype.prop = function (key) { return exports.opt(this._value[key]); };
     Some.prototype.swap = function (newVal) {
         return exports.some(newVal);
+    };
+    Some.prototype.at = function (index) {
+        var val = this._value;
+        if (Array.isArray(val)) {
+            var processedIndex = (index < 0 ? val.length : 0) + index;
+            return exports.opt(val[processedIndex]);
+        }
+        else {
+            throw new Error("`Opt#at` can only be used on arrays");
+        }
     };
     return Some;
 }(Opt));
@@ -925,9 +959,20 @@ var uncurryTuple5 = function (f) { return function (_a) {
 }; };
 exports.uncurryTuple5 = uncurryTuple5;
 /**
- * Similar to `isEmpty` from lodash, but also supports opts.
+ * Similar to `isEmpty` from lodash, but also supports [[Opt]]s.
  * Returns `true` for [[None]], `[]`, `null`, `undefined`, empty map, empty set, empty object, `''` and `NaN`.
  * Otherwise returns `false`.
+ *
+ * @example
+ * ```ts
+ * isEmpty(opt(1)) // false
+ * isEmpty(opt(null)) // true
+ * isEmpty([]) // true
+ * isEmpty([1]) // false
+ * isEmpty(null) // true
+ * isEmpty('') // true
+ * ```
+ *
  * @param x
  */
 var isEmpty = function (x) {
@@ -955,4 +1000,37 @@ var isEmpty = function (x) {
     throw new Error("Unexpected input type: " + typeof x);
 };
 exports.isEmpty = isEmpty;
+/**
+ * Identity function.
+ *
+ * ```ts
+ * id(1) // 1
+ * id(null) // null
+ * ```
+ *
+ * @param x
+ */
+var id = function (x) { return x; };
+exports.id = id;
+/**
+ * Same as [[Opt.at]], but also supports unwrapped arrays.
+ * @see [[Opt.at]]
+ * @param index
+ */
+var at = function (index) { return function (x) { return (exports.isOpt(x) ? x : exports.opt(x)).at(index); }; };
+exports.at = at;
+/**
+ * Same as [[Opt.head]], but also supports unwrapped arrays.
+ * @see [[Opt.head]]
+ * @param x
+ */
+var head = function (x) { return (exports.isOpt(x) ? x : exports.opt(x)).head(); };
+exports.head = head;
+/**
+ * Same as [[Opt.last]], but also supports unwrapped arrays.
+ * @see [[Opt.last]]
+ * @param x
+ */
+var last = function (x) { return (exports.isOpt(x) ? x : exports.opt(x)).last(); };
+exports.last = last;
 //# sourceMappingURL=Opt.js.map

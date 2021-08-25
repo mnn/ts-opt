@@ -1,5 +1,4 @@
 // Do NOT split to multiple modules - it's not possible, since there would be cyclic dependencies..
-
 import {
   ActFn,
   ActInClassFn,
@@ -15,13 +14,10 @@ import {
 
 const someSymbol = Symbol('Some');
 const noneSymbol = Symbol('None');
-
 export type EqualityFunction = <T>(a: T, b: T) => boolean;
 const refCmp: EqualityFunction = <T>(a: T, b: T): boolean => a === b;
-
 type NotObject<T> = T extends object ? never : T;
 type SuperUnionOf<T, U> = Exclude<U, T> extends never ? NotObject<T> : never;
-
 type WithoutOptValues<T> = NonNullable<T>;
 
 interface ConstInClassFn<T> {
@@ -590,6 +586,49 @@ export abstract class Opt<T> {
    * @param newValue
    */
   abstract swap<U>(newValue: U): Opt<U>;
+
+  /**
+   * Get an item at given index of an array wrapped in [[Opt]].
+   * Resulting value is wrapped in [[Opt]].
+   * Non-existent index results in [[None]].
+   * Negative index is interpreted as an index from the end of the array (e.g. a last item of an array lies on an `index` equal to `-1`).
+   *
+   * @example
+   * ```ts
+   * opt([1]).at(0) // Some(1)
+   * opt([]).at(0) // None
+   * none.at(0) // None
+   * opt([null]).at(0) // None
+   * opt([1, 2, 3]).at(-1) // Some(3)
+   * ```
+   *
+   * @param index
+   */
+  abstract at<R extends (T extends (infer A)[] ? A : never)>(index: number): Opt<R>;
+
+  /**
+   * Get a first item of an array.
+   *
+   * @example
+   * ```ts
+   * opt([1, 2, 3]).head() // Some(1)
+   * opt([]).head() // None
+   * opt(null).head() // None
+   * ```
+   */
+  head<R extends (T extends (infer A)[] ? A : never)>(): Opt<R> { return this.at(0); }
+
+  /**
+   * Get a last item of an array.
+   *
+   * @example
+   * ```ts
+   * opt([1, 2, 3]).last() // Some(3)
+   * opt([]).last() // None
+   * opt(null).last() // None
+   * ```
+   */
+  last<R extends (T extends (infer A)[] ? A : never)>(): Opt<R> { return this.at(-1); }
 }
 
 /**
@@ -678,6 +717,10 @@ class None<T> extends Opt<T> {
   prop<K extends (T extends object ? keyof T : never)>(_key: K): Opt<WithoutOptValues<T[K]>> { return none; }
 
   swap<U>(_newVal: U): Opt<U> {
+    return none;
+  }
+
+  at<R extends (T extends (infer A)[] ? A : never)>(_index: number): Opt<R> {
     return none;
   }
 }
@@ -796,16 +839,27 @@ class Some<T> extends Opt<T> {
   swap<U>(newVal: U): Opt<U> {
     return some(newVal);
   }
+
+  at<R extends (T extends (infer A)[] ? A : never)>(index: number): Opt<R> {
+    const val = this._value;
+    if (Array.isArray(val)) {
+      const processedIndex = (index < 0 ? val.length : 0) + index;
+      return opt(val[processedIndex]);
+    } else {
+      throw new Error(`\`Opt#at\` can only be used on arrays`);
+    }
+  }
 }
 
 const someSerializedType = 'Opt/Some';
 const noneSerializedType = 'Opt/None';
-type OptSerialized = {
-  type: typeof noneSerializedType;
-} | {
-  type: typeof someSerializedType,
-  value: any,
-};
+type OptSerialized =
+  {
+    type: typeof noneSerializedType;
+  } | {
+    type: typeof someSerializedType,
+    value: any,
+  };
 
 export class ReduxDevtoolsCompatibilityHelper {
   static replacer(_key: unknown, value: any): any | OptSerialized {
@@ -1295,3 +1349,36 @@ export const isEmpty = (
   if (typeof x === 'number') { return Number.isNaN(x); }
   throw new Error(`Unexpected input type: ${typeof x}`);
 };
+
+/**
+ * Identity function.
+ *
+ * ```ts
+ * id(1) // 1
+ * id(null) // null
+ * ```
+ *
+ * @param x
+ */
+export const id = <T>(x: T): T => x;
+
+/**
+ * Same as [[Opt.at]], but also supports unwrapped arrays.
+ * @see [[Opt.at]]
+ * @param index
+ */
+export const at = (index: number) => <T>(x: T[] | Opt<T[]>): Opt<T> => (isOpt(x) ? x : opt(x)).at(index);
+
+/**
+ * Same as [[Opt.head]], but also supports unwrapped arrays.
+ * @see [[Opt.head]]
+ * @param x
+ */
+export const head = <T>(x: T[] | Opt<T[]>): Opt<T> => (isOpt(x) ? x : opt(x)).head();
+
+/**
+ * Same as [[Opt.last]], but also supports unwrapped arrays.
+ * @see [[Opt.last]]
+ * @param x
+ */
+export const last = <T>(x: T[] | Opt<T[]>): Opt<T> => (isOpt(x) ? x : opt(x)).last();

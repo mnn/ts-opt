@@ -67,6 +67,10 @@ import {
   uncurryTuple5,
   swap,
   isEmpty,
+  at,
+  id,
+  head,
+  last,
 } from '../src/Opt';
 
 chai.use(spies);
@@ -85,9 +89,7 @@ const isNumber = (x: any): x is number => typeof x === 'number';
 const isObject = (x: any): x is object => typeof x === 'object';
 const isArray = (x: any): x is unknown[] => Array.isArray(x);
 
-const head = <T>(xs: T[]): undefined | T => xs[0];
 const eq = (a: unknown) => (b: unknown) => a === b;
-const id = <T>(x: T): T => x;
 
 type EnumAB = 'a' | 'b';
 type Enum12 = 1 | 2;
@@ -584,6 +586,34 @@ describe('opt', () => {
     const a: Opt<string> = opt(1).swap('');
     const b: Opt<string> = none.swap('');
     suppressUnused(a, b);
+  });
+
+  it('at', () => {
+    expect(opt([1]).at(0).orFalse()).to.be.eq(1);
+    expect(opt([]).at(0).orFalse()).to.be.false;
+    expect(opt(null).at(0).orFalse()).to.be.false;
+    expect(none.at(0).orFalse()).to.be.false;
+    expect(() => {
+      const x: Opt<unknown> = opt(1).at(0);
+      suppressUnused(x);
+    }).to.throw();
+    expect(opt([1]).at(-1).orFalse()).to.be.eq(1);
+    expect(opt([1, 2, 3]).at(-1).orFalse()).to.be.eq(3);
+    expect(opt([null]).at(0).orFalse()).to.be.false;
+    expect(opt([1, 2, 3]).at(-3).orFalse()).to.be.eq(1);
+    expect(opt([1, 2, 3]).at(-4).orFalse()).to.be.false;
+  });
+
+  it('head', () => {
+    expect(opt([1, 2, 3]).head().orFalse()).to.be.eq(1);
+    expect(opt([]).head().orFalse()).to.be.false;
+    expect(opt(null).head().orFalse()).to.be.false;
+  });
+
+  it('last', () => {
+    expect(opt([1, 2, 3]).last().orFalse()).to.be.eq(3);
+    expect(opt([]).last().orFalse()).to.be.false;
+    expect(opt(null).last().orFalse()).to.be.false;
   });
 });
 
@@ -1495,5 +1525,41 @@ describe('(un)curry', () => {
       uncurryTuple5(a => b => c => d => e => c ? a - b : d * e);
     expect(opt(1).zip5(opt(2), opt(true), opt(7), opt(2)).map(f).orNull()).to.be.eq(-1);
     expect(opt(1).zip5(opt(2), opt(false), opt(7), opt(2)).map(f).orNull()).to.be.eq(14);
+  });
+});
+
+describe('id', () => {
+  it('returns same value', () => {
+    expect(id(1)).to.be.eq(1);
+    expect(id(null)).to.be.eq(null);
+  });
+});
+
+describe('at', () => {
+  it('gets item from array', () => {
+    expect(at(0)([5]).orFalse()).to.be.eq(5);
+    expect(at(1)([5]).orFalse()).to.be.false;
+    expect(at(0)(opt([5])).orFalse()).to.be.eq(5);
+    expect(at(1)(opt([5])).orFalse()).to.be.false;
+  });
+});
+
+describe('head', () => {
+  it('returns first element', () => {
+    expect(head([1, 2, 3]).orFalse()).to.be.eq(1);
+    expect(head([]).orFalse()).to.be.false;
+    expect(head(opt([1, 2, 3])).orFalse()).to.be.eq(1);
+    expect(head(opt([])).orFalse()).to.be.false;
+    expect(head(opt(null as null | number[])).orFalse()).to.be.false;
+  });
+});
+
+describe('last', () => {
+  it('returns last element', () => {
+    expect(last([1, 2, 3]).orFalse()).to.be.eq(3);
+    expect(last([]).orFalse()).to.be.false;
+    expect(last(opt([1, 2, 3])).orFalse()).to.be.eq(3);
+    expect(last(opt([])).orFalse()).to.be.false;
+    expect(last(opt(null as null | number[])).orFalse()).to.be.false;
   });
 });

@@ -1,4 +1,4 @@
-import { ActFn, ActInClassFn, MapFlowInClassFn, MapFlowFn, PipeInClassFn, PipeFn, ActToOptInClassFn, ActToOptFn, FlowFn, ComposeFn } from './FlowLike';
+import { ActFn, ActInClassFn, ActToOptFn, ActToOptInClassFn, ComposeFn, FlowFn, MapFlowFn, MapFlowInClassFn, PipeFn, PipeInClassFn } from './FlowLike';
 export declare type EqualityFunction = <T>(a: T, b: T) => boolean;
 declare type NotObject<T> = T extends object ? never : T;
 declare type SuperUnionOf<T, U> = Exclude<U, T> extends never ? NotObject<T> : never;
@@ -504,6 +504,46 @@ export declare abstract class Opt<T> {
      * @param newValue
      */
     abstract swap<U>(newValue: U): Opt<U>;
+    /**
+     * Get an item at given index of an array wrapped in [[Opt]].
+     * Resulting value is wrapped in [[Opt]].
+     * Non-existent index results in [[None]].
+     * Negative index is interpreted as an index from the end of the array (e.g. a last item of an array lies on an `index` equal to `-1`).
+     *
+     * @example
+     * ```ts
+     * opt([1]).at(0) // Some(1)
+     * opt([]).at(0) // None
+     * none.at(0) // None
+     * opt([null]).at(0) // None
+     * opt([1, 2, 3]).at(-1) // Some(3)
+     * ```
+     *
+     * @param index
+     */
+    abstract at<R extends (T extends (infer A)[] ? A : never)>(index: number): Opt<R>;
+    /**
+     * Get a first item of an array.
+     *
+     * @example
+     * ```ts
+     * opt([1, 2, 3]).head() // Some(1)
+     * opt([]).head() // None
+     * opt(null).head() // None
+     * ```
+     */
+    head<R extends (T extends (infer A)[] ? A : never)>(): Opt<R>;
+    /**
+     * Get a last item of an array.
+     *
+     * @example
+     * ```ts
+     * opt([1, 2, 3]).last() // Some(3)
+     * opt([]).last() // None
+     * opt(null).last() // None
+     * ```
+     */
+    last<R extends (T extends (infer A)[] ? A : never)>(): Opt<R>;
 }
 /**
  * Empty [[Opt]].
@@ -548,6 +588,7 @@ declare class None<T> extends Opt<T> {
     equals(other: Opt<T>, _comparator?: EqualityFunction): boolean;
     prop<K extends (T extends object ? keyof T : never)>(_key: K): Opt<WithoutOptValues<T[K]>>;
     swap<U>(_newVal: U): Opt<U>;
+    at<R extends (T extends (infer A)[] ? A : never)>(_index: number): Opt<R>;
 }
 /**
  * [[Opt]] with a value inside.
@@ -595,6 +636,7 @@ declare class Some<T> extends Opt<T> {
     equals(other: Opt<T>, comparator?: EqualityFunction): boolean;
     prop<K extends (T extends object ? keyof T : never)>(key: K): Opt<WithoutOptValues<T[K]>>;
     swap<U>(newVal: U): Opt<U>;
+    at<R extends (T extends (infer A)[] ? A : never)>(index: number): Opt<R>;
 }
 declare const someSerializedType = "Opt/Some";
 declare const noneSerializedType = "Opt/None";
@@ -949,12 +991,51 @@ declare type UncurryTuple5Fn = <A, B, C, D, E, F>(_: (_: A) => (_: B) => (_: C) 
  * @param f
  */
 export declare const uncurryTuple5: UncurryTuple5Fn;
-declare type IsEmptyFn = (x: Opt<any> | any[] | null | undefined | Map<any, any> | Set<any> | object | string | number) => boolean;
 /**
- * Similar to `isEmpty` from lodash, but also supports opts.
+ * Similar to `isEmpty` from lodash, but also supports [[Opt]]s.
  * Returns `true` for [[None]], `[]`, `null`, `undefined`, empty map, empty set, empty object, `''` and `NaN`.
  * Otherwise returns `false`.
+ *
+ * @example
+ * ```ts
+ * isEmpty(opt(1)) // false
+ * isEmpty(opt(null)) // true
+ * isEmpty([]) // true
+ * isEmpty([1]) // false
+ * isEmpty(null) // true
+ * isEmpty('') // true
+ * ```
+ *
  * @param x
  */
-export declare const isEmpty: IsEmptyFn;
+export declare const isEmpty: (x: Opt<unknown> | unknown[] | null | undefined | Map<unknown, unknown> | Set<unknown> | object | string | number) => boolean;
+/**
+ * Identity function.
+ *
+ * ```ts
+ * id(1) // 1
+ * id(null) // null
+ * ```
+ *
+ * @param x
+ */
+export declare const id: <T>(x: T) => T;
+/**
+ * Same as [[Opt.at]], but also supports unwrapped arrays.
+ * @see [[Opt.at]]
+ * @param index
+ */
+export declare const at: (index: number) => <T>(x: T[] | Opt<T[]>) => Opt<T>;
+/**
+ * Same as [[Opt.head]], but also supports unwrapped arrays.
+ * @see [[Opt.head]]
+ * @param x
+ */
+export declare const head: <T>(x: T[] | Opt<T[]>) => Opt<T>;
+/**
+ * Same as [[Opt.last]], but also supports unwrapped arrays.
+ * @see [[Opt.last]]
+ * @param x
+ */
+export declare const last: <T>(x: T[] | Opt<T[]>) => Opt<T>;
 export {};
