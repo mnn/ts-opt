@@ -88,6 +88,7 @@ const isString = (x: any): x is string => typeof x === 'string';
 const isNumber = (x: any): x is number => typeof x === 'number';
 const isObject = (x: any): x is object => typeof x === 'object';
 const isArray = (x: any): x is unknown[] => Array.isArray(x);
+const join = (delim: string) => (xs: string[]): string => xs.join(delim);
 
 const eq = (a: unknown) => (b: unknown) => a === b;
 
@@ -424,6 +425,13 @@ describe('opt', () => {
     expect(some(1).zip(none).orNull()).to.be.null;
     expect(none.zip(some(true)).orNull()).to.be.null;
     expect(none.zip(some(true)).orNull()).to.be.null;
+    const formatAddress =
+      (streetName?: string, streetNumber?: string): string =>
+        opt(streetName).zip(opt(streetNumber)).map(join(' ')).orElse('');
+    expect(formatAddress('Strawberry', '12')).to.be.eq('Strawberry 12');
+    expect(formatAddress('Strawberry', undefined)).to.be.eq('');
+    expect(formatAddress(undefined, '12')).to.be.eq('');
+    expect(formatAddress(undefined, undefined)).to.be.eq('');
   });
 
   it('zip3', () => {
@@ -1250,26 +1258,26 @@ describe('bimap', () => {
 describe('zip', () => {
   describe('checks types', () => {
     it('opt', () => {
-      const a: Opt<[boolean, number]> = zip(opt(1))(opt(true));
+      const a: Opt<[number, boolean]> = zip(opt(1))(opt(true));
       // @ts-expect-error
-      const aFail: Opt<[number, boolean]> = zip(opt(1))(opt(true));
+      const aFail: Opt<[boolean, number]> = zip(opt(1))(opt(true));
       suppressUnused(a, aFail);
     });
     it('array', () => {
-      const a: [boolean, number][] = zip([1, 2])([true, false]);
+      const a: [number, boolean][] = zip([1, 2])([true, false]);
       // @ts-expect-error
-      const aFail: [number, boolean][] = zip(opt(1))(opt(true));
+      const aFail: [boolean, number][] = zip(opt(1))(opt(true));
       suppressUnused(a, aFail);
     });
     it('mixing', () => {
       // @ts-expect-error
-      const aFail: [boolean, number][] = zip(opt(1))(opt(true));
+      const aFail: [number, boolean][] = zip(opt(1))(opt(true));
       suppressUnused(aFail);
     });
   });
 
   it('opt', () => {
-    expect(zip(opt(2))(opt(1)).orNull()).to.be.eql([1, 2]);
+    expect(zip(opt(1))(opt(2)).orNull()).to.be.eql([1, 2]);
     expect(zip(opt(1))(none).orNull()).to.be.eql(null);
     expect(zip(none)(opt(2)).orNull()).to.be.eql(null);
     expect(zip(none)(none).orNull()).to.be.eql(null);
@@ -1280,37 +1288,47 @@ describe('zip', () => {
       expect(zip([])([])).to.be.eql([]);
     });
     it('same length', () => {
-      expect(zip([2])([1])).to.be.eql([[1, 2]]);
+      expect(zip([1])([2])).to.be.eql([[1, 2]]);
     });
     it('different length', () => {
-      expect(zip([3])([1, 2])).to.be.eql([[1, 3]]);
-      expect(zip([3, 4])([1])).to.be.eql([[1, 3]]);
+      expect(zip([1, 2])([3])).to.be.eql([[1, 3]]);
+      expect(zip([1])([3, 4])).to.be.eql([[1, 3]]);
+    });
+
+    it('example', () => {
+      const formatAddress =
+        (streetName?: string, streetNumber?: string): string =>
+          zip(opt(streetName))(opt(streetNumber)).map(join(' ')).orElse('');
+      expect(formatAddress('Strawberry', '12')).to.be.eq('Strawberry 12');
+      expect(formatAddress('Strawberry', undefined)).to.be.eq('');
+      expect(formatAddress(undefined, '12')).to.be.eq('');
+      expect(formatAddress(undefined, undefined)).to.be.eq('');
     });
   });
 
   it('works with flow', () => {
-    const a: Opt<[number, string]> = flow2((x: Opt<number>) => x, zip(opt('x')))(opt(2));
-    expect(a.orNull()).to.be.eql([2, 'x']);
-    const b: Opt<[number, string]> = flow2(zip(opt('x')), id)(opt(2));
-    expect(b.orNull()).to.be.eql([2, 'x']);
+    const a: Opt<[string, number]> = flow2((x: Opt<number>) => x, zip(opt('x')))(opt(2));
+    expect(a.orNull()).to.be.eql(['x', 2]);
+    const b: Opt<[string, number]> = flow2(zip(opt('x')), id)(opt(2));
+    expect(b.orNull()).to.be.eql(['x', 2]);
   });
 });
 
 describe('zip3', () => {
   it('zips', () => {
-    expect(zip3(opt(1))(opt(2))(opt(3)).orNull()).to.be.eql([3, 1, 2]);
+    expect(zip3(opt(1))(opt(2))(opt(3)).orNull()).to.be.eql([1, 2, 3]);
   });
 });
 
 describe('zip4', () => {
   it('zips', () => {
-    expect(zip4(opt(1))(opt(2))(opt(3))(opt(4)).orNull()).to.be.eql([4, 1, 2, 3]);
+    expect(zip4(opt(1))(opt(2))(opt(3))(opt(4)).orNull()).to.be.eql([1, 2, 3, 4]);
   });
 });
 
 describe('zip5', () => {
   it('zips', () => {
-    expect(zip5(opt(1))(opt(2))(opt(3))(opt(4))(opt(5)).orNull()).to.be.eql([5, 1, 2, 3, 4]);
+    expect(zip5(opt(1))(opt(2))(opt(3))(opt(4))(opt(5)).orNull()).to.be.eql([1, 2, 3, 4, 5]);
   });
 });
 

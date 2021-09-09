@@ -435,6 +435,18 @@ export abstract class Opt<T> {
    * none.zip(some(1)) // None
    * none.zip(none) // None
    * ```
+   *
+   * @example
+   * ```ts
+   * const formatAddress =
+   *   (streetName?: string, streetNumber?: number): string =>
+   *     opt(streetName).zip(opt(streetNumber)).map(join(' ')).orElse('');
+   * formatAddress('Strawberry', '12') // 'Strawberry 12'
+   * formatAddress('Strawberry', undefined) // ''
+   * formatAddress(undefined, '12') // ''
+   * formatAddress(undefined, undefined) // ''
+   * ```
+   *
    * @param other
    */
   abstract zip<U>(other: Opt<U>): Opt<[T, U]>;
@@ -1129,29 +1141,41 @@ export const orElseOpt = <T>(def: Opt<T>) => (x: Opt<T>): Opt<T> => x.orElseOpt(
 export const bimap = <T, U>(someF: (_: T) => U) => (noneF: () => U) => (x: Opt<T>): Opt<U> => x.bimap(someF, noneF);
 
 interface ZipFn {
-  <U>(other: Opt<U>): <T>(x: Opt<T>) => Opt<[T, U]>;
+  <T>(other: Opt<T>): <U>(x: Opt<U>) => Opt<[T, U]>;
 
-  <U>(other: U[]): <T>(x: T[]) => [T, U][];
+  <T>(other: T[]): <U>(x: U[]) => [T, U][];
 }
 
 const zipArray = <T, U>(a: T[], b: U[]): [T, U][] => [...Array(Math.min(b.length, a.length))].map((_, i) => [a[i], b[i]]);
 
 /**
  * Same as [[Opt.zip]], but also supports arrays.
+ *
+ * @example
+ * ```ts
+ * const formatAddress =
+ *   (streetName?: string, streetNumber?: string): string =>
+ *     zip(opt(streetName))(opt(streetNumber)).map(join(' ')).orElse('');
+ * formatAddress('Strawberry', '12') // 'Strawberry 12'
+ * formatAddress('Strawberry', undefined) // ''
+ * formatAddress(undefined, '12') // ''
+ * formatAddress(undefined, undefined) // ''
+ * ```
+ *
  * @see [[Opt.zip]]
  */
-export const zip: ZipFn = (other: any) => (x: any): any => isOpt(x) ? x.zip(other) : zipArray(x, other);
+export const zip: ZipFn = (x: any) => (other: any): any => isOpt(x) ? x.zip(other) : zipArray(x, other);
 
 /** @see [[Opt.zip3]] */
-export const zip3 = <A>(a: Opt<A>) => <B>(b: Opt<B>) => <T>(x: Opt<T>): Opt<[T, A, B]> => x.zip3(a, b);
+export const zip3 = <T>(x: Opt<T>) => <A>(a: Opt<A>) => <B>(b: Opt<B>): Opt<[T, A, B]> => x.zip3(a, b);
 
 /** @see [[Opt.zip4]] */
 export const zip4 =
-  <A>(a: Opt<A>) => <B>(b: Opt<B>) => <C>(c: Opt<C>) => <T>(x: Opt<T>): Opt<[T, A, B, C]> => x.zip4(a, b, c);
+  <T>(x: Opt<T>) => <A>(a: Opt<A>) => <B>(b: Opt<B>) => <C>(c: Opt<C>): Opt<[T, A, B, C]> => x.zip4(a, b, c);
 
 /** @see [[Opt.zip5]] */
 export const zip5 =
-  <A>(a: Opt<A>) => <B>(b: Opt<B>) => <C>(c: Opt<C>) => <D>(d: Opt<D>) => <T>(x: Opt<T>): Opt<[T, A, B, C, D]> =>
+  <T>(x: Opt<T>) => <A>(a: Opt<A>) => <B>(b: Opt<B>) => <C>(c: Opt<C>) => <D>(d: Opt<D>): Opt<[T, A, B, C, D]> =>
     x.zip5(a, b, c, d);
 
 type FilterFn = <T>(p: (_: T) => boolean) => <U extends Opt<T> | T[]>(x: U) => U extends Opt<T> ? Opt<T> : T[];

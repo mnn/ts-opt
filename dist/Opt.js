@@ -759,18 +759,30 @@ exports.bimap = bimap;
 var zipArray = function (a, b) { return __spreadArray([], Array(Math.min(b.length, a.length))).map(function (_, i) { return [a[i], b[i]]; }); };
 /**
  * Same as [[Opt.zip]], but also supports arrays.
+ *
+ * @example
+ * ```ts
+ * const formatAddress =
+ *   (streetName?: string, streetNumber?: string): string =>
+ *     zip(opt(streetName))(opt(streetNumber)).map(join(' ')).orElse('');
+ * formatAddress('Strawberry', '12') // 'Strawberry 12'
+ * formatAddress('Strawberry', undefined) // ''
+ * formatAddress(undefined, '12') // ''
+ * formatAddress(undefined, undefined) // ''
+ * ```
+ *
  * @see [[Opt.zip]]
  */
-var zip = function (other) { return function (x) { return exports.isOpt(x) ? x.zip(other) : zipArray(x, other); }; };
+var zip = function (x) { return function (other) { return exports.isOpt(x) ? x.zip(other) : zipArray(x, other); }; };
 exports.zip = zip;
 /** @see [[Opt.zip3]] */
-var zip3 = function (a) { return function (b) { return function (x) { return x.zip3(a, b); }; }; };
+var zip3 = function (x) { return function (a) { return function (b) { return x.zip3(a, b); }; }; };
 exports.zip3 = zip3;
 /** @see [[Opt.zip4]] */
-var zip4 = function (a) { return function (b) { return function (c) { return function (x) { return x.zip4(a, b, c); }; }; }; };
+var zip4 = function (x) { return function (a) { return function (b) { return function (c) { return x.zip4(a, b, c); }; }; }; };
 exports.zip4 = zip4;
 /** @see [[Opt.zip5]] */
-var zip5 = function (a) { return function (b) { return function (c) { return function (d) { return function (x) {
+var zip5 = function (x) { return function (a) { return function (b) { return function (c) { return function (d) {
     return x.zip5(a, b, c, d);
 }; }; }; }; };
 exports.zip5 = zip5;
