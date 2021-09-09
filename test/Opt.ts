@@ -71,6 +71,7 @@ import {
   id,
   head,
   last,
+  zipToOptArray,
 } from '../src/Opt';
 
 chai.use(spies);
@@ -1579,5 +1580,28 @@ describe('last', () => {
     expect(last(opt([1, 2, 3])).orFalse()).to.be.eq(3);
     expect(last(opt([])).orFalse()).to.be.false;
     expect(last(opt(null as null | number[])).orFalse()).to.be.false;
+  });
+});
+
+describe('zipToOptArray', () => {
+  it('type checks', () => {
+    const a: Opt<[1, 2]> = zipToOptArray([1 as 1 | null, 2 as 2 | undefined]);
+    const b: Opt<[1, 2, 3]> = zipToOptArray([1 as 1 | null, 2 as 2 | undefined, 3 as 3 | null]);
+    const c: Opt<[1, 2, 3, 4]> = zipToOptArray([1 as 1 | null, 2 as 2 | undefined, 3 as 3 | null, 4 as 4 | undefined]);
+    const d: Opt<[1, 2, 3, 4, 5]> = zipToOptArray([1 as 1 | null, 2 as 2 | undefined, 3 as 3 | null, 4 as 4 | undefined, 5 as 5 | null]);
+    suppressUnused(a, b, c, d);
+  });
+
+  it('returns correct result', () => {
+    const a1: Opt<[1, number]> = zipToOptArray([1 as 1, null as number | null]);
+    expect(a1.orNull()).to.be.null;
+    const a2: [1, number] | null = zipToOptArray([1 as 1, 2]).orNull();
+    expect(a2).to.be.eql([1, 2]);
+    expect(zipToOptArray([1, null, '']).orNull()).to.be.null;
+    expect(zipToOptArray([1, true, '']).orNull()).to.be.eql([1, true, '']);
+    expect(zipToOptArray([1, null, '', 7]).orNull()).to.be.null;
+    expect(zipToOptArray([1, true, '', 7]).orNull()).to.be.eql([1, true, '', 7]);
+    expect(zipToOptArray([1, null, '', 7, false]).orNull()).to.be.null;
+    expect(zipToOptArray([1, true, '', 7, false]).orNull()).to.be.eql([1, true, '', 7, false]);
   });
 });

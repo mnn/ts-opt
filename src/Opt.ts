@@ -159,7 +159,6 @@ export abstract class Opt<T> {
    * @param fs
    */
   act: ActInClassFn<T> = (...fs: any[]) => fs.reduce((acc, x) => acc.chain(x), this);
-
   /**
    * Alias of [[act]]
    * @param args
@@ -1406,3 +1405,40 @@ export const head = <T>(x: T[] | Opt<T[]>): Opt<T> => (isOpt(x) ? x : opt(x)).he
  * @param x
  */
 export const last = <T>(x: T[] | Opt<T[]>): Opt<T> => (isOpt(x) ? x : opt(x)).last();
+
+interface ZipToOptArrayFn {
+  <A, B>(xs: [A, B]): Opt<[WithoutOptValues<A>, WithoutOptValues<B>]>;
+
+  <A, B, C>(xs: [A, B, C]): Opt<[WithoutOptValues<A>, WithoutOptValues<B>, WithoutOptValues<C>]>;
+
+  <A, B, C, D>(xs: [A, B, C, D]): Opt<[WithoutOptValues<A>, WithoutOptValues<B>, WithoutOptValues<C>, WithoutOptValues<D>]>;
+
+  <A, B, C, D, E>(xs: [A, B, C, D, E]): Opt<[WithoutOptValues<A>, WithoutOptValues<B>, WithoutOptValues<C>, WithoutOptValues<D>, WithoutOptValues<E>]>;
+}
+
+const lenToZipFn = {
+  2: uncurryTuple(zip),
+  3: uncurryTuple3(zip3),
+  4: uncurryTuple4(zip4),
+  5: uncurryTuple5(zip5),
+};
+/**
+ * Takes a tuple, wraps each element in [[Opt]] and applies appropriate [[Opt.zip]] function.
+ *
+ * @example
+ * ```ts
+ * zipToOptArray([1, null, '', 7, false]) // None: Opt<[number, boolean, string, number, boolean]>
+ * zipToOptArray([1, true, '', 7, false]) // Some<[1, true, '', 7, false]>: Opt<[number, boolean, string, number, boolean]>
+ * ```
+ *
+ * Useful as a replacement to `zip*` functions when construction of [[Opt]]s happens in parameters of the function.
+ * ```ts
+ * zipToOptArray([1, null, '', 7, false])
+ * // is same as
+ * zip5(opt(1), opt(null), opt(''), opt(7), opt(false))
+ * ```
+ *
+ * @param xs
+ */
+export const zipToOptArray: ZipToOptArrayFn = (xs: unknown[]): Opt<any> =>
+  opt((lenToZipFn as any)[xs.length]).orCrash(`Invalid input array length ${xs.length}`)(xs.map(opt));
