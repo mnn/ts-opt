@@ -1062,4 +1062,29 @@ export declare const head: <T>(x: T[] | Opt<T[]>) => Opt<T>;
  * @param x
  */
 export declare const last: <T>(x: T[] | Opt<T[]>) => Opt<T>;
+interface ZipToOptArrayFn {
+    <A, B>(xs: [A, B]): Opt<[WithoutOptValues<A>, WithoutOptValues<B>]>;
+    <A, B, C>(xs: [A, B, C]): Opt<[WithoutOptValues<A>, WithoutOptValues<B>, WithoutOptValues<C>]>;
+    <A, B, C, D>(xs: [A, B, C, D]): Opt<[WithoutOptValues<A>, WithoutOptValues<B>, WithoutOptValues<C>, WithoutOptValues<D>]>;
+    <A, B, C, D, E>(xs: [A, B, C, D, E]): Opt<[WithoutOptValues<A>, WithoutOptValues<B>, WithoutOptValues<C>, WithoutOptValues<D>, WithoutOptValues<E>]>;
+}
+/**
+ * Takes a tuple, wraps each element in [[Opt]] and applies appropriate [[Opt.zip]] function.
+ *
+ * @example
+ * ```ts
+ * zipToOptArray([1, null, '', 7, false]) // None: Opt<[number, boolean, string, number, boolean]>
+ * zipToOptArray([1, true, '', 7, false]) // Some<[1, true, '', 7, false]>: Opt<[number, boolean, string, number, boolean]>
+ * ```
+ *
+ * Useful as a replacement to `zip*` functions when construction of [[Opt]]s happens in parameters of the function.
+ * ```ts
+ * zipToOptArray([1, null, '', 7, false])
+ * // is same as
+ * zip5(opt(1), opt(null), opt(''), opt(7), opt(false))
+ * ```
+ *
+ * @param xs
+ */
+export declare const zipToOptArray: ZipToOptArrayFn;
 export {};

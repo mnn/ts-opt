@@ -21,7 +21,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.print = exports.narrow = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.bimap = exports.orElseOpt = exports.orElse = exports.forAll = exports.exists = exports.contains = exports.pipe = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOptFlow = exports.actToOpt = exports.chainToOpt = exports.chainFlow = exports.act = exports.chain = exports.flatMap = exports.mapFlow = exports.map = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = void 0;
-exports.last = exports.head = exports.at = exports.id = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.prop = exports.equals = void 0;
+exports.zipToOptArray = exports.last = exports.head = exports.at = exports.id = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.prop = exports.equals = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 var refCmp = function (a, b) { return a === b; };
@@ -1045,4 +1045,32 @@ exports.head = head;
  */
 var last = function (x) { return (exports.isOpt(x) ? x : exports.opt(x)).last(); };
 exports.last = last;
+var lenToZipFn = {
+    2: exports.uncurryTuple(exports.zip),
+    3: exports.uncurryTuple3(exports.zip3),
+    4: exports.uncurryTuple4(exports.zip4),
+    5: exports.uncurryTuple5(exports.zip5),
+};
+/**
+ * Takes a tuple, wraps each element in [[Opt]] and applies appropriate [[Opt.zip]] function.
+ *
+ * @example
+ * ```ts
+ * zipToOptArray([1, null, '', 7, false]) // None: Opt<[number, boolean, string, number, boolean]>
+ * zipToOptArray([1, true, '', 7, false]) // Some<[1, true, '', 7, false]>: Opt<[number, boolean, string, number, boolean]>
+ * ```
+ *
+ * Useful as a replacement to `zip*` functions when construction of [[Opt]]s happens in parameters of the function.
+ * ```ts
+ * zipToOptArray([1, null, '', 7, false])
+ * // is same as
+ * zip5(opt(1), opt(null), opt(''), opt(7), opt(false))
+ * ```
+ *
+ * @param xs
+ */
+var zipToOptArray = function (xs) {
+    return exports.opt(lenToZipFn[xs.length]).orCrash("Invalid input array length " + xs.length)(xs.map(exports.opt));
+};
+exports.zipToOptArray = zipToOptArray;
 //# sourceMappingURL=Opt.js.map
