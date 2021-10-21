@@ -14,17 +14,27 @@ import {
 
 const someSymbol = Symbol('Some');
 const noneSymbol = Symbol('None');
+const errorSymbol = Symbol('Error');
 export type EqualityFunction = <T>(a: T, b: T) => boolean;
 const refCmp: EqualityFunction = <T>(a: T, b: T): boolean => a === b;
 type NotObject<T> = T extends object ? never : T;
 type SuperUnionOf<T, U> = Exclude<U, T> extends never ? NotObject<T> : never;
 type WithoutOptValues<T> = NonNullable<T>;
 
+/* istanbul ignore next */
+class OperationNotAvailable<TypeGot, TypeExpected> {
+  readonly '@@type' = errorSymbol;
+  _notUsed1?: TypeGot;
+  _notUsed2?: TypeExpected;
+}
+
 interface ConstInClassFn<T> {
   (): () => T | null;
 
   <E>(emptyValue: E): () => T | E;
 }
+
+export const isString = (x: any): x is string => typeof x === 'string';
 
 const debugPrint = (tag?: string, ...xs: unknown[]) => {
   // tslint:disable-next-line:no-console
@@ -640,6 +650,21 @@ export abstract class Opt<T> {
    * ```
    */
   last<R extends (T extends (infer A)[] ? A : never)>(): Opt<R> { return this.at(-1); }
+
+  /**
+   * A convenience function to test this (`Opt<string>`) against a given regular expression.
+   *
+   * @example
+   * ```ts
+   * opt('a').testReOrFalse(/a/) // true
+   * opt('b').testReOrFalse(/a/)) // false;
+   * ```
+   *
+   * @param re Regular expression
+   */
+  testReOrFalse<R extends (T extends string ? boolean : OperationNotAvailable<T, string>)>(re: RegExp): R {
+    return this.narrow(isString).someOrCrash(`testReOrFalse only works on Opt<string>`).map(testRe(re)).orFalse() as R;
+  }
 }
 
 /**
@@ -1442,3 +1467,18 @@ const lenToZipFn = {
  */
 export const zipToOptArray: ZipToOptArrayFn = (xs: unknown[]): Opt<any> =>
   opt((lenToZipFn as any)[xs.length]).orCrash(`Invalid input array length ${xs.length}`)(xs.map(opt));
+
+/**
+ * Test string against regular expression.
+ *
+ * @example
+ * ```ts
+ * testRe(/a/)('bac') // true
+ * testRe(/a/)('xxx') // false
+ *
+ * opt('abc').map(testRe(/b/)).orFalse() // false
+ * ```
+ *
+ * @param re
+ */
+export const testRe = (re: RegExp) => (x: string): boolean => re.test(x);

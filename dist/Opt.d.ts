@@ -3,10 +3,16 @@ export declare type EqualityFunction = <T>(a: T, b: T) => boolean;
 declare type NotObject<T> = T extends object ? never : T;
 declare type SuperUnionOf<T, U> = Exclude<U, T> extends never ? NotObject<T> : never;
 declare type WithoutOptValues<T> = NonNullable<T>;
+declare class OperationNotAvailable<TypeGot, TypeExpected> {
+    readonly '@@type': symbol;
+    _notUsed1?: TypeGot;
+    _notUsed2?: TypeExpected;
+}
 interface ConstInClassFn<T> {
     (): () => T | null;
     <E>(emptyValue: E): () => T | E;
 }
+export declare const isString: (x: any) => x is string;
 /**
  * @typeparam T Wrapped value type.
  */
@@ -556,6 +562,18 @@ export declare abstract class Opt<T> {
      * ```
      */
     last<R extends (T extends (infer A)[] ? A : never)>(): Opt<R>;
+    /**
+     * A convenience function to test this (`Opt<string>`) against a given regular expression.
+     *
+     * @example
+     * ```ts
+     * opt('a').testReOrFalse(/a/) // true
+     * opt('b').testReOrFalse(/a/)) // false;
+     * ```
+     *
+     * @param re Regular expression
+     */
+    testReOrFalse<R extends (T extends string ? boolean : OperationNotAvailable<T, string>)>(re: RegExp): R;
 }
 /**
  * Empty [[Opt]].
@@ -1087,4 +1105,18 @@ interface ZipToOptArrayFn {
  * @param xs
  */
 export declare const zipToOptArray: ZipToOptArrayFn;
+/**
+ * Test string against regular expression.
+ *
+ * @example
+ * ```ts
+ * testRe(/a/)('bac') // true
+ * testRe(/a/)('xxx') // false
+ *
+ * opt('abc').map(testRe(/b/)).orFalse() // false
+ * ```
+ *
+ * @param re
+ */
+export declare const testRe: (re: RegExp) => (x: string) => boolean;
 export {};

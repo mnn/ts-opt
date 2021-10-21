@@ -20,11 +20,21 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from) {
     return to;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.print = exports.narrow = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.bimap = exports.orElseOpt = exports.orElse = exports.forAll = exports.exists = exports.contains = exports.pipe = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOptFlow = exports.actToOpt = exports.chainToOpt = exports.chainFlow = exports.act = exports.chain = exports.flatMap = exports.mapFlow = exports.map = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = void 0;
-exports.zipToOptArray = exports.last = exports.head = exports.at = exports.id = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.prop = exports.equals = void 0;
+exports.narrow = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.bimap = exports.orElseOpt = exports.orElse = exports.forAll = exports.exists = exports.contains = exports.pipe = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOptFlow = exports.actToOpt = exports.chainToOpt = exports.chainFlow = exports.act = exports.chain = exports.flatMap = exports.mapFlow = exports.map = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = exports.isString = void 0;
+exports.testRe = exports.zipToOptArray = exports.last = exports.head = exports.at = exports.id = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.prop = exports.equals = exports.print = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
+var errorSymbol = Symbol('Error');
 var refCmp = function (a, b) { return a === b; };
+/* istanbul ignore next */
+var OperationNotAvailable = /** @class */ (function () {
+    function OperationNotAvailable() {
+        this['@@type'] = errorSymbol;
+    }
+    return OperationNotAvailable;
+}());
+var isString = function (x) { return typeof x === 'string'; };
+exports.isString = isString;
 var debugPrint = function (tag) {
     var xs = [];
     for (var _i = 1; _i < arguments.length; _i++) {
@@ -283,6 +293,20 @@ var Opt = /** @class */ (function () {
      * ```
      */
     Opt.prototype.last = function () { return this.at(-1); };
+    /**
+     * A convenience function to test this (`Opt<string>`) against a given regular expression.
+     *
+     * @example
+     * ```ts
+     * opt('a').testReOrFalse(/a/) // true
+     * opt('b').testReOrFalse(/a/)) // false;
+     * ```
+     *
+     * @param re Regular expression
+     */
+    Opt.prototype.testReOrFalse = function (re) {
+        return this.narrow(exports.isString).someOrCrash("testReOrFalse only works on Opt<string>").map(exports.testRe(re)).orFalse();
+    };
     return Opt;
 }());
 exports.Opt = Opt;
@@ -1073,4 +1097,19 @@ var zipToOptArray = function (xs) {
     return exports.opt(lenToZipFn[xs.length]).orCrash("Invalid input array length " + xs.length)(xs.map(exports.opt));
 };
 exports.zipToOptArray = zipToOptArray;
+/**
+ * Test string against regular expression.
+ *
+ * @example
+ * ```ts
+ * testRe(/a/)('bac') // true
+ * testRe(/a/)('xxx') // false
+ *
+ * opt('abc').map(testRe(/b/)).orFalse() // false
+ * ```
+ *
+ * @param re
+ */
+var testRe = function (re) { return function (x) { return re.test(x); }; };
+exports.testRe = testRe;
 //# sourceMappingURL=Opt.js.map

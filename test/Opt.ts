@@ -72,6 +72,8 @@ import {
   head,
   last,
   zipToOptArray,
+  testRe,
+  isString,
 } from '../src/Opt';
 
 chai.use(spies);
@@ -85,7 +87,6 @@ const lt0 = (x: number): boolean => x < 0;
 
 const randomNumOpt = (): Opt<number> => Math.random() > .5 ? none : some(Math.random());
 
-const isString = (x: any): x is string => typeof x === 'string';
 const isNumber = (x: any): x is number => typeof x === 'number';
 const isObject = (x: any): x is object => typeof x === 'object';
 const isArray = (x: any): x is unknown[] => Array.isArray(x);
@@ -623,6 +624,20 @@ describe('opt', () => {
     expect(opt([1, 2, 3]).last().orFalse()).to.be.eq(3);
     expect(opt([]).last().orFalse()).to.be.false;
     expect(opt(null).last().orFalse()).to.be.false;
+  });
+
+  describe('testReOrFalse', () => {
+    it('returns expected result', () => {
+      expect(opt('a').testReOrFalse(/a/)).to.be.true;
+      expect(opt('b').testReOrFalse(/a/)).to.be.false;
+    });
+    it('rejects invalid wrapper type', () => {
+      expect(() => {
+        // @ts-expect-error
+        const x: boolean = opt(7).testReOrFalse(/a/);
+        suppressUnused(x);
+      }).to.throw('testReOrFalse only works on Opt<string>');
+    });
   });
 });
 
@@ -1603,5 +1618,20 @@ describe('zipToOptArray', () => {
     expect(zipToOptArray([1, true, '', 7]).orNull()).to.be.eql([1, true, '', 7]);
     expect(zipToOptArray([1, null, '', 7, false]).orNull()).to.be.null;
     expect(zipToOptArray([1, true, '', 7, false]).orNull()).to.be.eql([1, true, '', 7, false]);
+  });
+});
+
+describe('testRe', () => {
+  it('pos', () => {
+    expect(testRe(/a/)('a')).to.be.true;
+    expect(testRe(/a/)('bac')).to.be.true;
+  });
+  it('neg', () => {
+    expect(testRe(/a/)('')).to.be.false;
+    expect(testRe(/a/)('xxx')).to.be.false;
+    expect(testRe(/a/)('A')).to.be.false;
+  });
+  it('use', () => {
+    expect(opt('abc').map(testRe(/b/)).orFalse()).to.be.true;
   });
 });
