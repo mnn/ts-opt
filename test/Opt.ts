@@ -1,15 +1,42 @@
 /* tslint:disable:no-unused-expression no-console */
-
 import * as chai from 'chai';
 import * as spies from 'chai-spies';
-
 import {
+  act,
+  actToOpt,
   ap,
   apFn,
+  at,
+  bimap,
+  caseOf,
   catOpts,
+  chainFlow,
+  chainToOpt,
+  chainToOptFlow,
+  compose,
+  contains,
+  curryTuple,
+  curryTuple3,
+  curryTuple4,
+  curryTuple5,
+  equals,
+  exists,
+  filter,
+  flatMap,
+  flow,
+  forAll,
+  fromArray,
+  head,
+  id,
+  isEmpty,
   isOpt,
+  isString,
   joinOpt,
+  last,
+  map,
+  mapFlow,
   mapOpt,
+  narrow,
   none,
   opt,
   Opt,
@@ -19,61 +46,32 @@ import {
   optFalsy,
   optNegative,
   optZero,
-  ReduxDevtoolsCompatibilityHelper,
-  some,
   orCrash,
-  map,
-  flatMap,
-  fromArray,
-  toArray,
-  chainToOpt,
-  orUndef,
-  orNull,
-  caseOf,
-  contains,
-  exists,
-  forAll,
   orElse,
   orElseOpt,
-  bimap,
+  orFalse,
+  orNaN,
+  orNull,
+  orTrue,
+  orUndef,
+  pipe,
+  print,
+  prop,
+  ReduxDevtoolsCompatibilityHelper,
+  some,
+  someOrCrash,
+  swap,
+  testRe,
+  toArray,
+  uncurryTuple,
+  uncurryTuple3,
+  uncurryTuple4,
+  uncurryTuple5,
   zip,
   zip3,
   zip4,
   zip5,
-  filter,
-  narrow,
-  print,
-  prop,
-  someOrCrash,
-  orFalse,
-  orTrue,
-  orNaN,
-  equals,
-  pipe,
-  mapFlow,
-  act,
-  chainFlow,
-  actToOpt,
-  chainToOptFlow,
-  flow,
-  compose,
-  curryTuple,
-  uncurryTuple,
-  curryTuple3,
-  uncurryTuple3,
-  curryTuple4,
-  curryTuple5,
-  uncurryTuple4,
-  uncurryTuple5,
-  swap,
-  isEmpty,
-  at,
-  id,
-  head,
-  last,
   zipToOptArray,
-  testRe,
-  isString,
 } from '../src/Opt';
 
 chai.use(spies);
@@ -1633,5 +1631,141 @@ describe('testRe', () => {
   });
   it('use', () => {
     expect(opt('abc').map(testRe(/b/)).orFalse()).to.be.true;
+  });
+});
+
+interface TestUser {
+  name?: string;
+}
+
+describe('pitfalls', () => {
+  beforeEach(() => {
+    sandbox.on(console, ['log']);
+  });
+  afterEach(() => {
+    sandbox.restore();
+  });
+  describe('none without explicit type', () => {
+    it('bad', () => {
+      let a = none;
+      // @ts-expect-error
+      a = opt(1); // TS2741: Property ''@@type'' is missing in type 'Opt<number>' but required in type 'None<any>'.
+      suppressUnused(a);
+    });
+    it('good', () => {
+      let a: Opt<number> = none;
+      a = opt(1);
+      suppressUnused(a);
+    });
+  });
+  describe('empty value in some', () => {
+    describe('unexpected null', () => {
+      it('bad', () => {
+        const getNameOrDefault = (x?: TestUser) => opt(x).map(x => x.name).orElse('John');
+
+        const nameKon = getNameOrDefault({name: 'Kon'}); // 'Kon'
+        expect(nameKon).to.be.eq('Kon');
+
+        const nameDefaultFromUndefined = getNameOrDefault(); // 'John'
+        expect(nameDefaultFromUndefined).to.be.eq('John');
+
+        const nameDefaultFromEmpty = getNameOrDefault({}); // undefined
+        expect(nameDefaultFromEmpty).to.be.undefined;
+
+        suppressUnused(nameKon, nameDefaultFromEmpty, nameDefaultFromUndefined);
+      });
+
+      it('good - chainToOpt', () => {
+        const getNameOrDefault = (x?: TestUser) => opt(x).chainToOpt(x => x.name).orElse('John');
+
+        const nameKon = getNameOrDefault({name: 'Kon'}); // 'Kon'
+        expect(nameKon).to.be.eq('Kon');
+
+        const nameDefaultFromUndefined = getNameOrDefault(); // 'John'
+        expect(nameDefaultFromUndefined).to.be.eq('John');
+
+        const nameDefaultFromEmpty = getNameOrDefault({});
+        expect(nameDefaultFromEmpty).to.be.eq('John');
+
+        suppressUnused(nameKon, nameDefaultFromEmpty, nameDefaultFromUndefined);
+      });
+
+      it('good - prop', () => {
+        const getNameOrDefault = (x?: TestUser) => opt(x).prop('name').orElse('John');
+
+        const nameKon = getNameOrDefault({name: 'Kon'}); // 'Kon'
+        expect(nameKon).to.be.eq('Kon');
+
+        const nameDefaultFromUndefined = getNameOrDefault(); // 'John'
+        expect(nameDefaultFromUndefined).to.be.eq('John');
+
+        const nameDefaultFromEmpty = getNameOrDefault({});
+        expect(nameDefaultFromEmpty).to.be.eq('John');
+
+        suppressUnused(nameKon, nameDefaultFromEmpty, nameDefaultFromUndefined);
+      });
+
+    });
+  });
+  it('map vs onSome', () => {
+    let a = 0;
+    const setA = (newA: number) => { a = newA; };
+    expect(a).to.be.eq(0);
+
+    opt(null as number | null).map(setA); // a is unchanged
+    expect(a).to.be.eq(0);
+
+    opt(null as number | null).onSome(setA); // a is unchanged
+    expect(a).to.be.eq(0);
+
+    opt(2).map(setA); // a is now 2
+    expect(a).to.be.eq(2);
+
+    opt(4).onSome(setA); // a is now 4
+    expect(a).to.be.eq(4);
+
+    expect(
+      opt(7).map(setA) // Some(undefined)
+            .orNull(),
+    ).to.be.undefined;
+    expect(
+      opt(9).onSome(setA) // Some(9)
+            .orNull(),
+    ).to.be.eq(9);
+
+    expect(
+      opt(2) // Some(2)
+      .map(x => x + 1) // Some(3)
+      .map(x => x * x) // Some(9)
+      .orNull(),
+    ).to.be.eq(9);
+    expect(
+      opt(2) // Some(2)
+      .onSome(x => x + 1) // Some(2)
+      .onSome(x => x * x) // Some(2)
+      .orNull(),
+    ).to.be.eq(2);
+
+    const f = (x?: number) => opt(x)
+    .onSome(x => console.log('Got value', x))
+    .chainToOpt(x => x * x > 9 ? null : x * 2)
+    .onSome(x => console.log('First step result', x))
+    .map(x => x - 1)
+    .onSome(x => console.log('Second step result', x))
+    .orNull();
+    expect(console.log).to.have.been.called.exactly(0);
+
+    expect(f()).to.be.null;
+    expect(console.log).to.have.been.called.exactly(0);
+
+    expect(f(3)).to.be.eq(5);
+    expect(console.log).to.have.been.called.exactly(3);
+    expect(console.log).to.have.been.called.with.exactly('Got value', 3);
+    expect(console.log).to.have.been.called.with.exactly('First step result', 6);
+    expect(console.log).to.have.been.called.with.exactly('Second step result', 5);
+
+    expect(f(10)).to.be.null;
+    expect(console.log).to.have.been.called.exactly(4);
+    expect(console.log).to.have.been.called.with.exactly('Got value', 10);
   });
 });
