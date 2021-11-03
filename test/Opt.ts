@@ -1650,6 +1650,32 @@ describe('testReOrFalse', () => {
   });
 });
 
+describe('toString', () => {
+  it('calls toString method', () => {
+    expect(toString(4)).to.be.eq('4');
+    expect(isString(toString(new Date(0)))).to.be.true;
+    expect(toString({})).to.be.eq('[object Object]');
+    expect(toString({toString(): string { return '!'; }})).to.be.eq('!');
+  });
+});
+
+describe('isString', () => {
+  it('pos', () => {
+    expect(isString('')).to.be.true;
+    expect(isString('x')).to.be.true;
+    expect(isString('Yoruichi')).to.be.true;
+  });
+  it('neg', () => {
+    expect(isString(undefined)).to.be.false;
+    expect(isString(null)).to.be.false;
+    expect(isString(0)).to.be.false;
+    expect(isString(false)).to.be.false;
+    expect(isString(NaN)).to.be.false;
+  });
+});
+
+// --- Pitfalls ---
+
 interface TestUser {
   name?: string;
 }

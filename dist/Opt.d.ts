@@ -13,6 +13,9 @@ interface ConstInClassFn<T> {
     <E>(emptyValue: E): () => T | E;
 }
 export declare const isString: (x: any) => x is string;
+export declare const toString: (x: {
+    toString(): string;
+}) => string;
 /**
  * @typeparam T Wrapped value type.
  */
@@ -1119,4 +1122,6 @@ export declare const zipToOptArray: ZipToOptArrayFn;
  * @param re
  */
 export declare const testRe: (re: RegExp) => (x: string) => boolean;
+/** @see [[Opt.testReOrFalse]] */
+export declare const testReOrFalse: (re: RegExp) => (x: Opt<string>) => boolean;
 export {};
