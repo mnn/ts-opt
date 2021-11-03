@@ -1,3 +1,5 @@
+[[_TOC_]]
+
 ts-opt
 ===
 
@@ -109,22 +111,22 @@ type Db = { [_: string]: Person };
 Pitfalls
 ===
 
-None without explicit type
+`None` without explicit type
 ---
 ```ts
 let a = none;
 a = opt(1); // TS2741: Property ''@@type'' is missing in type 'Opt<number>' but required in type 'None<any>'.
 ```
-The solution is to explicitly state type:
+The solution is to explicitly state the type:
 ```ts
 let a: Opt<number> = none;
 a = opt(1);
 ```
 While it's recommended to not use `let`, so this example may seem unrealistic, a similar issue may happen in other places as well (e.g. default arguments of functions or "exact" type via `as const`).
 
-Empty value in Some
+Empty value in `Some`
 ---
-Be careful to not misuse methods/functions like `map` and end up with `Opt`s like `Opt<string | null>` or `Opt<number | undefined>`. Such `Opt`s are traps, ready to bite a coworker or later even yourself.
+Be careful to not misuse methods/functions like `map` and end up with `Opt`s like `Opt<string | null>` or `Opt<number | undefined>`. Such `Opt`s are ticking bombs, ready to bite a coworker or later even yourself.
 
 Let's have a simple example of a function returning a `name`. When the name is missing (either whole object is `undefined` or the field), we want it to return a default name, in this case `'John'`.
 
@@ -151,7 +153,7 @@ const getNameOrDefault = (x?: TestUser) =>
     .orElse('John');  // string | undefined
 ```
 
-The culprit is the `map` call which operates on (maps, converts) the value inside the `Opt`. When we want to transform a value inside an `Opt`, but that transformation may return an empty value (e.g. `null` or `undefined`), we must not use the `map`. Otherwise, advantages of `Opt` are severely diminished.
+The culprit is the `map` call which operates on (converts, does mapping of) the value inside the `Opt`. When we want to transform a value inside an `Opt`, but that transformation may return an empty value (e.g. `null` or `undefined`), we **must not** use the `map`. Otherwise, advantages of `Opt` are severely diminished.
 
 Possible and most general solution is to use the `chainToOpt`. It behaves same as the `map`, but when empty values are returned, it flips the whole `Opt` from `Some` to `None`.
 
@@ -164,7 +166,7 @@ const getNameOrDefault = (x?: TestUser) =>
 getNameOrDefault({}); // 'John'
 ```
 
-Another alternative, in this case of "zooming" onto a field (which is quite common), is to use the `prop` method:
+Another alternative, in this case of "zooming" onto a field (which is quite common), is to use the `prop` method which also automatically handles possible empty values:
 
 ```ts
 const getNameOrDefault = (x?: TestUser) =>
@@ -177,7 +179,7 @@ getNameOrDefault({}); // 'John'
 
 `map` vs `onSome` 
 ---
-It may look like those methods are the same.
+At a first glance, it may look like those methods are the same.
 
 ```ts
 let a = 0;
@@ -190,7 +192,7 @@ opt(2).map(setA); // a is now 2
 opt(4).onSome(setA); // a is now 4
 ```
 
-It may seem like in specific scenarios they can be used interchangeably (do nothing for `None` and call the function for `Some`). But their purpose differs quite a lot. From a technical perspective, there is a big distinction in the return value.
+It may seem like in specific scenarios they can be used interchangeably (do nothing for `None` and call the function for `Some`). But their purpose differs quite a lot. From a technical perspective, there is a distinction in the return value.
 
 ```ts
 opt(7).map(setA) // Some(undefined)
@@ -212,7 +214,7 @@ opt(2) // Some(2)
   .onSome(x => x * x) // Some(2)
 ```
 
-That's because the purpose of `onSome` is to "break" the purely functional approach and allows `Opt` to be used in a more imperative way - calling a callback function for the sole purpose of side-effects. The callback function changes something somewhere else, e.g. sets a global variable or changes DOM. In such cases we don't care about the return value (it's up to the callback function to handle errors) and thus `Opt` ignores that return value from a callback and `onSome` simply returns a previous `Opt`. Because of this, we can easily create chains with multiple callbacks between processing:
+That's because the purpose of `onSome` is to "break" the purely functional approach and allows `Opt` to be used in a more imperative way - calling a callback function for the sole purpose of [side-effects](https://softwareengineering.stackexchange.com/a/262000/302966). The callback function changes something somewhere else, e.g. sets a global variable or changes DOM. In such cases we don't care about the return value (in most cases it doesn't return anything, this library assumes the responsibility for an error handling is on the callback function). Thus `Opt` ignores that return value from a callback and `onSome` simply returns a previous `Opt`. Because of this, we can easily create chains with multiple callbacks between processing:
 
 ```ts
 const f = (x?: number) => opt(x)
@@ -236,7 +238,18 @@ Got value 10
 */
 ```
 
-TODO: impl may change, map may no longer call the fn unless needed
+The final note is about implementation. Since `Opt` library gives a specific meaning to `map` and `onSome`, you should not use them interchangeably. In the future `map` implementation may very well change to not be called until termination (making `Opt` so called lazy), but `onSome` will always force evaluation instantly (even if `Opt` starts supporting lazy approach). This would mean that `map` will not call a mapping function until a result from `Opt` is requested (e.g. termination via `orNull`).
+
+```ts
+// Example of possible lazy Opt (not currently implemented)
+
+opt(1).onSome(console.log); // prints 1
+
+opt(2).map(console.log); // prints nothing
+
+const x = opt(3).map(console.log); // prints nothing
+x.orNull(); // prints 1
+```
 
 Documentation
 ===
