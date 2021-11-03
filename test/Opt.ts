@@ -62,6 +62,7 @@ import {
   someOrCrash,
   swap,
   testRe,
+  testReOrFalse,
   toArray,
   uncurryTuple,
   uncurryTuple3,
@@ -72,6 +73,7 @@ import {
   zip4,
   zip5,
   zipToOptArray,
+  toString,
 } from '../src/Opt';
 
 chai.use(spies);
@@ -1631,6 +1633,20 @@ describe('testRe', () => {
   });
   it('use', () => {
     expect(opt('abc').map(testRe(/b/)).orFalse()).to.be.true;
+  });
+});
+
+describe('testReOrFalse', () => {
+  it('pos', () => {
+    expect(testReOrFalse(/\d/)(opt('7'))).to.be.true;
+  });
+  it('neg', () => {
+    expect(testReOrFalse(/\d/)(opt('x'))).to.be.false;
+  });
+  it('use', () => {
+    expect(pipe('7', opt, testReOrFalse(/\d/))).to.be.true;
+    expect(pipe(opt(4), map(toString), testReOrFalse(/\d/))).to.be.true;
+    expect(pipe('x', opt, testReOrFalse(/\d/))).to.be.false;
   });
 });
 

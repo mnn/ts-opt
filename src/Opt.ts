@@ -35,6 +35,7 @@ interface ConstInClassFn<T> {
 }
 
 export const isString = (x: any): x is string => typeof x === 'string';
+export const toString = (x: { toString(): string }): string => x.toString();
 
 const debugPrint = (tag?: string, ...xs: unknown[]) => {
   // tslint:disable-next-line:no-console
@@ -1482,3 +1483,6 @@ export const zipToOptArray: ZipToOptArrayFn = (xs: unknown[]): Opt<any> =>
  * @param re
  */
 export const testRe = (re: RegExp) => (x: string): boolean => re.test(x);
+
+/** @see [[Opt.testReOrFalse]] */
+export const testReOrFalse = (re: RegExp) => (x: Opt<string>): boolean => x.testReOrFalse(re);
