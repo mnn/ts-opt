@@ -246,15 +246,34 @@ export declare abstract class Opt<T> {
     /**
      * Applies appropriate function and returns result from the function.
      *
-     * ```
+     * ```ts
      * some(1).caseOf(x => x + 1, () => 0) // 2
      * none.caseOf(x => x + 1, () => 0) // 0
      * ```
+     *
+     * @see [[onBoth]] for imperative version
      *
      * @param onSome Processing function for [[Some]].
      * @param onNone Processing function for [[None]].
      */
     abstract caseOf<R>(onSome: (x: T) => R, onNone: () => R): R;
+    /**
+     * Calls appropriate callback and returns without change current instance of [[Opt]].
+     *
+     * ```ts
+     * // prints 1, returns some(1)
+     * some(1).onBoth(x => console.log(x), () => console.log('none'))
+     *
+     * // prints "none", returns none
+     * none.onBoth(x => console.log(x), () => console.log('none'))
+     * ```
+     *
+     * @see [[caseOf]] for functional version
+     *
+     * @param onSome
+     * @param onNone
+     */
+    abstract onBoth(onSome: (x: T) => void, onNone: () => void): Opt<T>;
     /**
      * Calls `f` on [[Some]] with its value, does nothing for [[None]].
      * @param f
@@ -601,6 +620,7 @@ declare class None<T> extends Opt<T> {
     orTrue(): true | T;
     orNaN(): number | T;
     caseOf<R>(_onSome: (x: T) => R, onNone: () => R): R;
+    onBoth(_onSome: (x: T) => void, onNone: () => void): Opt<T>;
     onNone(f: () => void): Opt<T>;
     onSome(_f: (x: T) => void): Opt<T>;
     contains(_x: T): boolean;
@@ -649,6 +669,7 @@ declare class Some<T> extends Opt<T> {
     orTrue(): true | T;
     orNaN(): number | T;
     caseOf<R>(onSome: (x: T) => R, _onNone: () => R): R;
+    onBoth(onSome: (x: T) => void, _onNone: () => void): Opt<T>;
     contains(x: T): boolean;
     exists(p: (x: T) => boolean): boolean;
     forAll(p: (x: T) => boolean): boolean;
@@ -853,6 +874,8 @@ export declare const orTrue: <T>(x: Opt<T>) => true | T;
 export declare const orNaN: <T>(x: Opt<T>) => number | T;
 /** @see [[Opt.caseOf]] */
 export declare const caseOf: <T, R>(onSome: (x: T) => R) => (onNone: () => R) => (x: Opt<T>) => R;
+/** @see [[Opt.onBoth]] */
+export declare const onBoth: <T>(onSome: (x: T) => void) => (onNone: () => void) => (x: Opt<T>) => Opt<T>;
 /**
  * Similar to [[Opt.pipe]], but the first argument is the input.
  * Supports arbitrary input type, not just [[Opt]].

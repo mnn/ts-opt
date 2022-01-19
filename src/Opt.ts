@@ -295,15 +295,35 @@ export abstract class Opt<T> {
   /**
    * Applies appropriate function and returns result from the function.
    *
-   * ```
+   * ```ts
    * some(1).caseOf(x => x + 1, () => 0) // 2
    * none.caseOf(x => x + 1, () => 0) // 0
    * ```
+   *
+   * @see [[onBoth]] for imperative version
    *
    * @param onSome Processing function for [[Some]].
    * @param onNone Processing function for [[None]].
    */
   abstract caseOf<R>(onSome: (x: T) => R, onNone: () => R): R;
+
+  /**
+   * Calls appropriate callback and returns without change current instance of [[Opt]].
+   *
+   * ```ts
+   * // prints 1, returns some(1)
+   * some(1).onBoth(x => console.log(x), () => console.log('none'))
+   *
+   * // prints "none", returns none
+   * none.onBoth(x => console.log(x), () => console.log('none'))
+   * ```
+   *
+   * @see [[caseOf]] for functional version
+   *
+   * @param onSome
+   * @param onNone
+   */
+  abstract onBoth(onSome: (x: T) => void, onNone: () => void): Opt<T>;
 
   /**
    * Calls `f` on [[Some]] with its value, does nothing for [[None]].
@@ -707,6 +727,11 @@ class None<T> extends Opt<T> {
     return onNone();
   }
 
+  onBoth(_onSome: (x: T) => void, onNone: () => void): Opt<T> {
+    onNone();
+    return this;
+  }
+
   onNone(f: () => void): Opt<T> {
     f();
     return this;
@@ -806,6 +831,11 @@ class Some<T> extends Opt<T> {
   orNaN(): number | T { return this._value; }
 
   caseOf<R>(onSome: (x: T) => R, _onNone: () => R): R { return onSome(this._value); }
+
+  onBoth(onSome: (x: T) => void, _onNone: () => void): Opt<T> {
+    onSome(this._value);
+    return this;
+  }
 
   contains(x: T): boolean { return this._value === x; }
 
@@ -1139,6 +1169,9 @@ export const orNaN = <T>(x: Opt<T>): T | number => x.orNaN();
 
 /** @see [[Opt.caseOf]] */
 export const caseOf = <T, R>(onSome: (x: T) => R) => (onNone: () => R) => (x: Opt<T>): R => x.caseOf(onSome, onNone);
+
+/** @see [[Opt.onBoth]] */
+export const onBoth = <T>(onSome: (x: T) => void) => (onNone: () => void) => (x: Opt<T>): Opt<T> => x.onBoth(onSome, onNone);
 
 /**
  * Similar to [[Opt.pipe]], but the first argument is the input.

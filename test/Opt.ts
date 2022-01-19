@@ -74,6 +74,7 @@ import {
   zip5,
   zipToOptArray,
   toString,
+  onBoth,
 } from '../src/Opt';
 
 chai.use(spies);
@@ -289,24 +290,37 @@ describe('opt', () => {
     expect(opt(null).toArray()).to.eql([]);
   });
 
-  describe('caseOf', () => {
-    it('fp', () => {
-      expect(some(1).caseOf(x => 'x' + x, () => 'y')).to.eql('x1');
-      expect(none.caseOf(x => 'x' + x, () => 'y')).to.eql('y');
-      expect(randomNumOpt().caseOf(() => 'x', () => 'y')).to.be.oneOf(['x', 'y']);
-    });
-    it('imperative', () => {
+  it('caseOf', () => {
+    expect(some(1).caseOf(x => 'x' + x, () => 'y')).to.eql('x1');
+    expect(none.caseOf(x => 'x' + x, () => 'y')).to.eql('y');
+    expect(randomNumOpt().caseOf(() => 'x', () => 'y')).to.be.oneOf(['x', 'y']);
+  });
+
+  describe('onBoth', () => {
+    it('calls correct callback', () => {
       const noneCb = chai.spy();
       const someCb = chai.spy();
       noneCb.should.have.not.been.called();
       someCb.should.have.not.been.called();
-      none.caseOf(someCb, noneCb);
+      expect(none.onBoth(someCb, noneCb).orNull()).to.be.null;
       someCb.should.have.not.been.called();
       noneCb.should.have.been.called.once;
-      some(1).caseOf(someCb, noneCb);
+      expect(some(1).onBoth(someCb, noneCb).orNull()).to.eql(1);
       someCb.should.have.been.called.once;
       someCb.should.have.been.called.always.with(1);
       noneCb.should.have.been.called.once;
+    });
+    it('example', () => {
+      expect(
+        // prints 1, returns some(1)
+        some(1).onBoth(x => console.log(x), () => console.log('none'))
+               .orNull(),
+      ).to.eql(1);
+      expect(
+        // prints "none", returns none
+        none.onBoth(x => console.log(x), () => console.log('none'))
+            .orNull(),
+      ).to.be.null;
     });
   });
 
@@ -324,8 +338,8 @@ describe('opt', () => {
     expect(some(1).pipe(orElse(7), add1, add1, add1, add1, add1, add1, add1, add1, add1)).to.be.eq(10);
     // example
     expect(opt(1).pipe(
-      x => x.isEmpty,
-      x => !x,
+        x => x.isEmpty,
+        x => !x,
       ),
     ).to.be.true;
   });
@@ -853,7 +867,9 @@ interface Person {
   surname: string | null;
 }
 
-interface Db {[_: string]: Person}
+interface Db {
+  [_: string]: Person;
+}
 
 describe('examples', () => {
   it('basic', () => {
@@ -1196,6 +1212,32 @@ describe('caseOf', () => {
   });
   it('uses onNone with none', () => {
     expect(caseOf(add1)(() => 7)(none)).to.be.eq(7);
+  });
+});
+
+describe('onBoth', () => {
+  let onSome: (_: number) => void;
+  let onNone: () => void;
+  beforeEach(() => {
+    onSome = chai.spy((x: number) => x * 10);
+    onNone = chai.spy(() => 99);
+  });
+
+  it('calls onSome with some', () => {
+    onSome.should.have.not.been.called();
+    onNone.should.have.not.been.called();
+    expect(onBoth(onSome)(onNone)(opt(7)).orNull()).to.eql(7);
+    onSome.should.have.been.called.exactly(1);
+    onSome.should.have.been.called.with(7);
+    onNone.should.have.not.been.called();
+  });
+  it('calls onNone with none', () => {
+    onSome.should.have.not.been.called();
+    onNone.should.have.not.been.called();
+    expect(onBoth(onSome)(onNone)(none).orNull()).to.be.null;
+    onSome.should.have.not.been.called();
+    onNone.should.have.been.called.exactly(1);
+    onNone.should.have.been.called.with.exactly();
   });
 });
 
