@@ -177,7 +177,38 @@ const getNameOrDefault = (x?: TestUser) =>
 getNameOrDefault({}); // 'John'
 ```
 
-`map` vs `onSome` 
+Using functional methods instead of its imperative variants
+---
+
+Functional methods (functions) are used when we care about the result and passed function(s) are pure.
+
+```ts
+const res = opt(2).map(x => x * 5); // res is some(10) and is used later in code
+```
+
+Imperative methods are used when we want to call a callback or do impure operations, we don't care about results from passed functions.
+
+```ts
+opt(1).onSome(console.log); // prints 1, returns some(1), log method returns undefined which is discarded
+```
+
+Functional and imperative methods can be used in one opt chain (e.g. `map` -> `print` -> `map`) without breaking recommendations above (an example is in the [`map` vs `onSome` section](#map-vs-onsome)). If you have an impure part of a computation, one function, it is recommended to rewrite it to functional approach (use in `map` or similar) and any remaining imperative operations (e.g. callbacks) isolate to a next part of opt chain (use `onSome` or similar).
+
+---
+
+A common mistake is using a function from first column instead of one from the second.
+
+| Functional                                                                                         | Imperative |
+|----------------------------------------------------------------------------------------------------|------------|
+| `map` / `chainToOpt`                                                                               | `onSome`   |
+| `caseOf` / `bimap`                                                                                 | `onBoth`   |
+| <code>orNull() &#124;&#124;</code> / `orNull() ??` / <br /> `if (!x.orUndef())` / `if (x.isEmpty)` | `onNone`   |
+
+The table isn't exhaustive, if you are unsure whether the method/function is imperative, it probably isn't (vast majority of methods are functional).
+
+An explanation with examples can be found in the [`map` vs `onSome` section](#map-vs-onsome).
+
+`map` vs `onSome`
 ---
 At a first glance, it may look like those methods are the same.
 
@@ -238,18 +269,21 @@ Got value 10
 */
 ```
 
-The final note is about implementation. Since `Opt` library gives a specific meaning to `map` and `onSome`, you should not use them interchangeably. In the future `map` implementation may very well change to not be called until termination (making `Opt` so called lazy), but `onSome` will always force evaluation instantly (even if `Opt` starts supporting lazy approach). This would mean that `map` will not call a mapping function until a result from `Opt` is requested (e.g. termination via `orNull`).
+The final note is about implementation. Since `Opt` library gives a specific meaning to `map` (functional methods) and `onSome` (imperative methods), you should not use them interchangeably. In the future `map` implementation may very well change to not be called until termination (making `Opt` so called lazy), but `onSome` will always force evaluation instantly (even if `Opt` starts supporting lazy approach). This would mean that `map` will not call a mapping function until a result from `Opt` is requested (e.g. termination via `orNull`).
 
 ```ts
-// Example of possible lazy Opt (not currently implemented)
+// Example of possible lazy Opt
 
 opt(1).onSome(console.log); // prints 1
 
 opt(2).map(console.log); // prints nothing
 
 const x = opt(3).map(console.log); // prints nothing
+// ...
 x.orNull(); // prints 1
 ```
+
+This could lead to bugs. Ones which are not easy to track down, since evaluation of the opt may be in an entirely different file to which opt was passed across several layers and delayed (e.g. from a helper utility function via props through several React components and used [evaluated] only after a user does some action).
 
 Documentation
 ===

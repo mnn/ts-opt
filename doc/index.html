@@ -216,8 +216,42 @@
 
 <span style="color: #795E26">getNameOrDefault</span><span style="color: #000000">({}); </span><span style="color: #008000">// &#039;John&#039;</span>
 </code></pre>
+				<a href="#using-functional-methods-instead-of-its-imperative-variants" id="using-functional-methods-instead-of-its-imperative-variants" style="color: inherit; text-decoration: none;">
+					<h2>Using functional methods instead of its imperative variants</h2>
+				</a>
+				<p>Functional methods (functions) are used when we care about the result and passed function(s) are pure.</p>
+				<pre><code class="language-ts"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">res</span><span style="color: #000000"> = </span><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #098658">2</span><span style="color: #000000">).</span><span style="color: #795E26">map</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">x</span><span style="color: #000000"> * </span><span style="color: #098658">5</span><span style="color: #000000">); </span><span style="color: #008000">// res is some(10) and is used later in code</span>
+</code></pre>
+				<p>Imperative methods are used when we want to call a callback or do impure operations, we don&#39;t care about results from passed functions.</p>
+				<pre><code class="language-ts"><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #098658">1</span><span style="color: #000000">).</span><span style="color: #795E26">onSome</span><span style="color: #000000">(</span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #001080">log</span><span style="color: #000000">); </span><span style="color: #008000">// prints 1, returns some(1), log method returns undefined which is discarded</span>
+</code></pre>
+				<p>Functional and imperative methods can be used in one opt chain (e.g. <code>map</code> -&gt; <code>print</code> -&gt; <code>map</code>) without breaking recommendations above (an example is in the <a href="#map-vs-onsome"><code>map</code> vs <code>onSome</code> section</a>). If you have an impure part of computation, one function, it is recommended to rewrite it to functional approach (use in <code>map</code> or similar) and any remaining imperative operations (e.g. callbacks) isolate to a next part of opt chain (use <code>onSome</code> or similar).</p>
+				<hr>
+				<p>A common mistake is using a function from first column instead of one from the second.</p>
+				<table>
+					<thead>
+						<tr>
+							<th>Functional</th>
+							<th>Imperative</th>
+						</tr>
+					</thead>
+					<tbody><tr>
+							<td><code>map</code> / <code>chainToOpt</code></td>
+							<td><code>onSome</code></td>
+						</tr>
+						<tr>
+							<td><code>caseOf</code> / <code>bimap</code></td>
+							<td><code>onBoth</code></td>
+						</tr>
+						<tr>
+							<td><code>orNull() &#124;&#124;</code> / <code>orNull() ??</code> / <br /> <code>if (!x.orUndef())</code> / <code>if (x.isEmpty)</code></td>
+							<td><code>onNone</code></td>
+						</tr>
+				</tbody></table>
+				<p>The table isn&#39;t exhaustive, if you are unsure whether the method/function is imperative, it probably isn&#39;t (vast majority of methods are functional).</p>
+				<p>An explanation with examples can be found in the <a href="#map-vs-onsome"><code>map</code> vs <code>onSome</code> section</a>.</p>
 				<a href="#map-vs-onsome" id="map-vs-onsome" style="color: inherit; text-decoration: none;">
-					<h2><code>map</code> vs <code>onSome</code> </h2>
+					<h2><code>map</code> vs <code>onSome</code></h2>
 				</a>
 				<p>At a first glance, it may look like those methods are the same.</p>
 				<pre><code class="language-ts"><span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">a</span><span style="color: #000000"> = </span><span style="color: #098658">0</span><span style="color: #000000">;</span>
@@ -264,16 +298,18 @@
 <span style="color: #008000">Got value 10</span>
 <span style="color: #008000">*/</span>
 </code></pre>
-				<p>The final note is about implementation. Since <code>Opt</code> library gives a specific meaning to <code>map</code> and <code>onSome</code>, you should not use them interchangeably. In the future <code>map</code> implementation may very well change to not be called until termination (making <code>Opt</code> so called lazy), but <code>onSome</code> will always force evaluation instantly (even if <code>Opt</code> starts supporting lazy approach). This would mean that <code>map</code> will not call a mapping function until a result from <code>Opt</code> is requested (e.g. termination via <code>orNull</code>).</p>
-				<pre><code class="language-ts"><span style="color: #008000">// Example of possible lazy Opt (not currently implemented)</span>
+				<p>The final note is about implementation. Since <code>Opt</code> library gives a specific meaning to <code>map</code> (functional methods) and <code>onSome</code> (imperative methods), you should not use them interchangeably. In the future <code>map</code> implementation may very well change to not be called until termination (making <code>Opt</code> so called lazy), but <code>onSome</code> will always force evaluation instantly (even if <code>Opt</code> starts supporting lazy approach). This would mean that <code>map</code> will not call a mapping function until a result from <code>Opt</code> is requested (e.g. termination via <code>orNull</code>).</p>
+				<pre><code class="language-ts"><span style="color: #008000">// Example of possible lazy Opt</span>
 
 <span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #098658">1</span><span style="color: #000000">).</span><span style="color: #795E26">onSome</span><span style="color: #000000">(</span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #001080">log</span><span style="color: #000000">); </span><span style="color: #008000">// prints 1</span>
 
 <span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #098658">2</span><span style="color: #000000">).</span><span style="color: #795E26">map</span><span style="color: #000000">(</span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #001080">log</span><span style="color: #000000">); </span><span style="color: #008000">// prints nothing</span>
 
 <span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">x</span><span style="color: #000000"> = </span><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #098658">3</span><span style="color: #000000">).</span><span style="color: #795E26">map</span><span style="color: #000000">(</span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #001080">log</span><span style="color: #000000">); </span><span style="color: #008000">// prints nothing</span>
+<span style="color: #008000">// ...</span>
 <span style="color: #001080">x</span><span style="color: #000000">.</span><span style="color: #795E26">orNull</span><span style="color: #000000">(); </span><span style="color: #008000">// prints 1</span>
 </code></pre>
+				<p>This could lead to bugs. Ones which are not easy to track down, since evaluation of the opt may be in entirely different file to which opt was passed across several layers and delayed (e.g. from a helper utility function via props through several React components and used [evaluated] only after a user does some action).</p>
 				<a href="#documentation" id="documentation" style="color: inherit; text-decoration: none;">
 					<h1>Documentation</h1>
 				</a>
