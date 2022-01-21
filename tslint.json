@@ -16,7 +16,8 @@
     "no-empty": false,
     "semicolon": [true, "always", "ignore-interfaces", "ignore-bound-class-methods"],
     "variable-name": [true, "allow-leading-underscore"],
-    "no-shadowed-variable": false
+    "no-shadowed-variable": false,
+    "radix": false
   },
   "rulesDirectory": []
 }

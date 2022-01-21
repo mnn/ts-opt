@@ -68,6 +68,8 @@ export declare abstract class Opt<T> {
      * none.map(x => x + 1) // None
      * ```
      *
+     * @see [[onSome]] for imperative variant (for use with callback)
+     *
      * @param f
      */
     abstract map<U>(f: (_: T) => U): Opt<U>;

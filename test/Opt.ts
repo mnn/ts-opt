@@ -75,6 +75,9 @@ import {
   zipToOptArray,
   toString,
   onBoth,
+  tryRun,
+  parseJson,
+  parseInt,
 } from '../src/Opt';
 
 chai.use(spies);
@@ -1713,6 +1716,51 @@ describe('isString', () => {
     expect(isString(0)).to.be.false;
     expect(isString(false)).to.be.false;
     expect(isString(NaN)).to.be.false;
+  });
+});
+
+describe('tryRun', () => {
+  it('runs ok', () => {
+    expect(tryRun(() => 1).orNull()).to.eql(1);
+    expect(tryRun(() => null).orNull()).to.be.null;
+  });
+  it('catches throw', () => {
+    expect(tryRun(() => { throw new Error(''); }).orNull()).to.be.null;
+    expect(tryRun(() => { JSON.parse('?'); }).orNull()).to.be.null;
+  });
+  it('example', () => {
+    expect(
+      tryRun(() => 1) // Some(1)
+        .orNull(),
+    ).to.be.eq(1);
+    expect(
+      tryRun(() => { throw new Error(); }) // None
+        .orNull(),
+    ).to.be.null;
+  });
+});
+
+describe('parseJson', () => {
+  it('parses valid JSON', () => {
+    expect(parseJson('{"a": 1}').orNull()).to.be.eql({a: 1});
+    expect(parseJson('null').orNull()).to.be.null;
+  });
+  it('returns none on invalid JSON', () => {
+    expect(parseJson('{neko}').orNull()).to.be.null;
+    expect(parseJson('Ryoka').orNull()).to.be.null;
+  });
+});
+
+describe('parseInt', () => {
+  it('parses valid integer (according to JS semantics)', () => {
+    expect(parseInt('0').orNull()).to.be.eq(0);
+    expect(parseInt('-44').orNull()).to.be.eq(-44);
+    expect(parseInt('1.1').orNull()).to.be.eq(1);
+  });
+  it('returns none on invalid integer', () => {
+    expect(parseInt('').orNull()).to.be.null;
+    expect(parseInt('gin').orNull()).to.be.null;
+    expect(parseInt('xFF').orNull()).to.be.null;
   });
 });
 

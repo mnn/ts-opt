@@ -43,6 +43,10 @@ const debugPrint = (tag?: string, ...xs: unknown[]) => {
 };
 
 /**
+ * Generic container class. It either holds exactly one value - [[Some]], or no value - [[None]] (empty).
+ *
+ * It simplifies working with possibly empty values and provides many methods/functions which allow creation of processing pipelines (commonly known as "fluent API" in OOP or [[pipe|chain of reverse applications]] in FP).
+ *
  * @typeparam T Wrapped value type.
  */
 export abstract class Opt<T> {
@@ -1521,3 +1525,53 @@ export const testRe = (re: RegExp) => (x: string): boolean => re.test(x);
 
 /** @see [[Opt.testReOrFalse]] */
 export const testReOrFalse = (re: RegExp) => (x: Opt<string>): boolean => x.testReOrFalse(re);
+
+/**
+ * Runs a given function. Result is wrapped by [[opt]]. Returns [[None]] when the function throws.
+ *
+ * @example
+ * ```ts
+ * tryRun(() => 1) // Some(1)
+ * tryRun(() => { throw new Error(); }) // None
+ * ```
+ *
+ * @param f
+ */
+export const tryRun = <T>(f: () => T): Opt<T> => {
+  try {
+    return opt(f());
+  } catch (e) {
+    return none;
+  }
+};
+
+/**
+ * Parses JSON. The result is passed to [[opt]], any error results in [[None]].
+ *
+ * @example
+ * ```ts
+ * parseJson('{"a": 1}') // Some({a: 1})
+ * parseJson('Ryoka') // None
+ * parseJson('null') // None - valid JSON (according to the new standard), but opt(null) is None
+ * ```
+ *
+ * Typical use is to call [[Opt.narrow]] afterwards to validate parsed data and get proper type.
+ *
+ * @param x
+ */
+export const parseJson = (x: string): Opt<unknown> => tryRun(() => JSON.parse(x));
+
+/**
+ * Parses integer (same semantics as `Number.parseInt`).
+ * The result is wrapped into [[opt]] (so `NaN` will become [[None]]).
+ *
+ * @example
+ * ```ts
+ * parseInt('0') // Some(0)
+ * parseInt('gin') // None
+ * parseInt('1.1') // Some(1)
+ * ```
+ *
+ * @param x
+ */
+export const parseInt = (x: string): Opt<number> => opt(Number.parseInt(x, 10));
