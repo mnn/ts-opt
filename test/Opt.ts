@@ -78,6 +78,7 @@ import {
   tryRun,
   parseJson,
   parseInt,
+  nonEmpty,
 } from '../src/Opt';
 
 chai.use(spies);
@@ -862,6 +863,29 @@ describe('isEmpty', () => {
     expect(isEmpty(b)).to.be.true;
     const c: OptNumMay = opt(3) as OptNumMay;
     expect(isEmpty(c)).to.be.false;
+  });
+});
+
+// uses isEmpty internally, so more tests shouldn't be necessary
+describe('nonEmpty', () => {
+  it('opt', () => {
+    expect(nonEmpty(opt(2))).to.be.true;
+    expect(nonEmpty(none)).to.be.false;
+  });
+  it('array', () => {
+    expect(nonEmpty([])).to.be.false;
+    expect(nonEmpty([1])).to.be.true;
+  });
+  it('works well with pipe', () => {
+    const a: Opt<number> = opt(4) as Opt<number>;
+    const inc = (x: number) => x + 1;
+    expect(
+      pipe(
+        a,
+        map(inc),
+        nonEmpty,
+      ),
+    ).to.be.true;
   });
 });
 
@@ -1731,11 +1755,11 @@ describe('tryRun', () => {
   it('example', () => {
     expect(
       tryRun(() => 1) // Some(1)
-        .orNull(),
+      .orNull(),
     ).to.be.eq(1);
     expect(
       tryRun(() => { throw new Error(); }) // None
-        .orNull(),
+      .orNull(),
     ).to.be.null;
   });
 });

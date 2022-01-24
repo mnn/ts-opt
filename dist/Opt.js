@@ -21,7 +21,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.bimap = exports.orElseOpt = exports.orElse = exports.forAll = exports.exists = exports.contains = exports.pipe = exports.onBoth = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOptFlow = exports.actToOpt = exports.chainToOpt = exports.chainFlow = exports.act = exports.chain = exports.flatMap = exports.mapFlow = exports.map = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = exports.toString = exports.isString = void 0;
-exports.testReOrFalse = exports.testRe = exports.zipToOptArray = exports.last = exports.head = exports.at = exports.id = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.prop = exports.equals = exports.print = exports.narrow = exports.filter = void 0;
+exports.parseInt = exports.parseJson = exports.tryRun = exports.testReOrFalse = exports.testRe = exports.zipToOptArray = exports.last = exports.head = exports.at = exports.id = exports.nonEmpty = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.prop = exports.equals = exports.print = exports.narrow = exports.filter = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 var errorSymbol = Symbol('Error');
@@ -46,6 +46,10 @@ var debugPrint = function (tag) {
     console.log.apply(console, __spreadArray(__spreadArray([], exports.opt(tag).map(function (x) { return ["[" + x + "]"]; }).orElse([])), xs));
 };
 /**
+ * Generic container class. It either holds exactly one value - [[Some]], or no value - [[None]] (empty).
+ *
+ * It simplifies working with possibly empty values and provides many methods/functions which allow creation of processing pipelines (commonly known as "fluent API" in OOP or [[pipe|chain of reverse applications]] in FP).
+ *
  * @typeparam T Wrapped value type.
  */
 var Opt = /** @class */ (function () {
@@ -1050,6 +1054,28 @@ var isEmpty = function (x) {
 };
 exports.isEmpty = isEmpty;
 /**
+ * Negated version of [[isEmpty]].
+ * `nonEmpty(x)` is the same as `!isEmpty(x)`. It can be useful when composing functions (e.g. via [[pipe]]).
+ *
+ * @example
+ * ```ts
+ * nonEmpty(opt(2)) // true
+ * nonEmpty([]) // false
+ *
+ * const inc = (x: number) => x + 1;
+ * pipe(
+ *   a, // Some(4)
+ *   map(inc), // Some(5)
+ *   nonEmpty, // true
+ * ) // true
+ * ```
+ *
+ * @see [[isEmpty]]
+ * @param x
+ */
+var nonEmpty = function (x) { return !exports.isEmpty(x); };
+exports.nonEmpty = nonEmpty;
+/**
  * Identity function.
  *
  * ```ts
@@ -1128,4 +1154,55 @@ exports.testRe = testRe;
 /** @see [[Opt.testReOrFalse]] */
 var testReOrFalse = function (re) { return function (x) { return x.testReOrFalse(re); }; };
 exports.testReOrFalse = testReOrFalse;
+/**
+ * Runs a given function. Result is wrapped by [[opt]]. Returns [[None]] when the function throws.
+ *
+ * @example
+ * ```ts
+ * tryRun(() => 1) // Some(1)
+ * tryRun(() => { throw new Error(); }) // None
+ * ```
+ *
+ * @param f
+ */
+var tryRun = function (f) {
+    try {
+        return exports.opt(f());
+    }
+    catch (e) {
+        return exports.none;
+    }
+};
+exports.tryRun = tryRun;
+/**
+ * Parses JSON. The result is passed to [[opt]], any error results in [[None]].
+ *
+ * @example
+ * ```ts
+ * parseJson('{"a": 1}') // Some({a: 1})
+ * parseJson('Ryoka') // None
+ * parseJson('null') // None - valid JSON (according to the new standard), but opt(null) is None
+ * ```
+ *
+ * Typical use is to call [[Opt.narrow]] afterwards to validate parsed data and get proper type.
+ *
+ * @param x
+ */
+var parseJson = function (x) { return exports.tryRun(function () { return JSON.parse(x); }); };
+exports.parseJson = parseJson;
+/**
+ * Parses integer (same semantics as `Number.parseInt`).
+ * The result is wrapped into [[opt]] (so `NaN` will become [[None]]).
+ *
+ * @example
+ * ```ts
+ * parseInt('0') // Some(0)
+ * parseInt('gin') // None
+ * parseInt('1.1') // Some(1)
+ * ```
+ *
+ * @param x
+ */
+var parseInt = function (x) { return exports.opt(Number.parseInt(x, 10)); };
+exports.parseInt = parseInt;
 //# sourceMappingURL=Opt.js.map

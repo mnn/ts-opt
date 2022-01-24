@@ -1439,6 +1439,30 @@ export const isEmpty = (
 };
 
 /**
+ * Negated version of [[isEmpty]].
+ * `nonEmpty(x)` is the same as `!isEmpty(x)`. It can be useful when composing functions (e.g. via [[pipe]]).
+ *
+ * @example
+ * ```ts
+ * nonEmpty(opt(2)) // true
+ * nonEmpty([]) // false
+ *
+ * const inc = (x: number) => x + 1;
+ * pipe(
+ *   a, // Some(4)
+ *   map(inc), // Some(5)
+ *   nonEmpty, // true
+ * ) // true
+ * ```
+ *
+ * @see [[isEmpty]]
+ * @param x
+ */
+export const nonEmpty = (
+  x: Opt<unknown> | unknown[] | null | undefined | Map<unknown, unknown> | Set<unknown> | object | string | number,
+): boolean => !isEmpty(x);
+
+/**
  * Identity function.
  *
  * ```ts

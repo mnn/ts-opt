@@ -127,6 +127,7 @@
 								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="opt.html#mapflow" class="tsd-kind-icon">map<wbr>Flow</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="opt.html#mapopt" class="tsd-kind-icon">map<wbr>Opt</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="opt.html#narrow" class="tsd-kind-icon">narrow</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="opt.html#nonempty" class="tsd-kind-icon">non<wbr>Empty</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="opt.html#onboth" class="tsd-kind-icon">on<wbr>Both</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="opt.html#opt-2" class="tsd-kind-icon">opt</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter"><a href="opt.html#optemptyarray" class="tsd-kind-icon">opt<wbr>Empty<wbr>Array</a></li>
@@ -3911,7 +3912,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:1458</li>
+									<li>Defined in Opt.ts:1482</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -12745,7 +12746,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:1465</li>
+									<li>Defined in Opt.ts:1489</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -12786,7 +12787,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:1451</li>
+									<li>Defined in Opt.ts:1475</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -12960,7 +12961,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:1472</li>
+									<li>Defined in Opt.ts:1496</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -14991,6 +14992,54 @@
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="nonempty" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> non<wbr>Empty</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">non<wbr>Empty<span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><a href="../classes/opt.opt-1.html" class="tsd-signature-type" data-tsd-kind="Class">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in Opt.ts:1461</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Negated version of <a href="opt.html#isempty">isEmpty</a>.
+									<code>nonEmpty(x)</code> is the same as <code>!isEmpty(x)</code>. It can be useful when composing functions (e.g. via <a href="opt.html#pipe">pipe</a>).</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>example</dt>
+									<dd><pre><code class="language-ts"><span style="color: #795E26">nonEmpty</span><span style="color: #000000">(</span><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #098658">2</span><span style="color: #000000">)) </span><span style="color: #008000">// true</span>
+<span style="color: #795E26">nonEmpty</span><span style="color: #000000">([]) </span><span style="color: #008000">// false</span>
+
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #795E26">inc</span><span style="color: #000000"> = (</span><span style="color: #001080">x</span><span style="color: #000000">: </span><span style="color: #267F99">number</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">x</span><span style="color: #000000"> + </span><span style="color: #098658">1</span><span style="color: #000000">;</span>
+<span style="color: #795E26">pipe</span><span style="color: #000000">(</span>
+<span style="color: #000000">  </span><span style="color: #001080">a</span><span style="color: #000000">, </span><span style="color: #008000">// Some(4)</span>
+<span style="color: #000000">  </span><span style="color: #795E26">map</span><span style="color: #000000">(</span><span style="color: #001080">inc</span><span style="color: #000000">), </span><span style="color: #008000">// Some(5)</span>
+<span style="color: #000000">  </span><span style="color: #001080">nonEmpty</span><span style="color: #000000">, </span><span style="color: #008000">// true</span>
+<span style="color: #000000">) </span><span style="color: #008000">// true</span>
+</code></pre>
+									</dd>
+									<dt>see</dt>
+									<dd><p><a href="opt.html#isempty">isEmpty</a></p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>x: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><a href="../classes/opt.opt-1.html" class="tsd-signature-type" data-tsd-kind="Class">Opt</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
 					<a name="onboth" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagConst">Const</span> on<wbr>Both</h3>
@@ -15703,7 +15752,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:1577</li>
+									<li>Defined in Opt.ts:1601</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -15742,7 +15791,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:1562</li>
+									<li>Defined in Opt.ts:1586</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -17694,7 +17743,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:1524</li>
+									<li>Defined in Opt.ts:1548</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -17751,7 +17800,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:1527</li>
+									<li>Defined in Opt.ts:1551</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -17876,7 +17925,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:1540</li>
+									<li>Defined in Opt.ts:1564</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -18923,7 +18972,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:1508</li>
+									<li>Defined in Opt.ts:1532</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -18965,7 +19014,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:1508</li>
+									<li>Defined in Opt.ts:1532</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -19010,7 +19059,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:1508</li>
+									<li>Defined in Opt.ts:1532</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -19058,7 +19107,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in Opt.ts:1508</li>
+									<li>Defined in Opt.ts:1532</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -19245,6 +19294,9 @@
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
 						<a href="opt.html#narrow" class="tsd-kind-icon">narrow</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="opt.html#nonempty" class="tsd-kind-icon">non<wbr>Empty</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
 						<a href="opt.html#onboth" class="tsd-kind-icon">on<wbr>Both</a>

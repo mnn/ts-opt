@@ -17,6 +17,10 @@ export declare const toString: (x: {
     toString(): string;
 }) => string;
 /**
+ * Generic container class. It either holds exactly one value - [[Some]], or no value - [[None]] (empty).
+ *
+ * It simplifies working with possibly empty values and provides many methods/functions which allow creation of processing pipelines (commonly known as "fluent API" in OOP or [[pipe|chain of reverse applications]] in FP).
+ *
  * @typeparam T Wrapped value type.
  */
 export declare abstract class Opt<T> {
@@ -1080,6 +1084,27 @@ export declare const uncurryTuple5: UncurryTuple5Fn;
  */
 export declare const isEmpty: (x: Opt<unknown> | unknown[] | null | undefined | Map<unknown, unknown> | Set<unknown> | object | string | number) => boolean;
 /**
+ * Negated version of [[isEmpty]].
+ * `nonEmpty(x)` is the same as `!isEmpty(x)`. It can be useful when composing functions (e.g. via [[pipe]]).
+ *
+ * @example
+ * ```ts
+ * nonEmpty(opt(2)) // true
+ * nonEmpty([]) // false
+ *
+ * const inc = (x: number) => x + 1;
+ * pipe(
+ *   a, // Some(4)
+ *   map(inc), // Some(5)
+ *   nonEmpty, // true
+ * ) // true
+ * ```
+ *
+ * @see [[isEmpty]]
+ * @param x
+ */
+export declare const nonEmpty: (x: Opt<unknown> | unknown[] | null | undefined | Map<unknown, unknown> | Set<unknown> | object | string | number) => boolean;
+/**
  * Identity function.
  *
  * ```ts
@@ -1149,4 +1174,45 @@ export declare const zipToOptArray: ZipToOptArrayFn;
 export declare const testRe: (re: RegExp) => (x: string) => boolean;
 /** @see [[Opt.testReOrFalse]] */
 export declare const testReOrFalse: (re: RegExp) => (x: Opt<string>) => boolean;
+/**
+ * Runs a given function. Result is wrapped by [[opt]]. Returns [[None]] when the function throws.
+ *
+ * @example
+ * ```ts
+ * tryRun(() => 1) // Some(1)
+ * tryRun(() => { throw new Error(); }) // None
+ * ```
+ *
+ * @param f
+ */
+export declare const tryRun: <T>(f: () => T) => Opt<T>;
+/**
+ * Parses JSON. The result is passed to [[opt]], any error results in [[None]].
+ *
+ * @example
+ * ```ts
+ * parseJson('{"a": 1}') // Some({a: 1})
+ * parseJson('Ryoka') // None
+ * parseJson('null') // None - valid JSON (according to the new standard), but opt(null) is None
+ * ```
+ *
+ * Typical use is to call [[Opt.narrow]] afterwards to validate parsed data and get proper type.
+ *
+ * @param x
+ */
+export declare const parseJson: (x: string) => Opt<unknown>;
+/**
+ * Parses integer (same semantics as `Number.parseInt`).
+ * The result is wrapped into [[opt]] (so `NaN` will become [[None]]).
+ *
+ * @example
+ * ```ts
+ * parseInt('0') // Some(0)
+ * parseInt('gin') // None
+ * parseInt('1.1') // Some(1)
+ * ```
+ *
+ * @param x
+ */
+export declare const parseInt: (x: string) => Opt<number>;
 export {};
