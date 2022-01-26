@@ -1925,3 +1925,40 @@ describe('pitfalls', () => {
     expect(console.log).to.have.been.called.with.exactly('Got value', 10);
   });
 });
+
+describe('simple lens-like use', () => {
+  it('example', () => {
+    interface House {
+      occupantIds?: number[];
+    }
+
+    const h = {
+      occupantIds: [7],
+    } as House | undefined;
+
+    const r1 =
+      opt(h) // Some({ occupantIds: [7] }) :: Opt<House>
+      .prop('occupantIds') // Some([7]) :: Opt<number[]>
+      .at(0) // Some(7) :: Opt<number>
+      .orElse(-1) // 7 :: number
+    ;
+    expect(r1).to.be.eq(7);
+
+    const r2 =
+      opt(h) // Some({ occupantIds: [7] }) :: Opt<House>
+      .prop('occupantIds') // Some([7]) :: Opt<number[]>
+      .at(99) // None :: Opt<number> (nonexisting index)
+      .orElse(-1) // -1 :: number
+    ;
+    expect(r2).to.be.eq(-1);
+
+    const h2 = {} as House | undefined;
+    const r3 =
+      opt(h2) // Some({ }) :: Opt<House>
+      .prop('occupantIds') // None :: Opt<number[]> (field is undefined)
+      .at(0) // None :: Opt<number>
+      .orElse(-1) // -1 :: number
+    ;
+    expect(r3).to.be.eq(-1);
+  });
+});

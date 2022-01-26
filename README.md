@@ -111,6 +111,38 @@ type Db = { [_: string]: Person };
     g(2); // null
 ```
 
+Looking inside wrapped values
+---
+You can "zoom" inside an (optional) structure of a value inside an opt.
+`prop` allows you to look inside fields (which can be optional).
+You can use `at` to focus on an index (possibly non-existing or holding an empty value) when value inside opt is an array.
+
+```ts
+interface House {
+  occupantIds?: number[];
+}
+
+const h = {
+  occupantIds: [7],
+} as House | undefined;
+
+opt(h) // Some({ occupantIds: [7] }) :: Opt<House>
+  .prop('occupantIds') // Some([7]) :: Opt<number[]>
+  .at(0) // Some(7) :: Opt<number>
+  .orElse(-1) // 7 :: number
+
+opt(h) // Some({ occupantIds: [7] }) :: Opt<House>
+  .prop('occupantIds') // Some([7]) :: Opt<number[]>
+  .at(99) // None :: Opt<number> (nonexisting index)
+  .orElse(-1) // -1 :: number
+
+const h2 = {} as House | undefined;
+opt(h2) // Some({ }) :: Opt<House>
+  .prop('occupantIds') // None :: Opt<number[]> (field is undefined)
+  .at(0) // None :: Opt<number>
+  .orElse(-1) // -1 :: number
+```
+
 Documentation
 ===
 All methods are documented, if you don't see a description please make sure you are reading the base class page - `Opt`.
