@@ -54,14 +54,14 @@ Basic use
     g(undefined); // exception thrown
 ```
 
-caseOf
+onBoth
 ---
 ```typescript
     const fireMissiles = () => { console.log('FIRING!'); };
     const printSuccess = (x: string) => { console.log(x); };
 
-    const handleMoveVanilla = (usersMove?: string): void => usersMove ? printSuccess(usersMove) : fireMissiles();
-    const handleMove = (usersMove?: string): void => opt(usersMove).caseOf(printSuccess, fireMissiles);
+    const handleMoveVanilla = (usersMove?: string): void => { if (usersMove) printSuccess(usersMove); else fireMissiles(); };
+    const handleMove = (usersMove?: string): void => { opt(usersMove).onBoth(printSuccess, fireMissiles); };
 
     handleMoveVanilla(); // prints FIRING!
     handleMove(); // prints FIRING!
