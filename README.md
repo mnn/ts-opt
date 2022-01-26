@@ -295,6 +295,19 @@ x.orNull(); // prints 1
 
 This could lead to bugs. Ones which are not easy to track down, since evaluation of the opt may be in an entirely different file to which opt was passed across several layers and delayed (e.g. from a helper utility function via props through several React components and used [evaluated] only after a user does some action).
 
+Development
+===
+
+1) clone repo
+2) `cd ts-opt`
+3) `npm i`
+4) write code
+5) `npm test`
+
+`FlowLike.ts`
+---
+This file is generated via program in `utils/genFlowyThings`. [Stack](https://docs.haskellstack.org/en/stable/README/) is required to run it. To regenerate the file use `npm run gen-flowy`.
+
 License
 ===
 **MIT**

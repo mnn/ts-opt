@@ -166,6 +166,14 @@
 <span style="color: #000000">    </span><span style="color: #795E26">f</span><span style="color: #000000">(</span><span style="color: #098658">2</span><span style="color: #000000">); </span><span style="color: #008000">// null</span>
 <span style="color: #000000">    </span><span style="color: #795E26">g</span><span style="color: #000000">(</span><span style="color: #098658">2</span><span style="color: #000000">); </span><span style="color: #008000">// null</span>
 </code></pre>
+				<a href="#documentation" id="documentation" style="color: inherit; text-decoration: none;">
+					<h1>Documentation</h1>
+				</a>
+				<p>All methods are documented, if you don&#39;t see a description please make sure you are reading the base class page - <code>Opt</code>.</p>
+				<ul>
+					<li>Main <a href="https://glcdn.githack.com/monnef/ts-opt/-/raw/v3.1.0/doc/modules/opt.html">Opt</a> class</li>
+					<li><a href="https://glcdn.githack.com/monnef/ts-opt/-/raw/v3.1.0/doc/modules.html">Module</a> (constructors and helper functions)</li>
+				</ul>
 				<a href="#pitfalls" id="pitfalls" style="color: inherit; text-decoration: none;">
 					<h1>Pitfalls</h1>
 				</a>
@@ -313,14 +321,20 @@
 <span style="color: #001080">x</span><span style="color: #000000">.</span><span style="color: #795E26">orNull</span><span style="color: #000000">(); </span><span style="color: #008000">// prints 1</span>
 </code></pre>
 				<p>This could lead to bugs. Ones which are not easy to track down, since evaluation of the opt may be in an entirely different file to which opt was passed across several layers and delayed (e.g. from a helper utility function via props through several React components and used [evaluated] only after a user does some action).</p>
-				<a href="#documentation" id="documentation" style="color: inherit; text-decoration: none;">
-					<h1>Documentation</h1>
+				<a href="#development" id="development" style="color: inherit; text-decoration: none;">
+					<h1>Development</h1>
 				</a>
-				<p>All methods are documented, if you don&#39;t see a description please make sure you are reading the base class page - <code>Opt</code>.</p>
-				<ul>
-					<li>Main <a href="https://glcdn.githack.com/monnef/ts-opt/-/raw/v3.1.0/doc/modules/opt.html">Opt</a> class</li>
-					<li><a href="https://glcdn.githack.com/monnef/ts-opt/-/raw/v3.1.0/doc/modules.html">Module</a> (constructors and helper functions)</li>
-				</ul>
+				<ol>
+					<li>clone repo</li>
+					<li><code>cd ts-opt</code></li>
+					<li><code>npm i</code></li>
+					<li>write code</li>
+					<li><code>npm test</code></li>
+				</ol>
+				<a href="#flowlikets" id="flowlikets" style="color: inherit; text-decoration: none;">
+					<h2><code>FlowLike.ts</code></h2>
+				</a>
+				<p>This file is generated via program in <code>utils/genFlowyThings</code>. <a href="https://docs.haskellstack.org/en/stable/README/">Stack</a> is required to run it. To regenerate the file use <code>npm run gen-flowy</code>.</p>
 				<a href="#license" id="license" style="color: inherit; text-decoration: none;">
 					<h1>License</h1>
 				</a>
