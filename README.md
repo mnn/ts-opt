@@ -111,6 +111,13 @@ type Db = { [_: string]: Person };
     g(2); // null
 ```
 
+Documentation
+===
+All methods are documented, if you don't see a description please make sure you are reading the base class page - `Opt`.
+
+* Main [Opt](https://glcdn.githack.com/monnef/ts-opt/-/raw/v3.1.0/doc/modules/opt.html) class
+* [Module](https://glcdn.githack.com/monnef/ts-opt/-/raw/v3.1.0/doc/modules.html) (constructors and helper functions)
+
 Pitfalls
 ===
 
@@ -287,13 +294,6 @@ x.orNull(); // prints 1
 ```
 
 This could lead to bugs. Ones which are not easy to track down, since evaluation of the opt may be in an entirely different file to which opt was passed across several layers and delayed (e.g. from a helper utility function via props through several React components and used [evaluated] only after a user does some action).
-
-Documentation
-===
-All methods are documented, if you don't see a description please make sure you are reading the base class page - `Opt`.
-
-* Main [Opt](https://glcdn.githack.com/monnef/ts-opt/-/raw/v3.1.0/doc/modules/opt.html) class
-* [Module](https://glcdn.githack.com/monnef/ts-opt/-/raw/v3.1.0/doc/modules.html) (constructors and helper functions)
 
 License
 ===
