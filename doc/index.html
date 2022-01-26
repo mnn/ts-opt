@@ -227,8 +227,8 @@
 
 <span style="color: #795E26">getNameOrDefault</span><span style="color: #000000">({}); </span><span style="color: #008000">// &#039;John&#039;</span>
 </code></pre>
-				<a href="#using-functional-methods-instead-of-its-imperative-variants" id="using-functional-methods-instead-of-its-imperative-variants" style="color: inherit; text-decoration: none;">
-					<h2>Using functional methods instead of its imperative variants</h2>
+				<a href="#functional-vs-imperative-methods" id="functional-vs-imperative-methods" style="color: inherit; text-decoration: none;">
+					<h2>Functional vs. imperative methods</h2>
 				</a>
 				<p>Functional methods (functions) are used when we care about the result and passed function(s) are pure.</p>
 				<pre><code class="language-ts"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">res</span><span style="color: #000000"> = </span><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #098658">2</span><span style="color: #000000">).</span><span style="color: #795E26">map</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">x</span><span style="color: #000000"> * </span><span style="color: #098658">5</span><span style="color: #000000">); </span><span style="color: #008000">// res is some(10) and is used later in code</span>
@@ -321,6 +321,21 @@
 <span style="color: #001080">x</span><span style="color: #000000">.</span><span style="color: #795E26">orNull</span><span style="color: #000000">(); </span><span style="color: #008000">// prints 1</span>
 </code></pre>
 				<p>This could lead to bugs. Ones which are not easy to track down, since evaluation of the opt may be in an entirely different file to which opt was passed across several layers and delayed (e.g. from a helper utility function via props through several React components and used [evaluated] only after a user does some action).</p>
+				<a href="#generators-star-functions" id="generators-star-functions" style="color: inherit; text-decoration: none;">
+					<h2>Generators (star functions)</h2>
+				</a>
+				<p>Because of the limitation how <code>yield</code> works, terminators like <code>onSome</code> or <code>onBoth</code> can&#39;t contain <code>yield</code> statements. The solution is to use guard functions <code>isSome</code>/<code>isNone</code>.</p>
+				<pre><code class="language-ts"><span style="color: #008000">// x is of type Opt&lt;number&gt;</span>
+
+<span style="color: #AF00DB">if</span><span style="color: #000000"> (</span><span style="color: #001080">x</span><span style="color: #000000">.</span><span style="color: #795E26">isSome</span><span style="color: #000000">()) {</span>
+<span style="color: #000000">  </span><span style="color: #008000">// x got narrowed to type Some&lt;number&gt; and you can access its value inside via `value` field</span>
+<span style="color: #000000">  </span><span style="color: #AF00DB">yield</span><span style="color: #000000"> </span><span style="color: #001080">x</span><span style="color: #000000">.</span><span style="color: #001080">value</span><span style="color: #000000">;</span>
+<span style="color: #000000">}</span>
+</code></pre>
+				<p>Please note that generally guard functions <code>isSome</code> and <code>isNone</code> shouldn&#39;t be used where any other approach is possible.
+					For just checking if an opt instance is empty use <code>isEmpty</code> or <code>nonEmpty</code> getters.
+					Don&#39;t make a mistake of terminating an opt chain prematurely or do an opt unwrapping followed by an opt wrapping.
+				It usually leads to more noisy, less readable and less extensible code, something this library tries to improve.</p>
 				<a href="#development" id="development" style="color: inherit; text-decoration: none;">
 					<h1>Development</h1>
 				</a>

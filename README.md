@@ -187,7 +187,7 @@ const getNameOrDefault = (x?: TestUser) =>
 getNameOrDefault({}); // 'John'
 ```
 
-Using functional methods instead of its imperative variants
+Functional vs. imperative methods
 ---
 
 Functional methods (functions) are used when we care about the result and passed function(s) are pure.
@@ -294,6 +294,24 @@ x.orNull(); // prints 1
 ```
 
 This could lead to bugs. Ones which are not easy to track down, since evaluation of the opt may be in an entirely different file to which opt was passed across several layers and delayed (e.g. from a helper utility function via props through several React components and used [evaluated] only after a user does some action).
+
+Generators (star functions)
+---
+Because of the limitation how `yield` works, terminators like `onSome` or `onBoth` can't contain `yield` statements. The solution is to use guard functions `isSome`/`isNone`.
+
+```ts
+// x is of type Opt<number>
+
+if (x.isSome()) {
+  // x got narrowed to type Some<number> and you can access its value inside via `value` field
+  yield x.value;
+}
+```
+
+Please note that generally guard functions `isSome` and `isNone` shouldn't be used where any other approach is possible.
+For just checking if an opt instance is empty use `isEmpty` or `nonEmpty` getters.
+Don't make a mistake of terminating an opt chain prematurely or do an opt unwrapping followed by an opt wrapping.
+It usually leads to more noisy, less readable and less extensible code, something this library tries to improve.
 
 Development
 ===
