@@ -9,9 +9,8 @@
     "fp",
     "functional programming",
     "typescript",
-    "monad",
-    "applicative",
-    "functor"
+    "undefined",
+    "null"
   ],
   "main": "dist/Opt.js",
   "types": "dist/Opt.d.ts",
