@@ -16,6 +16,7 @@ export declare const isString: (x: any) => x is string;
 export declare const toString: (x: {
     toString(): string;
 }) => string;
+export declare const isArray: (x: any) => x is unknown[];
 /**
  * Generic container class. It either holds exactly one value - [[Some]], or no value - [[None]] (empty).
  *
@@ -43,7 +44,7 @@ export declare abstract class Opt<T> {
     /**
      * `1` for [[Some]], `0` for [[None]].
      */
-    get length(): number;
+    get length(): 0 | 1;
     /**
      * Create Opt instance from an array of one or zero items.
      *
@@ -451,6 +452,8 @@ export declare abstract class Opt<T> {
     abstract zip5<X, Y, Z, ZZ>(x: Opt<X>, y: Opt<Y>, z: Opt<Z>, zz: Opt<ZZ>): Opt<[T, X, Y, Z, ZZ]>;
     /**
      * Returns [[Some]] with same value if predicate holds, [[None]] otherwise.
+     *
+     * @example
      * ```ts
      * opt(1).filter(x => x > 0); // Some(1)
      * opt(-1).filter(x => x > 0); // None
@@ -461,6 +464,8 @@ export declare abstract class Opt<T> {
     abstract filter(predicate: (_: T) => boolean): Opt<T>;
     /**
      * Returns [[None]] if predicate holds, otherwise passes same instance of [[Opt]].
+     *
+     * @example
      * ```ts
      * opt(1).noneIf(x => x > 0); // None
      * opt(-1).noneIf(x => x > 0); // Some(-1)
@@ -469,6 +474,22 @@ export declare abstract class Opt<T> {
      * @param predicate
      */
     noneIf(predicate: (_: T) => boolean): Opt<T>;
+    /**
+     * Returns `0` or `1` for [[Some]] depending on whether the predicate holds.
+     * Returns `0` for [[None]].
+     *
+     * It is a combination of [[Opt.filter]] and [[Opt.length]].
+     *
+     * @example
+     * ```ts
+     * opt('Mu').count(x => x.length > 3) // 0
+     * opt('Ichi').count(x => x.length > 3) // 1
+     * ```
+     *
+     * @see [[count]]
+     * @param predicate
+     */
+    count(predicate: (_: T) => boolean): 0 | 1;
     /**
      * Narrows type inside [[Opt]] using given type guard.
      * ```ts
@@ -944,6 +965,20 @@ declare type FilterFn = <T>(p: (_: T) => boolean) => <U extends Opt<T> | T[]>(x:
  * @see [[Opt.filter]]
  */
 export declare const filter: FilterFn;
+declare type CountFn = <T>(p: (_: T) => boolean) => <U extends Opt<T> | T[]>(x: U) => U extends Opt<T> ? 0 | 1 : number;
+/**
+ * Same as [[Opt.count]], but also supports arrays.
+ *
+ * @example
+ * ```ts
+ * const greaterThanZero = (x: number) => x > 0;
+ *
+ * count(greaterThanZero)([-3, 0, 5, 10]) // 2
+ * ```
+ *
+ * @see [[Opt.count]]
+ */
+export declare const count: CountFn;
 /** @see [[Opt.narrow]] */
 export declare const narrow: <U>(guard: (value: any) => value is U) => <T>(x: Opt<T>) => Opt<U>;
 /**

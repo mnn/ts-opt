@@ -36,6 +36,7 @@ interface ConstInClassFn<T> {
 
 export const isString = (x: any): x is string => typeof x === 'string';
 export const toString = (x: { toString(): string }): string => x.toString();
+export const isArray = (x: any): x is unknown[] => Array.isArray(x);
 
 const debugPrint = (tag?: string, ...xs: unknown[]) => {
   // tslint:disable-next-line:no-console
@@ -73,7 +74,7 @@ export abstract class Opt<T> {
   /**
    * `1` for [[Some]], `0` for [[None]].
    */
-  get length(): number { return this.isEmpty ? 0 : 1; }
+  get length(): 0 | 1 { return this.isEmpty ? 0 : 1; }
 
   /**
    * Create Opt instance from an array of one or zero items.
@@ -517,6 +518,8 @@ export abstract class Opt<T> {
 
   /**
    * Returns [[Some]] with same value if predicate holds, [[None]] otherwise.
+   *
+   * @example
    * ```ts
    * opt(1).filter(x => x > 0); // Some(1)
    * opt(-1).filter(x => x > 0); // None
@@ -528,6 +531,8 @@ export abstract class Opt<T> {
 
   /**
    * Returns [[None]] if predicate holds, otherwise passes same instance of [[Opt]].
+   *
+   * @example
    * ```ts
    * opt(1).noneIf(x => x > 0); // None
    * opt(-1).noneIf(x => x > 0); // Some(-1)
@@ -537,6 +542,25 @@ export abstract class Opt<T> {
    */
   noneIf(predicate: (_: T) => boolean): Opt<T> {
     return this.filter(x => !predicate(x));
+  }
+
+  /**
+   * Returns `0` or `1` for [[Some]] depending on whether the predicate holds.
+   * Returns `0` for [[None]].
+   *
+   * It is a combination of [[Opt.filter]] and [[Opt.length]].
+   *
+   * @example
+   * ```ts
+   * opt('Mu').count(x => x.length > 3) // 0
+   * opt('Ichi').count(x => x.length > 3) // 1
+   * ```
+   *
+   * @see [[count]]
+   * @param predicate
+   */
+  count(predicate: (_: T) => boolean): 0 | 1 {
+    return this.filter(predicate).length;
   }
 
   /**
@@ -1261,6 +1285,26 @@ type FilterFn = <T>(p: (_: T) => boolean) => <U extends Opt<T> | T[]>(x: U) => U
  * @see [[Opt.filter]]
  */
 export const filter: FilterFn = (p: any) => (x: any) => x.filter(p);
+
+type CountFn = <T>(p: (_: T) => boolean) => <U extends Opt<T> | T[]>(x: U) => U extends Opt<T> ? 0 | 1 : number;
+
+/**
+ * Same as [[Opt.count]], but also supports arrays.
+ *
+ * @example
+ * ```ts
+ * const greaterThanZero = (x: number) => x > 0;
+ *
+ * count(greaterThanZero)([-3, 0, 5, 10]) // 2
+ * ```
+ *
+ * @see [[Opt.count]]
+ */
+export const count: CountFn = (p: any) => (x: any): any => {
+  if (isOpt(x)) { return x.count(p); }
+  if (isArray(x)) { return x.filter(p).length; }
+  throw new Error(`Invalid input to count, only Opt and Array are supported: ${JSON.stringify(x)}`);
+};
 
 /** @see [[Opt.narrow]] */
 export const narrow = <U>(guard: (value: any) => value is U) => <T>(x: Opt<T>): Opt<U> => x.narrow(guard);

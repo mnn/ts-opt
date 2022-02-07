@@ -79,6 +79,7 @@ import {
   parseJson,
   parseInt,
   nonEmpty,
+  count,
 } from '../src/Opt';
 
 chai.use(spies);
@@ -497,6 +498,12 @@ describe('opt', () => {
     expect(some(1).noneIf(lt0).orNull()).to.be.eq(1);
     expect(some(1).noneIf(gt0).orNull()).to.be.null;
     expect(none.noneIf(lt0).orNull()).to.be.null;
+  });
+
+  it('count', () => {
+    expect(opt(1).count(gt0)).to.be.eq(1);
+    expect(opt(-1).count(gt0)).to.be.eq(0);
+    expect(opt(NaN).count(gt0)).to.be.eq(0);
   });
 
   it('narrow', () => {
@@ -1454,6 +1461,53 @@ describe('filter', () => {
   });
 });
 
+describe('count', () => {
+  it('checks types', () => {
+    const a: 0 | 1 = count(gt0)(opt(1));
+    const a2: number = count(gt0)(opt(1)); // 0 | 1 is assignable to number
+    suppressUnused(a, a2);
+    // ---
+    const b: number = count(gt0)([0]);
+    // @ts-expect-error but not the other way around
+    const bFail: 0 | 1 = count(gt0)([0]);
+    suppressUnused(b, bFail);
+  });
+
+  describe('counts', () => {
+    it('opt', () => {
+      expect(count(gt0)(opt(1))).to.be.eq(1);
+      expect(count(gt0)(opt(-1))).to.be.eq(0);
+      expect(count(gt0)(opt(NaN))).to.be.eq(0);
+    });
+    it('array', () => {
+      expect(count(gt0)([1])).to.be.eq(1);
+      expect(count(gt0)([-1])).to.be.eq(0);
+      expect(count(gt0)([])).to.be.eq(0);
+      expect(count(gt0)([-1, 1, 11])).to.be.eq(2);
+    });
+  });
+
+  it('crashes when given invalid input', () => {
+    expect(() => count(gt0)('' as any)).to.throw('Invalid input to count, only Opt and Array are supported: ""');
+    expect(() => count(gt0)(true as any)).to.throw('Invalid input to count, only Opt and Array are supported: true');
+    expect(() => count(gt0)(new Date(0) as any))
+    .to.throw('Invalid input to count, only Opt and Array are supported: "1970-01-01T00:00:00.000Z"');
+  });
+
+  it('example', () => {
+    expect(
+      opt('Mu').count(x => x.length > 3), // 0
+    ).to.be.eq(0);
+    expect(
+      opt('Ichi').count(x => x.length > 3), // 1
+    ).to.be.eq(1);
+    const greaterThanZero = (x: number) => x > 0;
+    expect(
+      count(greaterThanZero)([-3, 0, 5, 10]), // 2
+    ).to.be.eq(2);
+  });
+});
+
 describe('narrow', () => {
   it('narrows', () => {
     const a: Opt<string> = narrow(isString)(opt(1));
@@ -1752,6 +1806,23 @@ describe('isString', () => {
     expect(isString(0)).to.be.false;
     expect(isString(false)).to.be.false;
     expect(isString(NaN)).to.be.false;
+  });
+});
+
+describe('isArray', () => {
+  it('pos', () => {
+    expect(isArray([])).to.be.true;
+    expect(isArray(['x'])).to.be.true;
+    expect(isArray([0])).to.be.true;
+    expect(isArray(['Kon'])).to.be.true;
+  });
+  it('neg', () => {
+    expect(isArray(undefined)).to.be.false;
+    expect(isArray({})).to.be.false;
+    expect(isArray(0)).to.be.false;
+    expect(isArray(NaN)).to.be.false;
+    expect(isArray(false)).to.be.false;
+    expect(isArray('')).to.be.false;
   });
 });
 
