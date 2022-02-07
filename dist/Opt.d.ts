@@ -602,6 +602,17 @@ export declare abstract class Opt<T> {
      * @param re Regular expression
      */
     testReOrFalse<R extends (T extends string ? boolean : OperationNotAvailable<T, string>)>(re: RegExp): R;
+    /**
+     * No-op terminator used to end imperative chains.
+     *
+     * @example
+     * ```ts
+     * const f = (x: unknown): void => opt(x).onBoth(noop, noop).end;
+     * // same as
+     * const g = (x: unknown): void => { opt(x).onBoth(noop, noop); };
+     * ```
+     */
+    get end(): void;
 }
 /**
  * Empty [[Opt]].

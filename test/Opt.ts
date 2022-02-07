@@ -99,6 +99,8 @@ const join = (delim: string) => (xs: string[]): string => xs.join(delim);
 
 const eq = (a: unknown) => (b: unknown) => a === b;
 
+const noop = (..._args: unknown[]): void => {};
+
 type EnumAB = 'a' | 'b';
 type Enum12 = 1 | 2;
 type EnumABC = 'a' | 'b' | 'c';
@@ -657,6 +659,16 @@ describe('opt', () => {
       }).to.throw('testReOrFalse only works on Opt<string>');
     });
   });
+
+  it('end', () => {
+    expect(opt(null).end).to.be.undefined;
+    const f = (x: unknown): void => opt(x).onBoth(noop, noop).end;
+    // same as
+    const g = (x: unknown): void => { opt(x).onBoth(noop, noop); };
+    expect(f(0)).to.be.undefined;
+    expect(f(null)).to.be.undefined;
+    suppressUnused(g);
+  });
 });
 
 describe('helper functions', () => {
@@ -934,7 +946,7 @@ describe('examples', () => {
     const printSuccess = (x: string) => { console.log(x); };
 
     const handleMoveVanilla = (usersMove?: string): void => { if (usersMove) printSuccess(usersMove); else fireMissiles(); };
-    const handleMove = (usersMove?: string): void => { opt(usersMove).onBoth(printSuccess, fireMissiles); };
+    const handleMove = (usersMove?: string): void => opt(usersMove).onBoth(printSuccess, fireMissiles).end;
 
     handleMoveVanilla(); // prints FIRING!
     handleMove(); // prints FIRING!

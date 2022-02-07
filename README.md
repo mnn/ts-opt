@@ -61,7 +61,7 @@ onBoth
     const printSuccess = (x: string) => { console.log(x); };
 
     const handleMoveVanilla = (usersMove?: string): void => { if (usersMove) printSuccess(usersMove); else fireMissiles(); };
-    const handleMove = (usersMove?: string): void => { opt(usersMove).onBoth(printSuccess, fireMissiles); };
+    const handleMove = (usersMove?: string): void => opt(usersMove).onBoth(printSuccess, fireMissiles).end;
 
     handleMoveVanilla(); // prints FIRING!
     handleMove(); // prints FIRING!

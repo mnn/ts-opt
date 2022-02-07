@@ -313,6 +313,21 @@ var Opt = /** @class */ (function () {
     Opt.prototype.testReOrFalse = function (re) {
         return this.narrow(exports.isString).someOrCrash("testReOrFalse only works on Opt<string>").map(exports.testRe(re)).orFalse();
     };
+    Object.defineProperty(Opt.prototype, "end", {
+        /**
+         * No-op terminator used to end imperative chains.
+         *
+         * @example
+         * ```ts
+         * const f = (x: unknown): void => opt(x).onBoth(noop, noop).end;
+         * // same as
+         * const g = (x: unknown): void => { opt(x).onBoth(noop, noop); };
+         * ```
+         */
+        get: function () { return undefined; },
+        enumerable: false,
+        configurable: true
+    });
     return Opt;
 }());
 exports.Opt = Opt;

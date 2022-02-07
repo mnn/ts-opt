@@ -692,6 +692,18 @@ export abstract class Opt<T> {
   testReOrFalse<R extends (T extends string ? boolean : OperationNotAvailable<T, string>)>(re: RegExp): R {
     return this.narrow(isString).someOrCrash(`testReOrFalse only works on Opt<string>`).map(testRe(re)).orFalse() as R;
   }
+
+  /**
+   * No-op terminator used to end imperative chains.
+   *
+   * @example
+   * ```ts
+   * const f = (x: unknown): void => opt(x).onBoth(noop, noop).end;
+   * // same as
+   * const g = (x: unknown): void => { opt(x).onBoth(noop, noop); };
+   * ```
+   */
+  get end(): void { return undefined; }
 }
 
 /**
