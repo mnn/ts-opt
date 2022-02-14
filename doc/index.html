@@ -1,448 +1,201 @@
-<!doctype html>
-<html class="default no-js">
-<head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ts-opt</title>
-	<meta name="description" content="Documentation for ts-opt">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="assets/css/main.css">
-	<script async src="assets/js/search.js" id="search-script"></script>
-</head>
-<body>
-<header>
-	<div class="tsd-page-toolbar">
-		<div class="container">
-			<div class="table-wrap">
-				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
-					<div class="field">
-						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
-						<input id="tsd-search-field" type="text" />
-					</div>
-					<ul class="results">
-						<li class="state loading">Preparing search index...</li>
-						<li class="state failure">The search index is not available</li>
-					</ul>
-					<a href="index.html" class="title">ts-opt</a>
-				</div>
-				<div class="table-cell" id="tsd-widgets">
-					<div id="tsd-filter">
-						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
-						<div class="tsd-filter-group">
-							<div class="tsd-select" id="tsd-filter-visibility">
-								<span class="tsd-select-label">All</span>
-								<ul class="tsd-select-list">
-									<li data-value="public">Public</li>
-									<li data-value="protected">Public/Protected</li>
-									<li data-value="private" class="selected">All</li>
-								</ul>
-							</div>
-							<input type="checkbox" id="tsd-filter-inherited" checked />
-							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
-							<input type="checkbox" id="tsd-filter-externals" checked />
-							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
-						</div>
-					</div>
-					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="tsd-page-title">
-		<div class="container">
-			<h1>ts-opt</h1>
-		</div>
-	</div>
-</header>
-<div class="container container-main">
-	<div class="row">
-		<div class="col-8 col-content">
-			<div class="tsd-panel tsd-typography">
-				<p>[[<em>TOC</em>]]</p>
-				<a href="#ts-opt" id="ts-opt" style="color: inherit; text-decoration: none;">
-					<h1>ts-opt</h1>
-				</a>
-				<p><a href="https://gitlab.com/monnef/ts-opt/-/commits/master"><img src="https://gitlab.com/monnef/ts-opt/badges/master/pipeline.svg" alt="pipeline status"></a>
-					<a href="https://gitlab.com/monnef/ts-opt/-/commits/master"><img src="https://gitlab.com/monnef/ts-opt/badges/master/coverage.svg" alt="coverage report"></a>
-					<a href="https://bundlephobia.com/package/ts-opt"><img src="https://badgen.net/bundlephobia/minzip/ts-opt" alt="minified + gzipped size"></a>
-					<a href="https://npmjs.com/package/ts-opt"><img src="https://badgen.net/npm/v/ts-opt" alt="npm version"></a>
-					<a href="LICENSE.md"><img src="https://badgen.net/npm/license/ts-opt" alt="license"></a>
-				<a href="https://bundlephobia.com/package/ts-opt"><img src="https://badgen.net/bundlephobia/dependency-count/ts-opt" alt="dependencies"></a></p>
-				<p>Typed Option/Maybe for TypeScript and JavaScript (based on Scala, Haskell and Sanctuary), created to simplify code involving optional values.</p>
-				<a href="#features" id="features" style="color: inherit; text-decoration: none;">
-					<h1>Features</h1>
-				</a>
-				<ul>
-					<li>⛓️ TypeScript Support<ul>
-							<li>⚙️ Strict types - it&#39;s a TypeScript-first library, no wild <code>any</code>s</li>
-							<li>but it is fully usable from JavaScript as well</li>
-						</ul>
-					</li>
-					<li>🔩 Pragmatic - doesn&#39;t force functional programming paradigm</li>
-					<li>📏 100% Test Coverage</li>
-					<li>🗜️ Lightweight - no dependencies, only around 3KiB gzip+minified</li>
-				</ul>
-				<a href="#installation" id="installation" style="color: inherit; text-decoration: none;">
-					<h1>Installation</h1>
-				</a>
-				<pre><code class="language-sh"><span style="color: #000000">npm i -S ts-opt</span>
+<!DOCTYPE html><html class="default"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>ts-opt</title><meta name="description" content="Documentation for ts-opt"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script async src="assets/search.js" id="search-script"></script></head><body><script>document.body.classList.add(localStorage.getItem("tsd-theme") || "os")</script><header><div class="tsd-page-toolbar"><div class="container"><div class="table-wrap"><div class="table-cell" id="tsd-search" data-base="."><div class="field"><label for="tsd-search-field" class="tsd-widget search no-caption">Search</label><input type="text" id="tsd-search-field"/></div><ul class="results"><li class="state loading">Preparing search index...</li><li class="state failure">The search index is not available</li></ul><a href="index.html" class="title">ts-opt</a></div><div class="table-cell" id="tsd-widgets"><div id="tsd-filter"><a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a><div class="tsd-filter-group"><div class="tsd-select" id="tsd-filter-visibility"><span class="tsd-select-label">All</span><ul class="tsd-select-list"><li data-value="public">Public</li><li data-value="protected">Public/Protected</li><li data-value="private" class="selected">All</li></ul></div> <input type="checkbox" id="tsd-filter-inherited" checked/><label class="tsd-widget" for="tsd-filter-inherited">Inherited</label><input type="checkbox" id="tsd-filter-externals" checked/><label class="tsd-widget" for="tsd-filter-externals">Externals</label></div></div><a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a></div></div></div></div><div class="tsd-page-title"><div class="container"><h1>ts-opt</h1></div></div></header><div class="container container-main"><div class="row"><div class="col-8 col-content"><div class="tsd-panel tsd-typography"><p>[[<em>TOC</em>]]</p>
+
+<a href="#ts-opt" id="ts-opt" style="color: inherit; text-decoration: none;">
+  <h1>ts-opt</h1>
+</a>
+<p><a href="https://gitlab.com/monnef/ts-opt/-/commits/master"><img src="https://gitlab.com/monnef/ts-opt/badges/master/pipeline.svg" alt="pipeline status"></a>
+<a href="https://gitlab.com/monnef/ts-opt/-/commits/master"><img src="https://gitlab.com/monnef/ts-opt/badges/master/coverage.svg" alt="coverage report"></a>
+<a href="https://bundlephobia.com/package/ts-opt"><img src="https://badgen.net/bundlephobia/minzip/ts-opt" alt="minified + gzipped size"></a>
+<a href="https://npmjs.com/package/ts-opt"><img src="https://badgen.net/npm/v/ts-opt" alt="npm version"></a>
+<a href="LICENSE.md"><img src="https://badgen.net/npm/license/ts-opt" alt="license"></a>
+<a href="https://bundlephobia.com/package/ts-opt"><img src="https://badgen.net/bundlephobia/dependency-count/ts-opt" alt="dependencies"></a></p>
+<p>Typed Option/Maybe for TypeScript and JavaScript (based on Scala, Haskell and Sanctuary), created to simplify code involving optional values.</p>
+
+<a href="#features" id="features" style="color: inherit; text-decoration: none;">
+  <h1>Features</h1>
+</a>
+<ul>
+<li>⛓️ TypeScript Support<ul>
+<li>⚙️ Strict types - it&#39;s a TypeScript-first library, no wild <code>any</code>s</li>
+<li>but it is fully usable from JavaScript as well</li>
+</ul>
+</li>
+<li>🔩 Pragmatic - doesn&#39;t force functional programming paradigm</li>
+<li>📏 100% Test Coverage</li>
+<li>🗜️ Lightweight - no dependencies, only around 3KiB gzip+minified</li>
+</ul>
+
+<a href="#installation" id="installation" style="color: inherit; text-decoration: none;">
+  <h1>Installation</h1>
+</a>
+<pre><code class="language-sh"><span class="hl-1">npm i -S ts-opt</span>
 </code></pre>
-				<a href="#examples" id="examples" style="color: inherit; text-decoration: none;">
-					<h1>Examples</h1>
-				</a>
-				<p>In all examples <code>opt</code> import is presumed to be present:</p>
-				<pre><code class="language-typescript"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">opt</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;ts-opt&#039;</span><span style="color: #000000">;</span>
+
+<a href="#examples" id="examples" style="color: inherit; text-decoration: none;">
+  <h1>Examples</h1>
+</a>
+<p>In all examples <code>opt</code> import is presumed to be present:</p>
+<pre><code class="language-typescript"><span class="hl-10">import</span><span class="hl-1"> { </span><span class="hl-7">opt</span><span class="hl-1"> } </span><span class="hl-10">from</span><span class="hl-1"> </span><span class="hl-2">&#39;ts-opt&#39;</span><span class="hl-1">;</span>
 </code></pre>
-				<a href="#basic-use" id="basic-use" style="color: inherit; text-decoration: none;">
-					<h2>Basic use</h2>
-				</a>
-				<pre><code class="language-typescript"><span style="color: #000000">    </span><span style="color: #008000">// without</span>
-<span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #795E26">f</span><span style="color: #000000"> = (</span><span style="color: #001080">name</span><span style="color: #000000">: </span><span style="color: #267F99">string</span><span style="color: #000000"> | </span><span style="color: #267F99">undefined</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
-<span style="color: #000000">      </span><span style="color: #AF00DB">if</span><span style="color: #000000"> (!</span><span style="color: #001080">name</span><span style="color: #000000"> || </span><span style="color: #001080">name</span><span style="color: #000000"> === </span><span style="color: #A31515">&#039;&#039;</span><span style="color: #000000">) { </span><span style="color: #AF00DB">throw</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #267F99">Error</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;Missing name.&#039;</span><span style="color: #000000">); }</span>
-<span style="color: #000000">      </span><span style="color: #AF00DB">return</span><span style="color: #000000"> </span><span style="color: #001080">name</span><span style="color: #000000">[</span><span style="color: #098658">0</span><span style="color: #000000">];</span>
-<span style="color: #000000">    };</span>
 
-<span style="color: #000000">    </span><span style="color: #008000">// with</span>
-<span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #795E26">g</span><span style="color: #000000"> = (</span><span style="color: #001080">name</span><span style="color: #000000">: </span><span style="color: #267F99">string</span><span style="color: #000000"> | </span><span style="color: #267F99">undefined</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #001080">name</span><span style="color: #000000">).</span><span style="color: #795E26">orCrash</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;Missing name.&#039;</span><span style="color: #000000">)[</span><span style="color: #098658">0</span><span style="color: #000000">];</span>
-
-<span style="color: #000000">    </span><span style="color: #795E26">f</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;Riker&#039;</span><span style="color: #000000">); </span><span style="color: #008000">// &#039;R&#039;</span>
-<span style="color: #000000">    </span><span style="color: #795E26">g</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;Riker&#039;</span><span style="color: #000000">); </span><span style="color: #008000">// &#039;R&#039;</span>
-
-<span style="color: #000000">    </span><span style="color: #795E26">f</span><span style="color: #000000">(</span><span style="color: #0000FF">undefined</span><span style="color: #000000">); </span><span style="color: #008000">// exception thrown</span>
-<span style="color: #000000">    </span><span style="color: #795E26">g</span><span style="color: #000000">(</span><span style="color: #0000FF">undefined</span><span style="color: #000000">); </span><span style="color: #008000">// exception thrown</span>
+<a href="#basic-use" id="basic-use" style="color: inherit; text-decoration: none;">
+  <h2>Basic use</h2>
+</a>
+<pre><code class="language-typescript"><span class="hl-1">    </span><span class="hl-3">// without</span><br/><span class="hl-1">    </span><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-0">f</span><span class="hl-1"> = (</span><span class="hl-7">name</span><span class="hl-1">: </span><span class="hl-6">string</span><span class="hl-1"> | </span><span class="hl-6">undefined</span><span class="hl-1">) </span><span class="hl-5">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">      </span><span class="hl-10">if</span><span class="hl-1"> (!</span><span class="hl-7">name</span><span class="hl-1"> || </span><span class="hl-7">name</span><span class="hl-1"> === </span><span class="hl-2">&#39;&#39;</span><span class="hl-1">) { </span><span class="hl-10">throw</span><span class="hl-1"> </span><span class="hl-5">new</span><span class="hl-1"> </span><span class="hl-6">Error</span><span class="hl-1">(</span><span class="hl-2">&#39;Missing name.&#39;</span><span class="hl-1">); }</span><br/><span class="hl-1">      </span><span class="hl-10">return</span><span class="hl-1"> </span><span class="hl-7">name</span><span class="hl-1">[</span><span class="hl-4">0</span><span class="hl-1">];</span><br/><span class="hl-1">    };</span><br/><br/><span class="hl-1">    </span><span class="hl-3">// with</span><br/><span class="hl-1">    </span><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-0">g</span><span class="hl-1"> = (</span><span class="hl-7">name</span><span class="hl-1">: </span><span class="hl-6">string</span><span class="hl-1"> | </span><span class="hl-6">undefined</span><span class="hl-1">) </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-0">opt</span><span class="hl-1">(</span><span class="hl-7">name</span><span class="hl-1">).</span><span class="hl-0">orCrash</span><span class="hl-1">(</span><span class="hl-2">&#39;Missing name.&#39;</span><span class="hl-1">)[</span><span class="hl-4">0</span><span class="hl-1">];</span><br/><br/><span class="hl-1">    </span><span class="hl-0">f</span><span class="hl-1">(</span><span class="hl-2">&#39;Riker&#39;</span><span class="hl-1">); </span><span class="hl-3">// &#39;R&#39;</span><br/><span class="hl-1">    </span><span class="hl-0">g</span><span class="hl-1">(</span><span class="hl-2">&#39;Riker&#39;</span><span class="hl-1">); </span><span class="hl-3">// &#39;R&#39;</span><br/><br/><span class="hl-1">    </span><span class="hl-0">f</span><span class="hl-1">(</span><span class="hl-5">undefined</span><span class="hl-1">); </span><span class="hl-3">// exception thrown</span><br/><span class="hl-1">    </span><span class="hl-0">g</span><span class="hl-1">(</span><span class="hl-5">undefined</span><span class="hl-1">); </span><span class="hl-3">// exception thrown</span>
 </code></pre>
-				<a href="#onboth" id="onboth" style="color: inherit; text-decoration: none;">
-					<h2>onBoth</h2>
-				</a>
-				<pre><code class="language-typescript"><span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #795E26">fireMissiles</span><span style="color: #000000"> = () </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> { </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;FIRING!&#039;</span><span style="color: #000000">); };</span>
-<span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #795E26">printSuccess</span><span style="color: #000000"> = (</span><span style="color: #001080">x</span><span style="color: #000000">: </span><span style="color: #267F99">string</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> { </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000">); };</span>
 
-<span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #795E26">handleMoveVanilla</span><span style="color: #000000"> = (</span><span style="color: #001080">usersMove</span><span style="color: #000000">?: </span><span style="color: #267F99">string</span><span style="color: #000000">): </span><span style="color: #267F99">void</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> { </span><span style="color: #AF00DB">if</span><span style="color: #000000"> (</span><span style="color: #001080">usersMove</span><span style="color: #000000">) </span><span style="color: #795E26">printSuccess</span><span style="color: #000000">(</span><span style="color: #001080">usersMove</span><span style="color: #000000">); </span><span style="color: #AF00DB">else</span><span style="color: #000000"> </span><span style="color: #795E26">fireMissiles</span><span style="color: #000000">(); };</span>
-<span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #795E26">handleMove</span><span style="color: #000000"> = (</span><span style="color: #001080">usersMove</span><span style="color: #000000">?: </span><span style="color: #267F99">string</span><span style="color: #000000">): </span><span style="color: #267F99">void</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #001080">usersMove</span><span style="color: #000000">).</span><span style="color: #795E26">onBoth</span><span style="color: #000000">(</span><span style="color: #001080">printSuccess</span><span style="color: #000000">, </span><span style="color: #001080">fireMissiles</span><span style="color: #000000">).</span><span style="color: #001080">end</span><span style="color: #000000">;</span>
-
-<span style="color: #000000">    </span><span style="color: #795E26">handleMoveVanilla</span><span style="color: #000000">(); </span><span style="color: #008000">// prints FIRING!</span>
-<span style="color: #000000">    </span><span style="color: #795E26">handleMove</span><span style="color: #000000">(); </span><span style="color: #008000">// prints FIRING!</span>
-<span style="color: #000000">    </span><span style="color: #795E26">handleMoveVanilla</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;Build a pylon.&#039;</span><span style="color: #000000">); </span><span style="color: #008000">// prints Build a pylon.</span>
-<span style="color: #000000">    </span><span style="color: #795E26">handleMove</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;Build a pylon.&#039;</span><span style="color: #000000">); </span><span style="color: #008000">// prints Build a pylon.</span>
+<a href="#onboth" id="onboth" style="color: inherit; text-decoration: none;">
+  <h2>onBoth</h2>
+</a>
+<pre><code class="language-typescript"><span class="hl-1">    </span><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-0">fireMissiles</span><span class="hl-1"> = () </span><span class="hl-5">=&gt;</span><span class="hl-1"> { </span><span class="hl-7">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-2">&#39;FIRING!&#39;</span><span class="hl-1">); };</span><br/><span class="hl-1">    </span><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-0">printSuccess</span><span class="hl-1"> = (</span><span class="hl-7">x</span><span class="hl-1">: </span><span class="hl-6">string</span><span class="hl-1">) </span><span class="hl-5">=&gt;</span><span class="hl-1"> { </span><span class="hl-7">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-7">x</span><span class="hl-1">); };</span><br/><br/><span class="hl-1">    </span><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-0">handleMoveVanilla</span><span class="hl-1"> = (</span><span class="hl-7">usersMove</span><span class="hl-1">?: </span><span class="hl-6">string</span><span class="hl-1">): </span><span class="hl-6">void</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> { </span><span class="hl-10">if</span><span class="hl-1"> (</span><span class="hl-7">usersMove</span><span class="hl-1">) </span><span class="hl-0">printSuccess</span><span class="hl-1">(</span><span class="hl-7">usersMove</span><span class="hl-1">); </span><span class="hl-10">else</span><span class="hl-1"> </span><span class="hl-0">fireMissiles</span><span class="hl-1">(); };</span><br/><span class="hl-1">    </span><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-0">handleMove</span><span class="hl-1"> = (</span><span class="hl-7">usersMove</span><span class="hl-1">?: </span><span class="hl-6">string</span><span class="hl-1">): </span><span class="hl-6">void</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-0">opt</span><span class="hl-1">(</span><span class="hl-7">usersMove</span><span class="hl-1">).</span><span class="hl-0">onBoth</span><span class="hl-1">(</span><span class="hl-7">printSuccess</span><span class="hl-1">, </span><span class="hl-7">fireMissiles</span><span class="hl-1">).</span><span class="hl-7">end</span><span class="hl-1">;</span><br/><br/><span class="hl-1">    </span><span class="hl-0">handleMoveVanilla</span><span class="hl-1">(); </span><span class="hl-3">// prints FIRING!</span><br/><span class="hl-1">    </span><span class="hl-0">handleMove</span><span class="hl-1">(); </span><span class="hl-3">// prints FIRING!</span><br/><span class="hl-1">    </span><span class="hl-0">handleMoveVanilla</span><span class="hl-1">(</span><span class="hl-2">&#39;Build a pylon.&#39;</span><span class="hl-1">); </span><span class="hl-3">// prints Build a pylon.</span><br/><span class="hl-1">    </span><span class="hl-0">handleMove</span><span class="hl-1">(</span><span class="hl-2">&#39;Build a pylon.&#39;</span><span class="hl-1">); </span><span class="hl-3">// prints Build a pylon.</span>
 </code></pre>
-				<a href="#more-advanced" id="more-advanced" style="color: inherit; text-decoration: none;">
-					<h2>More advanced</h2>
-				</a>
-				<pre><code class="language-typescript"><span style="color: #0000FF">interface</span><span style="color: #000000"> </span><span style="color: #267F99">Person</span><span style="color: #000000"> {</span>
-<span style="color: #000000">  </span><span style="color: #001080">name</span><span style="color: #000000">: </span><span style="color: #267F99">string</span><span style="color: #000000">;</span>
-<span style="color: #000000">  </span><span style="color: #001080">surname</span><span style="color: #000000">: </span><span style="color: #267F99">string</span><span style="color: #000000"> | </span><span style="color: #267F99">null</span><span style="color: #000000">;</span>
-<span style="color: #000000">}</span>
 
-<span style="color: #0000FF">type</span><span style="color: #000000"> </span><span style="color: #267F99">Db</span><span style="color: #000000"> = { [</span><span style="color: #001080">_</span><span style="color: #000000">: </span><span style="color: #267F99">string</span><span style="color: #000000">]: </span><span style="color: #267F99">Person</span><span style="color: #000000"> };</span>
-
-<span style="color: #008000">/* ... */</span>
-
-<span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">db</span><span style="color: #000000">: </span><span style="color: #267F99">Db</span><span style="color: #000000"> = {</span>
-<span style="color: #000000">      </span><span style="color: #A31515">&#039;0&#039;</span><span style="color: #001080">:</span><span style="color: #000000"> {</span><span style="color: #001080">name:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;John&#039;</span><span style="color: #000000">, </span><span style="color: #001080">surname:</span><span style="color: #000000"> </span><span style="color: #0000FF">null</span><span style="color: #000000">},</span>
-<span style="color: #000000">      </span><span style="color: #A31515">&#039;1&#039;</span><span style="color: #001080">:</span><span style="color: #000000"> {</span><span style="color: #001080">name:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;Worf&#039;</span><span style="color: #000000">, </span><span style="color: #001080">surname:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;Mercer&#039;</span><span style="color: #000000">}</span>
-<span style="color: #000000">    };</span>
-
-<span style="color: #000000">    </span><span style="color: #008000">// without</span>
-<span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #795E26">f</span><span style="color: #000000"> = (</span><span style="color: #001080">id</span><span style="color: #000000">: </span><span style="color: #267F99">number</span><span style="color: #000000"> | </span><span style="color: #267F99">undefined</span><span style="color: #000000">): </span><span style="color: #267F99">string</span><span style="color: #000000"> | </span><span style="color: #267F99">null</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
-<span style="color: #000000">      </span><span style="color: #AF00DB">if</span><span style="color: #000000"> (</span><span style="color: #001080">id</span><span style="color: #000000"> === </span><span style="color: #0000FF">undefined</span><span style="color: #000000">) { </span><span style="color: #AF00DB">return</span><span style="color: #000000"> </span><span style="color: #0000FF">null</span><span style="color: #000000">; }</span>
-<span style="color: #000000">      </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">item</span><span style="color: #000000"> = </span><span style="color: #001080">db</span><span style="color: #000000">[</span><span style="color: #001080">id</span><span style="color: #000000">];</span>
-<span style="color: #000000">      </span><span style="color: #AF00DB">if</span><span style="color: #000000"> (!</span><span style="color: #001080">item</span><span style="color: #000000">) { </span><span style="color: #AF00DB">return</span><span style="color: #000000"> </span><span style="color: #0000FF">null</span><span style="color: #000000">; }</span>
-<span style="color: #000000">      </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">surname</span><span style="color: #000000"> = </span><span style="color: #001080">item</span><span style="color: #000000">.</span><span style="color: #001080">surname</span><span style="color: #000000"> ? </span><span style="color: #001080">item</span><span style="color: #000000">.</span><span style="color: #001080">surname</span><span style="color: #000000">.</span><span style="color: #795E26">toUpperCase</span><span style="color: #000000">() : </span><span style="color: #A31515">&#039;&lt;missing&gt;&#039;</span><span style="color: #000000">;</span>
-<span style="color: #000000">      </span><span style="color: #AF00DB">return</span><span style="color: #000000"> </span><span style="color: #001080">item</span><span style="color: #000000">.</span><span style="color: #001080">name</span><span style="color: #000000"> + </span><span style="color: #A31515">&#039; &#039;</span><span style="color: #000000"> + </span><span style="color: #001080">surname</span><span style="color: #000000">;</span>
-<span style="color: #000000">    };</span>
-
-<span style="color: #000000">    </span><span style="color: #008000">// with</span>
-<span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #795E26">g</span><span style="color: #000000"> = (</span><span style="color: #001080">id</span><span style="color: #000000">: </span><span style="color: #267F99">number</span><span style="color: #000000"> | </span><span style="color: #267F99">undefined</span><span style="color: #000000">): </span><span style="color: #267F99">string</span><span style="color: #000000"> | </span><span style="color: #267F99">null</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #001080">id</span><span style="color: #000000">)</span>
-<span style="color: #000000">      .</span><span style="color: #795E26">chainToOpt</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">db</span><span style="color: #000000">[</span><span style="color: #001080">x</span><span style="color: #000000">])</span>
-<span style="color: #000000">      .</span><span style="color: #795E26">map</span><span style="color: #000000">(</span><span style="color: #001080">item</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">item</span><span style="color: #000000">.</span><span style="color: #001080">name</span><span style="color: #000000"> + </span><span style="color: #A31515">&#039; &#039;</span><span style="color: #000000"> + </span><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #001080">item</span><span style="color: #000000">.</span><span style="color: #001080">surname</span><span style="color: #000000">).</span><span style="color: #795E26">map</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">x</span><span style="color: #000000">.</span><span style="color: #795E26">toUpperCase</span><span style="color: #000000">()).</span><span style="color: #795E26">orElse</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;&lt;missing&gt;&#039;</span><span style="color: #000000">))</span>
-<span style="color: #000000">      .</span><span style="color: #795E26">orNull</span><span style="color: #000000">();</span>
-
-<span style="color: #000000">    </span><span style="color: #795E26">f</span><span style="color: #000000">(</span><span style="color: #098658">0</span><span style="color: #000000">); </span><span style="color: #008000">// &#039;John &lt;missing&gt;&#039;</span>
-<span style="color: #000000">    </span><span style="color: #795E26">g</span><span style="color: #000000">(</span><span style="color: #098658">0</span><span style="color: #000000">); </span><span style="color: #008000">// &#039;John &lt;missing&gt;&#039;</span>
-
-<span style="color: #000000">    </span><span style="color: #795E26">f</span><span style="color: #000000">(</span><span style="color: #098658">1</span><span style="color: #000000">); </span><span style="color: #008000">// &#039;Worf MERCER&#039;</span>
-<span style="color: #000000">    </span><span style="color: #795E26">g</span><span style="color: #000000">(</span><span style="color: #098658">1</span><span style="color: #000000">); </span><span style="color: #008000">// &#039;Worf MERCER&#039;</span>
-<span style="color: #000000">    </span>
-<span style="color: #000000">    </span><span style="color: #795E26">f</span><span style="color: #000000">(</span><span style="color: #098658">2</span><span style="color: #000000">); </span><span style="color: #008000">// null</span>
-<span style="color: #000000">    </span><span style="color: #795E26">g</span><span style="color: #000000">(</span><span style="color: #098658">2</span><span style="color: #000000">); </span><span style="color: #008000">// null</span>
+<a href="#more-advanced" id="more-advanced" style="color: inherit; text-decoration: none;">
+  <h2>More advanced</h2>
+</a>
+<pre><code class="language-typescript"><span class="hl-5">interface</span><span class="hl-1"> </span><span class="hl-6">Person</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-7">name</span><span class="hl-1">: </span><span class="hl-6">string</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-7">surname</span><span class="hl-1">: </span><span class="hl-6">string</span><span class="hl-1"> | </span><span class="hl-6">null</span><span class="hl-1">;</span><br/><span class="hl-1">}</span><br/><br/><span class="hl-5">type</span><span class="hl-1"> </span><span class="hl-6">Db</span><span class="hl-1"> = { [</span><span class="hl-7">_</span><span class="hl-1">: </span><span class="hl-6">string</span><span class="hl-1">]: </span><span class="hl-6">Person</span><span class="hl-1"> };</span><br/><br/><span class="hl-3">/* ... */</span><br/><br/><span class="hl-1">    </span><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-8">db</span><span class="hl-1">: </span><span class="hl-6">Db</span><span class="hl-1"> = {</span><br/><span class="hl-1">      </span><span class="hl-2">&#39;0&#39;</span><span class="hl-7">:</span><span class="hl-1"> {</span><span class="hl-7">name:</span><span class="hl-1"> </span><span class="hl-2">&#39;John&#39;</span><span class="hl-1">, </span><span class="hl-7">surname:</span><span class="hl-1"> </span><span class="hl-5">null</span><span class="hl-1">},</span><br/><span class="hl-1">      </span><span class="hl-2">&#39;1&#39;</span><span class="hl-7">:</span><span class="hl-1"> {</span><span class="hl-7">name:</span><span class="hl-1"> </span><span class="hl-2">&#39;Worf&#39;</span><span class="hl-1">, </span><span class="hl-7">surname:</span><span class="hl-1"> </span><span class="hl-2">&#39;Mercer&#39;</span><span class="hl-1">}</span><br/><span class="hl-1">    };</span><br/><br/><span class="hl-1">    </span><span class="hl-3">// without</span><br/><span class="hl-1">    </span><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-0">f</span><span class="hl-1"> = (</span><span class="hl-7">id</span><span class="hl-1">: </span><span class="hl-6">number</span><span class="hl-1"> | </span><span class="hl-6">undefined</span><span class="hl-1">): </span><span class="hl-6">string</span><span class="hl-1"> | </span><span class="hl-6">null</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">      </span><span class="hl-10">if</span><span class="hl-1"> (</span><span class="hl-7">id</span><span class="hl-1"> === </span><span class="hl-5">undefined</span><span class="hl-1">) { </span><span class="hl-10">return</span><span class="hl-1"> </span><span class="hl-5">null</span><span class="hl-1">; }</span><br/><span class="hl-1">      </span><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-8">item</span><span class="hl-1"> = </span><span class="hl-7">db</span><span class="hl-1">[</span><span class="hl-7">id</span><span class="hl-1">];</span><br/><span class="hl-1">      </span><span class="hl-10">if</span><span class="hl-1"> (!</span><span class="hl-7">item</span><span class="hl-1">) { </span><span class="hl-10">return</span><span class="hl-1"> </span><span class="hl-5">null</span><span class="hl-1">; }</span><br/><span class="hl-1">      </span><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-8">surname</span><span class="hl-1"> = </span><span class="hl-7">item</span><span class="hl-1">.</span><span class="hl-7">surname</span><span class="hl-1"> ? </span><span class="hl-7">item</span><span class="hl-1">.</span><span class="hl-7">surname</span><span class="hl-1">.</span><span class="hl-0">toUpperCase</span><span class="hl-1">() : </span><span class="hl-2">&#39;&lt;missing&gt;&#39;</span><span class="hl-1">;</span><br/><span class="hl-1">      </span><span class="hl-10">return</span><span class="hl-1"> </span><span class="hl-7">item</span><span class="hl-1">.</span><span class="hl-7">name</span><span class="hl-1"> + </span><span class="hl-2">&#39; &#39;</span><span class="hl-1"> + </span><span class="hl-7">surname</span><span class="hl-1">;</span><br/><span class="hl-1">    };</span><br/><br/><span class="hl-1">    </span><span class="hl-3">// with</span><br/><span class="hl-1">    </span><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-0">g</span><span class="hl-1"> = (</span><span class="hl-7">id</span><span class="hl-1">: </span><span class="hl-6">number</span><span class="hl-1"> | </span><span class="hl-6">undefined</span><span class="hl-1">): </span><span class="hl-6">string</span><span class="hl-1"> | </span><span class="hl-6">null</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-0">opt</span><span class="hl-1">(</span><span class="hl-7">id</span><span class="hl-1">)</span><br/><span class="hl-1">      .</span><span class="hl-0">chainToOpt</span><span class="hl-1">(</span><span class="hl-7">x</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-7">db</span><span class="hl-1">[</span><span class="hl-7">x</span><span class="hl-1">])</span><br/><span class="hl-1">      .</span><span class="hl-0">map</span><span class="hl-1">(</span><span class="hl-7">item</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-7">item</span><span class="hl-1">.</span><span class="hl-7">name</span><span class="hl-1"> + </span><span class="hl-2">&#39; &#39;</span><span class="hl-1"> + </span><span class="hl-0">opt</span><span class="hl-1">(</span><span class="hl-7">item</span><span class="hl-1">.</span><span class="hl-7">surname</span><span class="hl-1">).</span><span class="hl-0">map</span><span class="hl-1">(</span><span class="hl-7">x</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-7">x</span><span class="hl-1">.</span><span class="hl-0">toUpperCase</span><span class="hl-1">()).</span><span class="hl-0">orElse</span><span class="hl-1">(</span><span class="hl-2">&#39;&lt;missing&gt;&#39;</span><span class="hl-1">))</span><br/><span class="hl-1">      .</span><span class="hl-0">orNull</span><span class="hl-1">();</span><br/><br/><span class="hl-1">    </span><span class="hl-0">f</span><span class="hl-1">(</span><span class="hl-4">0</span><span class="hl-1">); </span><span class="hl-3">// &#39;John &lt;missing&gt;&#39;</span><br/><span class="hl-1">    </span><span class="hl-0">g</span><span class="hl-1">(</span><span class="hl-4">0</span><span class="hl-1">); </span><span class="hl-3">// &#39;John &lt;missing&gt;&#39;</span><br/><br/><span class="hl-1">    </span><span class="hl-0">f</span><span class="hl-1">(</span><span class="hl-4">1</span><span class="hl-1">); </span><span class="hl-3">// &#39;Worf MERCER&#39;</span><br/><span class="hl-1">    </span><span class="hl-0">g</span><span class="hl-1">(</span><span class="hl-4">1</span><span class="hl-1">); </span><span class="hl-3">// &#39;Worf MERCER&#39;</span><br/><span class="hl-1">    </span><br/><span class="hl-1">    </span><span class="hl-0">f</span><span class="hl-1">(</span><span class="hl-4">2</span><span class="hl-1">); </span><span class="hl-3">// null</span><br/><span class="hl-1">    </span><span class="hl-0">g</span><span class="hl-1">(</span><span class="hl-4">2</span><span class="hl-1">); </span><span class="hl-3">// null</span>
 </code></pre>
-				<a href="#looking-inside-wrapped-values" id="looking-inside-wrapped-values" style="color: inherit; text-decoration: none;">
-					<h2>Looking inside wrapped values</h2>
-				</a>
-				<p>You can &quot;zoom&quot; inside an (optional) structure of a value inside an opt.
-					<code>prop</code> allows you to look inside fields (which can be optional).
-				You can use <code>at</code> to focus on an index (possibly non-existing or holding an empty value) when value inside opt is an array.</p>
-				<pre><code class="language-ts"><span style="color: #0000FF">interface</span><span style="color: #000000"> </span><span style="color: #267F99">House</span><span style="color: #000000"> {</span>
-<span style="color: #000000">  </span><span style="color: #001080">occupantIds</span><span style="color: #000000">?: </span><span style="color: #267F99">number</span><span style="color: #000000">[];</span>
-<span style="color: #000000">}</span>
 
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">h</span><span style="color: #000000"> = {</span>
-<span style="color: #000000">  </span><span style="color: #001080">occupantIds:</span><span style="color: #000000"> [</span><span style="color: #098658">7</span><span style="color: #000000">],</span>
-<span style="color: #000000">} </span><span style="color: #AF00DB">as</span><span style="color: #000000"> </span><span style="color: #267F99">House</span><span style="color: #000000"> | </span><span style="color: #267F99">undefined</span><span style="color: #000000">;</span>
+<a href="#looking-inside-wrapped-values" id="looking-inside-wrapped-values" style="color: inherit; text-decoration: none;">
+  <h2>Looking inside wrapped values</h2>
+</a>
+<p>You can &quot;zoom&quot; inside an (optional) structure of a value inside an opt.
+<code>prop</code> allows you to look inside fields (which can be optional).
+You can use <code>at</code> to focus on an index (possibly non-existing or holding an empty value) when value inside opt is an array.</p>
+<pre><code class="language-ts"><span class="hl-5">interface</span><span class="hl-1"> </span><span class="hl-6">House</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-7">occupantIds</span><span class="hl-1">?: </span><span class="hl-6">number</span><span class="hl-1">[];</span><br/><span class="hl-1">}</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-8">h</span><span class="hl-1"> = {</span><br/><span class="hl-1">  </span><span class="hl-7">occupantIds:</span><span class="hl-1"> [</span><span class="hl-4">7</span><span class="hl-1">],</span><br/><span class="hl-1">} </span><span class="hl-10">as</span><span class="hl-1"> </span><span class="hl-6">House</span><span class="hl-1"> | </span><span class="hl-6">undefined</span><span class="hl-1">;</span><br/><br/><span class="hl-0">opt</span><span class="hl-1">(</span><span class="hl-7">h</span><span class="hl-1">) </span><span class="hl-3">// Some({ occupantIds: [7] }) :: Opt&lt;House&gt;</span><br/><span class="hl-1">  .</span><span class="hl-0">prop</span><span class="hl-1">(</span><span class="hl-2">&#39;occupantIds&#39;</span><span class="hl-1">) </span><span class="hl-3">// Some([7]) :: Opt&lt;number[]&gt;</span><br/><span class="hl-1">  .</span><span class="hl-0">at</span><span class="hl-1">(</span><span class="hl-4">0</span><span class="hl-1">) </span><span class="hl-3">// Some(7) :: Opt&lt;number&gt;</span><br/><span class="hl-1">  .</span><span class="hl-0">orElse</span><span class="hl-1">(-</span><span class="hl-4">1</span><span class="hl-1">) </span><span class="hl-3">// 7 :: number</span><br/><br/><span class="hl-0">opt</span><span class="hl-1">(</span><span class="hl-7">h</span><span class="hl-1">) </span><span class="hl-3">// Some({ occupantIds: [7] }) :: Opt&lt;House&gt;</span><br/><span class="hl-1">  .</span><span class="hl-0">prop</span><span class="hl-1">(</span><span class="hl-2">&#39;occupantIds&#39;</span><span class="hl-1">) </span><span class="hl-3">// Some([7]) :: Opt&lt;number[]&gt;</span><br/><span class="hl-1">  .</span><span class="hl-0">at</span><span class="hl-1">(</span><span class="hl-4">99</span><span class="hl-1">) </span><span class="hl-3">// None :: Opt&lt;number&gt; (nonexisting index)</span><br/><span class="hl-1">  .</span><span class="hl-0">orElse</span><span class="hl-1">(-</span><span class="hl-4">1</span><span class="hl-1">) </span><span class="hl-3">// -1 :: number</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-8">h2</span><span class="hl-1"> = {} </span><span class="hl-10">as</span><span class="hl-1"> </span><span class="hl-6">House</span><span class="hl-1"> | </span><span class="hl-6">undefined</span><span class="hl-1">;</span><br/><span class="hl-0">opt</span><span class="hl-1">(</span><span class="hl-7">h2</span><span class="hl-1">) </span><span class="hl-3">// Some({ }) :: Opt&lt;House&gt;</span><br/><span class="hl-1">  .</span><span class="hl-0">prop</span><span class="hl-1">(</span><span class="hl-2">&#39;occupantIds&#39;</span><span class="hl-1">) </span><span class="hl-3">// None :: Opt&lt;number[]&gt; (field is undefined)</span><br/><span class="hl-1">  .</span><span class="hl-0">at</span><span class="hl-1">(</span><span class="hl-4">0</span><span class="hl-1">) </span><span class="hl-3">// None :: Opt&lt;number&gt;</span><br/><span class="hl-1">  .</span><span class="hl-0">orElse</span><span class="hl-1">(-</span><span class="hl-4">1</span><span class="hl-1">) </span><span class="hl-3">// -1 :: number</span>
+</code></pre>
 
-<span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #001080">h</span><span style="color: #000000">) </span><span style="color: #008000">// Some({ occupantIds: [7] }) :: Opt&lt;House&gt;</span>
-<span style="color: #000000">  .</span><span style="color: #795E26">prop</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;occupantIds&#039;</span><span style="color: #000000">) </span><span style="color: #008000">// Some([7]) :: Opt&lt;number[]&gt;</span>
-<span style="color: #000000">  .</span><span style="color: #795E26">at</span><span style="color: #000000">(</span><span style="color: #098658">0</span><span style="color: #000000">) </span><span style="color: #008000">// Some(7) :: Opt&lt;number&gt;</span>
-<span style="color: #000000">  .</span><span style="color: #795E26">orElse</span><span style="color: #000000">(-</span><span style="color: #098658">1</span><span style="color: #000000">) </span><span style="color: #008000">// 7 :: number</span>
+<a href="#documentation" id="documentation" style="color: inherit; text-decoration: none;">
+  <h1>Documentation</h1>
+</a>
+<p>All methods are documented, if you don&#39;t see a description please make sure you are reading the base class page - <code>Opt</code>.</p>
+<ul>
+<li>Main <a href="https://glcdn.githack.com/monnef/ts-opt/-/raw/v3.1.0/doc/modules/opt.html">Opt</a> class</li>
+<li><a href="https://glcdn.githack.com/monnef/ts-opt/-/raw/v3.1.0/doc/modules.html">Module</a> (constructors and helper functions)</li>
+</ul>
 
-<span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #001080">h</span><span style="color: #000000">) </span><span style="color: #008000">// Some({ occupantIds: [7] }) :: Opt&lt;House&gt;</span>
-<span style="color: #000000">  .</span><span style="color: #795E26">prop</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;occupantIds&#039;</span><span style="color: #000000">) </span><span style="color: #008000">// Some([7]) :: Opt&lt;number[]&gt;</span>
-<span style="color: #000000">  .</span><span style="color: #795E26">at</span><span style="color: #000000">(</span><span style="color: #098658">99</span><span style="color: #000000">) </span><span style="color: #008000">// None :: Opt&lt;number&gt; (nonexisting index)</span>
-<span style="color: #000000">  .</span><span style="color: #795E26">orElse</span><span style="color: #000000">(-</span><span style="color: #098658">1</span><span style="color: #000000">) </span><span style="color: #008000">// -1 :: number</span>
+<a href="#pitfalls" id="pitfalls" style="color: inherit; text-decoration: none;">
+  <h1>Pitfalls</h1>
+</a>
 
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">h2</span><span style="color: #000000"> = {} </span><span style="color: #AF00DB">as</span><span style="color: #000000"> </span><span style="color: #267F99">House</span><span style="color: #000000"> | </span><span style="color: #267F99">undefined</span><span style="color: #000000">;</span>
-<span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #001080">h2</span><span style="color: #000000">) </span><span style="color: #008000">// Some({ }) :: Opt&lt;House&gt;</span>
-<span style="color: #000000">  .</span><span style="color: #795E26">prop</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;occupantIds&#039;</span><span style="color: #000000">) </span><span style="color: #008000">// None :: Opt&lt;number[]&gt; (field is undefined)</span>
-<span style="color: #000000">  .</span><span style="color: #795E26">at</span><span style="color: #000000">(</span><span style="color: #098658">0</span><span style="color: #000000">) </span><span style="color: #008000">// None :: Opt&lt;number&gt;</span>
-<span style="color: #000000">  .</span><span style="color: #795E26">orElse</span><span style="color: #000000">(-</span><span style="color: #098658">1</span><span style="color: #000000">) </span><span style="color: #008000">// -1 :: number</span>
+<a href="#none-without-explicit-type" id="none-without-explicit-type" style="color: inherit; text-decoration: none;">
+  <h2><code>None</code> without explicit type</h2>
+</a>
+<pre><code class="language-ts"><span class="hl-5">let</span><span class="hl-1"> </span><span class="hl-7">a</span><span class="hl-1"> = </span><span class="hl-7">none</span><span class="hl-1">;</span><br/><span class="hl-7">a</span><span class="hl-1"> = </span><span class="hl-0">opt</span><span class="hl-1">(</span><span class="hl-4">1</span><span class="hl-1">); </span><span class="hl-3">// TS2741: Property &#39;&#39;@@type&#39;&#39; is missing in type &#39;Opt&lt;number&gt;&#39; but required in type &#39;None&lt;any&gt;&#39;.</span>
 </code></pre>
-				<a href="#documentation" id="documentation" style="color: inherit; text-decoration: none;">
-					<h1>Documentation</h1>
-				</a>
-				<p>All methods are documented, if you don&#39;t see a description please make sure you are reading the base class page - <code>Opt</code>.</p>
-				<ul>
-					<li>Main <a href="https://glcdn.githack.com/monnef/ts-opt/-/raw/v3.1.0/doc/modules/opt.html">Opt</a> class</li>
-					<li><a href="https://glcdn.githack.com/monnef/ts-opt/-/raw/v3.1.0/doc/modules.html">Module</a> (constructors and helper functions)</li>
-				</ul>
-				<a href="#pitfalls" id="pitfalls" style="color: inherit; text-decoration: none;">
-					<h1>Pitfalls</h1>
-				</a>
-				<a href="#none-without-explicit-type" id="none-without-explicit-type" style="color: inherit; text-decoration: none;">
-					<h2><code>None</code> without explicit type</h2>
-				</a>
-				<pre><code class="language-ts"><span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">a</span><span style="color: #000000"> = </span><span style="color: #001080">none</span><span style="color: #000000">;</span>
-<span style="color: #001080">a</span><span style="color: #000000"> = </span><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #098658">1</span><span style="color: #000000">); </span><span style="color: #008000">// TS2741: Property &#039;&#039;@@type&#039;&#039; is missing in type &#039;Opt&lt;number&gt;&#039; but required in type &#039;None&lt;any&gt;&#039;.</span>
+<p>The solution is to explicitly state the type:</p>
+<pre><code class="language-ts"><span class="hl-5">let</span><span class="hl-1"> </span><span class="hl-7">a</span><span class="hl-1">: </span><span class="hl-6">Opt</span><span class="hl-1">&lt;</span><span class="hl-6">number</span><span class="hl-1">&gt; = </span><span class="hl-7">none</span><span class="hl-1">;</span><br/><span class="hl-7">a</span><span class="hl-1"> = </span><span class="hl-0">opt</span><span class="hl-1">(</span><span class="hl-4">1</span><span class="hl-1">);</span>
 </code></pre>
-				<p>The solution is to explicitly state the type:</p>
-				<pre><code class="language-ts"><span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">a</span><span style="color: #000000">: </span><span style="color: #267F99">Opt</span><span style="color: #000000">&lt;</span><span style="color: #267F99">number</span><span style="color: #000000">&gt; = </span><span style="color: #001080">none</span><span style="color: #000000">;</span>
-<span style="color: #001080">a</span><span style="color: #000000"> = </span><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #098658">1</span><span style="color: #000000">);</span>
-</code></pre>
-				<p>While it&#39;s recommended to not use <code>let</code>, so this example may seem unrealistic, a similar issue may happen in other places as well (e.g. default arguments of functions or &quot;exact&quot; type via <code>as const</code>).</p>
-				<a href="#empty-value-in-some" id="empty-value-in-some" style="color: inherit; text-decoration: none;">
-					<h2>Empty value in <code>Some</code></h2>
-				</a>
-				<p>Be careful to not misuse methods/functions like <code>map</code> and end up with <code>Opt</code>s like <code>Opt&lt;string | null&gt;</code> or <code>Opt&lt;number | undefined&gt;</code>. Such <code>Opt</code>s are ticking bombs, ready to bite a coworker or later even yourself.</p>
-				<p>Let&#39;s have a simple example of a function returning a <code>name</code>. When the name is missing (either whole object is <code>undefined</code> or the field), we want it to return a default name, in this case <code>&#39;John&#39;</code>.</p>
-				<pre><code class="language-ts"><span style="color: #0000FF">interface</span><span style="color: #000000"> </span><span style="color: #267F99">TestUser</span><span style="color: #000000"> {</span>
-<span style="color: #000000">  </span><span style="color: #001080">name</span><span style="color: #000000">?: </span><span style="color: #267F99">string</span><span style="color: #000000">;</span>
-<span style="color: #000000">}</span>
+<p>While it&#39;s recommended to not use <code>let</code>, so this example may seem unrealistic, a similar issue may happen in other places as well (e.g. default arguments of functions or &quot;exact&quot; type via <code>as const</code>).</p>
 
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #795E26">getNameOrDefault</span><span style="color: #000000"> = (</span><span style="color: #001080">x</span><span style="color: #000000">?: </span><span style="color: #267F99">TestUser</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000">).</span><span style="color: #795E26">map</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">x</span><span style="color: #000000">.</span><span style="color: #001080">name</span><span style="color: #000000">).</span><span style="color: #795E26">orElse</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;John&#039;</span><span style="color: #000000">);</span>
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">nameKon</span><span style="color: #000000"> = </span><span style="color: #795E26">getNameOrDefault</span><span style="color: #000000">({</span><span style="color: #001080">name:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;Kon&#039;</span><span style="color: #000000">}); </span><span style="color: #008000">// &#039;Kon&#039;</span>
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">nameDefaultFromUndefined</span><span style="color: #000000"> = </span><span style="color: #795E26">getNameOrDefault</span><span style="color: #000000">(); </span><span style="color: #008000">// &#039;John&#039;</span>
+<a href="#empty-value-in-some" id="empty-value-in-some" style="color: inherit; text-decoration: none;">
+  <h2>Empty value in <code>Some</code></h2>
+</a>
+<p>Be careful to not misuse methods/functions like <code>map</code> and end up with <code>Opt</code>s like <code>Opt&lt;string | null&gt;</code> or <code>Opt&lt;number | undefined&gt;</code>. Such <code>Opt</code>s are ticking bombs, ready to bite a coworker or later even yourself.</p>
+<p>Let&#39;s have a simple example of a function returning a <code>name</code>. When the name is missing (either whole object is <code>undefined</code> or the field), we want it to return a default name, in this case <code>&#39;John&#39;</code>.</p>
+<pre><code class="language-ts"><span class="hl-5">interface</span><span class="hl-1"> </span><span class="hl-6">TestUser</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-7">name</span><span class="hl-1">?: </span><span class="hl-6">string</span><span class="hl-1">;</span><br/><span class="hl-1">}</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-0">getNameOrDefault</span><span class="hl-1"> = (</span><span class="hl-7">x</span><span class="hl-1">?: </span><span class="hl-6">TestUser</span><span class="hl-1">) </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-0">opt</span><span class="hl-1">(</span><span class="hl-7">x</span><span class="hl-1">).</span><span class="hl-0">map</span><span class="hl-1">(</span><span class="hl-7">x</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-7">x</span><span class="hl-1">.</span><span class="hl-7">name</span><span class="hl-1">).</span><span class="hl-0">orElse</span><span class="hl-1">(</span><span class="hl-2">&#39;John&#39;</span><span class="hl-1">);</span><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-8">nameKon</span><span class="hl-1"> = </span><span class="hl-0">getNameOrDefault</span><span class="hl-1">({</span><span class="hl-7">name:</span><span class="hl-1"> </span><span class="hl-2">&#39;Kon&#39;</span><span class="hl-1">}); </span><span class="hl-3">// &#39;Kon&#39;</span><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-8">nameDefaultFromUndefined</span><span class="hl-1"> = </span><span class="hl-0">getNameOrDefault</span><span class="hl-1">(); </span><span class="hl-3">// &#39;John&#39;</span>
 </code></pre>
-				<p>It seems to be working. But there is a catch, when you pass an empty value in the <code>name</code> field, you will get <code>undefined</code>:</p>
-				<pre><code class="language-ts"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">nameDefaultFromEmpty</span><span style="color: #000000"> = </span><span style="color: #795E26">getNameOrDefault</span><span style="color: #000000">({}); </span><span style="color: #008000">// undefined</span>
+<p>It seems to be working. But there is a catch, when you pass an empty value in the <code>name</code> field, you will get <code>undefined</code>:</p>
+<pre><code class="language-ts"><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-8">nameDefaultFromEmpty</span><span class="hl-1"> = </span><span class="hl-0">getNameOrDefault</span><span class="hl-1">({}); </span><span class="hl-3">// undefined</span>
 </code></pre>
-				<p>Types can help us see, what is happening:</p>
-				<pre><code class="language-ts"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #795E26">getNameOrDefault</span><span style="color: #000000"> = (</span><span style="color: #001080">x</span><span style="color: #000000">?: </span><span style="color: #267F99">TestUser</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span>
-<span style="color: #000000">  </span><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000">)              </span><span style="color: #008000">// Opt&lt;TestUser&gt;</span>
-<span style="color: #000000">    .</span><span style="color: #795E26">map</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">x</span><span style="color: #000000">.</span><span style="color: #001080">name</span><span style="color: #000000">) </span><span style="color: #008000">// Opt&lt;string | undefined&gt;</span>
-<span style="color: #000000">    .</span><span style="color: #795E26">orElse</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;John&#039;</span><span style="color: #000000">);  </span><span style="color: #008000">// string | undefined</span>
+<p>Types can help us see, what is happening:</p>
+<pre><code class="language-ts"><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-0">getNameOrDefault</span><span class="hl-1"> = (</span><span class="hl-7">x</span><span class="hl-1">?: </span><span class="hl-6">TestUser</span><span class="hl-1">) </span><span class="hl-5">=&gt;</span><br/><span class="hl-1">  </span><span class="hl-0">opt</span><span class="hl-1">(</span><span class="hl-7">x</span><span class="hl-1">)              </span><span class="hl-3">// Opt&lt;TestUser&gt;</span><br/><span class="hl-1">    .</span><span class="hl-0">map</span><span class="hl-1">(</span><span class="hl-7">x</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-7">x</span><span class="hl-1">.</span><span class="hl-7">name</span><span class="hl-1">) </span><span class="hl-3">// Opt&lt;string | undefined&gt;</span><br/><span class="hl-1">    .</span><span class="hl-0">orElse</span><span class="hl-1">(</span><span class="hl-2">&#39;John&#39;</span><span class="hl-1">);  </span><span class="hl-3">// string | undefined</span>
 </code></pre>
-				<p>The culprit is the <code>map</code> call which operates on (converts, does mapping of) the value inside the <code>Opt</code>. When we want to transform a value inside an <code>Opt</code>, but that transformation may return an empty value (e.g. <code>null</code> or <code>undefined</code>), we <strong>must not</strong> use the <code>map</code>. Otherwise, advantages of <code>Opt</code> are severely diminished.</p>
-				<p>Possible and most general solution is to use the <code>chainToOpt</code>. It behaves same as the <code>map</code>, but when empty values are returned, it flips the whole <code>Opt</code> from <code>Some</code> to <code>None</code>.</p>
-				<pre><code class="language-ts"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #795E26">getNameOrDefault</span><span style="color: #000000"> = (</span><span style="color: #001080">x</span><span style="color: #000000">?: </span><span style="color: #267F99">TestUser</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span>
-<span style="color: #000000">  </span><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000">)                     </span><span style="color: #008000">// Opt&lt;TestUser&gt;</span>
-<span style="color: #000000">    .</span><span style="color: #795E26">chainToOpt</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">x</span><span style="color: #000000">.</span><span style="color: #001080">name</span><span style="color: #000000">) </span><span style="color: #008000">// Opt&lt;string&gt;</span>
-<span style="color: #000000">    .</span><span style="color: #795E26">orElse</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;John&#039;</span><span style="color: #000000">);         </span><span style="color: #008000">// string</span>
+<p>The culprit is the <code>map</code> call which operates on (converts, does mapping of) the value inside the <code>Opt</code>. When we want to transform a value inside an <code>Opt</code>, but that transformation may return an empty value (e.g. <code>null</code> or <code>undefined</code>), we <strong>must not</strong> use the <code>map</code>. Otherwise, advantages of <code>Opt</code> are severely diminished.</p>
+<p>Possible and most general solution is to use the <code>chainToOpt</code>. It behaves same as the <code>map</code>, but when empty values are returned, it flips the whole <code>Opt</code> from <code>Some</code> to <code>None</code>.</p>
+<pre><code class="language-ts"><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-0">getNameOrDefault</span><span class="hl-1"> = (</span><span class="hl-7">x</span><span class="hl-1">?: </span><span class="hl-6">TestUser</span><span class="hl-1">) </span><span class="hl-5">=&gt;</span><br/><span class="hl-1">  </span><span class="hl-0">opt</span><span class="hl-1">(</span><span class="hl-7">x</span><span class="hl-1">)                     </span><span class="hl-3">// Opt&lt;TestUser&gt;</span><br/><span class="hl-1">    .</span><span class="hl-0">chainToOpt</span><span class="hl-1">(</span><span class="hl-7">x</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-7">x</span><span class="hl-1">.</span><span class="hl-7">name</span><span class="hl-1">) </span><span class="hl-3">// Opt&lt;string&gt;</span><br/><span class="hl-1">    .</span><span class="hl-0">orElse</span><span class="hl-1">(</span><span class="hl-2">&#39;John&#39;</span><span class="hl-1">);         </span><span class="hl-3">// string</span><br/><br/><span class="hl-0">getNameOrDefault</span><span class="hl-1">({}); </span><span class="hl-3">// &#39;John&#39;</span>
+</code></pre>
+<p>Another alternative, in this case of &quot;zooming&quot; onto a field (which is quite common), is to use the <code>prop</code> method which also automatically handles possible empty values:</p>
+<pre><code class="language-ts"><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-0">getNameOrDefault</span><span class="hl-1"> = (</span><span class="hl-7">x</span><span class="hl-1">?: </span><span class="hl-6">TestUser</span><span class="hl-1">) </span><span class="hl-5">=&gt;</span><br/><span class="hl-1">  </span><span class="hl-0">opt</span><span class="hl-1">(</span><span class="hl-7">x</span><span class="hl-1">)             </span><span class="hl-3">// Opt&lt;TestUser&gt;</span><br/><span class="hl-1">    .</span><span class="hl-0">prop</span><span class="hl-1">(</span><span class="hl-2">&#39;name&#39;</span><span class="hl-1">)    </span><span class="hl-3">// Opt&lt;string&gt;</span><br/><span class="hl-1">    .</span><span class="hl-0">orElse</span><span class="hl-1">(</span><span class="hl-2">&#39;John&#39;</span><span class="hl-1">); </span><span class="hl-3">// string</span><br/><br/><span class="hl-0">getNameOrDefault</span><span class="hl-1">({}); </span><span class="hl-3">// &#39;John&#39;</span>
+</code></pre>
 
-<span style="color: #795E26">getNameOrDefault</span><span style="color: #000000">({}); </span><span style="color: #008000">// &#039;John&#039;</span>
+<a href="#functional-vs-imperative-methods" id="functional-vs-imperative-methods" style="color: inherit; text-decoration: none;">
+  <h2>Functional vs. imperative methods</h2>
+</a>
+<p>Functional methods (functions) are used when we care about the result and passed function(s) are pure.</p>
+<pre><code class="language-ts"><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-8">res</span><span class="hl-1"> = </span><span class="hl-0">opt</span><span class="hl-1">(</span><span class="hl-4">2</span><span class="hl-1">).</span><span class="hl-0">map</span><span class="hl-1">(</span><span class="hl-7">x</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-7">x</span><span class="hl-1"> * </span><span class="hl-4">5</span><span class="hl-1">); </span><span class="hl-3">// res is some(10) and is used later in code</span>
 </code></pre>
-				<p>Another alternative, in this case of &quot;zooming&quot; onto a field (which is quite common), is to use the <code>prop</code> method which also automatically handles possible empty values:</p>
-				<pre><code class="language-ts"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #795E26">getNameOrDefault</span><span style="color: #000000"> = (</span><span style="color: #001080">x</span><span style="color: #000000">?: </span><span style="color: #267F99">TestUser</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span>
-<span style="color: #000000">  </span><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000">)             </span><span style="color: #008000">// Opt&lt;TestUser&gt;</span>
-<span style="color: #000000">    .</span><span style="color: #795E26">prop</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;name&#039;</span><span style="color: #000000">)    </span><span style="color: #008000">// Opt&lt;string&gt;</span>
-<span style="color: #000000">    .</span><span style="color: #795E26">orElse</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;John&#039;</span><span style="color: #000000">); </span><span style="color: #008000">// string</span>
+<p>Imperative methods are used when we want to call a callback or do impure operations, we don&#39;t care about results from passed functions.</p>
+<pre><code class="language-ts"><span class="hl-0">opt</span><span class="hl-1">(</span><span class="hl-4">1</span><span class="hl-1">).</span><span class="hl-0">onSome</span><span class="hl-1">(</span><span class="hl-7">console</span><span class="hl-1">.</span><span class="hl-7">log</span><span class="hl-1">); </span><span class="hl-3">// prints 1, returns some(1), log method returns undefined which is discarded</span>
+</code></pre>
+<p>Functional and imperative methods can be used in one opt chain (e.g. <code>map</code> -&gt; <code>print</code> -&gt; <code>map</code>) without breaking recommendations above (an example is in the <a href="#map-vs-onsome"><code>map</code> vs <code>onSome</code> section</a>). If you have an impure part of a computation, one function, it is recommended to rewrite it to functional approach (use in <code>map</code> or similar) and any remaining imperative operations (e.g. callbacks) isolate to a next part of opt chain (use <code>onSome</code> or similar).</p>
+<hr>
+<p>A common mistake is using a function from first column instead of one from the second.</p>
+<table>
+<thead>
+<tr>
+<th>Functional</th>
+<th>Imperative</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>map</code> / <code>chainToOpt</code></td>
+<td><code>onSome</code></td>
+</tr>
+<tr>
+<td><code>caseOf</code> / <code>bimap</code></td>
+<td><code>onBoth</code></td>
+</tr>
+<tr>
+<td><code>orNull() &#124;&#124;</code> / <code>orNull() ??</code> / <br /> <code>if (!x.orUndef())</code> / <code>if (x.isEmpty)</code></td>
+<td><code>onNone</code></td>
+</tr>
+</tbody></table>
+<p>The table isn&#39;t exhaustive, if you are unsure whether the method/function is imperative, it probably isn&#39;t (vast majority of methods are functional).</p>
+<p>An explanation with examples can be found in the <a href="#map-vs-onsome"><code>map</code> vs <code>onSome</code> section</a>.</p>
 
-<span style="color: #795E26">getNameOrDefault</span><span style="color: #000000">({}); </span><span style="color: #008000">// &#039;John&#039;</span>
+<a href="#map-vs-onsome" id="map-vs-onsome" style="color: inherit; text-decoration: none;">
+  <h2><code>map</code> vs <code>onSome</code></h2>
+</a>
+<p>At a first glance, it may look like those methods are the same.</p>
+<pre><code class="language-ts"><span class="hl-5">let</span><span class="hl-1"> </span><span class="hl-7">a</span><span class="hl-1"> = </span><span class="hl-4">0</span><span class="hl-1">;</span><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-0">setA</span><span class="hl-1"> = (</span><span class="hl-7">newA</span><span class="hl-1">: </span><span class="hl-6">number</span><span class="hl-1">) </span><span class="hl-5">=&gt;</span><span class="hl-1"> { </span><span class="hl-7">a</span><span class="hl-1"> = </span><span class="hl-7">newA</span><span class="hl-1"> };</span><br/><br/><span class="hl-0">opt</span><span class="hl-1">(</span><span class="hl-5">null</span><span class="hl-1"> </span><span class="hl-10">as</span><span class="hl-1"> </span><span class="hl-6">number</span><span class="hl-1"> | </span><span class="hl-6">null</span><span class="hl-1">).</span><span class="hl-0">map</span><span class="hl-1">(</span><span class="hl-7">setA</span><span class="hl-1">); </span><span class="hl-3">// a is unchanged</span><br/><span class="hl-0">opt</span><span class="hl-1">(</span><span class="hl-5">null</span><span class="hl-1"> </span><span class="hl-10">as</span><span class="hl-1"> </span><span class="hl-6">number</span><span class="hl-1"> | </span><span class="hl-6">null</span><span class="hl-1">).</span><span class="hl-0">onSome</span><span class="hl-1">(</span><span class="hl-7">setA</span><span class="hl-1">); </span><span class="hl-3">// a is unchanged</span><br/><br/><span class="hl-0">opt</span><span class="hl-1">(</span><span class="hl-4">2</span><span class="hl-1">).</span><span class="hl-0">map</span><span class="hl-1">(</span><span class="hl-7">setA</span><span class="hl-1">); </span><span class="hl-3">// a is now 2</span><br/><span class="hl-0">opt</span><span class="hl-1">(</span><span class="hl-4">4</span><span class="hl-1">).</span><span class="hl-0">onSome</span><span class="hl-1">(</span><span class="hl-7">setA</span><span class="hl-1">); </span><span class="hl-3">// a is now 4</span>
 </code></pre>
-				<a href="#functional-vs-imperative-methods" id="functional-vs-imperative-methods" style="color: inherit; text-decoration: none;">
-					<h2>Functional vs. imperative methods</h2>
-				</a>
-				<p>Functional methods (functions) are used when we care about the result and passed function(s) are pure.</p>
-				<pre><code class="language-ts"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">res</span><span style="color: #000000"> = </span><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #098658">2</span><span style="color: #000000">).</span><span style="color: #795E26">map</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">x</span><span style="color: #000000"> * </span><span style="color: #098658">5</span><span style="color: #000000">); </span><span style="color: #008000">// res is some(10) and is used later in code</span>
+<p>It may seem like in specific scenarios they can be used interchangeably (do nothing for <code>None</code> and call the function for <code>Some</code>). But their purpose differs quite a lot. From a technical perspective, there is a distinction in the return value.</p>
+<pre><code class="language-ts"><span class="hl-0">opt</span><span class="hl-1">(</span><span class="hl-4">7</span><span class="hl-1">).</span><span class="hl-0">map</span><span class="hl-1">(</span><span class="hl-7">setA</span><span class="hl-1">) </span><span class="hl-3">// Some(undefined)</span><br/><span class="hl-0">opt</span><span class="hl-1">(</span><span class="hl-4">9</span><span class="hl-1">).</span><span class="hl-0">onSome</span><span class="hl-1">(</span><span class="hl-7">setA</span><span class="hl-1">) </span><span class="hl-3">// Some(9)</span>
 </code></pre>
-				<p>Imperative methods are used when we want to call a callback or do impure operations, we don&#39;t care about results from passed functions.</p>
-				<pre><code class="language-ts"><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #098658">1</span><span style="color: #000000">).</span><span style="color: #795E26">onSome</span><span style="color: #000000">(</span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #001080">log</span><span style="color: #000000">); </span><span style="color: #008000">// prints 1, returns some(1), log method returns undefined which is discarded</span>
+<p>Both methods are meant to be chained. <code>map</code> allows us to refine a value inside <code>Opt</code>:</p>
+<pre><code class="language-ts"><span class="hl-0">opt</span><span class="hl-1">(</span><span class="hl-4">2</span><span class="hl-1">) </span><span class="hl-3">// Some(2)</span><br/><span class="hl-1">  .</span><span class="hl-0">map</span><span class="hl-1">(</span><span class="hl-7">x</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-7">x</span><span class="hl-1"> + </span><span class="hl-4">1</span><span class="hl-1">) </span><span class="hl-3">// Some(3)</span><br/><span class="hl-1">  .</span><span class="hl-0">map</span><span class="hl-1">(</span><span class="hl-7">x</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-7">x</span><span class="hl-1"> * </span><span class="hl-7">x</span><span class="hl-1">) </span><span class="hl-3">// Some(9)</span>
 </code></pre>
-				<p>Functional and imperative methods can be used in one opt chain (e.g. <code>map</code> -&gt; <code>print</code> -&gt; <code>map</code>) without breaking recommendations above (an example is in the <a href="#map-vs-onsome"><code>map</code> vs <code>onSome</code> section</a>). If you have an impure part of a computation, one function, it is recommended to rewrite it to functional approach (use in <code>map</code> or similar) and any remaining imperative operations (e.g. callbacks) isolate to a next part of opt chain (use <code>onSome</code> or similar).</p>
-				<hr>
-				<p>A common mistake is using a function from first column instead of one from the second.</p>
-				<table>
-					<thead>
-						<tr>
-							<th>Functional</th>
-							<th>Imperative</th>
-						</tr>
-					</thead>
-					<tbody><tr>
-							<td><code>map</code> / <code>chainToOpt</code></td>
-							<td><code>onSome</code></td>
-						</tr>
-						<tr>
-							<td><code>caseOf</code> / <code>bimap</code></td>
-							<td><code>onBoth</code></td>
-						</tr>
-						<tr>
-							<td><code>orNull() &#124;&#124;</code> / <code>orNull() ??</code> / <br /> <code>if (!x.orUndef())</code> / <code>if (x.isEmpty)</code></td>
-							<td><code>onNone</code></td>
-						</tr>
-				</tbody></table>
-				<p>The table isn&#39;t exhaustive, if you are unsure whether the method/function is imperative, it probably isn&#39;t (vast majority of methods are functional).</p>
-				<p>An explanation with examples can be found in the <a href="#map-vs-onsome"><code>map</code> vs <code>onSome</code> section</a>.</p>
-				<a href="#map-vs-onsome" id="map-vs-onsome" style="color: inherit; text-decoration: none;">
-					<h2><code>map</code> vs <code>onSome</code></h2>
-				</a>
-				<p>At a first glance, it may look like those methods are the same.</p>
-				<pre><code class="language-ts"><span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">a</span><span style="color: #000000"> = </span><span style="color: #098658">0</span><span style="color: #000000">;</span>
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #795E26">setA</span><span style="color: #000000"> = (</span><span style="color: #001080">newA</span><span style="color: #000000">: </span><span style="color: #267F99">number</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> { </span><span style="color: #001080">a</span><span style="color: #000000"> = </span><span style="color: #001080">newA</span><span style="color: #000000"> };</span>
+<p><code>onSome</code> can&#39;t do that:</p>
+<pre><code class="language-ts"><span class="hl-0">opt</span><span class="hl-1">(</span><span class="hl-4">2</span><span class="hl-1">) </span><span class="hl-3">// Some(2)</span><br/><span class="hl-1">  .</span><span class="hl-0">onSome</span><span class="hl-1">(</span><span class="hl-7">x</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-7">x</span><span class="hl-1"> + </span><span class="hl-4">1</span><span class="hl-1">) </span><span class="hl-3">// Some(2)</span><br/><span class="hl-1">  .</span><span class="hl-0">onSome</span><span class="hl-1">(</span><span class="hl-7">x</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-7">x</span><span class="hl-1"> * </span><span class="hl-7">x</span><span class="hl-1">) </span><span class="hl-3">// Some(2)</span>
+</code></pre>
+<p>That&#39;s because the purpose of <code>onSome</code> is to &quot;break&quot; the purely functional approach and allows <code>Opt</code> to be used in a more imperative way - calling a callback function for the sole purpose of <a href="https://softwareengineering.stackexchange.com/a/262000/302966">side-effects</a>. The callback function changes something somewhere else, e.g. sets a global variable or changes DOM. In such cases we don&#39;t care about the return value (in most cases it doesn&#39;t return anything, this library assumes the responsibility for an error handling is on the callback function). Thus <code>Opt</code> ignores that return value from a callback and <code>onSome</code> simply returns a previous <code>Opt</code>. Because of this, we can easily create chains with multiple callbacks between processing:</p>
+<pre><code class="language-ts"><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-0">f</span><span class="hl-1"> = (</span><span class="hl-7">x</span><span class="hl-1">?: </span><span class="hl-6">number</span><span class="hl-1">) </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-0">opt</span><span class="hl-1">(</span><span class="hl-7">x</span><span class="hl-1">)</span><br/><span class="hl-1">    .</span><span class="hl-0">onSome</span><span class="hl-1">(</span><span class="hl-7">x</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-7">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-2">&#39;Got value&#39;</span><span class="hl-1">, </span><span class="hl-7">x</span><span class="hl-1">))</span><br/><span class="hl-1">    .</span><span class="hl-0">chainToOpt</span><span class="hl-1">(</span><span class="hl-7">x</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-7">x</span><span class="hl-1"> * </span><span class="hl-7">x</span><span class="hl-1"> &gt; </span><span class="hl-4">9</span><span class="hl-1"> ? </span><span class="hl-5">null</span><span class="hl-1"> : </span><span class="hl-7">x</span><span class="hl-1"> * </span><span class="hl-4">2</span><span class="hl-1">)</span><br/><span class="hl-1">    .</span><span class="hl-0">onSome</span><span class="hl-1">(</span><span class="hl-7">x</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-7">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-2">&#39;First step result&#39;</span><span class="hl-1">, </span><span class="hl-7">x</span><span class="hl-1">))</span><br/><span class="hl-1">    .</span><span class="hl-0">map</span><span class="hl-1">(</span><span class="hl-7">x</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-7">x</span><span class="hl-1"> - </span><span class="hl-4">1</span><span class="hl-1">)</span><br/><span class="hl-1">    .</span><span class="hl-0">onSome</span><span class="hl-1">(</span><span class="hl-7">x</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-7">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-2">&#39;Second step result&#39;</span><span class="hl-1">, </span><span class="hl-7">x</span><span class="hl-1">))</span><br/><span class="hl-1">    .</span><span class="hl-0">orNull</span><span class="hl-1">();</span><br/><br/><span class="hl-0">f</span><span class="hl-1">(); </span><span class="hl-3">// returns null, nothing is printed</span><br/><br/><span class="hl-0">f</span><span class="hl-1">(</span><span class="hl-4">3</span><span class="hl-1">); </span><span class="hl-3">/* returns 5, prints:</span><br/><span class="hl-3">Got value 3</span><br/><span class="hl-3">First step result 6</span><br/><span class="hl-3">Second step result 5</span><br/><span class="hl-3">*/</span><br/><br/><span class="hl-0">f</span><span class="hl-1">(</span><span class="hl-4">10</span><span class="hl-1">); </span><span class="hl-3">/* returns null, prints:</span><br/><span class="hl-3">Got value 10</span><br/><span class="hl-3">*/</span>
+</code></pre>
+<p>The final note is about implementation. Since <code>Opt</code> library gives a specific meaning to <code>map</code> (functional methods) and <code>onSome</code> (imperative methods), you should not use them interchangeably. In the future <code>map</code> implementation may very well change to not be called until termination (making <code>Opt</code> so called lazy), but <code>onSome</code> will always force evaluation instantly (even if <code>Opt</code> starts supporting lazy approach). This would mean that <code>map</code> will not call a mapping function until a result from <code>Opt</code> is requested (e.g. termination via <code>orNull</code>).</p>
+<pre><code class="language-ts"><span class="hl-3">// Example of possible lazy Opt</span><br/><br/><span class="hl-0">opt</span><span class="hl-1">(</span><span class="hl-4">1</span><span class="hl-1">).</span><span class="hl-0">onSome</span><span class="hl-1">(</span><span class="hl-7">console</span><span class="hl-1">.</span><span class="hl-7">log</span><span class="hl-1">); </span><span class="hl-3">// prints 1</span><br/><br/><span class="hl-0">opt</span><span class="hl-1">(</span><span class="hl-4">2</span><span class="hl-1">).</span><span class="hl-0">map</span><span class="hl-1">(</span><span class="hl-7">console</span><span class="hl-1">.</span><span class="hl-7">log</span><span class="hl-1">); </span><span class="hl-3">// prints nothing</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-8">x</span><span class="hl-1"> = </span><span class="hl-0">opt</span><span class="hl-1">(</span><span class="hl-4">3</span><span class="hl-1">).</span><span class="hl-0">map</span><span class="hl-1">(</span><span class="hl-7">console</span><span class="hl-1">.</span><span class="hl-7">log</span><span class="hl-1">); </span><span class="hl-3">// prints nothing</span><br/><span class="hl-3">// ...</span><br/><span class="hl-7">x</span><span class="hl-1">.</span><span class="hl-0">orNull</span><span class="hl-1">(); </span><span class="hl-3">// prints 1</span>
+</code></pre>
+<p>This could lead to bugs. Ones which are not easy to track down, since evaluation of the opt may be in an entirely different file to which opt was passed across several layers and delayed (e.g. from a helper utility function via props through several React components and used [evaluated] only after a user does some action).</p>
 
-<span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #0000FF">null</span><span style="color: #000000"> </span><span style="color: #AF00DB">as</span><span style="color: #000000"> </span><span style="color: #267F99">number</span><span style="color: #000000"> | </span><span style="color: #267F99">null</span><span style="color: #000000">).</span><span style="color: #795E26">map</span><span style="color: #000000">(</span><span style="color: #001080">setA</span><span style="color: #000000">); </span><span style="color: #008000">// a is unchanged</span>
-<span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #0000FF">null</span><span style="color: #000000"> </span><span style="color: #AF00DB">as</span><span style="color: #000000"> </span><span style="color: #267F99">number</span><span style="color: #000000"> | </span><span style="color: #267F99">null</span><span style="color: #000000">).</span><span style="color: #795E26">onSome</span><span style="color: #000000">(</span><span style="color: #001080">setA</span><span style="color: #000000">); </span><span style="color: #008000">// a is unchanged</span>
-
-<span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #098658">2</span><span style="color: #000000">).</span><span style="color: #795E26">map</span><span style="color: #000000">(</span><span style="color: #001080">setA</span><span style="color: #000000">); </span><span style="color: #008000">// a is now 2</span>
-<span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #098658">4</span><span style="color: #000000">).</span><span style="color: #795E26">onSome</span><span style="color: #000000">(</span><span style="color: #001080">setA</span><span style="color: #000000">); </span><span style="color: #008000">// a is now 4</span>
+<a href="#generators-star-functions" id="generators-star-functions" style="color: inherit; text-decoration: none;">
+  <h2>Generators (star functions)</h2>
+</a>
+<p>Because of the limitation how <code>yield</code> works, terminators like <code>onSome</code> or <code>onBoth</code> can&#39;t contain <code>yield</code> statements. The solution is to use guard functions <code>isSome</code>/<code>isNone</code>.</p>
+<pre><code class="language-ts"><span class="hl-3">// x is of type Opt&lt;number&gt;</span><br/><br/><span class="hl-10">if</span><span class="hl-1"> (</span><span class="hl-7">x</span><span class="hl-1">.</span><span class="hl-0">isSome</span><span class="hl-1">()) {</span><br/><span class="hl-1">  </span><span class="hl-3">// x got narrowed to type Some&lt;number&gt; and you can access its value inside via `value` field</span><br/><span class="hl-1">  </span><span class="hl-10">yield</span><span class="hl-1"> </span><span class="hl-7">x</span><span class="hl-1">.</span><span class="hl-7">value</span><span class="hl-1">;</span><br/><span class="hl-1">}</span>
 </code></pre>
-				<p>It may seem like in specific scenarios they can be used interchangeably (do nothing for <code>None</code> and call the function for <code>Some</code>). But their purpose differs quite a lot. From a technical perspective, there is a distinction in the return value.</p>
-				<pre><code class="language-ts"><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #098658">7</span><span style="color: #000000">).</span><span style="color: #795E26">map</span><span style="color: #000000">(</span><span style="color: #001080">setA</span><span style="color: #000000">) </span><span style="color: #008000">// Some(undefined)</span>
-<span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #098658">9</span><span style="color: #000000">).</span><span style="color: #795E26">onSome</span><span style="color: #000000">(</span><span style="color: #001080">setA</span><span style="color: #000000">) </span><span style="color: #008000">// Some(9)</span>
-</code></pre>
-				<p>Both methods are meant to be chained. <code>map</code> allows us to refine a value inside <code>Opt</code>:</p>
-				<pre><code class="language-ts"><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #098658">2</span><span style="color: #000000">) </span><span style="color: #008000">// Some(2)</span>
-<span style="color: #000000">  .</span><span style="color: #795E26">map</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">x</span><span style="color: #000000"> + </span><span style="color: #098658">1</span><span style="color: #000000">) </span><span style="color: #008000">// Some(3)</span>
-<span style="color: #000000">  .</span><span style="color: #795E26">map</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">x</span><span style="color: #000000"> * </span><span style="color: #001080">x</span><span style="color: #000000">) </span><span style="color: #008000">// Some(9)</span>
-</code></pre>
-				<p><code>onSome</code> can&#39;t do that:</p>
-				<pre><code class="language-ts"><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #098658">2</span><span style="color: #000000">) </span><span style="color: #008000">// Some(2)</span>
-<span style="color: #000000">  .</span><span style="color: #795E26">onSome</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">x</span><span style="color: #000000"> + </span><span style="color: #098658">1</span><span style="color: #000000">) </span><span style="color: #008000">// Some(2)</span>
-<span style="color: #000000">  .</span><span style="color: #795E26">onSome</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">x</span><span style="color: #000000"> * </span><span style="color: #001080">x</span><span style="color: #000000">) </span><span style="color: #008000">// Some(2)</span>
-</code></pre>
-				<p>That&#39;s because the purpose of <code>onSome</code> is to &quot;break&quot; the purely functional approach and allows <code>Opt</code> to be used in a more imperative way - calling a callback function for the sole purpose of <a href="https://softwareengineering.stackexchange.com/a/262000/302966">side-effects</a>. The callback function changes something somewhere else, e.g. sets a global variable or changes DOM. In such cases we don&#39;t care about the return value (in most cases it doesn&#39;t return anything, this library assumes the responsibility for an error handling is on the callback function). Thus <code>Opt</code> ignores that return value from a callback and <code>onSome</code> simply returns a previous <code>Opt</code>. Because of this, we can easily create chains with multiple callbacks between processing:</p>
-				<pre><code class="language-ts"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #795E26">f</span><span style="color: #000000"> = (</span><span style="color: #001080">x</span><span style="color: #000000">?: </span><span style="color: #267F99">number</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000">)</span>
-<span style="color: #000000">    .</span><span style="color: #795E26">onSome</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;Got value&#039;</span><span style="color: #000000">, </span><span style="color: #001080">x</span><span style="color: #000000">))</span>
-<span style="color: #000000">    .</span><span style="color: #795E26">chainToOpt</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">x</span><span style="color: #000000"> * </span><span style="color: #001080">x</span><span style="color: #000000"> &gt; </span><span style="color: #098658">9</span><span style="color: #000000"> ? </span><span style="color: #0000FF">null</span><span style="color: #000000"> : </span><span style="color: #001080">x</span><span style="color: #000000"> * </span><span style="color: #098658">2</span><span style="color: #000000">)</span>
-<span style="color: #000000">    .</span><span style="color: #795E26">onSome</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;First step result&#039;</span><span style="color: #000000">, </span><span style="color: #001080">x</span><span style="color: #000000">))</span>
-<span style="color: #000000">    .</span><span style="color: #795E26">map</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">x</span><span style="color: #000000"> - </span><span style="color: #098658">1</span><span style="color: #000000">)</span>
-<span style="color: #000000">    .</span><span style="color: #795E26">onSome</span><span style="color: #000000">(</span><span style="color: #001080">x</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;Second step result&#039;</span><span style="color: #000000">, </span><span style="color: #001080">x</span><span style="color: #000000">))</span>
-<span style="color: #000000">    .</span><span style="color: #795E26">orNull</span><span style="color: #000000">();</span>
+<p>Please note that generally guard functions <code>isSome</code> and <code>isNone</code> shouldn&#39;t be used where any other approach is possible.
+For just checking if an opt instance is empty use <code>isEmpty</code> or <code>nonEmpty</code> getters.
+Don&#39;t make a mistake of terminating an opt chain prematurely or do an opt unwrapping followed by an opt wrapping.
+It usually leads to more noisy, less readable and less extensible code, something this library tries to improve.</p>
 
-<span style="color: #795E26">f</span><span style="color: #000000">(); </span><span style="color: #008000">// returns null, nothing is printed</span>
+<a href="#development" id="development" style="color: inherit; text-decoration: none;">
+  <h1>Development</h1>
+</a>
+<ol>
+<li>clone repo</li>
+<li><code>cd ts-opt</code></li>
+<li><code>npm i</code></li>
+<li>write code</li>
+<li><code>npm test</code></li>
+</ol>
 
-<span style="color: #795E26">f</span><span style="color: #000000">(</span><span style="color: #098658">3</span><span style="color: #000000">); </span><span style="color: #008000">/* returns 5, prints:</span>
-<span style="color: #008000">Got value 3</span>
-<span style="color: #008000">First step result 6</span>
-<span style="color: #008000">Second step result 5</span>
-<span style="color: #008000">*/</span>
+<a href="#flowlikets" id="flowlikets" style="color: inherit; text-decoration: none;">
+  <h2><code>FlowLike.ts</code></h2>
+</a>
+<p>This file is generated via program in <code>utils/genFlowyThings</code>. <a href="https://docs.haskellstack.org/en/stable/README/">Stack</a> is required to run it. To regenerate the file use <code>npm run gen-flowy</code>.</p>
 
-<span style="color: #795E26">f</span><span style="color: #000000">(</span><span style="color: #098658">10</span><span style="color: #000000">); </span><span style="color: #008000">/* returns null, prints:</span>
-<span style="color: #008000">Got value 10</span>
-<span style="color: #008000">*/</span>
-</code></pre>
-				<p>The final note is about implementation. Since <code>Opt</code> library gives a specific meaning to <code>map</code> (functional methods) and <code>onSome</code> (imperative methods), you should not use them interchangeably. In the future <code>map</code> implementation may very well change to not be called until termination (making <code>Opt</code> so called lazy), but <code>onSome</code> will always force evaluation instantly (even if <code>Opt</code> starts supporting lazy approach). This would mean that <code>map</code> will not call a mapping function until a result from <code>Opt</code> is requested (e.g. termination via <code>orNull</code>).</p>
-				<pre><code class="language-ts"><span style="color: #008000">// Example of possible lazy Opt</span>
-
-<span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #098658">1</span><span style="color: #000000">).</span><span style="color: #795E26">onSome</span><span style="color: #000000">(</span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #001080">log</span><span style="color: #000000">); </span><span style="color: #008000">// prints 1</span>
-
-<span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #098658">2</span><span style="color: #000000">).</span><span style="color: #795E26">map</span><span style="color: #000000">(</span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #001080">log</span><span style="color: #000000">); </span><span style="color: #008000">// prints nothing</span>
-
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">x</span><span style="color: #000000"> = </span><span style="color: #795E26">opt</span><span style="color: #000000">(</span><span style="color: #098658">3</span><span style="color: #000000">).</span><span style="color: #795E26">map</span><span style="color: #000000">(</span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #001080">log</span><span style="color: #000000">); </span><span style="color: #008000">// prints nothing</span>
-<span style="color: #008000">// ...</span>
-<span style="color: #001080">x</span><span style="color: #000000">.</span><span style="color: #795E26">orNull</span><span style="color: #000000">(); </span><span style="color: #008000">// prints 1</span>
-</code></pre>
-				<p>This could lead to bugs. Ones which are not easy to track down, since evaluation of the opt may be in an entirely different file to which opt was passed across several layers and delayed (e.g. from a helper utility function via props through several React components and used [evaluated] only after a user does some action).</p>
-				<a href="#generators-star-functions" id="generators-star-functions" style="color: inherit; text-decoration: none;">
-					<h2>Generators (star functions)</h2>
-				</a>
-				<p>Because of the limitation how <code>yield</code> works, terminators like <code>onSome</code> or <code>onBoth</code> can&#39;t contain <code>yield</code> statements. The solution is to use guard functions <code>isSome</code>/<code>isNone</code>.</p>
-				<pre><code class="language-ts"><span style="color: #008000">// x is of type Opt&lt;number&gt;</span>
-
-<span style="color: #AF00DB">if</span><span style="color: #000000"> (</span><span style="color: #001080">x</span><span style="color: #000000">.</span><span style="color: #795E26">isSome</span><span style="color: #000000">()) {</span>
-<span style="color: #000000">  </span><span style="color: #008000">// x got narrowed to type Some&lt;number&gt; and you can access its value inside via `value` field</span>
-<span style="color: #000000">  </span><span style="color: #AF00DB">yield</span><span style="color: #000000"> </span><span style="color: #001080">x</span><span style="color: #000000">.</span><span style="color: #001080">value</span><span style="color: #000000">;</span>
-<span style="color: #000000">}</span>
-</code></pre>
-				<p>Please note that generally guard functions <code>isSome</code> and <code>isNone</code> shouldn&#39;t be used where any other approach is possible.
-					For just checking if an opt instance is empty use <code>isEmpty</code> or <code>nonEmpty</code> getters.
-					Don&#39;t make a mistake of terminating an opt chain prematurely or do an opt unwrapping followed by an opt wrapping.
-				It usually leads to more noisy, less readable and less extensible code, something this library tries to improve.</p>
-				<a href="#development" id="development" style="color: inherit; text-decoration: none;">
-					<h1>Development</h1>
-				</a>
-				<ol>
-					<li>clone repo</li>
-					<li><code>cd ts-opt</code></li>
-					<li><code>npm i</code></li>
-					<li>write code</li>
-					<li><code>npm test</code></li>
-				</ol>
-				<a href="#flowlikets" id="flowlikets" style="color: inherit; text-decoration: none;">
-					<h2><code>FlowLike.ts</code></h2>
-				</a>
-				<p>This file is generated via program in <code>utils/genFlowyThings</code>. <a href="https://docs.haskellstack.org/en/stable/README/">Stack</a> is required to run it. To regenerate the file use <code>npm run gen-flowy</code>.</p>
-				<a href="#license" id="license" style="color: inherit; text-decoration: none;">
-					<h1>License</h1>
-				</a>
-				<p><strong>MIT</strong></p>
-			</div>
-		</div>
-		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
-			<nav class="tsd-navigation primary">
-				<ul>
-					<li class=" ">
-						<a href="modules.html">Exports</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/flowlike.html">Flow<wbr>Like</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/opt.html">Opt</a>
-					</li>
-				</ul>
-			</nav>
-			<nav class="tsd-navigation secondary menu-sticky">
-				<ul class="before-current">
-					<li class=" tsd-kind-class tsd-has-type-parameter">
-						<a href="classes/none.html" class="tsd-kind-icon">None</a>
-					</li>
-					<li class=" tsd-kind-class tsd-has-type-parameter">
-						<a href="classes/some.html" class="tsd-kind-icon">Some</a>
-					</li>
-				</ul>
-			</nav>
-		</div>
-	</div>
-</div>
-<footer class="with-border-bottom">
-	<div class="container">
-		<h2>Legend</h2>
-		<div class="tsd-legend-group">
-			<ul class="tsd-legend">
-				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
-				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
-				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
-				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
-				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
-			</ul>
-		</div>
-	</div>
-</footer>
-<div class="container tsd-generator">
-	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
-</div>
-<div class="overlay"></div>
-<script src="assets/js/main.js"></script>
-</body>
-</html>
+<a href="#license" id="license" style="color: inherit; text-decoration: none;">
+  <h1>License</h1>
+</a>
+<p><strong>MIT</strong></p>
+</div></div><div class="col-4 col-menu menu-sticky-wrap menu-highlight"><nav class="tsd-navigation primary"><ul><li class="current"><a href="modules.html">Exports</a></li></ul></nav><nav class="tsd-navigation secondary menu-sticky"><ul><li class="tsd-kind-type-alias"><a href="modules.html#EqualityFunction" class="tsd-kind-icon">Equality<wbr/>Function</a></li><li class="tsd-kind-function"><a href="modules.html#isString" class="tsd-kind-icon">is<wbr/>String</a></li><li class="tsd-kind-function"><a href="modules.html#toString" class="tsd-kind-icon">to<wbr/>String</a></li><li class="tsd-kind-function"><a href="modules.html#isArray" class="tsd-kind-icon">is<wbr/>Array</a></li><li class="tsd-kind-class tsd-has-type-parameter"><a href="classes/Opt.html" class="tsd-kind-icon">Opt</a></li><li class="tsd-kind-class tsd-has-type-parameter"><a href="classes/None.html" class="tsd-kind-icon">None</a></li><li class="tsd-kind-class tsd-has-type-parameter"><a href="classes/Some.html" class="tsd-kind-icon">Some</a></li><li class="tsd-kind-class"><a href="classes/ReduxDevtoolsCompatibilityHelper.html" class="tsd-kind-icon">Redux<wbr/>Devtools<wbr/>Compatibility<wbr/>Helper</a></li><li class="tsd-kind-variable"><a href="modules.html#none" class="tsd-kind-icon">none</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#some" class="tsd-kind-icon">some</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#opt" class="tsd-kind-icon">opt</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#optFalsy" class="tsd-kind-icon">opt<wbr/>Falsy</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#optEmptyArray" class="tsd-kind-icon">opt<wbr/>Empty<wbr/>Array</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#optEmptyObject" class="tsd-kind-icon">opt<wbr/>Empty<wbr/>Object</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#optEmptyString" class="tsd-kind-icon">opt<wbr/>Empty<wbr/>String</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#optZero" class="tsd-kind-icon">opt<wbr/>Zero</a></li><li class="tsd-kind-function"><a href="modules.html#optNegative" class="tsd-kind-icon">opt<wbr/>Negative</a></li><li class="tsd-kind-function"><a href="modules.html#isOpt" class="tsd-kind-icon">is<wbr/>Opt</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#ap" class="tsd-kind-icon">ap</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#apFn" class="tsd-kind-icon">ap<wbr/>Fn</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#catOpts" class="tsd-kind-icon">cat<wbr/>Opts</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#mapOpt" class="tsd-kind-icon">map<wbr/>Opt</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#joinOpt" class="tsd-kind-icon">join<wbr/>Opt</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#fromArray" class="tsd-kind-icon">from<wbr/>Array</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#toArray" class="tsd-kind-icon">to<wbr/>Array</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#map" class="tsd-kind-icon">map</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#mapFlow" class="tsd-kind-icon">map<wbr/>Flow</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#flatMap" class="tsd-kind-icon">flat<wbr/>Map</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#chain" class="tsd-kind-icon">chain</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#act" class="tsd-kind-icon">act</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#chainFlow" class="tsd-kind-icon">chain<wbr/>Flow</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#chainToOpt" class="tsd-kind-icon">chain<wbr/>To<wbr/>Opt</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#actToOpt" class="tsd-kind-icon">act<wbr/>To<wbr/>Opt</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#chainToOptFlow" class="tsd-kind-icon">chain<wbr/>To<wbr/>Opt<wbr/>Flow</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#someOrCrash" class="tsd-kind-icon">some<wbr/>Or<wbr/>Crash</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#orCrash" class="tsd-kind-icon">or<wbr/>Crash</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#orUndef" class="tsd-kind-icon">or<wbr/>Undef</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#orNull" class="tsd-kind-icon">or<wbr/>Null</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#orFalse" class="tsd-kind-icon">or<wbr/>False</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#orTrue" class="tsd-kind-icon">or<wbr/>True</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#orNaN" class="tsd-kind-icon">or<wbr/>NaN</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#caseOf" class="tsd-kind-icon">case<wbr/>Of</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#onBoth" class="tsd-kind-icon">on<wbr/>Both</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#pipe" class="tsd-kind-icon">pipe</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#contains" class="tsd-kind-icon">contains</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#exists" class="tsd-kind-icon">exists</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#forAll" class="tsd-kind-icon">for<wbr/>All</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#orElse" class="tsd-kind-icon">or<wbr/>Else</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#orElseOpt" class="tsd-kind-icon">or<wbr/>Else<wbr/>Opt</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#bimap" class="tsd-kind-icon">bimap</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#flatBimap" class="tsd-kind-icon">flat<wbr/>Bimap</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#zip" class="tsd-kind-icon">zip</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#zip3" class="tsd-kind-icon">zip3</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#zip4" class="tsd-kind-icon">zip4</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#zip5" class="tsd-kind-icon">zip5</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#filter" class="tsd-kind-icon">filter</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#count" class="tsd-kind-icon">count</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#narrow" class="tsd-kind-icon">narrow</a></li><li class="tsd-kind-function"><a href="modules.html#print" class="tsd-kind-icon">print</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#equals" class="tsd-kind-icon">equals</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#prop" class="tsd-kind-icon">prop</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#swap" class="tsd-kind-icon">swap</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#flow" class="tsd-kind-icon">flow</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#compose" class="tsd-kind-icon">compose</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#curryTuple" class="tsd-kind-icon">curry<wbr/>Tuple</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#curryTuple3" class="tsd-kind-icon">curry<wbr/>Tuple3</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#curryTuple4" class="tsd-kind-icon">curry<wbr/>Tuple4</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#curryTuple5" class="tsd-kind-icon">curry<wbr/>Tuple5</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#uncurryTuple" class="tsd-kind-icon">uncurry<wbr/>Tuple</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#uncurryTuple3" class="tsd-kind-icon">uncurry<wbr/>Tuple3</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#uncurryTuple4" class="tsd-kind-icon">uncurry<wbr/>Tuple4</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#uncurryTuple5" class="tsd-kind-icon">uncurry<wbr/>Tuple5</a></li><li class="tsd-kind-function"><a href="modules.html#isEmpty" class="tsd-kind-icon">is<wbr/>Empty</a></li><li class="tsd-kind-function"><a href="modules.html#nonEmpty" class="tsd-kind-icon">non<wbr/>Empty</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#id" class="tsd-kind-icon">id</a></li><li class="tsd-kind-function"><a href="modules.html#at" class="tsd-kind-icon">at</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#head" class="tsd-kind-icon">head</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#last" class="tsd-kind-icon">last</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#zipToOptArray" class="tsd-kind-icon">zip<wbr/>To<wbr/>Opt<wbr/>Array</a></li><li class="tsd-kind-function"><a href="modules.html#testRe" class="tsd-kind-icon">test<wbr/>Re</a></li><li class="tsd-kind-function"><a href="modules.html#testReOrFalse" class="tsd-kind-icon">test<wbr/>Re<wbr/>Or<wbr/>False</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#tryRun" class="tsd-kind-icon">try<wbr/>Run</a></li><li class="tsd-kind-function"><a href="modules.html#parseJson" class="tsd-kind-icon">parse<wbr/>Json</a></li><li class="tsd-kind-function"><a href="modules.html#parseInt" class="tsd-kind-icon">parse<wbr/>Int</a></li></ul></nav></div></div></div><footer class="with-border-bottom"><div class="container"><h2>Legend</h2><div class="tsd-legend-group"><ul class="tsd-legend"><li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li><li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li><li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li><li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li></ul></div><h2>Settings</h2><p>Theme <select id="theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></p></div></footer><div class="container tsd-generator"><p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div><div class="overlay"></div><script src="assets/main.js"></script></body></html>

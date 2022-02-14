@@ -51,8 +51,13 @@ const debugPrint = (tag?: string, ...xs: unknown[]) => {
  * @typeparam T Wrapped value type.
  */
 export abstract class Opt<T> {
+  /** @internal */
+  constructor() { }
+
   /**
    * `false` for [[Some]], `true` for [[None]].
+   *
+   * @see [[ts-opt.isEmpty]]
    */
   abstract get isEmpty(): boolean;
 
@@ -91,10 +96,12 @@ export abstract class Opt<T> {
   /**
    * Converts `Opt` to an array.
    *
+   * @example
    * ```ts
    * some(1).toArray() // [1]
    * none.toArray() // []
    * ```
+   * @see [[ts-opt.toArray]]
    */
   abstract toArray(): [] | [T];
 
@@ -107,6 +114,7 @@ export abstract class Opt<T> {
    * ```
    *
    * @see [[onSome]] for imperative variant (for use with callback)
+   * @see [[ts-opt.map]]
    *
    * @param f
    */
@@ -115,12 +123,14 @@ export abstract class Opt<T> {
   /**
    * Similar to [[map]], but supports more functions which are called in succession, each on a result of a previous one.
    *
-   * ```
+   * @example
+   * ```ts
    * const sq = (x: number) => x * x;
    * const dec = (x: number) => x - 1;
    * opt(4).mapFlow(sq, dec) // Some(15)
    * opt(null).mapFlow(sq, dec) // None
    * ```
+   * @see [[ts-opt.mapFlow]]
    * @param fs
    */
   mapFlow: MapFlowInClassFn<T> = (...fs: any[]) => fs.reduce((acc, x) => acc.map(x), this);
@@ -134,12 +144,14 @@ export abstract class Opt<T> {
    * none.flatMap(x => some(1)) // None
    * ```
    *
+   * @see [[ts-opt.flatMap]]
    * @param f
    */
   abstract flatMap<U>(f: (_: T) => Opt<U>): Opt<U>;
 
   /**
-   * Alias of [[flatMap]]
+   * @alias [[flatMap]]
+   * @see [[ts-opt.chain]]
    * @param f
    */
   chain<U>(f: (_: T) => Opt<U>): Opt<U> { return this.flatMap(f); }
@@ -174,11 +186,14 @@ export abstract class Opt<T> {
    * ); // Some(4)
    * ```
    *
+   * @see [[ts-opt.act]]
    * @param fs
    */
   act: ActInClassFn<T> = (...fs: any[]) => fs.reduce((acc, x) => acc.chain(x), this);
+
   /**
-   * Alias of [[act]]
+   * @alias [[act]]
+   * @see [[ts-opt.chainFlow]]
    * @param args
    */
   chainFlow: ActInClassFn<T> = (...args: any[]) => (this.act as any)(...args);
@@ -186,10 +201,13 @@ export abstract class Opt<T> {
   /**
    * Combination of [[flatMap]] and [[opt]] functions.
    *
+   * @example
    * ```ts
    * some(1).chainToOpt(x => x === 1 ? null : x + 1) // None
    * some(2).chainToOpt(x => x === 1 ? null : x + 1) // Some(3)
    * ```
+   *
+   * @see [[ts-opt.chainToOpt]]
    *
    * @param f
    */
@@ -208,18 +226,22 @@ export abstract class Opt<T> {
    * ); // None
    * ```
    *
+   * @see [[ts-opt.actToOpt]]
+   *
    * @param fs
    */
   actToOpt: ActToOptInClassFn<T> = (...fs: any[]) => fs.reduce((acc, x) => acc.chainToOpt(x), this);
 
   /**
-   * Alias of [[actToOpt]].
+   * @alias [[actToOpt]]
+   * @see [[ts-opt.chainToOptFlow]]
    * @param args
    */
   chainToOptFlow: ActToOptInClassFn<T> = (...args: any[]) => (this.act as any)(...args);
 
   /**
    * Returns value when [[Some]], throws error with `msg` otherwise.
+   * @see [[ts-opt.orCrash]]
    * @param msg Error message.
    */
   abstract orCrash(msg: string): T;
@@ -227,6 +249,7 @@ export abstract class Opt<T> {
   /**
    * Crash when called on [[None]], pass [[Opt]] instance on [[Some]].
    *
+   * @example
    * ```ts
    * some(1).optOrCrash('fail') // Some(1)
    * none.optOrCrash('fail') // throws
@@ -240,10 +263,13 @@ export abstract class Opt<T> {
   /**
    * Crash when called on [[None]], pass [[Opt]] instance on [[Some]].
    *
+   * @example
    * ```ts
    * some(1).someOrCrash('fail') // Some(1)
    * none.someOrCrash('fail') // throws
    * ```
+   *
+   * @see [[ts-opt.someOrCrash]]
    *
    * @param msg
    */
@@ -252,50 +278,60 @@ export abstract class Opt<T> {
   /**
    * Returns value for [[Some]] or `undefined` for [[None]].
    *
+   * @example
    * ```ts
    * some(1).orUndef() // 1
    * none.orUndef() // undefined
    * ```
+   * @see [[ts-opt.orUndef]]
    */
   abstract orUndef(): T | undefined;
 
   /**
    * Returns value for [[Some]] or `null` for [[None]].
    *
+   * @example
    * ```ts
    * some(1).orNull() // 1
    * none.orNull() // null
    * ```
+   * @see [[ts-opt.orNull]]
    */
   abstract orNull(): T | null;
 
   /**
    * Returns inner value for [[Some]], `false` for [[None]].
    *
+   * @example
    * ```ts
    * some(1).orFalse() // 1
    * none.orFalse() // false
    * ```
+   * @see [[ts-opt.orFalse]]
    */
   abstract orFalse(): T | false;
 
   /**
    * Returns inner value for [[Some]], `true` for [[None]].
    *
+   * @example
    * ```ts
    * some(1).orTrue() // 1
    * none.orTrue() // true
    * ```
+   * @see [[ts-opt.orTrue]]
    */
   abstract orTrue(): T | true;
 
   /**
    * Returns inner value for [[Some]], `NaN` for [[None]].
    *
+   * @example
    * ```ts
    * some(1).orNaN() // 1
    * none.orNaN() // NaN
    * ```
+   * @see [[ts-opt.orNaN]]
    */
   abstract orNaN(): T | number;
 
@@ -308,6 +344,7 @@ export abstract class Opt<T> {
    * ```
    *
    * @see [[onBoth]] for imperative version
+   * @see [[ts-opt.caseOf]]
    *
    * @param onSome Processing function for [[Some]].
    * @param onNone Processing function for [[None]].
@@ -326,6 +363,7 @@ export abstract class Opt<T> {
    * ```
    *
    * @see [[caseOf]] for functional version
+   * @see [[ts-opt.onBoth]]
    *
    * @param onSome
    * @param onNone
@@ -348,6 +386,7 @@ export abstract class Opt<T> {
    * Applies passed function to this instance and returns function result.
    * Also known as a reverse function application, `|>` (Reason/ReScript, F#, OCaml), `&` (Haskell), `#` (PureScript) or a pipe operator.
    *
+   * @example
    * ```ts
    * some(1).pipe(x => x.isEmpty) // false
    * none.pipe(x => x.isEmpty) // true
@@ -355,12 +394,15 @@ export abstract class Opt<T> {
    *
    * Supports multiple functions.
    *
+   * @example
    * ```ts
    * opt(1).pipe( // Some(1)
    *   x => x.isEmpty, // false
    *   x => !x, // true
    * ) // true
    * ```
+   *
+   * @see [[ts-opt.pipe]]
    *
    * @param fs Functions in call chain
    */
@@ -375,6 +417,8 @@ export abstract class Opt<T> {
    * none.contains(undefined) // false
    * ```
    *
+   * @see [[ts-opt.contains]]
+   *
    * @param x
    */
   abstract contains(x: T): boolean;
@@ -388,6 +432,8 @@ export abstract class Opt<T> {
    * none.exists(x => x > 0) // false
    * ```
    *
+   * @see [[ts-opt.exists]]
+   *
    * @param p Predicate.
    */
   abstract exists(p: (x: T) => boolean): boolean;
@@ -395,11 +441,13 @@ export abstract class Opt<T> {
   /**
    * Applies `p` to inner value and passes result. Always `true` for [[None]].
    *
-   * ```
+   * @example
+   * ```ts
    * some(0).forAll(x => x > 0) // false
    * some(1).forAll(x => x > 0) // true
    * none.forAll(x => x > 0) // true
    * ```
+   * @see [[ts-opt.forAll]]
    * @param p Predicate.
    */
   abstract forAll(p: (x: T) => boolean): boolean;
@@ -411,6 +459,7 @@ export abstract class Opt<T> {
    * some(1).orElse(2) // 1
    * none.orElse(2) // 2
    * ```
+   * @see [[ts-opt.orElse]]
    *
    * @param def Default value.
    */
@@ -419,11 +468,15 @@ export abstract class Opt<T> {
   /**
    * Return `this` for [[Some]], `def` for [[None]].
    *
+   * @example
    * ```ts
    * some(1).orElseOpt(some(2)) // Some(1)
    * none.orElseOpt(some(2)) // Some(2)
    * none.orElseOpt(none) // None
    * ```
+   *
+   * @see [[ts-opt.orElseOpt]]
+   *
    * @param def
    */
   abstract orElseOpt(def: Opt<T>): Opt<T>;
@@ -431,10 +484,14 @@ export abstract class Opt<T> {
   /**
    * Similar to [[caseOf]] but doesn't unwrap value.
    *
-   * ```
+   * @example
+   * ```ts
    * some(1).bimap(x => x + 1, () => 0) // Some(2)
    * none.bimap(x => x + 1, () => 0) // Some(0)
    * ```
+   *
+   * @see [[ts-opt.bimap]]
+   *
    * @param someF
    * @param noneF
    */
@@ -443,11 +500,15 @@ export abstract class Opt<T> {
   /**
    * Similar to [[bimap]], but accepts functions returning [[Opt]].
    *
-   * ```
+   * @example
+   * ```ts
    * some(1).flatBimap(x => some(x+1), () => some(0)) // Some(2)
    * none.flatBimap(x => some(x+1), () => some(0)) // Some(0)
    * some(5).flatBimap(x => none, () => some(0)) // None
    * ```
+   *
+   * @see [[ts-opt.flatBimap]]
+   *
    * @param someF
    * @param noneF
    */
@@ -456,16 +517,20 @@ export abstract class Opt<T> {
   /**
    * Formats [[Opt]] to string. In case of [[Some]] inner value is converted using `JSON.stringify`.
    *
+   * @example
    * ```ts
    * some(1).toString() // 'Some(1)'
    * none.toString() // 'None'
    * ```
+   *
+   * @see [[ts-opt.toString]]
    */
   abstract toString(): string;
 
   /**
    * Joins two optional values to a pair. If either of them is [[None]] then the result is [[None]].
    *
+   * @example
    * ```ts
    * some(1).zip(some(true)) // Some([1, true])
    * some(1).zip(none) // None
@@ -484,16 +549,22 @@ export abstract class Opt<T> {
    * formatAddress(undefined, undefined) // ''
    * ```
    *
+   * @see [[ts-opt.zip]]
+   *
    * @param other
    */
   abstract zip<U>(other: Opt<U>): Opt<[T, U]>;
 
   /**
    * Same as [[zip]], but with one more optional.
+   *
+   * @example
    * ```ts
    * some(1).zip3(some('a'), some(false)) // Some([1, 'a', false])
    * none.zip3(some(1), some(2)) // None
    * ```
+   * @see [[ts-opt.zip3]]
+   *
    * @param x
    * @param y
    */
@@ -501,6 +572,7 @@ export abstract class Opt<T> {
 
   /**
    * Same as [[zip3]], but with one more optional.
+   * @see [[ts-opt.zip4]]
    * @param x
    * @param y
    * @param z
@@ -509,6 +581,7 @@ export abstract class Opt<T> {
 
   /**
    * Same as [[zip4]], but with one more optional.
+   * @see [[ts-opt.zip5]]
    * @param x
    * @param y
    * @param z
@@ -525,6 +598,7 @@ export abstract class Opt<T> {
    * opt(-1).filter(x => x > 0); // None
    * ```
    * @see [[noneIf]]
+   * @see [[ts-opt.filter]]
    * @param predicate
    */
   abstract filter(predicate: (_: T) => boolean): Opt<T>;
@@ -556,7 +630,7 @@ export abstract class Opt<T> {
    * opt('Ichi').count(x => x.length > 3) // 1
    * ```
    *
-   * @see [[count]]
+   * @see [[ts-opt.count]]
    * @param predicate
    */
   count(predicate: (_: T) => boolean): 0 | 1 {
@@ -565,21 +639,31 @@ export abstract class Opt<T> {
 
   /**
    * Narrows type inside [[Opt]] using given type guard.
+   *
+   * @example
    * ```ts
    * some('1' as string | number).narrow(isString) // Some('1'): Opt<string>
    * some(1 as string | number).narrow(isString) // None: Opt<string>
    * ```
+   *
+   * @see [[ts-opt.narrow]]
+   *
    * @param guard
    */
   abstract narrow<U>(guard: (value: any) => value is U): Opt<U>;
 
   /**
    * Print value to console.
+   *
+   * @example
    * ```ts
    * opt(1).print() // logs 'Some:', '1'; returns Some(1)
    * opt(1).print('test') // logs '[test]', 'Some:', '1'; returns Some(1)
    * none.print('x') // logs '[x]', 'None'; returns None
    * ```
+   *
+   * @see [[ts-opt.print]]
+   *
    * @param tag
    */
   abstract print(tag?: string): Opt<T>;
@@ -588,6 +672,7 @@ export abstract class Opt<T> {
    * Is a value of this instance and given `other` instance the same?
    * Default comparator function is `===` (referential equality).
    *
+   * @example
    * ```ts
    * none.equals(none) // true
    * some(1).equals(none) // false
@@ -599,6 +684,9 @@ export abstract class Opt<T> {
    * const jsonCmp = <T>(a: T, b: T): boolean => JSON.stringify(a) === JSON.stringify(b);
    * some({a: 1}).equals(some({a: 1}), jsonCmp) // true (comparing values converted to JSON)
    * ```
+   *
+   * @see [[ts-opt.equals]]
+   *
    * @param other
    * @param comparator
    */
@@ -606,9 +694,17 @@ export abstract class Opt<T> {
 
   /**
    * Widen union (typically union of strings to string).
-   * Experimental. May be removed if it is later found out it's unsafe and unfixable.
+   *
+   * @experimental May be removed if it is later found out it's unsafe and unfixable.
+   *
+   * @example
    * ```ts
-   * opt(someValueOfUnionType).widen<SuperOfThatUnion>() // :Opt<SuperOfThatUnion>
+   * type EnumAB = 'a' | 'b';
+   * type EnumABC = 'a' | 'b' | 'c';
+   * const ab = 'a' as EnumAB;
+   * const abc = 'c' as EnumABC;
+   * const correctWiden: Opt<EnumABC> = opt(ab).widen<EnumABC>(); // AB -> ABC: Ok
+   * const wrongWiden: Opt<never> = opt(abc).widen<EnumAB>(); // ABC -> AB: Not Ok, C is not in AB
    * ```
    */
   widen<U, R extends SuperUnionOf<U, T> = SuperUnionOf<U, T>>(): Opt<R> {
@@ -618,10 +714,14 @@ export abstract class Opt<T> {
   /**
    * Maps property of a wrapped object.
    *
+   * @example
    * ```ts
    * const a = {x: 1};
    * const xValue = opt(a).prop('x').orCrash('missing prop x'); // 1
    * ```
+   *
+   * @see [[ts-opt.prop]]
+   *
    * @param key
    */
   abstract prop<K extends (T extends object ? keyof T : never)>(key: K): Opt<WithoutOptValues<T[K]>>;
@@ -630,6 +730,7 @@ export abstract class Opt<T> {
    * Constructs a function which returns a value for [[Some]] or an empty value for [[None]] (default is `null`).
    * Optionally takes an empty value as a parameter.
    *
+   * @example
    * ```ts
    * opt(1).const()() // 1
    * opt(undefined).const()() // null
@@ -649,12 +750,16 @@ export abstract class Opt<T> {
   /**
    * Swaps value inside (for [[None]] it's noop).
    *
+   * @example
    * ```ts
    * opt(1).swap('a') // Some('a')
    * none.swap('a') // None
    * ```
    *
    * Same as `map(const(newValue))`.
+   *
+   * @see [[ts-opt.swap]]
+   *
    * @param newValue
    */
   abstract swap<U>(newValue: U): Opt<U>;
@@ -674,6 +779,8 @@ export abstract class Opt<T> {
    * opt([1, 2, 3]).at(-1) // Some(3)
    * ```
    *
+   * @see [[ts-opt.at]]
+   *
    * @param index
    */
   abstract at<R extends (T extends (infer A)[] ? A : never)>(index: number): Opt<R>;
@@ -687,6 +794,8 @@ export abstract class Opt<T> {
    * opt([]).head() // None
    * opt(null).head() // None
    * ```
+   *
+   * @see [[ts-opt.head]]
    */
   head<R extends (T extends (infer A)[] ? A : never)>(): Opt<R> { return this.at(0); }
 
@@ -699,6 +808,8 @@ export abstract class Opt<T> {
    * opt([]).last() // None
    * opt(null).last() // None
    * ```
+   *
+   * @see [[ts-opt.last]]
    */
   last<R extends (T extends (infer A)[] ? A : never)>(): Opt<R> { return this.at(-1); }
 
@@ -708,8 +819,10 @@ export abstract class Opt<T> {
    * @example
    * ```ts
    * opt('a').testReOrFalse(/a/) // true
-   * opt('b').testReOrFalse(/a/)) // false;
+   * opt('b').testReOrFalse(/a/) // false
    * ```
+   *
+   * @see [[ts-opt.testReOrFalse]]
    *
    * @param re Regular expression
    */
@@ -737,6 +850,9 @@ export abstract class Opt<T> {
  */
 class None<T> extends Opt<T> {
   readonly '@@type' = noneSymbol;
+
+  /** @internal */
+  constructor() { super(); }
 
   get isEmpty(): boolean { return true; }
 
@@ -837,6 +953,7 @@ class None<T> extends Opt<T> {
 class Some<T> extends Opt<T> {
   readonly '@@type' = someSymbol;
 
+  /** @internal */
   constructor(private _value: T) { super(); }
 
   get isEmpty(): boolean { return false; }
@@ -1239,6 +1356,9 @@ export const orElseOpt = <T>(def: Opt<T>) => (x: Opt<T>): Opt<T> => x.orElseOpt(
 
 /** @see [[Opt.bimap]] */
 export const bimap = <T, U>(someF: (_: T) => U) => (noneF: () => U) => (x: Opt<T>): Opt<U> => x.bimap(someF, noneF);
+
+/** @see [[Opt.flatBimap]] */
+export const flatBimap = <T, U>(someF: (_: T) => Opt<U>) => (noneF: () => Opt<U>) => (x: Opt<T>): Opt<U> => x.flatBimap(someF, noneF);
 
 interface ZipFn {
   <T>(other: Opt<T>): <U>(x: Opt<U>) => Opt<[T, U]>;

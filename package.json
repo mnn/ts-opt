@@ -21,7 +21,7 @@
     "lint": "tslint src/*.ts",
     "test": "nyc -r html -e .ts -x \"test/*.ts\" mocha -r ts-node/register test/**/*.ts && nyc report --check-coverage --branches 100 --functions 100 --lines 100 --statements 100",
     "test:no-coverage": "mocha -r ts-node/register test/**/*.ts",
-    "doc": "typedoc --out doc --listInvalidSymbolLinks src",
+    "doc": "typedoc --out doc --listInvalidSymbolLinks src/Opt.ts --sort source-order --categorizeByGroup false",
     "build": "tsc --outDir ./dist -p . ",
     "build-all": "run-s clean gen-flowy build doc",
     "check": "run-s lint test",
@@ -52,8 +52,8 @@
     "rimraf": "3.0.2",
     "ts-node": "9.1.1",
     "tslint": "6.1.3",
-    "typedoc": "0.20.20",
-    "typedoc-plugin-not-exported": "0.1.5",
+    "typedoc": "0.22.11",
+    "typedoc-plugin-not-exported": "0.1.6",
     "typescript": "4.2.3"
   }
 }

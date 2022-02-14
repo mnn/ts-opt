@@ -20,8 +20,8 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from) {
     return to;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.zip4 = exports.zip3 = exports.zip = exports.bimap = exports.orElseOpt = exports.orElse = exports.forAll = exports.exists = exports.contains = exports.pipe = exports.onBoth = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOptFlow = exports.actToOpt = exports.chainToOpt = exports.chainFlow = exports.act = exports.chain = exports.flatMap = exports.mapFlow = exports.map = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = exports.isArray = exports.toString = exports.isString = void 0;
-exports.parseInt = exports.parseJson = exports.tryRun = exports.testReOrFalse = exports.testRe = exports.zipToOptArray = exports.last = exports.head = exports.at = exports.id = exports.nonEmpty = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.prop = exports.equals = exports.print = exports.narrow = exports.count = exports.filter = exports.zip5 = void 0;
+exports.zip3 = exports.zip = exports.flatBimap = exports.bimap = exports.orElseOpt = exports.orElse = exports.forAll = exports.exists = exports.contains = exports.pipe = exports.onBoth = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOptFlow = exports.actToOpt = exports.chainToOpt = exports.chainFlow = exports.act = exports.chain = exports.flatMap = exports.mapFlow = exports.map = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = exports.isArray = exports.toString = exports.isString = void 0;
+exports.parseInt = exports.parseJson = exports.tryRun = exports.testReOrFalse = exports.testRe = exports.zipToOptArray = exports.last = exports.head = exports.at = exports.id = exports.nonEmpty = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.prop = exports.equals = exports.print = exports.narrow = exports.count = exports.filter = exports.zip5 = exports.zip4 = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 var errorSymbol = Symbol('Error');
@@ -55,17 +55,20 @@ var debugPrint = function (tag) {
  * @typeparam T Wrapped value type.
  */
 var Opt = /** @class */ (function () {
+    /** @internal */
     function Opt() {
         var _this = this;
         /**
          * Similar to [[map]], but supports more functions which are called in succession, each on a result of a previous one.
          *
-         * ```
+         * @example
+         * ```ts
          * const sq = (x: number) => x * x;
          * const dec = (x: number) => x - 1;
          * opt(4).mapFlow(sq, dec) // Some(15)
          * opt(null).mapFlow(sq, dec) // None
          * ```
+         * @see [[ts-opt.mapFlow]]
          * @param fs
          */
         this.mapFlow = function () {
@@ -105,6 +108,7 @@ var Opt = /** @class */ (function () {
          * ); // Some(4)
          * ```
          *
+         * @see [[ts-opt.act]]
          * @param fs
          */
         this.act = function () {
@@ -115,7 +119,8 @@ var Opt = /** @class */ (function () {
             return fs.reduce(function (acc, x) { return acc.chain(x); }, _this);
         };
         /**
-         * Alias of [[act]]
+         * @alias [[act]]
+         * @see [[ts-opt.chainFlow]]
          * @param args
          */
         this.chainFlow = function () {
@@ -138,6 +143,8 @@ var Opt = /** @class */ (function () {
          * ); // None
          * ```
          *
+         * @see [[ts-opt.actToOpt]]
+         *
          * @param fs
          */
         this.actToOpt = function () {
@@ -148,7 +155,8 @@ var Opt = /** @class */ (function () {
             return fs.reduce(function (acc, x) { return acc.chainToOpt(x); }, _this);
         };
         /**
-         * Alias of [[actToOpt]].
+         * @alias [[actToOpt]]
+         * @see [[ts-opt.chainToOptFlow]]
          * @param args
          */
         this.chainToOptFlow = function () {
@@ -162,6 +170,7 @@ var Opt = /** @class */ (function () {
          * Applies passed function to this instance and returns function result.
          * Also known as a reverse function application, `|>` (Reason/ReScript, F#, OCaml), `&` (Haskell), `#` (PureScript) or a pipe operator.
          *
+         * @example
          * ```ts
          * some(1).pipe(x => x.isEmpty) // false
          * none.pipe(x => x.isEmpty) // true
@@ -169,12 +178,15 @@ var Opt = /** @class */ (function () {
          *
          * Supports multiple functions.
          *
+         * @example
          * ```ts
          * opt(1).pipe( // Some(1)
          *   x => x.isEmpty, // false
          *   x => !x, // true
          * ) // true
          * ```
+         *
+         * @see [[ts-opt.pipe]]
          *
          * @param fs Functions in call chain
          */
@@ -189,6 +201,7 @@ var Opt = /** @class */ (function () {
          * Constructs a function which returns a value for [[Some]] or an empty value for [[None]] (default is `null`).
          * Optionally takes an empty value as a parameter.
          *
+         * @example
          * ```ts
          * opt(1).const()() // 1
          * opt(undefined).const()() // null
@@ -242,17 +255,21 @@ var Opt = /** @class */ (function () {
      */
     Opt.fromArray = function (x) { return exports.opt(x[0]); };
     /**
-     * Alias of [[flatMap]]
+     * @alias [[flatMap]]
+     * @see [[ts-opt.chain]]
      * @param f
      */
     Opt.prototype.chain = function (f) { return this.flatMap(f); };
     /**
      * Combination of [[flatMap]] and [[opt]] functions.
      *
+     * @example
      * ```ts
      * some(1).chainToOpt(x => x === 1 ? null : x + 1) // None
      * some(2).chainToOpt(x => x === 1 ? null : x + 1) // Some(3)
      * ```
+     *
+     * @see [[ts-opt.chainToOpt]]
      *
      * @param f
      */
@@ -283,7 +300,7 @@ var Opt = /** @class */ (function () {
      * opt('Ichi').count(x => x.length > 3) // 1
      * ```
      *
-     * @see [[count]]
+     * @see [[ts-opt.count]]
      * @param predicate
      */
     Opt.prototype.count = function (predicate) {
@@ -291,9 +308,17 @@ var Opt = /** @class */ (function () {
     };
     /**
      * Widen union (typically union of strings to string).
-     * Experimental. May be removed if it is later found out it's unsafe and unfixable.
+     *
+     * @experimental May be removed if it is later found out it's unsafe and unfixable.
+     *
+     * @example
      * ```ts
-     * opt(someValueOfUnionType).widen<SuperOfThatUnion>() // :Opt<SuperOfThatUnion>
+     * type EnumAB = 'a' | 'b';
+     * type EnumABC = 'a' | 'b' | 'c';
+     * const ab = 'a' as EnumAB;
+     * const abc = 'c' as EnumABC;
+     * const correctWiden: Opt<EnumABC> = opt(ab).widen<EnumABC>(); // AB -> ABC: Ok
+     * const wrongWiden: Opt<never> = opt(abc).widen<EnumAB>(); // ABC -> AB: Not Ok, C is not in AB
      * ```
      */
     Opt.prototype.widen = function () {
@@ -308,6 +333,8 @@ var Opt = /** @class */ (function () {
      * opt([]).head() // None
      * opt(null).head() // None
      * ```
+     *
+     * @see [[ts-opt.head]]
      */
     Opt.prototype.head = function () { return this.at(0); };
     /**
@@ -319,6 +346,8 @@ var Opt = /** @class */ (function () {
      * opt([]).last() // None
      * opt(null).last() // None
      * ```
+     *
+     * @see [[ts-opt.last]]
      */
     Opt.prototype.last = function () { return this.at(-1); };
     /**
@@ -327,8 +356,10 @@ var Opt = /** @class */ (function () {
      * @example
      * ```ts
      * opt('a').testReOrFalse(/a/) // true
-     * opt('b').testReOrFalse(/a/)) // false;
+     * opt('b').testReOrFalse(/a/) // false
      * ```
+     *
+     * @see [[ts-opt.testReOrFalse]]
      *
      * @param re Regular expression
      */
@@ -360,8 +391,9 @@ exports.Opt = Opt;
  */
 var None = /** @class */ (function (_super) {
     __extends(None, _super);
+    /** @internal */
     function None() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super.call(this) || this;
         _this['@@type'] = noneSymbol;
         return _this;
     }
@@ -434,6 +466,7 @@ var None = /** @class */ (function (_super) {
  */
 var Some = /** @class */ (function (_super) {
     __extends(Some, _super);
+    /** @internal */
     function Some(_value) {
         var _this = _super.call(this) || this;
         _this._value = _value;
@@ -834,6 +867,9 @@ exports.orElseOpt = orElseOpt;
 /** @see [[Opt.bimap]] */
 var bimap = function (someF) { return function (noneF) { return function (x) { return x.bimap(someF, noneF); }; }; };
 exports.bimap = bimap;
+/** @see [[Opt.flatBimap]] */
+var flatBimap = function (someF) { return function (noneF) { return function (x) { return x.flatBimap(someF, noneF); }; }; };
+exports.flatBimap = flatBimap;
 var zipArray = function (a, b) { return __spreadArray([], Array(Math.min(b.length, a.length))).map(function (_, i) { return [a[i], b[i]]; }); };
 /**
  * Same as [[Opt.zip]], but also supports arrays.

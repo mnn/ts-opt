@@ -80,6 +80,7 @@ import {
   parseInt,
   nonEmpty,
   count,
+  flatBimap,
 } from '../src/Opt';
 
 chai.use(spies);
@@ -1356,6 +1357,15 @@ describe('bimap', () => {
   });
   it('uses onNone with none', () => {
     expect(bimap(add1)(() => 7)(none).orNull()).to.be.eq(7);
+  });
+});
+
+describe('flatBimap', () => {
+  it('uses onSome with some', () => {
+    expect(flatBimap((x: number) => opt(add1(x)))(() => opt(7))(opt(1)).orNull()).to.be.eq(2);
+  });
+  it('uses onNone with none', () => {
+    expect(flatBimap((x: number) => opt(add1(x)))(() => opt(7))(none).orNull()).to.be.eq(7);
   });
 });
 
