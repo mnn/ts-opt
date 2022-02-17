@@ -351,6 +351,12 @@ Unwrapping followed by wrapping should be avoided.
 In most cases there is a method or function which you can use instead.
 
 ```ts
+opt(x).orNull() ? 1 : opt(x).orElse(4) * 2 // BAD - orElse is useless (only present because of types)
+opt(x).orNull() ? 1 : opt(x).orCrash('impossible') * 2 // BAD - orCrash is useless (it can't ever crash, only present because of types)
+opt(x).map(x => x * 2).orElse(1) // best - no unnecessary rewrapping or unreachable cases
+```
+
+```ts
 opt(x.toUndef().?f()) // BAD
 x.map(y => y.f()) // better - when f can't return empty values
 x.chainToOpt(y => y.f()) // better - when f can return empty values
@@ -374,7 +380,7 @@ Generally it's best when you adhere to one direction of "data flow".
 See how data flow begins at the center left `1`, then goes to the start `1, 2, 3`, then again jumps to the center `4`, then jumps to the start `5` and finally jumps to the end `6`.
 
 You can utilize methods and functions like `pipe`, `mapFlow` or `actToOpt`.
-For example the example above could be rewritten like this:
+For example the code above could be rewritten like this:
 
 ```ts
 pipe(x, opt, f, orElse(4), g, orElse('a'))
