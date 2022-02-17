@@ -2055,3 +2055,16 @@ describe('simple lens-like use', () => {
     expect(r3).to.be.eq(-1);
   });
 });
+
+describe('data flow', () => {
+  it('example', () => {
+    const x = 10;
+    const f = (a: Opt<number>) => a.map(add1);
+    const g = (a: number) => opt(a * 2).map(toString);
+    expect(g(f(opt(x)).orElse(4)).orElse('a')).to.be.eq('22');
+    expect(g(f(none).orElse(4)).orElse('a')).to.be.eq('8');
+    expect(
+      pipe(x, opt, f, orElse(4), g, orElse('a')),
+    ).to.be.eq('22');
+  });
+});

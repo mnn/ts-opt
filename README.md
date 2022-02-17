@@ -345,6 +345,51 @@ For just checking if an opt instance is empty use `isEmpty` or `nonEmpty` getter
 Don't make a mistake of terminating an opt chain prematurely or do an opt unwrapping followed by an opt wrapping.
 It usually leads to more noisy, less readable and less extensible code, something this library tries to improve.
 
+Re-wrapping
+-----------
+Unwrapping followed by wrapping should be avoided.
+In most cases there is a method or function which you can use instead.
+
+```ts
+opt(x.toUndef().?f()) // BAD
+x.map(y => y.f()) // better - when f can't return empty values
+x.chainToOpt(y => y.f()) // better - when f can return empty values
+x.map(f) // best - when there is FP version of f method (curried function)
+```
+
+Unclear flow of data
+--------------------
+Generally it's best when you adhere to one direction of "data flow".
+
+```ts
+   g(f(opt(x)).orElse(4)).orElse('a')
+// | | |   1   |          |
+// | | 2       |          |
+// | 3         |          |
+// |           4          |
+// 5                      |
+//                        6
+```
+
+See how data flow begins at the center left `1`, then goes to the start `1, 2, 3`, then again jumps to the center `4`, then jumps to the start `5` and finally jumps to the end `6`.
+
+You can utilize methods and functions like `pipe`, `mapFlow` or `actToOpt`.
+For example the example above could be rewritten like this:
+
+```ts
+pipe(x, opt, f, orElse(4), g, orElse('a'))
+//   1  |    |  |          |  |
+//      2    |  |          |  |
+//           3  |          |  |
+//              4          |  |
+//                         5  |
+//                            6
+```
+
+Now the data flow is easy to understand and to read, since it only flows in one direction - from left to right.
+
+> Note: You could also use `opt(x).pipe(...)` instead of `pipe(x, opt, ...)`.
+
 Development
 ===
 

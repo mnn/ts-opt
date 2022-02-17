@@ -178,6 +178,30 @@ For just checking if an opt instance is empty use <code>isEmpty</code> or <code>
 Don&#39;t make a mistake of terminating an opt chain prematurely or do an opt unwrapping followed by an opt wrapping.
 It usually leads to more noisy, less readable and less extensible code, something this library tries to improve.</p>
 
+<a href="#re-wrapping" id="re-wrapping" style="color: inherit; text-decoration: none;">
+  <h2>Re-wrapping</h2>
+</a>
+<p>Unwrapping followed by wrapping should be avoided.
+In most cases there is a method or function which you can use instead.</p>
+<pre><code class="language-ts"><span class="hl-0">opt</span><span class="hl-1">(</span><span class="hl-7">x</span><span class="hl-1">.</span><span class="hl-0">toUndef</span><span class="hl-1">().?</span><span class="hl-0">f</span><span class="hl-1">()) </span><span class="hl-3">// BAD</span><br/><span class="hl-7">x</span><span class="hl-1">.</span><span class="hl-0">map</span><span class="hl-1">(</span><span class="hl-7">y</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-7">y</span><span class="hl-1">.</span><span class="hl-0">f</span><span class="hl-1">()) </span><span class="hl-3">// better - when f can&#39;t return empty values</span><br/><span class="hl-7">x</span><span class="hl-1">.</span><span class="hl-0">chainToOpt</span><span class="hl-1">(</span><span class="hl-7">y</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-7">y</span><span class="hl-1">.</span><span class="hl-0">f</span><span class="hl-1">()) </span><span class="hl-3">// better - when f can return empty values</span><br/><span class="hl-7">x</span><span class="hl-1">.</span><span class="hl-0">map</span><span class="hl-1">(</span><span class="hl-7">f</span><span class="hl-1">) </span><span class="hl-3">// best - when there is FP version of f method (curried function)</span>
+</code></pre>
+
+<a href="#unclear-flow-of-data" id="unclear-flow-of-data" style="color: inherit; text-decoration: none;">
+  <h2>Unclear flow of data</h2>
+</a>
+<p>Generally it&#39;s best when you adhere to one direction of &quot;data flow&quot;.</p>
+<pre><code class="language-ts"><span class="hl-1">   </span><span class="hl-0">g</span><span class="hl-1">(</span><span class="hl-0">f</span><span class="hl-1">(</span><span class="hl-0">opt</span><span class="hl-1">(</span><span class="hl-7">x</span><span class="hl-1">)).</span><span class="hl-0">orElse</span><span class="hl-1">(</span><span class="hl-4">4</span><span class="hl-1">)).</span><span class="hl-0">orElse</span><span class="hl-1">(</span><span class="hl-2">&#39;a&#39;</span><span class="hl-1">)</span><br/><span class="hl-3">// | | |   1   |          |</span><br/><span class="hl-3">// | | 2       |          |</span><br/><span class="hl-3">// | 3         |          |</span><br/><span class="hl-3">// |           4          |</span><br/><span class="hl-3">// 5                      |</span><br/><span class="hl-3">//                        6</span>
+</code></pre>
+<p>See how data flow begins at the center left <code>1</code>, then goes to the start <code>1, 2, 3</code>, then again jumps to the center <code>4</code>, then jumps to the start <code>5</code> and finally jumps to the end <code>6</code>.</p>
+<p>You can utilize methods and functions like <code>pipe</code>, <code>mapFlow</code> or <code>actToOpt</code>.
+For example the example above could be rewritten like this:</p>
+<pre><code class="language-ts"><span class="hl-0">pipe</span><span class="hl-1">(</span><span class="hl-7">x</span><span class="hl-1">, </span><span class="hl-7">opt</span><span class="hl-1">, </span><span class="hl-7">f</span><span class="hl-1">, </span><span class="hl-0">orElse</span><span class="hl-1">(</span><span class="hl-4">4</span><span class="hl-1">), </span><span class="hl-7">g</span><span class="hl-1">, </span><span class="hl-0">orElse</span><span class="hl-1">(</span><span class="hl-2">&#39;a&#39;</span><span class="hl-1">))</span><br/><span class="hl-3">//   1  |    |  |          |  |</span><br/><span class="hl-3">//      2    |  |          |  |</span><br/><span class="hl-3">//           3  |          |  |</span><br/><span class="hl-3">//              4          |  |</span><br/><span class="hl-3">//                         5  |</span><br/><span class="hl-3">//                            6</span>
+</code></pre>
+<p>Now the data flow is easy to understand and to read, since it only flows in one direction - from left to right.</p>
+<blockquote>
+<p>Note: You could also use <code>opt(x).pipe(...)</code> instead of <code>pipe(x, opt, ...)</code>.</p>
+</blockquote>
+
 <a href="#development" id="development" style="color: inherit; text-decoration: none;">
   <h1>Development</h1>
 </a>
