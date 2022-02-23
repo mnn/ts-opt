@@ -80,7 +80,7 @@ import {
   parseInt,
   nonEmpty,
   count,
-  flatBimap,
+  flatBimap, apply, onFunc,
 } from '../src/Opt';
 
 chai.use(spies);
@@ -676,6 +676,61 @@ describe('opt', () => {
     expect(f(0)).to.be.undefined;
     expect(f(null)).to.be.undefined;
     suppressUnused(g);
+  });
+
+  it('apply', () => {
+    const r1: number | null = opt(add1).apply(7).orNull();
+    expect(r1).to.be.eql(8);
+    const f = (a: number, b: string): boolean => (a + 1).toFixed() === b;
+    const r2: boolean = opt(f).apply(7, '8').orFalse();
+    expect(r2).to.be.true;
+    const f2 = (a: number) => (b: string): boolean => (a + 1).toFixed() === b;
+    const r3: boolean = opt(f2).apply(1).apply('2').orFalse();
+    expect(r3).to.be.true;
+    expect(
+      none.apply(0).orNull(), // None
+    ).to.be.null;
+    // @ts-expect-error
+    opt(add1).apply('wrong number');
+    // @ts-expect-error
+    expect(() => opt(1).apply(7)).to.throw('Invalid input - expected function');
+    const add = (a: number, b: number) => a + b;
+    expect(
+      opt(add).apply(2, 3) // Some(5)
+              .orNull(),
+    ).to.be.eq(5);
+    const g = chai.spy();
+    expect(opt(g).apply().orNull()).to.be.null;
+    expect(g).to.have.been.called.once;
+    const sub = (a: number) => (b: number) => a - b;
+    expect(
+      opt(sub).apply(10).apply(3) // Some(7)
+              .orNull(),
+    ).to.be.eq(7);
+  });
+
+  it('onFunc', () => {
+    const f = chai.spy();
+    expect(
+      opt(f).onFunc() // calls `f` and returns Some(f)
+            .orNull(),
+    ).to.be.eq(f);
+    expect(f).to.have.been.called.once;
+    const g = (a: number, b: number): void => console.log(a, b);
+    const gg = chai.spy(g);
+    expect(
+      opt(gg).onFunc(1, 2) // calls `g` (prints 1 and 2), returns Some(g)
+             .orNull(),
+    ).to.be.eq(gg);
+    expect(gg).to.have.been.called.once;
+    expect(gg).to.have.been.called.with(1, 2);
+    // @ts-expect-error
+    opt(add1).onFunc('not a number');
+    // @ts-expect-error
+    expect(() => opt(true).onFunc(1)).to.throw();
+    expect(
+      none.onFunc(79) // None
+          .orNull()).to.be.null;
   });
 });
 
@@ -1878,6 +1933,33 @@ describe('parseInt', () => {
     expect(parseInt('').orNull()).to.be.null;
     expect(parseInt('gin').orNull()).to.be.null;
     expect(parseInt('xFF').orNull()).to.be.null;
+  });
+});
+
+describe('apply', () => {
+  it('applies', () => {
+    expect(apply(1)(opt(add1)).orNull()).to.be.eq(2);
+    expect(pipe(
+      add1,
+      opt,
+      apply(1),
+      orNull,
+    )).to.be.eq(2);
+  });
+});
+
+describe('onFunc', () => {
+  it('calls function', () => {
+    const f = chai.spy((a: number) => { suppressUnused(a); });
+    expect(onFunc(7)(opt(f)).orNull()).to.be.eq(f);
+    expect(f).to.have.been.called.once;
+    expect(f).to.have.been.called.with(7);
+    expect(pipe(
+      f,
+      opt,
+      onFunc(7),
+      orNull,
+    )).to.be.eq(f);
   });
 });
 

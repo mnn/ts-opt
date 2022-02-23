@@ -20,6 +20,7 @@ const refCmp: EqualityFunction = <T>(a: T, b: T): boolean => a === b;
 type NotObject<T> = T extends object ? never : T;
 type SuperUnionOf<T, U> = Exclude<U, T> extends never ? NotObject<T> : never;
 type WithoutOptValues<T> = NonNullable<T>;
+type AnyFunc = (...args: any) => any;
 
 /* istanbul ignore next */
 class OperationNotAvailable<TypeGot, TypeExpected> {
@@ -37,6 +38,8 @@ interface ConstInClassFn<T> {
 export const isString = (x: any): x is string => typeof x === 'string';
 export const toString = (x: { toString(): string }): string => x.toString();
 export const isArray = (x: any): x is unknown[] => Array.isArray(x);
+// tslint:disable-next-line:ban-types
+export const isFunction = (x: any): x is Function => typeof x === 'function';
 
 const debugPrint = (tag?: string, ...xs: unknown[]) => {
   // tslint:disable-next-line:no-console
@@ -46,7 +49,8 @@ const debugPrint = (tag?: string, ...xs: unknown[]) => {
 /**
  * Generic container class. It either holds exactly one value - [[Some]], or no value - [[None]] (empty).
  *
- * It simplifies working with possibly empty values and provides many methods/functions which allow creation of processing pipelines (commonly known as "fluent API" in OOP or [[pipe|chain of reverse applications]] in FP).
+ * It simplifies working with possibly empty values and provides many methods/functions which allow creation of processing pipelines (commonly known as "fluent
+ * API" in OOP or [[pipe|chain of reverse applications]] in FP).
  *
  * @typeparam T Wrapped value type.
  */
@@ -364,6 +368,7 @@ export abstract class Opt<T> {
    *
    * @see [[caseOf]] for functional version
    * @see [[ts-opt.onBoth]]
+   * @imperative
    *
    * @param onSome
    * @param onNone
@@ -372,12 +377,14 @@ export abstract class Opt<T> {
 
   /**
    * Calls `f` on [[Some]] with its value, does nothing for [[None]].
+   * @imperative
    * @param f
    */
   abstract onSome(f: (x: T) => void): Opt<T>;
 
   /**
    * Calls `f` on [[None]], does nothing for [[Some]].
+   * @imperative
    * @param f
    */
   abstract onNone(f: () => void): Opt<T>;
@@ -833,6 +840,8 @@ export abstract class Opt<T> {
   /**
    * No-op terminator used to end imperative chains.
    *
+   * @imperative
+   *
    * @example
    * ```ts
    * const f = (x: unknown): void => opt(x).onBoth(noop, noop).end;
@@ -841,6 +850,77 @@ export abstract class Opt<T> {
    * ```
    */
   get end(): void { return undefined; }
+
+  /**
+   * Apply (call) a function inside [[Some]]. Does nothing for [[None]].
+   *
+   * @example
+   * ```ts
+   * const add = (a: number, b: number) => a + b;
+   * opt(add).apply(2, 3) // Some(5)
+   * none.apply(0).orNull() // None
+   * ```
+   *
+   * @example It can also be used with curried functions.
+   * ```ts
+   * const sub = (a: number) => (b: number) => a - b;
+   * opt(sub).apply(10).apply(3) // Some(7)
+   * ```
+   *
+   * @note [[apply]] is only available for functions, otherwise an exception will be thrown when called on [[Some]].
+   *
+   * @see [[onFunc]] for imperative version
+   *
+   * @param args Parameters passed to wrapped function.
+   * @return `opt`-wrapped result from the function
+   */
+  apply< //
+    R extends (T extends AnyFunc ? ReturnType<T> : OperationNotAvailable<T, AnyFunc>),
+    A extends (T extends AnyFunc ? Parameters<T> : never) //
+    >(...args: A): Opt<R> {
+    if (this.isSome()) {
+      const val = this.value;
+      if (isFunction(val)) { return opt(val(...args)); }
+      throw new Error(`Invalid input - expected function, got ${typeof val}.`);
+    }
+    return none;
+  }
+
+  /**
+   * Apply (call) a function inside [[Some]]. Does nothing for [[None]].
+   *
+   * @example Both lines do the same thing
+   * ```ts
+   * opt(f).onSome(x => x())
+   * opt(f).onFunc()
+   * ```
+   *
+   * @example
+   * ```ts
+   * const g = (a: number, b: number): void => console.log(a, b);
+   * opt(g).onFunc(1, 2) // calls `g` (prints 1 and 2), returns Some(g)
+   * none.onFunc(79) // None
+   * ```
+   *
+   * @note [[onFunc]] is only available for functions, otherwise an exception will be thrown when called on [[Some]].
+   * @imperative
+   *
+   * @see [[apply]] for functional version
+   *
+   * @param args
+   * @return Unchanged [[Opt]] instance
+   */
+  onFunc<A extends (T extends AnyFunc ? Parameters<T> : never)>(...args: A): Opt<T> {
+    if (this.isSome()) {
+      const val = this.value;
+      if (isFunction(val)) {
+        val(...args);
+      } else {
+        throw new Error(`Invalid input - expected function, got ${typeof val}.`);
+      }
+    }
+    return this;
+  }
 }
 
 /**
@@ -1775,3 +1855,16 @@ export const parseJson = (x: string): Opt<unknown> => tryRun(() => JSON.parse(x)
  * @param x
  */
 export const parseInt = (x: string): Opt<number> => opt(Number.parseInt(x, 10));
+
+/** @see [[Opt.apply]] */
+export const apply = < //
+  T extends AnyFunc,
+  R extends ReturnType<T>,
+  A extends Parameters<T> //
+  >(...args: A) => (x: Opt<T>): Opt<R> => x.apply(...args);
+
+/** @see [[Opt.onFunc]] */
+export const onFunc = < //
+  T extends AnyFunc,
+  A extends Parameters<T> //
+  >(...args: A) => (x: Opt<T>): Opt<T> => x.onFunc(...args);
