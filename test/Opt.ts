@@ -80,7 +80,11 @@ import {
   parseInt,
   nonEmpty,
   count,
-  flatBimap, apply, onFunc,
+  flatBimap,
+  apply,
+  onFunc,
+  alt,
+  orElseAny,
 } from '../src/Opt';
 
 chai.use(spies);
@@ -410,10 +414,51 @@ describe('opt', () => {
     expect(some(1).orElse(0)).to.be.eq(1);
   });
 
+  it('orElseAny', () => {
+    // @ts-expect-error
+    opt(1).orElse(true); // TS2345: Argument of type 'boolean' is not assignable to parameter of type 'number'.
+    const r1: number | boolean = opt(1).orElseAny(true);
+    expect(r1).to.be.eq(1);
+    const r2: number | boolean = opt<number>(null).orElseAny(true);
+    expect(r2).to.be.true;
+  });
+
   it('orElseOpt', () => {
     expect(none.orElseOpt(some(0)).orNull()).to.be.eq(0);
     expect(none.orElseOpt(none).orNull()).to.be.eq(null);
     expect(some(1).orElseOpt(none).orNull()).to.be.eq(1);
+  });
+
+  it('alt', () => {
+    expect(
+      none.alt(some(0)) // Some(0)
+          .orNull(),
+    ).to.be.eq(0);
+    expect(
+      opt(1).alt(some(0)) // Some(1)
+            .orNull(),
+    ).to.be.eq(1);
+    expect(
+      none.alt(none) // None
+          .orNull(),
+    ).to.be.eq(null);
+    expect(
+      some(1).alt(none) // Some(1)
+             .orNull(),
+    ).to.be.eq(1);
+    type Handler = (_: number) => void;
+    const userHandler: Handler | null = a => console.log('user handling', a);
+    const systemHandler: Handler | null = a => console.log('system handling', a);
+    const backupHandler: Handler | null = a => console.log('backup handling', a);
+    const panicHandler: Handler = a => console.log('PANIC handling', a);
+    const handler =
+      opt(userHandler)
+      .alt(opt(systemHandler))
+      .alt(opt(backupHandler))
+      .orElse(panicHandler);
+    handler(250 + 64); // prints "user handling 314"
+    expect(console.log).to.have.been.called.exactly(1);
+    expect(console.log).to.have.been.called.with('user handling', 314);
   });
 
   it('bimap', () => {
@@ -1397,12 +1442,30 @@ describe('orElse', () => {
   });
 });
 
+describe('orElseAny', () => {
+  it('returns value on some', () => {
+    expect(orElseAny(true)(opt(1))).to.be.eq(1);
+  });
+  it('returns default value on none', () => {
+    expect(orElseAny(true)(none)).to.be.true;
+  });
+});
+
 describe('orElseOpt', () => {
   it('returns value on some', () => {
     expect(orElseOpt(opt(0))(opt(1)).orNull()).to.be.eq(1);
   });
   it('returns default value on none', () => {
     expect(orElseOpt(opt(0))(none).orNull()).to.be.eq(0);
+  });
+});
+
+describe('alt', () => {
+  it('returns value on some', () => {
+    expect(alt(opt(0))(opt(1)).orNull()).to.be.eq(1);
+  });
+  it('returns default value on none', () => {
+    expect(alt(opt(0))(none).orNull()).to.be.eq(0);
   });
 });
 

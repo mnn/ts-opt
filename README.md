@@ -394,7 +394,7 @@ pipe(x, opt, f, orElse(4), g, orElse('a'))
 
 Now the data flow is easy to understand and to read, since it only flows in one direction - from left to right.
 
-> Note: You could also use `opt(x).pipe(...)` instead of `pipe(x, opt, ...)`.
+> You could also use `opt(x).pipe(...)` instead of `pipe(x, opt, ...)`. It can lead to better type inference.
 
 Development
 ===
