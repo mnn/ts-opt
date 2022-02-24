@@ -19,7 +19,7 @@ Features
   * but it is fully usable from JavaScript as well
 * 🔩 Pragmatic - doesn't force functional programming paradigm
 * 📏 100% Test Coverage
-* 🗜️ Lightweight - no dependencies, only around 3KiB gzip+minified
+* 🗜️ Lightweight - no dependencies, only around 4KiB gzip+minified
 
 Installation
 ===
