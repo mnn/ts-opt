@@ -594,6 +594,18 @@ export declare abstract class Opt<T> {
      */
     noneIf(predicate: (_: T) => boolean): Opt<T>;
     /**
+     * Returns [[None]] when given `true`, otherwise passes opt unchanged.
+     *
+     * @example
+     * ```ts
+     * opt(1).noneWhen(false) // Some(1)
+     * opt(1).noneWhen(true) // None
+     * ```
+     *
+     * @param returnNone
+     */
+    noneWhen(returnNone: boolean): Opt<T>;
+    /**
      * Returns `0` or `1` for [[Some]] depending on whether the predicate holds.
      * Returns `0` for [[None]].
      *
@@ -1187,6 +1199,10 @@ declare type FilterFn = <T>(p: (_: T) => boolean) => <U extends Opt<T> | T[]>(x:
  * @see [[Opt.filter]]
  */
 export declare const filter: FilterFn;
+/** @see [[Opt.noneIf]] */
+export declare const noneIf: <T>(predicate: (_: T) => boolean) => (x: Opt<T>) => Opt<T>;
+/** @see [[Opt.noneWhen]] */
+export declare const noneWhen: <T>(returnNone: boolean) => (x: Opt<T>) => Opt<T>;
 declare type CountFn = <T>(p: (_: T) => boolean) => <U extends Opt<T> | T[]>(x: U) => U extends Opt<T> ? 0 | 1 : number;
 /**
  * Same as [[Opt.count]], but also supports arrays.

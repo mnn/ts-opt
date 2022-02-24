@@ -21,7 +21,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.bimap = exports.alt = exports.orElseOpt = exports.orElseAny = exports.orElse = exports.forAll = exports.exists = exports.contains = exports.pipe = exports.onBoth = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOptFlow = exports.actToOpt = exports.chainToOpt = exports.chainFlow = exports.act = exports.chain = exports.flatMap = exports.mapFlow = exports.map = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = exports.isFunction = exports.isArray = exports.toString = exports.isString = void 0;
-exports.onFunc = exports.apply = exports.parseInt = exports.parseJson = exports.tryRun = exports.testReOrFalse = exports.testRe = exports.zipToOptArray = exports.last = exports.head = exports.at = exports.id = exports.nonEmpty = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.prop = exports.equals = exports.print = exports.narrow = exports.count = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.flatBimap = void 0;
+exports.onFunc = exports.apply = exports.parseInt = exports.parseJson = exports.tryRun = exports.testReOrFalse = exports.testRe = exports.zipToOptArray = exports.last = exports.head = exports.at = exports.id = exports.nonEmpty = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.prop = exports.equals = exports.print = exports.narrow = exports.count = exports.noneWhen = exports.noneIf = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.flatBimap = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 var errorSymbol = Symbol('Error');
@@ -291,6 +291,20 @@ var Opt = /** @class */ (function () {
      */
     Opt.prototype.noneIf = function (predicate) {
         return this.filter(function (x) { return !predicate(x); });
+    };
+    /**
+     * Returns [[None]] when given `true`, otherwise passes opt unchanged.
+     *
+     * @example
+     * ```ts
+     * opt(1).noneWhen(false) // Some(1)
+     * opt(1).noneWhen(true) // None
+     * ```
+     *
+     * @param returnNone
+     */
+    Opt.prototype.noneWhen = function (returnNone) {
+        return this.noneIf(function (_) { return returnNone; });
     };
     /**
      * Returns `0` or `1` for [[Some]] depending on whether the predicate holds.
@@ -1002,6 +1016,12 @@ exports.zip5 = zip5;
  */
 var filter = function (p) { return function (x) { return x.filter(p); }; };
 exports.filter = filter;
+/** @see [[Opt.noneIf]] */
+var noneIf = function (predicate) { return function (x) { return x.noneIf(predicate); }; };
+exports.noneIf = noneIf;
+/** @see [[Opt.noneWhen]] */
+var noneWhen = function (returnNone) { return function (x) { return x.noneWhen(returnNone); }; };
+exports.noneWhen = noneWhen;
 /**
  * Same as [[Opt.count]], but also supports arrays.
  *

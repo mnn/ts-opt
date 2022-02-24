@@ -85,6 +85,8 @@ import {
   onFunc,
   alt,
   orElseAny,
+  noneIf,
+  noneWhen,
 } from '../src/Opt';
 
 chai.use(spies);
@@ -544,6 +546,18 @@ describe('opt', () => {
     expect(some(1).noneIf(lt0).orNull()).to.be.eq(1);
     expect(some(1).noneIf(gt0).orNull()).to.be.null;
     expect(none.noneIf(lt0).orNull()).to.be.null;
+  });
+
+  it('noneWhen', () => {
+    expect(
+      opt(1).noneWhen(false) // Some(1)
+            .orNull(),
+    ).to.be.eq(1);
+    expect(
+      opt(1).noneWhen(true) // None
+            .orNull(),
+    ).to.be.null;
+    expect(none.noneWhen(true).orNull()).to.be.null;
   });
 
   it('count', () => {
@@ -1586,6 +1600,24 @@ describe('filter', () => {
       expect(filter((x: number) => x > 1)([1])).to.be.eql([]);
       expect(filter(gt0)([-1, 0, 1])).to.be.eql([1]);
     });
+  });
+});
+
+describe('noneIf', () => {
+  it('passes opt when predicate doesn\'t hold', () => {
+    expect(noneIf(gt0)(opt(-5)).orNull()).to.be.eq(-5);
+  });
+  it('returns none when predicate holds', () => {
+    expect(noneIf(gt0)(opt(5)).orNull()).to.be.null;
+  });
+});
+
+describe('noneWhen', () => {
+  it('passes opt on false', () => {
+    expect(noneWhen(false)(opt(1)).orNull()).to.be.eq(1);
+  });
+  it('returns none on true', () => {
+    expect(noneWhen(true)(opt(1)).orNull()).to.be.null;
   });
 });
 
