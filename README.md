@@ -147,7 +147,7 @@ Documentation
 ===
 All methods are documented, if you don't see a description please make sure you are reading the base class page - `Opt`.
 
-* Main [Opt](https://glcdn.githack.com/monnef/ts-opt/-/raw/v3.2.0/doc/modules/opt.html) class
+* Main [Opt](https://glcdn.githack.com/monnef/ts-opt/-/raw/v3.2.0/doc/classes/Opt.html) class
 * [Module](https://glcdn.githack.com/monnef/ts-opt/-/raw/v3.2.0/doc/modules.html) (constructors and helper functions)
 
 Pitfalls
