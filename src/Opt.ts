@@ -1589,6 +1589,21 @@ export const count: CountFn = (p: any) => (x: any): any => {
   throw new Error(`Invalid input to count, only Opt and Array are supported: ${JSON.stringify(x)}`);
 };
 
+/**
+ * Find a first item which holds true for a given predicate and return it wrapped in [[Some]].
+ * Return [[None]] when no match is found.
+ *
+ * @example
+ * ```ts
+ * find((x: number) => x > 0)([-1, 0, 1]) // Some(1)
+ * find((x: number) => x > 5)([0, 3, 5]) // None
+ * ```
+ *
+ * @param predicate
+ */ // TODO: optimize (reduce or while)
+export const find = <T>(predicate: (_: T) => boolean) => (xs: T[]): Opt<T> =>
+  opt(xs.filter(predicate)[0]);
+
 /** @see [[Opt.narrow]] */
 export const narrow = <U>(guard: (value: any) => value is U) => <T>(x: Opt<T>): Opt<U> => x.narrow(guard);
 
