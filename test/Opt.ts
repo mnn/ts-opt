@@ -1913,6 +1913,12 @@ describe('at', () => {
     const y: Opt<number> = at(0)([1] as (number | null)[]);
     suppressUnused(x, y);
   });
+
+  it('supports empty input values', () => {
+    const input1: number[] | null = [] as number[] | null;
+    const res1: Opt<number> = at(0)(input1);
+    expect(res1.orFalse()).to.be.false;
+  });
 });
 
 describe('head', () => {
@@ -1923,6 +1929,12 @@ describe('head', () => {
     expect(head(opt([])).orFalse()).to.be.false;
     expect(head(opt(null as null | number[])).orFalse()).to.be.false;
   });
+
+  it('supports empty input values', () => {
+    const input1: number[] | null = [] as number[] | null;
+    const res1: Opt<number> = head(input1);
+    expect(res1.orFalse()).to.be.false;
+  });
 });
 
 describe('last', () => {
@@ -1932,6 +1944,12 @@ describe('last', () => {
     expect(last(opt([1, 2, 3])).orFalse()).to.be.eq(3);
     expect(last(opt([])).orFalse()).to.be.false;
     expect(last(opt(null as null | number[])).orFalse()).to.be.false;
+  });
+
+  it('supports empty input values', () => {
+    const input1: number[] | null = [] as number[] | null;
+    const res1: Opt<number> = last(input1);
+    expect(res1.orFalse()).to.be.false;
   });
 });
 

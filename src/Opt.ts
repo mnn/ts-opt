@@ -221,7 +221,7 @@ export abstract class Opt<T> {
    *
    * @param f
    */
-  chainToOpt<U>(f: (_: T) => U | undefined | null): Opt<U> { return this.flatMap(x => opt(f(x))); }
+  chainToOpt<U>(f: (_: T) => U | undefined | null): OptSafe<U> { return this.flatMap(x => opt(f(x))); }
 
   /**
    * Similar to [[act]], but functions return empty values instead of [[Opt]].
@@ -797,7 +797,7 @@ export abstract class Opt<T> {
    *
    * @param key
    */
-  abstract prop<K extends (T extends object ? keyof T : never)>(key: K): Opt<WithoutOptValues<T[K]>>;
+  abstract prop<K extends (T extends object ? keyof T : never)>(key: K): OptSafe<T[K]>;
 
   /**
    * Constructs a function which returns a value for [[Some]] or an empty value for [[None]] (default is `null`).
@@ -870,7 +870,7 @@ export abstract class Opt<T> {
    *
    * @see [[ts-opt.head]]
    */
-  head<R extends (T extends (infer A)[] ? A : never)>(): Opt<R> { return this.at(0); }
+  head<R extends (T extends (infer A)[] ? A : never)>(): OptSafe<R> { return this.at(0); }
 
   /**
    * Get a last item of an array.
@@ -884,7 +884,7 @@ export abstract class Opt<T> {
    *
    * @see [[ts-opt.last]]
    */
-  last<R extends (T extends (infer A)[] ? A : never)>(): Opt<R> { return this.at(-1); }
+  last<R extends (T extends (infer A)[] ? A : never)>(): OptSafe<R> { return this.at(-1); }
 
   /**
    * A convenience function to test this (`Opt<string>`) against a given regular expression.
@@ -1084,7 +1084,7 @@ class None<T> extends Opt<T> {
     return other.isEmpty;
   }
 
-  prop<K extends (T extends object ? keyof T : never)>(_key: K): Opt<WithoutOptValues<T[K]>> { return none; }
+  prop<K extends (T extends object ? keyof T : never)>(_key: K): OptSafe<T[K]> { return none; }
 
   swap<U>(_newVal: U): Opt<U> {
     return none;
@@ -1214,7 +1214,7 @@ class Some<T> extends Opt<T> {
     return comparator(this._value, other.orCrash('Some expected'));
   }
 
-  prop<K extends (T extends object ? keyof T : never)>(key: K): Opt<WithoutOptValues<T[K]>> { return opt(this._value[key]) as Opt<WithoutOptValues<T[K]>>; }
+  prop<K extends (T extends object ? keyof T : never)>(key: K): OptSafe<T[K]> { return opt(this._value[key]) as Opt<WithoutOptValues<T[K]>>; }
 
   swap<U>(newVal: U): Opt<U> {
     return some(newVal);
@@ -1454,7 +1454,7 @@ export const act: ActFn = <I>(...fs: any[]) => (x: Opt<I>) => fs.reduce((acc, x)
 export const chainFlow: ActFn = act;
 
 /** @see [[Opt.chainToOpt]] */
-export const chainToOpt = <T, U>(f: (_: T) => U | undefined | null) => (x: Opt<T>): Opt<U> => x.chainToOpt(f);
+export const chainToOpt = <T, U>(f: (_: T) => U | undefined | null) => (x: Opt<T>): OptSafe<U> => x.chainToOpt(f);
 
 /** @see [[Opt.actToOpt]] */
 export const actToOpt: ActToOptFn = <I>(...fs: any[]) => (x: Opt<I>) => fs.reduce((acc, x) => acc.chainToOpt(x), x);
@@ -1635,7 +1635,7 @@ export const equals = <T>(other: Opt<T>, comparator: EqualityFunction = refCmp) 
 
 /** @see [[Opt.prop]] */
 export const prop = <T extends object,
-  K extends (T extends object ? keyof T : never) = T extends object ? keyof T : never>(key: K) => (x: Opt<T>): Opt<WithoutOptValues<T[K]>> =>
+  K extends (T extends object ? keyof T : never) = T extends object ? keyof T : never>(key: K) => (x: Opt<T>): OptSafe<T[K]> =>
   x.prop(key);
 
 /** @see [[Opt.swap]] */
@@ -1842,21 +1842,22 @@ export const id = <T>(x: T): T => x;
  * @see [[Opt.at]]
  * @param index
  */
-export const at = (index: number) => <T>(x: T[] | Opt<T[]>): OptSafe<T> => (isOpt(x) ? x : opt(x)).at(index);
+export const at = (index: number) => <T>(x: EmptyValue | T[] | Opt<T[]>): OptSafe<T> =>
+  (isOpt(x) ? x : opt(x)).at(index);
 
 /**
  * Same as [[Opt.head]], but also supports unwrapped arrays.
  * @see [[Opt.head]]
  * @param x
  */
-export const head = <T>(x: T[] | Opt<T[]>): Opt<T> => (isOpt(x) ? x : opt(x)).head();
+export const head = <T>(x: EmptyValue | T[] | Opt<T[]>): OptSafe<T> => (isOpt(x) ? x : opt(x)).head();
 
 /**
  * Same as [[Opt.last]], but also supports unwrapped arrays.
  * @see [[Opt.last]]
  * @param x
  */
-export const last = <T>(x: T[] | Opt<T[]>): Opt<T> => (isOpt(x) ? x : opt(x)).last();
+export const last = <T>(x: EmptyValue | T[] | Opt<T[]>): OptSafe<T> => (isOpt(x) ? x : opt(x)).last();
 
 interface ZipToOptArrayFn {
   <A, B>(xs: [A, B]): Opt<[WithoutOptValues<A>, WithoutOptValues<B>]>;
