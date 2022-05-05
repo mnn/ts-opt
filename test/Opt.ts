@@ -701,6 +701,8 @@ describe('opt', () => {
     expect(opt([null]).at(0).orFalse()).to.be.false;
     expect(opt([1, 2, 3]).at(-3).orFalse()).to.be.eq(1);
     expect(opt([1, 2, 3]).at(-4).orFalse()).to.be.false;
+    const x: Opt<number> = opt([1]).at(0);
+    suppressUnused(x);
   });
 
   it('head', () => {
@@ -1907,6 +1909,9 @@ describe('at', () => {
     expect(at(1)([5]).orFalse()).to.be.false;
     expect(at(0)(opt([5])).orFalse()).to.be.eq(5);
     expect(at(1)(opt([5])).orFalse()).to.be.false;
+    const x: number | false = at(0)([1] as (number | null)[]).orElseAny(false);
+    const y: Opt<number> = at(0)([1] as (number | null)[]);
+    suppressUnused(x, y);
   });
 });
 

@@ -19,8 +19,14 @@ export type EqualityFunction = <T>(a: T, b: T) => boolean;
 const refCmp: EqualityFunction = <T>(a: T, b: T): boolean => a === b;
 type NotObject<T> = T extends object ? never : T;
 type SuperUnionOf<T, U> = Exclude<U, T> extends never ? NotObject<T> : never;
+
+// NaN doesn't exist in TypeScript type system
+// https://github.com/Microsoft/TypeScript/issues/28682
 type WithoutOptValues<T> = NonNullable<T>;
+type EmptyValue = null | undefined;
+
 type AnyFunc = (...args: any) => any;
+type OptSafe<T> = Opt<WithoutOptValues<T>>;
 
 /* istanbul ignore next */
 class OperationNotAvailable<TypeGot, TypeExpected> {
@@ -850,7 +856,7 @@ export abstract class Opt<T> {
    *
    * @param index
    */
-  abstract at<R extends (T extends (infer A)[] ? A : never)>(index: number): Opt<R>;
+  abstract at<R extends (T extends (infer A)[] ? A : never)>(index: number): OptSafe<R>;
 
   /**
    * Get a first item of an array.
@@ -1084,7 +1090,7 @@ class None<T> extends Opt<T> {
     return none;
   }
 
-  at<R extends (T extends (infer A)[] ? A : never)>(_index: number): Opt<R> {
+  at<R extends (T extends (infer A)[] ? A : never)>(_index: number): OptSafe<R> {
     return none;
   }
 }
@@ -1214,7 +1220,7 @@ class Some<T> extends Opt<T> {
     return some(newVal);
   }
 
-  at<R extends (T extends (infer A)[] ? A : never)>(index: number): Opt<R> {
+  at<R extends (T extends (infer A)[] ? A : never)>(index: number): OptSafe<R> {
     const val = this._value;
     if (Array.isArray(val)) {
       const processedIndex = (index < 0 ? val.length : 0) + index;
@@ -1262,7 +1268,7 @@ export class ReduxDevtoolsCompatibilityHelper {
   }
 }
 
-const isNoneValue = (x: any): boolean => {
+const isNoneValue = (x: any): x is EmptyValue => {
   return x === undefined || x === null || Number.isNaN(x);
 };
 
@@ -1273,7 +1279,9 @@ export const none: None<any> = Object.freeze(new None());
 
 /**
  * Constructs [[Some]].
- * Usually it is [[opt]] you are looking for (only in rare cases you want to have for example `Some(undefined)`).
+ *
+ * Warning: Usually it is [[opt]] you are looking for.
+ * Only in rare cases you want to have for example `Some(undefined)`.
  * @param x
  */
 export const some = <T>(x: T) => Object.freeze(new Some(x));
@@ -1283,7 +1291,8 @@ export const some = <T>(x: T) => Object.freeze(new Some(x));
  * Anything else is wrapped into [[Some]].
  * @param x
  */
-export const opt = <T>(x: T | undefined | null): Opt<T> => isNoneValue(x) ? none : some(x as T);
+export const opt = <T>(x: T | undefined | null): OptSafe<T> =>
+  isNoneValue(x) ? none : some(x as WithoutOptValues<T>);
 
 /**
  * For falsy values returns [[None]], otherwise acts same as [[opt]].
@@ -1295,32 +1304,32 @@ export const opt = <T>(x: T | undefined | null): Opt<T> => isNoneValue(x) ? none
  * ```
  * @param x
  */
-export const optFalsy = <T>(x: T | undefined | null | '' | false | 0): Opt<T> => x ? some(x as T) : none;
+export const optFalsy = <T>(x: T | undefined | null | '' | false | 0): OptSafe<T> => x ? some(x as WithoutOptValues<T>) : none;
 
 /**
  * For empty array (`[]`) returns [[None]], otherwise acts same as [[opt]].
  * @param x
  */
-export const optEmptyArray = <T>(x: T[] | undefined | null): Opt<T[]> => opt(x).filter(y => y.length > 0);
+export const optEmptyArray = <T>(x: T[] | undefined | null): OptSafe<T[]> => opt(x).filter(y => y.length > 0);
 
 /**
  * For empty object (`{}`) returns [[None]], otherwise acts same as [[opt]].
  * @param x
  */
-export const optEmptyObject = <T extends object>(x: T | undefined | null): Opt<T> =>
+export const optEmptyObject = <T extends object>(x: T | undefined | null): OptSafe<T> =>
   opt(x).filter(y => Object.keys(y).length !== 0);
 
 /**
  * For empty string (`''`) returns [[None]], otherwise acts same as [[opt]].
  * @param x
  */
-export const optEmptyString = <T>(x: T | undefined | null | ''): Opt<T> => x === '' ? none : opt(x);
+export const optEmptyString = <T>(x: T | undefined | null | ''): OptSafe<T> => x === '' ? none : opt(x);
 
 /**
  * For a number `0` returns [[None]], otherwise acts same as [[opt]].
  * @param x
  */
-export const optZero = <T>(x: T | undefined | null | 0): Opt<T> => x === 0 ? none : opt(x);
+export const optZero = <T>(x: T | undefined | null | 0): OptSafe<T> => x === 0 ? none : opt(x);
 
 /**
  * For numbers lesser than `0` returns [[None]], otherwise acts same as [[opt]].
@@ -1333,7 +1342,7 @@ export const optZero = <T>(x: T | undefined | null | 0): Opt<T> => x === 0 ? non
  * ```
  * @param x
  */
-export const optNegative = (x: number | undefined | null): Opt<number> => typeof x === 'number' && x < 0 ? none : opt(x);
+export const optNegative = (x: number | undefined | null): OptSafe<number> => typeof x === 'number' && x < 0 ? none : opt(x);
 
 /**
  * Is given value an instance of [[Opt]]?
@@ -1833,7 +1842,7 @@ export const id = <T>(x: T): T => x;
  * @see [[Opt.at]]
  * @param index
  */
-export const at = (index: number) => <T>(x: T[] | Opt<T[]>): Opt<T> => (isOpt(x) ? x : opt(x)).at(index);
+export const at = (index: number) => <T>(x: T[] | Opt<T[]>): OptSafe<T> => (isOpt(x) ? x : opt(x)).at(index);
 
 /**
  * Same as [[Opt.head]], but also supports unwrapped arrays.

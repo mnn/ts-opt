@@ -21,7 +21,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.bimap = exports.alt = exports.orElseOpt = exports.orElseAny = exports.orElse = exports.forAll = exports.exists = exports.contains = exports.pipe = exports.onBoth = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOptFlow = exports.actToOpt = exports.chainToOpt = exports.chainFlow = exports.act = exports.chain = exports.flatMap = exports.mapFlow = exports.map = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = exports.isFunction = exports.isArray = exports.toString = exports.isString = void 0;
-exports.onFunc = exports.apply = exports.parseInt = exports.parseJson = exports.tryRun = exports.testReOrFalse = exports.testRe = exports.zipToOptArray = exports.last = exports.head = exports.at = exports.id = exports.nonEmpty = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.prop = exports.equals = exports.print = exports.narrow = exports.count = exports.noneWhen = exports.noneIf = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.flatBimap = void 0;
+exports.onFunc = exports.apply = exports.parseInt = exports.parseJson = exports.tryRun = exports.testReOrFalse = exports.testRe = exports.zipToOptArray = exports.last = exports.head = exports.at = exports.id = exports.nonEmpty = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.prop = exports.equals = exports.print = exports.narrow = exports.find = exports.count = exports.noneWhen = exports.noneIf = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.flatBimap = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 var errorSymbol = Symbol('Error');
@@ -722,7 +722,9 @@ var isNoneValue = function (x) {
 exports.none = Object.freeze(new None());
 /**
  * Constructs [[Some]].
- * Usually it is [[opt]] you are looking for (only in rare cases you want to have for example `Some(undefined)`).
+ *
+ * Warning: Usually it is [[opt]] you are looking for.
+ * Only in rare cases you want to have for example `Some(undefined)`.
  * @param x
  */
 var some = function (x) { return Object.freeze(new Some(x)); };
@@ -732,7 +734,9 @@ exports.some = some;
  * Anything else is wrapped into [[Some]].
  * @param x
  */
-var opt = function (x) { return isNoneValue(x) ? exports.none : exports.some(x); };
+var opt = function (x) {
+    return isNoneValue(x) ? exports.none : exports.some(x);
+};
 exports.opt = opt;
 /**
  * For falsy values returns [[None]], otherwise acts same as [[opt]].
@@ -1044,6 +1048,22 @@ var count = function (p) { return function (x) {
     throw new Error("Invalid input to count, only Opt and Array are supported: " + JSON.stringify(x));
 }; };
 exports.count = count;
+/**
+ * Find a first item which holds true for a given predicate and return it wrapped in [[Some]].
+ * Return [[None]] when no match is found.
+ *
+ * @example
+ * ```ts
+ * find((x: number) => x > 0)([-1, 0, 1]) // Some(1)
+ * find((x: number) => x > 5)([0, 3, 5]) // None
+ * ```
+ *
+ * @param predicate
+ */ // TODO: optimize (reduce or while)
+var find = function (predicate) { return function (xs) {
+    return exports.opt(xs.filter(predicate)[0]);
+}; };
+exports.find = find;
 /** @see [[Opt.narrow]] */
 var narrow = function (guard) { return function (x) { return x.narrow(guard); }; };
 exports.narrow = narrow;

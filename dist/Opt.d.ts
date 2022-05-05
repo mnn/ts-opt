@@ -4,6 +4,7 @@ declare type NotObject<T> = T extends object ? never : T;
 declare type SuperUnionOf<T, U> = Exclude<U, T> extends never ? NotObject<T> : never;
 declare type WithoutOptValues<T> = NonNullable<T>;
 declare type AnyFunc = (...args: any) => any;
+declare type OptSafe<T> = Opt<WithoutOptValues<T>>;
 declare class OperationNotAvailable<TypeGot, TypeExpected> {
     readonly '@@type': symbol;
     _notUsed1?: TypeGot;
@@ -973,7 +974,9 @@ export declare class ReduxDevtoolsCompatibilityHelper {
 export declare const none: None<any>;
 /**
  * Constructs [[Some]].
- * Usually it is [[opt]] you are looking for (only in rare cases you want to have for example `Some(undefined)`).
+ *
+ * Warning: Usually it is [[opt]] you are looking for.
+ * Only in rare cases you want to have for example `Some(undefined)`.
  * @param x
  */
 export declare const some: <T>(x: T) => Readonly<Some<T>>;
@@ -982,7 +985,7 @@ export declare const some: <T>(x: T) => Readonly<Some<T>>;
  * Anything else is wrapped into [[Some]].
  * @param x
  */
-export declare const opt: <T>(x: T | null | undefined) => Opt<T>;
+export declare const opt: <T>(x: T | null | undefined) => OptSafe<T>;
 /**
  * For falsy values returns [[None]], otherwise acts same as [[opt]].
  * ```ts
@@ -993,27 +996,27 @@ export declare const opt: <T>(x: T | null | undefined) => Opt<T>;
  * ```
  * @param x
  */
-export declare const optFalsy: <T>(x: false | "" | 0 | T | null | undefined) => Opt<T>;
+export declare const optFalsy: <T>(x: false | "" | 0 | T | null | undefined) => OptSafe<T>;
 /**
  * For empty array (`[]`) returns [[None]], otherwise acts same as [[opt]].
  * @param x
  */
-export declare const optEmptyArray: <T>(x: T[] | null | undefined) => Opt<T[]>;
+export declare const optEmptyArray: <T>(x: T[] | null | undefined) => OptSafe<T[]>;
 /**
  * For empty object (`{}`) returns [[None]], otherwise acts same as [[opt]].
  * @param x
  */
-export declare const optEmptyObject: <T extends object>(x: T | null | undefined) => Opt<T>;
+export declare const optEmptyObject: <T extends object>(x: T | null | undefined) => OptSafe<T>;
 /**
  * For empty string (`''`) returns [[None]], otherwise acts same as [[opt]].
  * @param x
  */
-export declare const optEmptyString: <T>(x: "" | T | null | undefined) => Opt<T>;
+export declare const optEmptyString: <T>(x: "" | T | null | undefined) => OptSafe<T>;
 /**
  * For a number `0` returns [[None]], otherwise acts same as [[opt]].
  * @param x
  */
-export declare const optZero: <T>(x: 0 | T | null | undefined) => Opt<T>;
+export declare const optZero: <T>(x: 0 | T | null | undefined) => OptSafe<T>;
 /**
  * For numbers lesser than `0` returns [[None]], otherwise acts same as [[opt]].
  * Useful for strange functions which return `-1` or other negative numbers on failure.
@@ -1025,7 +1028,7 @@ export declare const optZero: <T>(x: 0 | T | null | undefined) => Opt<T>;
  * ```
  * @param x
  */
-export declare const optNegative: (x: number | undefined | null) => Opt<number>;
+export declare const optNegative: (x: number | undefined | null) => OptSafe<number>;
 /**
  * Is given value an instance of [[Opt]]?
  * @param x
@@ -1217,6 +1220,18 @@ declare type CountFn = <T>(p: (_: T) => boolean) => <U extends Opt<T> | T[]>(x: 
  * @see [[Opt.count]]
  */
 export declare const count: CountFn;
+/**
+ * Find a first item which holds true for a given predicate and return it wrapped in [[Some]].
+ * Return [[None]] when no match is found.
+ *
+ * @example
+ * ```ts
+ * find((x: number) => x > 0)([-1, 0, 1]) // Some(1)
+ * find((x: number) => x > 5)([0, 3, 5]) // None
+ * ```
+ *
+ * @param predicate
+ */ export declare const find: <T>(predicate: (_: T) => boolean) => (xs: T[]) => Opt<T>;
 /** @see [[Opt.narrow]] */
 export declare const narrow: <U>(guard: (value: any) => value is U) => <T>(x: Opt<T>) => Opt<U>;
 /**
