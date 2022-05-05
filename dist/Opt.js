@@ -1323,7 +1323,9 @@ exports.id = id;
  * @see [[Opt.at]]
  * @param index
  */
-var at = function (index) { return function (x) { return (exports.isOpt(x) ? x : exports.opt(x)).at(index); }; };
+var at = function (index) { return function (x) {
+    return (exports.isOpt(x) ? x : exports.opt(x)).at(index);
+}; };
 exports.at = at;
 /**
  * Same as [[Opt.head]], but also supports unwrapped arrays.

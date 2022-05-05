@@ -6,9 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Added `altOpt`.
 - Implemented `find`.
 - Added change log.
 
 ### Changed
 - `at`, `head` and `last` now support empty inputs.
 - Improved return types of `opt` (and its variants), `at` and `chainToOpt`.
+
+### Removed
+- Removed deprecated `orElseOpt` (use `alt` instead).

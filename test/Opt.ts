@@ -48,7 +48,6 @@ import {
   optZero,
   orCrash,
   orElse,
-  orElseOpt,
   orFalse,
   orNaN,
   orNull,
@@ -88,6 +87,7 @@ import {
   noneIf,
   noneWhen,
   find,
+  altOpt,
 } from '../src/Opt';
 
 chai.use(spies);
@@ -427,12 +427,6 @@ describe('opt', () => {
     expect(r2).to.be.true;
   });
 
-  it('orElseOpt', () => {
-    expect(none.orElseOpt(some(0)).orNull()).to.be.eq(0);
-    expect(none.orElseOpt(none).orNull()).to.be.eq(null);
-    expect(some(1).orElseOpt(none).orNull()).to.be.eq(1);
-  });
-
   it('alt', () => {
     expect(
       none.alt(some(0)) // Some(0)
@@ -463,6 +457,22 @@ describe('opt', () => {
     handler(250 + 64); // prints "user handling 314"
     expect(console.log).to.have.been.called.exactly(1);
     expect(console.log).to.have.been.called.with('user handling', 314);
+  });
+
+  it('altOpt', () => {
+    const inputNull: number | null = null as number | null;
+    expect(
+      opt(inputNull).altOpt(null) // None
+                    .orFalse(),
+    ).to.be.false;
+    expect(
+      opt(inputNull).altOpt(1) // Some(1)
+                    .orFalse(),
+    ).to.be.eq(1);
+    expect(
+      opt(2).altOpt(1) // Some(2)
+            .orFalse(),
+    ).to.be.eq(2);
   });
 
   it('bimap', () => {
@@ -1469,21 +1479,24 @@ describe('orElseAny', () => {
   });
 });
 
-describe('orElseOpt', () => {
-  it('returns value on some', () => {
-    expect(orElseOpt(opt(0))(opt(1)).orNull()).to.be.eq(1);
-  });
-  it('returns default value on none', () => {
-    expect(orElseOpt(opt(0))(none).orNull()).to.be.eq(0);
-  });
-});
-
 describe('alt', () => {
   it('returns value on some', () => {
     expect(alt(opt(0))(opt(1)).orNull()).to.be.eq(1);
   });
   it('returns default value on none', () => {
     expect(alt(opt(0))(none).orNull()).to.be.eq(0);
+  });
+});
+
+describe('altOpt', () => {
+  it('returns value on some', () => {
+    expect(altOpt(0)(opt(1)).orNull()).to.be.eq(1);
+  });
+  it('returns default value on none', () => {
+    expect(altOpt(0)(none).orNull()).to.be.eq(0);
+  });
+  it('returns none on none and empty value', () => {
+    expect(altOpt(undefined as number | undefined)(opt(NaN)).orNull()).to.be.null;
   });
 });
 
@@ -1673,7 +1686,11 @@ describe('count', () => {
 });
 
 describe('find', () => {
-  interface Data { id: number; value: number; }
+  interface Data {
+    id: number;
+    value: number;
+  }
+
   const itemA: Data = {id: 6, value: 9};
   const itemB: Data = {id: 8, value: 2};
   const itemC: Data = {id: 6, value: 0};
@@ -1698,11 +1715,11 @@ describe('find', () => {
   it('passes examples', () => {
     expect(
       find((x: number) => x > 0)([-1, 0, 1]) // Some(1)
-        .orNull(),
+      .orNull(),
     ).to.be.eq(1);
     expect(
       find((x: number) => x > 5)([0, 3, 5]) // None
-        .orNull(),
+      .orNull(),
     ).to.be.null;
   });
 });

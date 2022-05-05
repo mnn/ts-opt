@@ -496,24 +496,6 @@ export abstract class Opt<T> {
    *
    * @example
    * ```ts
-   * some(1).orElseOpt(some(2)) // Some(1)
-   * none.orElseOpt(some(2)) // Some(2)
-   * none.orElseOpt(none) // None
-   * ```
-   *
-   * @see [[ts-opt.orElseOpt]]
-   *
-   * @deprecated Please use [[alt]] instead. This function will either be changed to accept `T` instead of `Opt<T>` and/or removed/renamed (maybe `altOpt`?).
-   *
-   * @param def
-   */
-  abstract orElseOpt(def: Opt<T>): Opt<T>;
-
-  /**
-   * Return `this` for [[Some]], `def` for [[None]].
-   *
-   * @example
-   * ```ts
    * none.alt(some(0)) // Some(0)
    * opt(1).alt(some(0)) // Some(1)
    * none.alt(none) // None
@@ -538,6 +520,21 @@ export abstract class Opt<T> {
    * @param def
    */
   abstract alt(def: Opt<T>): Opt<T>;
+
+  /**
+   * Return `this` for [[Some]], `def` wrapped in `opt` for [[None]].
+   *
+   * @example
+   * ```ts
+   * const inputNull: number | null = null as number | null;
+   * opt(inputNull).altOpt(null) // None
+   * opt(inputNull).altOpt(1) // Some(1)
+   * opt(2).altOpt(1) // Some(2)
+   * ```
+   *
+   * @param def
+   */
+  abstract altOpt(def: T | EmptyValue): OptSafe<T>;
 
   /**
    * Similar to [[caseOf]] but doesn't unwrap value.
@@ -1051,9 +1048,9 @@ class None<T> extends Opt<T> {
 
   orElse(def: T): T { return def; }
 
-  orElseOpt(def: Opt<T>): Opt<T> { return def; }
-
   alt(def: Opt<T>): Opt<T> { return def; }
+
+  altOpt(def: T | EmptyValue): OptSafe<T> { return opt(def); }
 
   orElseAny<U>(def: U): U { return def; }
 
@@ -1161,9 +1158,9 @@ class Some<T> extends Opt<T> {
 
   orElse(_def: T): T { return this._value; }
 
-  orElseOpt(_def: Opt<T>): Opt<T> { return this; }
-
   alt(_def: Opt<T>): Opt<T> { return this; }
+
+  altOpt(_def: T | EmptyValue): OptSafe<T> { return this as unknown as OptSafe<T>; }
 
   orElseAny<U>(_def: U): T { return this._value; }
 
@@ -1511,14 +1508,11 @@ export const orElse = <T>(e: T) => (x: Opt<T>): T => x.orElse(e);
 /** @see [[Opt.orElseAny]] */
 export const orElseAny = <U>(e: U) => <T>(x: Opt<T>): T | U => x.orElseAny(e);
 
-/**
- * @see [[Opt.orElseOpt]]
- * @deprecated use [[ts-opt.alt]]
- */
-export const orElseOpt = <T>(def: Opt<T>) => (x: Opt<T>): Opt<T> => x.orElseOpt(def);
-
 /** @see [[Opt.alt]] */
 export const alt = <T>(def: Opt<T>) => (x: Opt<T>): Opt<T> => x.alt(def);
+
+/** @see [[Opt.altOpt]] */
+export const altOpt = <T>(def: T) => (x: Opt<T>): OptSafe<T> => x.altOpt(def);
 
 /** @see [[Opt.bimap]] */
 export const bimap = <T, U>(someF: (_: T) => U) => (noneF: () => U) => (x: Opt<T>): Opt<U> => x.bimap(someF, noneF);
