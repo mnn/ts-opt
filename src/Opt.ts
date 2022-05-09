@@ -835,7 +835,7 @@ export abstract class Opt<T> {
   abstract swap<U>(newValue: U): Opt<U>;
 
   /**
-   * Get an item at given index of an array wrapped in [[Opt]].
+   * Get an item at given index of an array/string wrapped in [[Opt]].
    * Resulting value is wrapped in [[Opt]].
    * Non-existent index results in [[None]].
    * Negative index is interpreted as an index from the end of the array (e.g. a last item of an array lies on an `index` equal to `-1`).
@@ -847,41 +847,44 @@ export abstract class Opt<T> {
    * none.at(0) // None
    * opt([null]).at(0) // None
    * opt([1, 2, 3]).at(-1) // Some(3)
+   * opt('Palico').at(0) // Some('P')
    * ```
    *
    * @see [[ts-opt.at]]
    *
    * @param index
    */
-  abstract at<R extends (T extends (infer A)[] ? A : never)>(index: number): OptSafe<R>;
+  abstract at<R extends (T extends (infer A)[] ? A : (T extends string ? string : never))>(index: number): OptSafe<R>;
 
   /**
-   * Get a first item of an array.
+   * Get a first item of an array or a first character of a string.
    *
    * @example
    * ```ts
    * opt([1, 2, 3]).head() // Some(1)
    * opt([]).head() // None
    * opt(null).head() // None
+   * opt('Palico').head() // Some('P')
    * ```
    *
    * @see [[ts-opt.head]]
    */
-  head<R extends (T extends (infer A)[] ? A : never)>(): OptSafe<R> { return this.at(0); }
+  head<R extends (T extends (infer A)[] ? A : (T extends string ? string : never))>(): OptSafe<R> { return this.at(0); }
 
   /**
-   * Get a last item of an array.
+   * Get a last item of an array or a last character of a string.
    *
    * @example
    * ```ts
    * opt([1, 2, 3]).last() // Some(3)
    * opt([]).last() // None
    * opt(null).last() // None
+   * opt('Palico').last() // Some('o')
    * ```
    *
    * @see [[ts-opt.last]]
    */
-  last<R extends (T extends (infer A)[] ? A : never)>(): OptSafe<R> { return this.at(-1); }
+  last<R extends (T extends (infer A)[] ? A : (T extends string ? string : never))>(): OptSafe<R> { return this.at(-1); }
 
   /**
    * A convenience function to test this (`Opt<string>`) against a given regular expression.
@@ -1087,7 +1090,7 @@ class None<T> extends Opt<T> {
     return none;
   }
 
-  at<R extends (T extends (infer A)[] ? A : never)>(_index: number): OptSafe<R> {
+  at<R extends (T extends (infer A)[] ? A : (T extends string ? string : never))>(_index: number): OptSafe<R> {
     return none;
   }
 }
@@ -1217,13 +1220,13 @@ class Some<T> extends Opt<T> {
     return some(newVal);
   }
 
-  at<R extends (T extends (infer A)[] ? A : never)>(index: number): OptSafe<R> {
+  at<R extends (T extends (infer A)[] ? A : (T extends string ? string : never))>(index: number): OptSafe<R> {
     const val = this._value;
-    if (Array.isArray(val)) {
+    if (Array.isArray(val) || isString(val)) {
       const processedIndex = (index < 0 ? val.length : 0) + index;
       return opt(val[processedIndex]);
     } else {
-      throw new Error(`\`Opt#at\` can only be used on arrays`);
+      throw new Error(`\`Opt#at\` can only be used on arrays and strings`);
     }
   }
 }
@@ -1831,27 +1834,43 @@ export const nonEmpty = (
  */
 export const id = <T>(x: T): T => x;
 
+interface AtFn {
+  (x: EmptyValue | string): Opt<string>;
+  <T>(x: EmptyValue | T[] | Opt<T[]>): OptSafe<T>;
+}
+
 /**
  * Same as [[Opt.at]], but also supports unwrapped arrays.
  * @see [[Opt.at]]
  * @param index
  */
-export const at = (index: number) => <T>(x: EmptyValue | T[] | Opt<T[]>): OptSafe<T> =>
+export const at: (index: number) => AtFn = (index: number) => (x: any): any =>
   (isOpt(x) ? x : opt(x)).at(index);
+
+interface HeadFn {
+  (x: EmptyValue | string): Opt<string>;
+  <T>(x: EmptyValue | T[] | Opt<T[]>): OptSafe<T>;
+}
 
 /**
  * Same as [[Opt.head]], but also supports unwrapped arrays.
  * @see [[Opt.head]]
  * @param x
  */
-export const head = <T>(x: EmptyValue | T[] | Opt<T[]>): OptSafe<T> => (isOpt(x) ? x : opt(x)).head();
+export const head: HeadFn = (x: any): any => (isOpt(x) ? x : opt(x)).head();
+
+
+interface LastFn {
+  (x: EmptyValue | string): Opt<string>;
+  <T>(x: EmptyValue | T[] | Opt<T[]>): OptSafe<T>;
+}
 
 /**
  * Same as [[Opt.last]], but also supports unwrapped arrays.
  * @see [[Opt.last]]
  * @param x
  */
-export const last = <T>(x: EmptyValue | T[] | Opt<T[]>): OptSafe<T> => (isOpt(x) ? x : opt(x)).last();
+export const last: LastFn = (x: any): any => (isOpt(x) ? x : opt(x)).last();
 
 interface ZipToOptArrayFn {
   <A, B>(xs: [A, B]): Opt<[WithoutOptValues<A>, WithoutOptValues<B>]>;

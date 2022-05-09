@@ -481,7 +481,8 @@ describe('opt', () => {
   });
 
   it('flatBimap', () => {
-    expect(none.flatBimap(x => some(x), () => some('none')).orNull()).to.be.eq('none');
+    expect(none.flatBimap<string>(x => some(x), () => some('none')).orNull()).to.be.eq('none');
+    expect((none as Opt<string>).flatBimap(x => some(x), () => some('none')).orNull()).to.be.eq('none');
     expect(some('some').flatBimap(x => some(x), () => some('none')).orNull()).to.be.eq('some');
   });
 
@@ -711,6 +712,10 @@ describe('opt', () => {
     expect(opt([null]).at(0).orFalse()).to.be.false;
     expect(opt([1, 2, 3]).at(-3).orFalse()).to.be.eq(1);
     expect(opt([1, 2, 3]).at(-4).orFalse()).to.be.false;
+    expect(opt('Palico').at(0).orNull()).to.be.eq('P');
+    expect(opt('Palico').at(-1).orNull()).to.be.eq('o');
+    expect(opt('Palico').at(-4).orNull()).to.be.eq('l');
+    expect(opt(undefined as string | undefined).at(0).orNull()).to.be.null;
     const x: Opt<number> = opt([1]).at(0);
     suppressUnused(x);
   });
@@ -719,12 +724,14 @@ describe('opt', () => {
     expect(opt([1, 2, 3]).head().orFalse()).to.be.eq(1);
     expect(opt([]).head().orFalse()).to.be.false;
     expect(opt(null).head().orFalse()).to.be.false;
+    expect(opt('Palico').head().orFalse()).to.be.eq('P');
   });
 
   it('last', () => {
     expect(opt([1, 2, 3]).last().orFalse()).to.be.eq(3);
     expect(opt([]).last().orFalse()).to.be.false;
     expect(opt(null).last().orFalse()).to.be.false;
+    expect(opt('Palico').last().orFalse()).to.be.eq('o');
   });
 
   describe('testReOrFalse', () => {
@@ -1936,10 +1943,19 @@ describe('at', () => {
     const res1: Opt<number> = at(0)(input1);
     expect(res1.orFalse()).to.be.false;
   });
+
+  it('works with strings', () => {
+    const res1: Opt<string> = at(0)('Blender');
+    expect(res1.orNull()).to.be.eq('B');
+    const res2: Opt<string> = at(0)('');
+    expect(res2.orNull()).to.be.null;
+    const res3: Opt<string> = at(0)(undefined);
+    expect(res3.orNull()).to.be.null;
+  });
 });
 
 describe('head', () => {
-  it('returns first element', () => {
+  it('returns first element of array', () => {
     expect(head([1, 2, 3]).orFalse()).to.be.eq(1);
     expect(head([]).orFalse()).to.be.false;
     expect(head(opt([1, 2, 3])).orFalse()).to.be.eq(1);
@@ -1951,11 +1967,22 @@ describe('head', () => {
     const input1: number[] | null = [] as number[] | null;
     const res1: Opt<number> = head(input1);
     expect(res1.orFalse()).to.be.false;
+    const res2: Opt<number> = head([1] as number[] | null);
+    expect(res2.orFalse()).to.be.eq(1);
+  });
+
+  it('returns first character of string', () => {
+    const res1: Opt<string> = head('Palico');
+    expect(res1.orNull()).to.be.eq('P');
+    const res2: Opt<string> = head('');
+    expect(res2.orNull()).to.be.null;
+    const res3: Opt<string> = head(null as string | null);
+    expect(res3.orNull()).to.be.null;
   });
 });
 
 describe('last', () => {
-  it('returns last element', () => {
+  it('returns last element of array', () => {
     expect(last([1, 2, 3]).orFalse()).to.be.eq(3);
     expect(last([]).orFalse()).to.be.false;
     expect(last(opt([1, 2, 3])).orFalse()).to.be.eq(3);
@@ -1967,6 +1994,12 @@ describe('last', () => {
     const input1: number[] | null = [] as number[] | null;
     const res1: Opt<number> = last(input1);
     expect(res1.orFalse()).to.be.false;
+  });
+
+  it('returns last element of string', () => {
+    const res1: Opt<string> = last('Palico');
+    expect(res1.orFalse()).to.be.eq('o');
+    expect(last('').orFalse()).to.be.false;
   });
 });
 

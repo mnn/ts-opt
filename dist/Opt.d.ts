@@ -428,23 +428,6 @@ export declare abstract class Opt<T> {
      *
      * @example
      * ```ts
-     * some(1).orElseOpt(some(2)) // Some(1)
-     * none.orElseOpt(some(2)) // Some(2)
-     * none.orElseOpt(none) // None
-     * ```
-     *
-     * @see [[ts-opt.orElseOpt]]
-     *
-     * @deprecated Please use [[alt]] instead. This function will either be changed to accept `T` instead of `Opt<T>` and/or removed/renamed (maybe `altOpt`?).
-     *
-     * @param def
-     */
-    abstract orElseOpt(def: Opt<T>): Opt<T>;
-    /**
-     * Return `this` for [[Some]], `def` for [[None]].
-     *
-     * @example
-     * ```ts
      * none.alt(some(0)) // Some(0)
      * opt(1).alt(some(0)) // Some(1)
      * none.alt(none) // None
@@ -469,6 +452,20 @@ export declare abstract class Opt<T> {
      * @param def
      */
     abstract alt(def: Opt<T>): Opt<T>;
+    /**
+     * Return `this` for [[Some]], `def` wrapped in `opt` for [[None]].
+     *
+     * @example
+     * ```ts
+     * const inputNull: number | null = null as number | null;
+     * opt(inputNull).altOpt(null) // None
+     * opt(inputNull).altOpt(1) // Some(1)
+     * opt(2).altOpt(1) // Some(2)
+     * ```
+     *
+     * @param def
+     */
+    abstract altOpt(def: T | EmptyValue): OptSafe<T>;
     /**
      * Similar to [[caseOf]] but doesn't unwrap value.
      *
@@ -736,7 +733,7 @@ export declare abstract class Opt<T> {
      */
     abstract swap<U>(newValue: U): Opt<U>;
     /**
-     * Get an item at given index of an array wrapped in [[Opt]].
+     * Get an item at given index of an array/string wrapped in [[Opt]].
      * Resulting value is wrapped in [[Opt]].
      * Non-existent index results in [[None]].
      * Negative index is interpreted as an index from the end of the array (e.g. a last item of an array lies on an `index` equal to `-1`).
@@ -748,39 +745,42 @@ export declare abstract class Opt<T> {
      * none.at(0) // None
      * opt([null]).at(0) // None
      * opt([1, 2, 3]).at(-1) // Some(3)
+     * opt('Palico').at(0) // Some('P')
      * ```
      *
      * @see [[ts-opt.at]]
      *
      * @param index
      */
-    abstract at<R extends (T extends (infer A)[] ? A : never)>(index: number): OptSafe<R>;
+    abstract at<R extends (T extends (infer A)[] ? A : (T extends string ? string : never))>(index: number): OptSafe<R>;
     /**
-     * Get a first item of an array.
+     * Get a first item of an array or a first character of a string.
      *
      * @example
      * ```ts
      * opt([1, 2, 3]).head() // Some(1)
      * opt([]).head() // None
      * opt(null).head() // None
+     * opt('Palico').head() // Some('P')
      * ```
      *
      * @see [[ts-opt.head]]
      */
-    head<R extends (T extends (infer A)[] ? A : never)>(): OptSafe<R>;
+    head<R extends (T extends (infer A)[] ? A : (T extends string ? string : never))>(): OptSafe<R>;
     /**
-     * Get a last item of an array.
+     * Get a last item of an array or a last character of a string.
      *
      * @example
      * ```ts
      * opt([1, 2, 3]).last() // Some(3)
      * opt([]).last() // None
      * opt(null).last() // None
+     * opt('Palico').last() // Some('o')
      * ```
      *
      * @see [[ts-opt.last]]
      */
-    last<R extends (T extends (infer A)[] ? A : never)>(): OptSafe<R>;
+    last<R extends (T extends (infer A)[] ? A : (T extends string ? string : never))>(): OptSafe<R>;
     /**
      * A convenience function to test this (`Opt<string>`) against a given regular expression.
      *
@@ -889,8 +889,8 @@ declare class None<T> extends Opt<T> {
     exists(_p: (x: T) => boolean): boolean;
     forAll(_p: (x: T) => boolean): boolean;
     orElse(def: T): T;
-    orElseOpt(def: Opt<T>): Opt<T>;
     alt(def: Opt<T>): Opt<T>;
+    altOpt(def: T | EmptyValue): OptSafe<T>;
     orElseAny<U>(def: U): U;
     bimap<U>(_someF: (_: T) => U, noneF: () => U): Opt<U>;
     flatBimap<U>(_someF: (_: T) => Opt<U>, noneF: () => Opt<U>): Opt<U>;
@@ -905,7 +905,7 @@ declare class None<T> extends Opt<T> {
     equals(other: Opt<T>, _comparator?: EqualityFunction): boolean;
     prop<K extends (T extends object ? keyof T : never)>(_key: K): OptSafe<T[K]>;
     swap<U>(_newVal: U): Opt<U>;
-    at<R extends (T extends (infer A)[] ? A : never)>(_index: number): OptSafe<R>;
+    at<R extends (T extends (infer A)[] ? A : (T extends string ? string : never))>(_index: number): OptSafe<R>;
 }
 /**
  * [[Opt]] with a value inside.
@@ -939,8 +939,8 @@ declare class Some<T> extends Opt<T> {
     onNone(_f: () => void): Opt<T>;
     onSome(f: (x: T) => void): Opt<T>;
     orElse(_def: T): T;
-    orElseOpt(_def: Opt<T>): Opt<T>;
     alt(_def: Opt<T>): Opt<T>;
+    altOpt(_def: T | EmptyValue): OptSafe<T>;
     orElseAny<U>(_def: U): T;
     bimap<U>(someF: (_: T) => U, _noneF: () => U): Opt<U>;
     flatBimap<U>(someF: (_: T) => Opt<U>, _noneF: () => Opt<U>): Opt<U>;
@@ -955,7 +955,7 @@ declare class Some<T> extends Opt<T> {
     equals(other: Opt<T>, comparator?: EqualityFunction): boolean;
     prop<K extends (T extends object ? keyof T : never)>(key: K): OptSafe<T[K]>;
     swap<U>(newVal: U): Opt<U>;
-    at<R extends (T extends (infer A)[] ? A : never)>(index: number): OptSafe<R>;
+    at<R extends (T extends (infer A)[] ? A : (T extends string ? string : never))>(index: number): OptSafe<R>;
 }
 declare const someSerializedType = "Opt/Some";
 declare const noneSerializedType = "Opt/None";
@@ -980,7 +980,7 @@ export declare const none: None<any>;
  * Only in rare cases you want to have for example `Some(undefined)`.
  * @param x
  */
-export declare const some: <T>(x: T) => Readonly<Some<T>>;
+export declare const some: <T>(x: T) => Some<NonNullable<T>>;
 /**
  * Main constructor function - for `undefined`, `null` and `NaN` returns [[None]].
  * Anything else is wrapped into [[Some]].
@@ -1159,13 +1159,10 @@ export declare const forAll: <T>(p: (_: T) => boolean) => (x: Opt<T>) => boolean
 export declare const orElse: <T>(e: T) => (x: Opt<T>) => T;
 /** @see [[Opt.orElseAny]] */
 export declare const orElseAny: <U>(e: U) => <T>(x: Opt<T>) => U | T;
-/**
- * @see [[Opt.orElseOpt]]
- * @deprecated use [[ts-opt.alt]]
- */
-export declare const orElseOpt: <T>(def: Opt<T>) => (x: Opt<T>) => Opt<T>;
 /** @see [[Opt.alt]] */
 export declare const alt: <T>(def: Opt<T>) => (x: Opt<T>) => Opt<T>;
+/** @see [[Opt.altOpt]] */
+export declare const altOpt: <T>(def: T) => (x: Opt<T>) => OptSafe<T>;
 /** @see [[Opt.bimap]] */
 export declare const bimap: <T, U>(someF: (_: T) => U) => (noneF: () => U) => (x: Opt<T>) => Opt<U>;
 /** @see [[Opt.flatBimap]] */
@@ -1415,18 +1412,26 @@ export declare const nonEmpty: (x: Opt<unknown> | unknown[] | null | undefined |
  * @param x
  */
 export declare const id: <T>(x: T) => T;
+interface AtFn {
+    (x: EmptyValue | string): Opt<string>;
+    <T>(x: EmptyValue | T[] | Opt<T[]>): OptSafe<T>;
+}
 /**
  * Same as [[Opt.at]], but also supports unwrapped arrays.
  * @see [[Opt.at]]
  * @param index
  */
-export declare const at: (index: number) => <T>(x: EmptyValue | T[] | Opt<T[]>) => OptSafe<T>;
+export declare const at: (index: number) => AtFn;
+interface HeadFn {
+    (x: EmptyValue | string): Opt<string>;
+    <T>(x: EmptyValue | T[] | Opt<T[]>): OptSafe<T>;
+}
 /**
  * Same as [[Opt.head]], but also supports unwrapped arrays.
  * @see [[Opt.head]]
  * @param x
  */
-export declare const head: <T>(x: EmptyValue | T[] | Opt<T[]>) => OptSafe<T>;
+export declare const head: HeadFn;
 /**
  * Same as [[Opt.last]], but also supports unwrapped arrays.
  * @see [[Opt.last]]

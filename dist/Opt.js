@@ -20,7 +20,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from) {
     return to;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.bimap = exports.alt = exports.orElseOpt = exports.orElseAny = exports.orElse = exports.forAll = exports.exists = exports.contains = exports.pipe = exports.onBoth = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOptFlow = exports.actToOpt = exports.chainToOpt = exports.chainFlow = exports.act = exports.chain = exports.flatMap = exports.mapFlow = exports.map = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = exports.isFunction = exports.isArray = exports.toString = exports.isString = void 0;
+exports.bimap = exports.altOpt = exports.alt = exports.orElseAny = exports.orElse = exports.forAll = exports.exists = exports.contains = exports.pipe = exports.onBoth = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOptFlow = exports.actToOpt = exports.chainToOpt = exports.chainFlow = exports.act = exports.chain = exports.flatMap = exports.mapFlow = exports.map = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = exports.isFunction = exports.isArray = exports.toString = exports.isString = void 0;
 exports.onFunc = exports.apply = exports.parseInt = exports.parseJson = exports.tryRun = exports.testReOrFalse = exports.testRe = exports.zipToOptArray = exports.last = exports.head = exports.at = exports.id = exports.nonEmpty = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.prop = exports.equals = exports.print = exports.narrow = exports.find = exports.count = exports.noneWhen = exports.noneIf = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.flatBimap = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
@@ -343,26 +343,28 @@ var Opt = /** @class */ (function () {
         return this;
     };
     /**
-     * Get a first item of an array.
+     * Get a first item of an array or a first character of a string.
      *
      * @example
      * ```ts
      * opt([1, 2, 3]).head() // Some(1)
      * opt([]).head() // None
      * opt(null).head() // None
+     * opt('Palico').head() // Some('P')
      * ```
      *
      * @see [[ts-opt.head]]
      */
     Opt.prototype.head = function () { return this.at(0); };
     /**
-     * Get a last item of an array.
+     * Get a last item of an array or a last character of a string.
      *
      * @example
      * ```ts
      * opt([1, 2, 3]).last() // Some(3)
      * opt([]).last() // None
      * opt(null).last() // None
+     * opt('Palico').last() // Some('o')
      * ```
      *
      * @see [[ts-opt.last]]
@@ -529,8 +531,8 @@ var None = /** @class */ (function (_super) {
     None.prototype.exists = function (_p) { return false; };
     None.prototype.forAll = function (_p) { return true; };
     None.prototype.orElse = function (def) { return def; };
-    None.prototype.orElseOpt = function (def) { return def; };
     None.prototype.alt = function (def) { return def; };
+    None.prototype.altOpt = function (def) { return exports.opt(def); };
     None.prototype.orElseAny = function (def) { return def; };
     None.prototype.bimap = function (_someF, noneF) { return exports.opt(noneF()); };
     None.prototype.flatBimap = function (_someF, noneF) { return noneF(); };
@@ -614,8 +616,8 @@ var Some = /** @class */ (function (_super) {
         return this;
     };
     Some.prototype.orElse = function (_def) { return this._value; };
-    Some.prototype.orElseOpt = function (_def) { return this; };
     Some.prototype.alt = function (_def) { return this; };
+    Some.prototype.altOpt = function (_def) { return this; };
     Some.prototype.orElseAny = function (_def) { return this._value; };
     Some.prototype.bimap = function (someF, _noneF) { return exports.opt(someF(this._value)); };
     Some.prototype.flatBimap = function (someF, _noneF) { return someF(this._value); };
@@ -670,12 +672,12 @@ var Some = /** @class */ (function (_super) {
     };
     Some.prototype.at = function (index) {
         var val = this._value;
-        if (Array.isArray(val)) {
+        if (Array.isArray(val) || exports.isString(val)) {
             var processedIndex = (index < 0 ? val.length : 0) + index;
             return exports.opt(val[processedIndex]);
         }
         else {
-            throw new Error("`Opt#at` can only be used on arrays");
+            throw new Error("`Opt#at` can only be used on arrays and strings");
         }
     };
     return Some;
@@ -969,15 +971,12 @@ exports.orElse = orElse;
 /** @see [[Opt.orElseAny]] */
 var orElseAny = function (e) { return function (x) { return x.orElseAny(e); }; };
 exports.orElseAny = orElseAny;
-/**
- * @see [[Opt.orElseOpt]]
- * @deprecated use [[ts-opt.alt]]
- */
-var orElseOpt = function (def) { return function (x) { return x.orElseOpt(def); }; };
-exports.orElseOpt = orElseOpt;
 /** @see [[Opt.alt]] */
 var alt = function (def) { return function (x) { return x.alt(def); }; };
 exports.alt = alt;
+/** @see [[Opt.altOpt]] */
+var altOpt = function (def) { return function (x) { return x.altOpt(def); }; };
+exports.altOpt = altOpt;
 /** @see [[Opt.bimap]] */
 var bimap = function (someF) { return function (noneF) { return function (x) { return x.bimap(someF, noneF); }; }; };
 exports.bimap = bimap;
@@ -1334,6 +1333,7 @@ exports.at = at;
  */
 var head = function (x) { return (exports.isOpt(x) ? x : exports.opt(x)).head(); };
 exports.head = head;
+// TODO: last for strings
 /**
  * Same as [[Opt.last]], but also supports unwrapped arrays.
  * @see [[Opt.last]]

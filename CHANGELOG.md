@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added change log.
 
 ### Changed
+- Implemented support for strings in `head`, `last` and `tail`.
 - `at`, `head` and `last` now support empty inputs.
 - Improved return types of `opt` (and its variants), `at` and `chainToOpt`.
 
