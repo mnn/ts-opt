@@ -1333,7 +1333,6 @@ exports.at = at;
  */
 var head = function (x) { return (exports.isOpt(x) ? x : exports.opt(x)).head(); };
 exports.head = head;
-// TODO: last for strings
 /**
  * Same as [[Opt.last]], but also supports unwrapped arrays.
  * @see [[Opt.last]]

@@ -1834,10 +1834,7 @@ export const nonEmpty = (
  */
 export const id = <T>(x: T): T => x;
 
-interface AtFn {
-  (x: EmptyValue | string): Opt<string>;
-  <T>(x: EmptyValue | T[] | Opt<T[]>): OptSafe<T>;
-}
+type AtFn = <T, R = T extends (infer A)[] ? OptSafe<A> : Opt<string>>(x: EmptyValue | T) => R;
 
 /**
  * Same as [[Opt.at]], but also supports unwrapped arrays.
@@ -1847,10 +1844,7 @@ interface AtFn {
 export const at: (index: number) => AtFn = (index: number) => (x: any): any =>
   (isOpt(x) ? x : opt(x)).at(index);
 
-interface HeadFn {
-  (x: EmptyValue | string): Opt<string>;
-  <T>(x: EmptyValue | T[] | Opt<T[]>): OptSafe<T>;
-}
+type HeadFn = <T, R = T extends (infer A)[] ? OptSafe<A> : Opt<string>>(x: EmptyValue | T) => R;
 
 /**
  * Same as [[Opt.head]], but also supports unwrapped arrays.
@@ -1859,11 +1853,7 @@ interface HeadFn {
  */
 export const head: HeadFn = (x: any): any => (isOpt(x) ? x : opt(x)).head();
 
-
-interface LastFn {
-  (x: EmptyValue | string): Opt<string>;
-  <T>(x: EmptyValue | T[] | Opt<T[]>): OptSafe<T>;
-}
+type LastFn = <T, R = T extends (infer A)[] ? OptSafe<A> : Opt<string>>(x: EmptyValue | T) => R;
 
 /**
  * Same as [[Opt.last]], but also supports unwrapped arrays.

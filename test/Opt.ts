@@ -1952,6 +1952,15 @@ describe('at', () => {
     const res3: Opt<string> = at(0)(undefined);
     expect(res3.orNull()).to.be.null;
   });
+
+  it('works well with pipe/flow', () => {
+    const res1: Opt<number> = pipe([20, 15], id, at(1), id);
+    expect(res1.orNull()).to.be.eq(15);
+    const f = flow(id, at(1), id, orNull);
+    expect(f([20, 15])).to.be.eq(15);
+    expect(f('2015')).to.be.eq('0');
+    expect(f(undefined)).to.be.null;
+  });
 });
 
 describe('head', () => {
@@ -1979,6 +1988,24 @@ describe('head', () => {
     const res3: Opt<string> = head(null as string | null);
     expect(res3.orNull()).to.be.null;
   });
+
+  it('works well with pipe/flow', () => {
+    const res1: Opt<number> = pipe([1, 2, 3], id, head, id);
+    expect(res1.orNull()).to.be.eq(1);
+    const res2: Opt<string> = pipe('Yami', id, head, id);
+    expect(res2.orNull()).to.be.eq('Y');
+    const f: (_: number[] | null) => Opt<number> = flow(id, head, id);
+    const res3: Opt<number> = f([1]);
+    expect(res3.orNull()).to.be.eq(1);
+    expect(f([]).orNull()).to.be.null;
+    const g: (_: string | null) => Opt<string> = flow(id, head, id);
+    expect(g('Noelle').orNull()).to.be.eq('N');
+    expect(g('').orNull()).to.be.null;
+    expect(g(null).orFalse()).to.be.false;
+    const h = flow(id, head, id);
+    expect(h([0]).orNull()).to.be.eq(0);
+    expect(h('Yuno').orNull()).to.be.eq('Y');
+  });
 });
 
 describe('last', () => {
@@ -2000,6 +2027,14 @@ describe('last', () => {
     const res1: Opt<string> = last('Palico');
     expect(res1.orFalse()).to.be.eq('o');
     expect(last('').orFalse()).to.be.false;
+  });
+
+  it('works well with pipe/flow', () => {
+    const res1: number | null = pipe([20, 15], last, orNull);
+    expect(res1).to.be.eq(15);
+    expect(pipe([], last, orNull)).to.be.null;
+    expect(pipe('2015', last, orNull)).to.be.eq('5');
+    expect(pipe('', last, orNull)).to.be.null;
   });
 });
 

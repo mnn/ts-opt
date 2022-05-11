@@ -980,7 +980,7 @@ export declare const none: None<any>;
  * Only in rare cases you want to have for example `Some(undefined)`.
  * @param x
  */
-export declare const some: <T>(x: T) => Some<NonNullable<T>>;
+export declare const some: <T>(x: T) => Readonly<Some<T>>;
 /**
  * Main constructor function - for `undefined`, `null` and `NaN` returns [[None]].
  * Anything else is wrapped into [[Some]].
@@ -1412,32 +1412,27 @@ export declare const nonEmpty: (x: Opt<unknown> | unknown[] | null | undefined |
  * @param x
  */
 export declare const id: <T>(x: T) => T;
-interface AtFn {
-    (x: EmptyValue | string): Opt<string>;
-    <T>(x: EmptyValue | T[] | Opt<T[]>): OptSafe<T>;
-}
+declare type AtFn = <T, R = T extends (infer A)[] ? OptSafe<A> : Opt<string>>(x: EmptyValue | T) => R;
 /**
  * Same as [[Opt.at]], but also supports unwrapped arrays.
  * @see [[Opt.at]]
  * @param index
  */
 export declare const at: (index: number) => AtFn;
-interface HeadFn {
-    (x: EmptyValue | string): Opt<string>;
-    <T>(x: EmptyValue | T[] | Opt<T[]>): OptSafe<T>;
-}
+declare type HeadFn = <T, R = T extends (infer A)[] ? OptSafe<A> : Opt<string>>(x: EmptyValue | T) => R;
 /**
  * Same as [[Opt.head]], but also supports unwrapped arrays.
  * @see [[Opt.head]]
  * @param x
  */
 export declare const head: HeadFn;
+declare type LastFn = <T, R = T extends (infer A)[] ? OptSafe<A> : Opt<string>>(x: EmptyValue | T) => R;
 /**
  * Same as [[Opt.last]], but also supports unwrapped arrays.
  * @see [[Opt.last]]
  * @param x
  */
-export declare const last: <T>(x: EmptyValue | T[] | Opt<T[]>) => OptSafe<T>;
+export declare const last: LastFn;
 interface ZipToOptArrayFn {
     <A, B>(xs: [A, B]): Opt<[WithoutOptValues<A>, WithoutOptValues<B>]>;
     <A, B, C>(xs: [A, B, C]): Opt<[WithoutOptValues<A>, WithoutOptValues<B>, WithoutOptValues<C>]>;
