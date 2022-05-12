@@ -231,12 +231,6 @@ describe('opt', () => {
     expect(opt([]).orCrash('')).to.eql([]);
   });
 
-  it('optOrCrash', () => {
-    expect(() => opt(null).optOrCrash('')).to.throw();
-    expect(opt(0).optOrCrash('').orNull()).to.be.eq(0);
-    expect(opt([]).optOrCrash('').orNull()).to.be.eql([]);
-  });
-
   it('someOrCrash', () => {
     expect(() => opt(null).someOrCrash('')).to.throw();
     expect(opt(0).someOrCrash('').orNull()).to.be.eq(0);

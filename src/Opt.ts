@@ -261,20 +261,6 @@ export abstract class Opt<T> {
    *
    * @example
    * ```ts
-   * some(1).optOrCrash('fail') // Some(1)
-   * none.optOrCrash('fail') // throws
-   * ```
-   *
-   * @param msg
-   * @deprecated Please use [[someOrCrash]] instead
-   */
-  abstract optOrCrash(msg: string): Opt<T>;
-
-  /**
-   * Crash when called on [[None]], pass [[Opt]] instance on [[Some]].
-   *
-   * @example
-   * ```ts
    * some(1).someOrCrash('fail') // Some(1)
    * none.someOrCrash('fail') // throws
    * ```
@@ -1010,11 +996,6 @@ class None<T> extends Opt<T> {
 
   orCrash(msg: string): T { throw new Error(msg); }
 
-  /**
-   * @deprecated Please use [[someOrCrash]] instead
-   */
-  optOrCrash(msg: string): Opt<T> { throw new Error(msg); }
-
   someOrCrash(msg: string): Some<T> { throw new Error(msg); }
 
   orNull(): T | null { return null; }
@@ -1121,11 +1102,6 @@ class Some<T> extends Opt<T> {
   }
 
   orCrash(_msg: string): T { return this._value; }
-
-  /**
-   * @deprecated Please use [[someOrCrash]] instead
-   */
-  optOrCrash(_msg: string): Opt<T> { return this; }
 
   someOrCrash(_msg: string): Some<T> { return this; }
 

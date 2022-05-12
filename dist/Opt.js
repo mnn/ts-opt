@@ -505,10 +505,6 @@ var None = /** @class */ (function (_super) {
     None.prototype.flatMap = function (_f) { return exports.none; };
     None.prototype.map = function () { return exports.none; };
     None.prototype.orCrash = function (msg) { throw new Error(msg); };
-    /**
-     * @deprecated Please use [[someOrCrash]] instead
-     */
-    None.prototype.optOrCrash = function (msg) { throw new Error(msg); };
     None.prototype.someOrCrash = function (msg) { throw new Error(msg); };
     None.prototype.orNull = function () { return null; };
     None.prototype.orUndef = function () { return undefined; };
@@ -592,10 +588,6 @@ var Some = /** @class */ (function (_super) {
         return exports.some(f(this._value));
     };
     Some.prototype.orCrash = function (_msg) { return this._value; };
-    /**
-     * @deprecated Please use [[someOrCrash]] instead
-     */
-    Some.prototype.optOrCrash = function (_msg) { return this; };
     Some.prototype.someOrCrash = function (_msg) { return this; };
     Some.prototype.orNull = function () { return this._value; };
     Some.prototype.orUndef = function () { return this._value; };
