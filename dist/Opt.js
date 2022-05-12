@@ -1050,10 +1050,8 @@ exports.count = count;
  * ```
  *
  * @param predicate
- */ // TODO: optimize (reduce or while)
-var find = function (predicate) { return function (xs) {
-    return exports.opt(xs.filter(predicate)[0]);
-}; };
+ */
+var find = function (predicate) { return function (xs) { return exports.opt(xs.find(function (x) { return predicate(x); })); }; };
 exports.find = find;
 /** @see [[Opt.narrow]] */
 var narrow = function (guard) { return function (x) { return x.narrow(guard); }; };

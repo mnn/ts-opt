@@ -1582,9 +1582,8 @@ export const count: CountFn = (p: any) => (x: any): any => {
  * ```
  *
  * @param predicate
- */ // TODO: optimize (reduce or while)
-export const find = <T>(predicate: (_: T) => boolean) => (xs: T[]): Opt<T> =>
-  opt(xs.filter(predicate)[0]);
+ */
+export const find = <T>(predicate: (_: T) => boolean) => (xs: T[]): Opt<T> => opt(xs.find(x => predicate(x)));
 
 /** @see [[Opt.narrow]] */
 export const narrow = <U>(guard: (value: any) => value is U) => <T>(x: Opt<T>): Opt<U> => x.narrow(guard);

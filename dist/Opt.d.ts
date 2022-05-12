@@ -1208,7 +1208,8 @@ export declare const count: CountFn;
  * ```
  *
  * @param predicate
- */ export declare const find: <T>(predicate: (_: T) => boolean) => (xs: T[]) => Opt<T>;
+ */
+export declare const find: <T>(predicate: (_: T) => boolean) => (xs: T[]) => Opt<T>;
 /** @see [[Opt.narrow]] */
 export declare const narrow: <U>(guard: (value: any) => value is U) => <T>(x: Opt<T>) => Opt<U>;
 /**
