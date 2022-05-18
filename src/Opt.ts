@@ -886,6 +886,7 @@ export abstract class Opt<T> {
    * @param re Regular expression
    */
   testReOrFalse<R extends (T extends string ? boolean : OperationNotAvailable<T, string>)>(re: RegExp): R {
+    if (this.isEmpty) return false as R;
     return this.narrow(isString).someOrCrash(`testReOrFalse only works on Opt<string>`).map(testRe(re)).orFalse() as R;
   }
 

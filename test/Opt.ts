@@ -732,6 +732,8 @@ describe('opt', () => {
     it('returns expected result', () => {
       expect(opt('a').testReOrFalse(/a/)).to.be.true;
       expect(opt('b').testReOrFalse(/a/)).to.be.false;
+      const res1: boolean = opt(null as null | string).testReOrFalse(/a/);
+      expect(res1).to.be.false;
     });
     it('rejects invalid wrapper type', () => {
       expect(() => {
@@ -2076,6 +2078,7 @@ describe('testReOrFalse', () => {
   });
   it('neg', () => {
     expect(testReOrFalse(/\d/)(opt('x'))).to.be.false;
+    expect(testReOrFalse(/\d/)(opt(null))).to.be.false;
   });
   it('use', () => {
     expect(pipe('7', opt, testReOrFalse(/\d/))).to.be.true;

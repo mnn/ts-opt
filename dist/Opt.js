@@ -384,6 +384,8 @@ var Opt = /** @class */ (function () {
      * @param re Regular expression
      */
     Opt.prototype.testReOrFalse = function (re) {
+        if (this.isEmpty)
+            return false;
         return this.narrow(exports.isString).someOrCrash("testReOrFalse only works on Opt<string>").map(exports.testRe(re)).orFalse();
     };
     Object.defineProperty(Opt.prototype, "end", {
