@@ -88,6 +88,8 @@ import {
   noneWhen,
   find,
   altOpt,
+  isOrCrash,
+  assertType,
 } from '../src/Opt';
 
 chai.use(spies);
@@ -2197,6 +2199,44 @@ describe('onFunc', () => {
       onFunc(7),
       orNull,
     )).to.be.eq(f);
+  });
+});
+
+describe('isOrCrash', () => {
+  it('narrows', () => {
+    const a = isOrCrash(isNumber)(4 as unknown);
+    expect(a).to.be.eq(4);
+    const b: number = a;
+    suppressUnused(b);
+  });
+  it('crashes', () => {
+    expect(() => isOrCrash(isNumber)(null)).to.throw('invalid value');
+  });
+  it('narrows nullable', () => {
+    const isNumberOrNull = (x: unknown): x is number | null => isNumber(x) || x === null;
+    const a: number | null = isOrCrash(isNumberOrNull)(null);
+    expect(a).to.be.null;
+  });
+  it('custom message', () => {
+    expect(() => isOrCrash(isNumber, 'nope')(null)).to.throw('nope');
+  });
+});
+
+describe('assertType', () => {
+  it('doesn\'t crash on valid assertion', () => {
+    const a: unknown = 1 as unknown;
+    assertType(a, isNumber);
+    const b: number = a;
+    suppressUnused(b);
+  });
+  it('throws on wrong assertion', () => {
+    const a: unknown = '' as unknown;
+    expect(() => assertType(a, isNumber)).to.throw('invalid value');
+  });
+  it('custom error message', () => {
+    const a: unknown = '' as unknown;
+    const errMsg = 'not a number';
+    expect(() => assertType(a, isNumber, errMsg)).to.throw(errMsg);
   });
 });
 

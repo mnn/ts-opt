@@ -1958,3 +1958,38 @@ export const onFunc = < //
   T extends AnyFunc,
   A extends Parameters<T> //
   >(...args: A) => (x: Opt<T>): Opt<T> => x.onFunc(...args);
+
+/**
+ * Verify the given value passes the guard. If not, throw an exception.
+ *
+ * @example
+ * ```ts
+ * const a = isOrCrash(isNumber)(4 as unknown); // a is of type number, doesn't throw
+ * const b: number = a; // ok
+ * ```
+ *
+ * @param guard
+ * @param msg
+ */
+export const isOrCrash = <T>(guard: (x: unknown) => x is T, msg = 'invalid value') => (x: unknown): T =>
+  some(x).narrow(guard).orCrash(msg);
+
+type AssertTypeFunc = <T>(x: unknown, guard: (x: unknown) => x is T, msg?: string) => asserts x is T;
+
+/**
+ * Asserts a type via a given guard.
+ *
+ * @example
+ * ```ts
+ * const a: unknown = 1 as unknown;
+ * assertType(a, isNumber);
+ * const b: number = a; // ok
+ * ```
+ *
+ * @param x
+ * @param guard
+ * @param msg
+ */
+export const assertType: AssertTypeFunc = (x, guard, msg = 'invalid value') => {
+  isOrCrash(guard, msg)(x);
+}

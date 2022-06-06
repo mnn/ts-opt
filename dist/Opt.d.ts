@@ -180,6 +180,8 @@ export declare abstract class Opt<T> {
      * It is useful for typical JavaScript functions (e.g. lodash), properly handles `undefined`/`null`/`NaN` at any point of the chain.
      *
      * ```ts
+     * import {find} from 'lodash/fp';
+     *
      * const data = [{}, {f: true, a: [{b: 7, c: 1}]}, {a: [{}]}];
      * opt(data).actToOpt(
      *   find(x => Boolean(x?.f)), // {f: true, a: [{b: 7, c: 1}]}
