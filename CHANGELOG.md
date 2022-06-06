@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - Migrated from tslint to eslint.
+- Improved documentation of `actToOpt`.
 
 ## [4.0.1] - 2022-05-18
 ### Changed

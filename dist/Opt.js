@@ -39,7 +39,7 @@ var toString = function (x) { return x.toString(); };
 exports.toString = toString;
 var isArray = function (x) { return Array.isArray(x); };
 exports.isArray = isArray;
-// tslint:disable-next-line:ban-types
+// eslint-disable-next-line @typescript-eslint/ban-types
 var isFunction = function (x) { return typeof x === 'function'; };
 exports.isFunction = isFunction;
 var debugPrint = function (tag) {
@@ -47,7 +47,6 @@ var debugPrint = function (tag) {
     for (var _i = 1; _i < arguments.length; _i++) {
         xs[_i - 1] = arguments[_i];
     }
-    // tslint:disable-next-line:no-console
     console.log.apply(console, __spreadArray(__spreadArray([], exports.opt(tag).map(function (x) { return ["[" + x + "]"]; }).orElse([])), xs));
 };
 /**
@@ -60,6 +59,7 @@ var debugPrint = function (tag) {
  */
 var Opt = /** @class */ (function () {
     /** @internal */
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     function Opt() {
         var _this = this;
         /**
@@ -217,6 +217,7 @@ var Opt = /** @class */ (function () {
         this.const = function () {
             var _this = this;
             if (arguments.length === 1) {
+                // eslint-disable-next-line prefer-rest-params
                 var e_1 = arguments[0];
                 return function () { return _this.isSome() ? _this.value : e_1; };
             }
