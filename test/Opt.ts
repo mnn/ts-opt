@@ -109,6 +109,7 @@ const join = (delim: string) => (xs: string[]): string => xs.join(delim);
 const eq = <T>(a: T) => (b: T) => a === b;
 const eqAny = (a: unknown) => (b: unknown) => a === b;
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = (..._args: unknown[]): void => {};
 
 type EnumAB = 'a' | 'b';
@@ -173,7 +174,7 @@ describe('opt', () => {
       if (a.isSome()) {
         expect(a.value).to.eq(4);
       } else {
-        // @ts-expect-error
+        // @ts-expect-error no value on none
         expect(a.value).to.be.undefined;
       }
     };
@@ -184,7 +185,7 @@ describe('opt', () => {
   it('isNone', () => {
     const f = (a: Opt<number>) => {
       if (a.isNone()) {
-        // @ts-expect-error
+        // @ts-expect-error no value on none
         expect(a.value).to.be.undefined;
       } else {
         // this doesn't work - Opt is not a union (there are several usability issues preventing conversion)
@@ -413,8 +414,8 @@ describe('opt', () => {
   });
 
   it('orElseAny', () => {
-    // @ts-expect-error
-    opt(1).orElse(true); // TS2345: Argument of type 'boolean' is not assignable to parameter of type 'number'.
+    // @ts-expect-error TS2345: Argument of type 'boolean' is not assignable to parameter of type 'number'.
+    opt(1).orElse(true);
     const r1: number | boolean = opt(1).orElseAny(true);
     expect(r1).to.be.eq(1);
     const r2: number | boolean = opt<number>(null).orElseAny(true);
@@ -632,10 +633,9 @@ describe('opt', () => {
     const abc = 'c' as EnumABC;
     const correctWiden: Opt<EnumABC> = opt(ab).widen<EnumABC>(); // AB -> ABC: Ok
     const wrongWiden: Opt<never> = opt(abc).widen<EnumAB>(); // ABC -> AB: Not Ok, C is not in AB
-    // incorrect uses
-    // @ts-expect-error
+    // @ts-expect-error incorrect use
     const wrongWiden2 = opt(abc).widen<EnumAB, EnumAB>();
-    // @ts-expect-error
+    // @ts-expect-error incorrect use
     opt(abc).widen<EnumAB, EnumABC>();
     // disallowed use with objects (unsafe)
     const oa: ObjA = {a: true};
@@ -656,7 +656,7 @@ describe('opt', () => {
     const oab: ObjAB = {a: false, b: -1};
     expect(opt(oab).prop('a').orNull()).to.be.false;
     expect((none as Opt<ObjAB>).prop('a').orNull()).to.be.null;
-    // @ts-expect-error
+    // @ts-expect-error invalid prop
     opt(oab).prop('X');
     const a = {x: 1};
     const xValue = opt(a).prop('x').orCrash('missing prop x'); // 1
@@ -737,7 +737,7 @@ describe('opt', () => {
     });
     it('rejects invalid wrapper type', () => {
       expect(() => {
-        // @ts-expect-error
+        // @ts-expect-error invalid input type
         const x: boolean = opt(7).testReOrFalse(/a/);
         suppressUnused(x);
       }).to.throw('testReOrFalse only works on Opt<string>');
@@ -766,9 +766,9 @@ describe('opt', () => {
     expect(
       none.apply(0).orNull(), // None
     ).to.be.null;
-    // @ts-expect-error
+    // @ts-expect-error calling number function with string
     opt(inc).apply('wrong number');
-    // @ts-expect-error
+    // @ts-expect-error calling number
     expect(() => opt(1).apply(7)).to.throw('Invalid input - expected function');
     const add = (a: number, b: number) => a + b;
     expect(
@@ -800,9 +800,9 @@ describe('opt', () => {
     ).to.be.eq(gg);
     expect(gg).to.have.been.called.once;
     expect(gg).to.have.been.called.with(1, 2);
-    // @ts-expect-error
+    // @ts-expect-error wrong argument type
     opt(inc).onFunc('not a number');
-    // @ts-expect-error
+    // @ts-expect-error content is not a function
     expect(() => opt(true).onFunc(1)).to.throw();
     expect(
       none.onFunc(79) // None
@@ -1211,7 +1211,7 @@ describe('map', () => {
     expect(map((x: number) => x)([])).to.eql([]);
     // ---
     const r1: number[] = map((x: number) => x + 1)([1]);
-    // @ts-expect-error
+    // @ts-expect-error result should not be opt
     const r1Fail: Opt<number> = map((x: number) => x + 1)([1]);
     suppressUnused(r1Fail);
     expect(r1).to.eql([2]);
@@ -1219,7 +1219,7 @@ describe('map', () => {
     expect(map((x: number) => x + 1)(some(1)).orNull()).to.eq(2);
     // ---
     const r2: Opt<number> = map((x: number) => x + 1)(opt(1));
-    // @ts-expect-error
+    // @ts-expect-error result should not be array
     const r2Fail: number[] = map((x: number) => x + 1)(opt(1));
     suppressUnused(r2Fail);
     expect(r2.orNull()).to.eq(2);
@@ -1258,7 +1258,7 @@ describe('flatMap', () => {
     expect(flatMap((x: number) => [x])([])).to.eql([]);
     // ---
     const r1: number[] = flatMap((x: number) => [x + 1])([1]);
-    // @ts-expect-error
+    // @ts-expect-error result should not be opt
     const r1Fail: Opt<number> = flatMap((x: number) => [x + 1])([1]);
     suppressUnused(r1Fail);
     expect(r1).to.eql([2]);
@@ -1266,7 +1266,7 @@ describe('flatMap', () => {
     expect(flatMap((x: number) => opt(x + 1))(some(1)).orNull()).to.eq(2);
     // ---
     const r2: Opt<number> = flatMap((x: number) => opt(x + 1))(opt(1));
-    // @ts-expect-error
+    // @ts-expect-error result should not be array
     const r2Fail: number[] = flatMap((x: number) => opt(x + 1))(opt(1));
     suppressUnused(r2Fail);
     expect(r2.orNull()).to.eq(2);
@@ -1525,18 +1525,18 @@ describe('zip', () => {
   describe('checks types', () => {
     it('opt', () => {
       const a: Opt<[number, boolean]> = zip(opt(1))(opt(true));
-      // @ts-expect-error
+      // @ts-expect-error wrong result type
       const aFail: Opt<[boolean, number]> = zip(opt(1))(opt(true));
       suppressUnused(a, aFail);
     });
     it('array', () => {
       const a: [number, boolean][] = zip([1, 2])([true, false]);
-      // @ts-expect-error
+      // @ts-expect-error wrong result type
       const aFail: [boolean, number][] = zip(opt(1))(opt(true));
       suppressUnused(a, aFail);
     });
     it('mixing', () => {
-      // @ts-expect-error
+      // @ts-expect-error wrong result type
       const aFail: [number, boolean][] = zip(opt(1))(opt(true));
       suppressUnused(aFail);
     });
@@ -1601,12 +1601,12 @@ describe('zip5', () => {
 describe('filter', () => {
   it('checks types', () => {
     const a: Opt<number> = filter(gt0)(opt(1));
-    // @ts-expect-error
+    // @ts-expect-error wrong result type
     const aFail: number[] = filter(gt0)(opt(1));
     suppressUnused(a, aFail);
     // ---
     const b: number[] = filter(gt0)([7]);
-    // @ts-expect-error
+    // @ts-expect-error wrong result type
     const bFail: Opt<number> = filter(gt0)([]);
     suppressUnused(b, bFail);
     // ---
@@ -1778,7 +1778,7 @@ describe('prop', () => {
 
   it('neg', () => {
     expect(prop<ObjA>('a')(none).orNull()).to.be.null;
-    // @ts-expect-error
+    // @ts-expect-error invalid field name
     prop<ObjA>('b');
   });
 });
@@ -2044,9 +2044,9 @@ describe('zipToOptArray', () => {
   });
 
   it('returns correct result', () => {
-    const a1: Opt<[1, number]> = zipToOptArray([1 as 1, null as number | null]);
+    const a1: Opt<[1, number]> = zipToOptArray([1 as const, null as number | null]);
     expect(a1.orNull()).to.be.null;
-    const a2: [1, number] | null = zipToOptArray([1 as 1, 2]).orNull();
+    const a2: [1, number] | null = zipToOptArray([1 as const, 2]).orNull();
     expect(a2).to.be.eql([1, 2]);
     expect(zipToOptArray([1, null, '']).orNull()).to.be.null;
     expect(zipToOptArray([1, true, '']).orNull()).to.be.eql([1, true, '']);
@@ -2216,8 +2216,8 @@ describe('pitfalls', () => {
   describe('none without explicit type', () => {
     it('bad', () => {
       let a = none;
-      // @ts-expect-error
-      a = opt(1); // TS2741: Property ''@@type'' is missing in type 'Opt<number>' but required in type 'None<any>'.
+      // @ts-expect-error TS2741: Property ''@@type'' is missing in type 'Opt<number>' but required in type 'None<any>'.
+      a = opt(1);
       suppressUnused(a);
     });
     it('good', () => {

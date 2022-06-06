@@ -44,11 +44,10 @@ interface ConstInClassFn<T> {
 export const isString = (x: any): x is string => typeof x === 'string';
 export const toString = (x: { toString(): string }): string => x.toString();
 export const isArray = (x: any): x is unknown[] => Array.isArray(x);
-// tslint:disable-next-line:ban-types
+// eslint-disable-next-line @typescript-eslint/ban-types
 export const isFunction = (x: any): x is Function => typeof x === 'function';
 
 const debugPrint = (tag?: string, ...xs: unknown[]) => {
-  // tslint:disable-next-line:no-console
   console.log(...[...opt(tag).map(x => [`[${x}]`]).orElse([]), ...xs]);
 };
 
@@ -62,6 +61,7 @@ const debugPrint = (tag?: string, ...xs: unknown[]) => {
  */
 export abstract class Opt<T> {
   /** @internal */
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   constructor() { }
 
   /**
@@ -797,6 +797,7 @@ export abstract class Opt<T> {
    */
   const: ConstInClassFn<T> = function (this: any) {
     if (arguments.length === 1) {
+      // eslint-disable-next-line prefer-rest-params
       const e = arguments[0];
       return () => this.isSome() ? this.value : e;
     }
