@@ -396,6 +396,17 @@ Now the data flow is easy to understand and to read, since it only flows in one 
 
 > You could also use `opt(x).pipe(...)` instead of `pipe(x, opt, ...)`. It can lead to better type inference.
 
+Not using specialized methods and other common bad uses
+---
+
+| Bad                                                      | Good                       |
+|----------------------------------------------------------|----------------------------|
+| `lineId ? opt(lineId) : none`                            | `opt(lineId)`              |
+| `tag.equals(opt('MALE'))`                                | `tag.contains('MALE')`     |
+| `.map(pred).orFalse()`                                   | `.exists(pred)`            |
+| `.map(pred).orTrue()`                                    | `.forAll(pred)`            |
+| `found.prop('id').nonEmpty ? found.prop('id') : opt(id)` | `found.prop('id').alt(id)` |
+
 Development
 ===
 

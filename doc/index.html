@@ -204,6 +204,38 @@ For example the code above could be rewritten like this:</p>
 <p>You could also use <code>opt(x).pipe(...)</code> instead of <code>pipe(x, opt, ...)</code>. It can lead to better type inference.</p>
 </blockquote>
 
+<a href="#not-using-specialized-methods-and-other-common-bad-uses" id="not-using-specialized-methods-and-other-common-bad-uses" style="color: inherit; text-decoration: none;">
+  <h2>Not using specialized methods and other common bad uses</h2>
+</a>
+<table>
+<thead>
+<tr>
+<th>Bad</th>
+<th>Good</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>lineId ? opt(lineId) : none</code></td>
+<td><code>opt(lineId)</code></td>
+</tr>
+<tr>
+<td><code>tag.equals(opt(&#39;MALE&#39;))</code></td>
+<td><code>tag.contains(&#39;MALE&#39;)</code></td>
+</tr>
+<tr>
+<td><code>.map(pred).orFalse()</code></td>
+<td><code>.exists(pred)</code></td>
+</tr>
+<tr>
+<td><code>.map(pred).orTrue()</code></td>
+<td><code>.forAll(pred)</code></td>
+</tr>
+<tr>
+<td><code>found.prop(&#39;id&#39;).nonEmpty ? found.prop(&#39;id&#39;) : opt(id)</code></td>
+<td><code>found.prop(&#39;id&#39;).alt(id)</code></td>
+</tr>
+</tbody></table>
+
 <a href="#development" id="development" style="color: inherit; text-decoration: none;">
   <h1>Development</h1>
 </a>

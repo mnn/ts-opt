@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - `narrowOrCrash`
 - `isOrCrash` and `assertType`.
+- Readme: Bad uses section.
 
 ### Changed
 - Migrated from tslint to eslint.
