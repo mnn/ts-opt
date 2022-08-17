@@ -91,6 +91,7 @@ import {
   isOrCrash,
   assertType,
   narrowOrCrash,
+  parseFloat,
 } from '../src/Opt';
 
 chai.use(spies);
@@ -2196,6 +2197,19 @@ describe('parseInt', () => {
     expect(parseInt('').orNull()).to.be.null;
     expect(parseInt('gin').orNull()).to.be.null;
     expect(parseInt('xFF').orNull()).to.be.null;
+  });
+});
+
+describe('parseFloat', () => {
+  it('parses valid float', () => {
+    expect(parseFloat('0').orNull()).to.be.eq(0);
+    expect(parseFloat('0.0').orNull()).to.be.eq(0);
+    expect(parseFloat('-1.2').orNull()).to.be.eq(-1.2);
+  });
+  it('returns none on invalid float', () => {
+    expect(parseFloat('').orNull()).to.be.null;
+    expect(parseFloat('gin').orNull()).to.be.null;
+    expect(parseFloat('xFF').orNull()).to.be.null;
   });
 });
 

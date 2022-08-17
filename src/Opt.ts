@@ -1968,6 +1968,21 @@ export const parseJson = (x: string): Opt<unknown> => tryRun(() => JSON.parse(x)
  */
 export const parseInt = (x: string): Opt<number> => opt(Number.parseInt(x, 10));
 
+/**
+ * Parses float (same semantics as `Number.parseFloat`).
+ * The result is wrapped into [[opt]] (so `NaN` will become [[None]]).
+ *
+ * @example
+ * ```ts
+ * parseFloat('0') // Some(0)
+ * parseFloat('-1.2') // Some(-1.2)
+ * parseFloat('xFF') // None
+ * ```
+ *
+ * @param x
+ */
+export const parseFloat = (x: string): Opt<number> => opt(Number.parseFloat(x));
+
 /** @see [[Opt.apply]] */
 export const apply = < //
   T extends AnyFunc,

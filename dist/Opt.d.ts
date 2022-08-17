@@ -1510,6 +1510,20 @@ export declare const parseJson: (x: string) => Opt<unknown>;
  * @param x
  */
 export declare const parseInt: (x: string) => Opt<number>;
+/**
+ * Parses float (same semantics as `Number.parseFloat`).
+ * The result is wrapped into [[opt]] (so `NaN` will become [[None]]).
+ *
+ * @example
+ * ```ts
+ * parseFloat('0') // Some(0)
+ * parseFloat('-1.2') // Some(-1.2)
+ * parseFloat('xFF') // None
+ * ```
+ *
+ * @param x
+ */
+export declare const parseFloat: (x: string) => Opt<number>;
 /** @see [[Opt.apply]] */
 export declare const apply: <T extends AnyFunc, R extends ReturnType<T>, A extends Parameters<T>>(...args: A) => (x: Opt<T>) => Opt<R>;
 /** @see [[Opt.onFunc]] */
