@@ -21,7 +21,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.bimap = exports.altOpt = exports.alt = exports.orElseAny = exports.orElse = exports.forAll = exports.exists = exports.contains = exports.pipe = exports.onBoth = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOptFlow = exports.actToOpt = exports.chainToOpt = exports.chainFlow = exports.act = exports.chain = exports.flatMap = exports.mapFlow = exports.map = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = exports.isFunction = exports.isArray = exports.toString = exports.isString = void 0;
-exports.onFunc = exports.apply = exports.parseInt = exports.parseJson = exports.tryRun = exports.testReOrFalse = exports.testRe = exports.zipToOptArray = exports.last = exports.head = exports.at = exports.id = exports.nonEmpty = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.prop = exports.equals = exports.print = exports.narrow = exports.find = exports.count = exports.noneWhen = exports.noneIf = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.flatBimap = void 0;
+exports.assertType = exports.isOrCrash = exports.onFunc = exports.apply = exports.parseInt = exports.parseJson = exports.tryRun = exports.testReOrFalse = exports.testRe = exports.zipToOptArray = exports.last = exports.head = exports.at = exports.id = exports.nonEmpty = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.prop = exports.equals = exports.print = exports.narrowOrCrash = exports.narrow = exports.find = exports.count = exports.noneWhen = exports.noneIf = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.flatBimap = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 var errorSymbol = Symbol('Error');
@@ -544,6 +544,10 @@ var None = /** @class */ (function (_super) {
     None.prototype.zip5 = function (_x, _y, _z, _zz) { return exports.none; };
     None.prototype.filter = function (_predicate) { return exports.none; };
     None.prototype.narrow = function (_guard) { return this; };
+    None.prototype.narrowOrCrash = function (guard, _crashMessage) {
+        // don't crash on previous none
+        return this.narrow(guard);
+    };
     None.prototype.print = function (tag) {
         debugPrint(tag, 'None');
         return this;
@@ -651,6 +655,9 @@ var Some = /** @class */ (function (_super) {
     Some.prototype.filter = function (predicate) { return predicate(this._value) ? this : exports.none; };
     Some.prototype.narrow = function (guard) {
         return guard(this._value) ? this : exports.none;
+    };
+    Some.prototype.narrowOrCrash = function (guard, crashMessage) {
+        return this.narrow(guard).someOrCrash(crashMessage !== null && crashMessage !== void 0 ? crashMessage : 'Unexpected type in opt.');
     };
     Some.prototype.print = function (tag) {
         debugPrint(tag, 'Some:', this._value);
@@ -1061,6 +1068,9 @@ exports.find = find;
 /** @see [[Opt.narrow]] */
 var narrow = function (guard) { return function (x) { return x.narrow(guard); }; };
 exports.narrow = narrow;
+/** @see [[Opt.narrowOrCrash]] */
+var narrowOrCrash = function (guard, crashMessage) { return function (x) { return x.narrowOrCrash(guard, crashMessage); }; };
+exports.narrowOrCrash = narrowOrCrash;
 /**
  * Same as [[Opt.print]], but supports arbitrary argument types.
  * @see [[Opt.print]]
@@ -1450,4 +1460,42 @@ var onFunc = function () {
     return function (x) { return x.onFunc.apply(x, args); };
 };
 exports.onFunc = onFunc;
+/**
+ * Verify the given value passes the guard. If not, throw an exception.
+ *
+ * @example
+ * ```ts
+ * const a = isOrCrash(isNumber)(4 as unknown); // a is of type number, doesn't throw
+ * const b: number = a; // ok
+ * ```
+ *
+ * @param guard
+ * @param msg
+ */
+var isOrCrash = function (guard, msg) {
+    if (msg === void 0) { msg = 'invalid value'; }
+    return function (x) {
+        return exports.some(x).narrow(guard).orCrash(msg);
+    };
+};
+exports.isOrCrash = isOrCrash;
+/**
+ * Asserts a type via a given guard.
+ *
+ * @example
+ * ```ts
+ * const a: unknown = 1 as unknown;
+ * assertType(a, isNumber);
+ * const b: number = a; // ok
+ * ```
+ *
+ * @param x
+ * @param guard
+ * @param msg
+ */
+var assertType = function (x, guard, msg) {
+    if (msg === void 0) { msg = 'invalid value'; }
+    exports.isOrCrash(guard, msg)(x);
+};
+exports.assertType = assertType;
 //# sourceMappingURL=Opt.js.map

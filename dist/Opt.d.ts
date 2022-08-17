@@ -624,6 +624,15 @@ export declare abstract class Opt<T> {
      */
     abstract narrow<U>(guard: (value: any) => value is U): Opt<U>;
     /**
+     * Similar to [[Opt.narrow]], but crashes on a narrowing failure.
+     *
+     * @see [[Opt.narrow]]
+     *
+     * @param guard
+     * @param crashMessage
+     */
+    abstract narrowOrCrash<U>(guard: (value: any) => value is U, crashMessage?: string): Opt<U>;
+    /**
      * Print value to console.
      *
      * @example
@@ -886,6 +895,7 @@ declare class None<T> extends Opt<T> {
     zip5<X, Y, Z, ZZ>(_x: Opt<X>, _y: Opt<Y>, _z: Opt<Z>, _zz: Opt<ZZ>): Opt<[T, X, Y, Z, ZZ]>;
     filter(_predicate: (_: T) => boolean): Opt<T>;
     narrow<U>(_guard: (value: any) => value is U): Opt<U>;
+    narrowOrCrash<U>(guard: (value: any) => value is U, _crashMessage?: string): Opt<U>;
     print(tag?: string): Opt<T>;
     equals(other: Opt<T>, _comparator?: EqualityFunction): boolean;
     prop<K extends (T extends object ? keyof T : never)>(_key: K): OptSafe<T[K]>;
@@ -932,6 +942,7 @@ declare class Some<T> extends Opt<T> {
     zip5<X, Y, Z, ZZ>(x: Opt<X>, y: Opt<Y>, z: Opt<Z>, zz: Opt<ZZ>): Opt<[T, X, Y, Z, ZZ]>;
     filter(predicate: (_: T) => boolean): Opt<T>;
     narrow<U>(guard: (value: any) => value is U): Opt<U>;
+    narrowOrCrash<U>(guard: (value: any) => value is U, crashMessage?: string): Opt<U>;
     print(tag?: string): Opt<T>;
     equals(other: Opt<T>, comparator?: EqualityFunction): boolean;
     prop<K extends (T extends object ? keyof T : never)>(key: K): OptSafe<T[K]>;
@@ -1214,6 +1225,8 @@ export declare const count: CountFn;
 export declare const find: <T>(predicate: (_: T) => boolean) => (xs: T[]) => Opt<T>;
 /** @see [[Opt.narrow]] */
 export declare const narrow: <U>(guard: (value: any) => value is U) => <T>(x: Opt<T>) => Opt<U>;
+/** @see [[Opt.narrowOrCrash]] */
+export declare const narrowOrCrash: <T, U>(guard: (value: any) => value is U, crashMessage?: string | undefined) => (x: Opt<T>) => Opt<U>;
 /**
  * Same as [[Opt.print]], but supports arbitrary argument types.
  * @see [[Opt.print]]
@@ -1501,4 +1514,33 @@ export declare const parseInt: (x: string) => Opt<number>;
 export declare const apply: <T extends AnyFunc, R extends ReturnType<T>, A extends Parameters<T>>(...args: A) => (x: Opt<T>) => Opt<R>;
 /** @see [[Opt.onFunc]] */
 export declare const onFunc: <T extends AnyFunc, A extends Parameters<T>>(...args: A) => (x: Opt<T>) => Opt<T>;
+/**
+ * Verify the given value passes the guard. If not, throw an exception.
+ *
+ * @example
+ * ```ts
+ * const a = isOrCrash(isNumber)(4 as unknown); // a is of type number, doesn't throw
+ * const b: number = a; // ok
+ * ```
+ *
+ * @param guard
+ * @param msg
+ */
+export declare const isOrCrash: <T>(guard: (x: unknown) => x is T, msg?: string) => (x: unknown) => T;
+declare type AssertTypeFunc = <T>(x: unknown, guard: (x: unknown) => x is T, msg?: string) => asserts x is T;
+/**
+ * Asserts a type via a given guard.
+ *
+ * @example
+ * ```ts
+ * const a: unknown = 1 as unknown;
+ * assertType(a, isNumber);
+ * const b: number = a; // ok
+ * ```
+ *
+ * @param x
+ * @param guard
+ * @param msg
+ */
+export declare const assertType: AssertTypeFunc;
 export {};

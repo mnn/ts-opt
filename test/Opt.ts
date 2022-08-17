@@ -90,6 +90,7 @@ import {
   altOpt,
   isOrCrash,
   assertType,
+  narrowOrCrash,
 } from '../src/Opt';
 
 chai.use(spies);
@@ -598,6 +599,23 @@ describe('opt', () => {
     expect(an1.orNull()).to.be.eq('1');
     const an2: Opt<string> = some(1 as string | number).narrow(isString); // None: Opt<string>
     expect(an2.orNull()).to.be.null;
+  });
+
+  describe('narrowOrCrash', () => {
+    it('crashes on narrowing failure', () => {
+      expect(() => opt(1).narrowOrCrash(isString)).to.throw();
+    });
+    it('doesn\'t crash on none', () => {
+      expect(none.narrowOrCrash(isString).orNull()).to.be.null;
+    });
+    it('passes custom crash message', () => {
+      const crashMessage = 'not a string';
+      expect(() => opt(1).narrowOrCrash(isString, crashMessage)).to.throw(crashMessage);
+    });
+    it('narrows type', () => {
+      const a: Opt<string> = opt('y').narrowOrCrash(isString);
+      suppressUnused(a);
+    });
   });
 
   it('print', () => {
@@ -1735,6 +1753,12 @@ describe('narrow', () => {
     expect(a.orNull()).to.eq(null);
     const b: Opt<number> = narrow(isNumber)(opt(1));
     expect(b.orNull()).to.eq(1);
+  });
+});
+
+describe('narrowOrCrash', () => {
+  it('crashes on narrowing failure', () => {
+    expect(() => narrowOrCrash(isString)(opt(1))).to.throw();
   });
 });
 
