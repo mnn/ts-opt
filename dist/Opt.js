@@ -21,7 +21,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.bimap = exports.altOpt = exports.alt = exports.orElseAny = exports.orElse = exports.forAll = exports.exists = exports.contains = exports.pipe = exports.onBoth = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOptFlow = exports.actToOpt = exports.chainToOpt = exports.chainFlow = exports.act = exports.chain = exports.flatMap = exports.mapFlow = exports.map = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = exports.isFunction = exports.isArray = exports.toString = exports.isString = void 0;
-exports.max = exports.min = exports.assertType = exports.isOrCrash = exports.onFunc = exports.apply = exports.parseFloat = exports.parseInt = exports.parseJson = exports.tryRun = exports.testReOrFalse = exports.testRe = exports.zipToOptArray = exports.last = exports.head = exports.at = exports.id = exports.nonEmpty = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.prop = exports.equals = exports.print = exports.narrowOrCrash = exports.narrow = exports.find = exports.count = exports.noneWhen = exports.noneIf = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.flatBimap = void 0;
+exports.max = exports.min = exports.assertType = exports.isOrCrash = exports.onFunc = exports.apply = exports.parseFloat = exports.parseInt = exports.parseJson = exports.tryRun = exports.testReOrFalse = exports.testRe = exports.zipToOptArray = exports.last = exports.head = exports.at = exports.id = exports.isFull = exports.nonEmpty = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.prop = exports.equals = exports.print = exports.narrowOrCrash = exports.narrow = exports.find = exports.count = exports.noneWhen = exports.noneIf = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.flatBimap = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 var errorSymbol = Symbol('Error');
@@ -229,8 +229,18 @@ var Opt = /** @class */ (function () {
     Object.defineProperty(Opt.prototype, "nonEmpty", {
         /**
          * `false` for [[Some]], `true` for [[None]].
+         *
+         * If you need to narrow a type to [[Some]], use [[Opt.isSome]].
          */
         get: function () { return !this.isEmpty; },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Opt.prototype, "isFull", {
+        /**
+         * @alias [[Opt.nonEmpty]]
+         */
+        get: function () { return this.nonEmpty; },
         enumerable: false,
         configurable: true
     });
@@ -1334,6 +1344,9 @@ exports.isEmpty = isEmpty;
  */
 var nonEmpty = function (x) { return !exports.isEmpty(x); };
 exports.nonEmpty = nonEmpty;
+/** @alias [[nonEmpty]] */
+var isFull = function (x) { return exports.nonEmpty(x); };
+exports.isFull = isFull;
 /**
  * Identity function.
  *

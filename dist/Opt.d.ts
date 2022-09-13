@@ -38,8 +38,14 @@ export declare abstract class Opt<T> {
     abstract get isEmpty(): boolean;
     /**
      * `false` for [[Some]], `true` for [[None]].
+     *
+     * If you need to narrow a type to [[Some]], use [[Opt.isSome]].
      */
     get nonEmpty(): boolean;
+    /**
+     * @alias [[Opt.nonEmpty]]
+     */
+    get isFull(): boolean;
     /**
      * Is this instance of [[Some]]?
      */
@@ -1383,6 +1389,7 @@ declare type UncurryTuple5Fn = <A, B, C, D, E, F>(_: (_: A) => (_: B) => (_: C) 
  * @param f
  */
 export declare const uncurryTuple5: UncurryTuple5Fn;
+declare type PossiblyEmpty = Opt<unknown> | unknown[] | null | undefined | Map<unknown, unknown> | Set<unknown> | object | string | number;
 /**
  * Similar to `isEmpty` from lodash, but also supports [[Opt]]s.
  * Returns `true` for [[None]], `[]`, `null`, `undefined`, empty map, empty set, empty object, `''` and `NaN`.
@@ -1400,7 +1407,7 @@ export declare const uncurryTuple5: UncurryTuple5Fn;
  *
  * @param x
  */
-export declare const isEmpty: (x: Opt<unknown> | unknown[] | null | undefined | Map<unknown, unknown> | Set<unknown> | object | string | number) => boolean;
+export declare const isEmpty: (x: PossiblyEmpty) => boolean;
 /**
  * Negated version of [[isEmpty]].
  * `nonEmpty(x)` is the same as `!isEmpty(x)`. It can be useful when composing functions (e.g. via [[pipe]]).
@@ -1421,7 +1428,9 @@ export declare const isEmpty: (x: Opt<unknown> | unknown[] | null | undefined | 
  * @see [[isEmpty]]
  * @param x
  */
-export declare const nonEmpty: (x: Opt<unknown> | unknown[] | null | undefined | Map<unknown, unknown> | Set<unknown> | object | string | number) => boolean;
+export declare const nonEmpty: (x: PossiblyEmpty) => boolean;
+/** @alias [[nonEmpty]] */
+export declare const isFull: (x: PossiblyEmpty) => boolean;
 /**
  * Identity function.
  *

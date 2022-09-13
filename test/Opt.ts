@@ -36,6 +36,7 @@ import {
   head,
   id,
   isEmpty,
+  isFull,
   isOpt,
   isOrCrash,
   isString,
@@ -173,6 +174,11 @@ describe('opt', () => {
   it('nonEmpty', () => {
     expect(opt(null).nonEmpty).to.be.false;
     expect(opt(0).nonEmpty).to.be.true;
+  });
+
+  it('isFull', () => {
+    expect(opt(null).isFull).to.be.false;
+    expect(opt(0).isFull).to.be.true;
   });
 
   it('isSome', () => {
@@ -1086,6 +1092,17 @@ describe('nonEmpty', () => {
         nonEmpty,
       ),
     ).to.be.true;
+  });
+});
+
+describe('isFull', () => {
+  it('opt', () => {
+    expect(isFull(opt(1))).to.be.true;
+    expect(isFull(none)).to.be.false;
+  });
+  it('array', () => {
+    expect(isFull([1])).to.be.true;
+    expect(isFull([])).to.be.false;
   });
 });
 

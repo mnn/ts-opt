@@ -73,8 +73,15 @@ export abstract class Opt<T> {
 
   /**
    * `false` for [[Some]], `true` for [[None]].
+   *
+   * If you need to narrow a type to [[Some]], use [[Opt.isSome]].
    */
   get nonEmpty(): boolean { return !this.isEmpty; }
+
+  /**
+   * @alias [[Opt.nonEmpty]]
+   */
+  get isFull(): boolean { return this.nonEmpty; }
 
   /**
    * Is this instance of [[Some]]?
@@ -1815,6 +1822,17 @@ type UncurryTuple5Fn = <A, B, C, D, E, F>(_: (_: A) => (_: B) => (_: C) => (_: D
  */
 export const uncurryTuple5: UncurryTuple5Fn = f => ([a, b, c, d, e]) => f(a)(b)(c)(d)(e);
 
+type PossiblyEmpty =
+  Opt<unknown> |
+  unknown[] |
+  null |
+  undefined |
+  Map<unknown, unknown> |
+  Set<unknown> |
+  object |
+  string |
+  number;
+
 /**
  * Similar to `isEmpty` from lodash, but also supports [[Opt]]s.
  * Returns `true` for [[None]], `[]`, `null`, `undefined`, empty map, empty set, empty object, `''` and `NaN`.
@@ -1832,9 +1850,7 @@ export const uncurryTuple5: UncurryTuple5Fn = f => ([a, b, c, d, e]) => f(a)(b)(
  *
  * @param x
  */
-export const isEmpty = (
-  x: Opt<unknown> | unknown[] | null | undefined | Map<unknown, unknown> | Set<unknown> | object | string | number,
-): boolean => {
+export const isEmpty = (x: PossiblyEmpty): boolean => {
   if (isOpt(x)) { return x.isEmpty; }
   if (Array.isArray(x)) { return x.length === 0; }
   if (x === null || x === undefined) { return true; }
@@ -1865,9 +1881,10 @@ export const isEmpty = (
  * @see [[isEmpty]]
  * @param x
  */
-export const nonEmpty = (
-  x: Opt<unknown> | unknown[] | null | undefined | Map<unknown, unknown> | Set<unknown> | object | string | number,
-): boolean => !isEmpty(x);
+export const nonEmpty = (x: PossiblyEmpty): boolean => !isEmpty(x);
+
+/** @alias [[nonEmpty]] */
+export const isFull = (x: PossiblyEmpty): boolean => nonEmpty(x);
 
 /**
  * Identity function.
