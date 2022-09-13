@@ -871,6 +871,30 @@ export abstract class Opt<T> {
   head<R extends (T extends (infer A)[] ? A : (T extends string ? string : never))>(): OptSafe<R> { return this.at(0); }
 
   /**
+   * Get minimum from an array.
+   *
+   * @example
+   * ```ts
+   * opt([5, 1, 3]).min() // Some(1)
+   * none.min() // None
+   * opt([]).min() // None
+   * ```
+   */
+  abstract min<R extends (T extends (infer A)[] ? A : never)>(): OptSafe<R>;
+
+  /**
+   * Get maximum from an array.
+   *
+   * @example
+   * ```ts
+   * opt([3, 7]).max() // Some(7)
+   * none.max() // None
+   * opt([]).max() // None
+   * ```
+   */
+  abstract max<R extends (T extends (infer A)[] ? A : never)>(): OptSafe<R>;
+
+  /**
    * Get a last item of an array or a last character of a string.
    *
    * @example
@@ -1093,6 +1117,14 @@ class None<T> extends Opt<T> {
   at<R extends (T extends (infer A)[] ? A : (T extends string ? string : never))>(_index: number): OptSafe<R> {
     return none;
   }
+
+  max<R extends (T extends (infer A)[] ? A : never)>(): OptSafe<R> {
+    return none;
+  }
+
+  min<R extends (T extends (infer A)[] ? A : never)>(): OptSafe<R> {
+    return none;
+  }
 }
 
 /**
@@ -1227,6 +1259,20 @@ class Some<T> extends Opt<T> {
     } else {
       throw new Error(`\`Opt#at\` can only be used on arrays and strings`);
     }
+  }
+
+  min<R extends (T extends (infer A)[] ? A : never)>(): OptSafe<R> {
+    const val = this._value;
+    if (!isArray(val)) { throw new Error('Expected array.'); }
+    if (val.length === 0) return none;
+    return some(val.reduce((acc: R, x: any) => x < acc ? x : acc, val[0] as R)) as OptSafe<R>;
+  }
+
+  max<R extends (T extends (infer A)[] ? A : never)>(): OptSafe<R> {
+    const val = this._value;
+    if (!isArray(val)) { throw new Error('Expected array.'); }
+    if (val.length === 0) return none;
+    return some(val.reduce((acc: R, x: any) => x > acc ? x : acc, val[0] as R)) as OptSafe<R>;
   }
 }
 
@@ -2030,3 +2076,9 @@ type AssertTypeFunc = <T>(x: unknown, guard: (x: unknown) => x is T, msg?: strin
 export const assertType: AssertTypeFunc = (x, guard, msg = 'invalid value') => {
   isOrCrash(guard, msg)(x);
 };
+
+/** @see [[Opt.min]] */
+export const min = <R>(x: Opt<R[]>): OptSafe<R> => x.min();
+
+/** @see [[Opt.max]] */
+export const max = <R>(x: Opt<R[]>): OptSafe<R> => x.max();

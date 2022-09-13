@@ -766,6 +766,28 @@ export declare abstract class Opt<T> {
      */
     head<R extends (T extends (infer A)[] ? A : (T extends string ? string : never))>(): OptSafe<R>;
     /**
+     * Get minimum from an array.
+     *
+     * @example
+     * ```ts
+     * opt([5, 1, 3]).min() // Some(1)
+     * none.min() // None
+     * opt([]).min() // None
+     * ```
+     */
+    abstract min<R extends (T extends (infer A)[] ? A : never)>(): OptSafe<R>;
+    /**
+     * Get maximum from an array.
+     *
+     * @example
+     * ```ts
+     * opt([3, 7]).max() // Some(7)
+     * none.max() // None
+     * opt([]).max() // None
+     * ```
+     */
+    abstract max<R extends (T extends (infer A)[] ? A : never)>(): OptSafe<R>;
+    /**
      * Get a last item of an array or a last character of a string.
      *
      * @example
@@ -901,6 +923,8 @@ declare class None<T> extends Opt<T> {
     prop<K extends (T extends object ? keyof T : never)>(_key: K): OptSafe<T[K]>;
     swap<U>(_newVal: U): Opt<U>;
     at<R extends (T extends (infer A)[] ? A : (T extends string ? string : never))>(_index: number): OptSafe<R>;
+    max<R extends (T extends (infer A)[] ? A : never)>(): OptSafe<R>;
+    min<R extends (T extends (infer A)[] ? A : never)>(): OptSafe<R>;
 }
 /**
  * [[Opt]] with a value inside.
@@ -948,6 +972,8 @@ declare class Some<T> extends Opt<T> {
     prop<K extends (T extends object ? keyof T : never)>(key: K): OptSafe<T[K]>;
     swap<U>(newVal: U): Opt<U>;
     at<R extends (T extends (infer A)[] ? A : (T extends string ? string : never))>(index: number): OptSafe<R>;
+    min<R extends (T extends (infer A)[] ? A : never)>(): OptSafe<R>;
+    max<R extends (T extends (infer A)[] ? A : never)>(): OptSafe<R>;
 }
 declare const someSerializedType = "Opt/Some";
 declare const noneSerializedType = "Opt/None";
@@ -1557,4 +1583,8 @@ declare type AssertTypeFunc = <T>(x: unknown, guard: (x: unknown) => x is T, msg
  * @param msg
  */
 export declare const assertType: AssertTypeFunc;
+/** @see [[Opt.min]] */
+export declare const min: <R>(x: Opt<R[]>) => OptSafe<R>;
+/** @see [[Opt.max]] */
+export declare const max: <R>(x: Opt<R[]>) => OptSafe<R>;
 export {};

@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `narrowOrCrash`
 - `isOrCrash` and `assertType`.
 - Readme: Bad uses section.
+- `min` and `max`
 
 ### Changed
 - Migrated from tslint to eslint.

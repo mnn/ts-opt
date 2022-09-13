@@ -4,8 +4,12 @@ import * as spies from 'chai-spies';
 import {
   act,
   actToOpt,
+  alt,
+  altOpt,
   ap,
   apFn,
+  apply,
+  assertType,
   at,
   bimap,
   caseOf,
@@ -15,6 +19,7 @@ import {
   chainToOptFlow,
   compose,
   contains,
+  count,
   curryTuple,
   curryTuple3,
   curryTuple4,
@@ -22,6 +27,8 @@ import {
   equals,
   exists,
   filter,
+  find,
+  flatBimap,
   flatMap,
   flow,
   forAll,
@@ -30,14 +37,23 @@ import {
   id,
   isEmpty,
   isOpt,
+  isOrCrash,
   isString,
   joinOpt,
   last,
   map,
   mapFlow,
   mapOpt,
+  max,
+  min,
   narrow,
+  narrowOrCrash,
   none,
+  noneIf,
+  nonEmpty,
+  noneWhen,
+  onBoth,
+  onFunc,
   opt,
   Opt,
   optEmptyArray,
@@ -48,11 +64,15 @@ import {
   optZero,
   orCrash,
   orElse,
+  orElseAny,
   orFalse,
   orNaN,
   orNull,
   orTrue,
   orUndef,
+  parseFloat,
+  parseInt,
+  parseJson,
   pipe,
   print,
   prop,
@@ -63,6 +83,8 @@ import {
   testRe,
   testReOrFalse,
   toArray,
+  toString,
+  tryRun,
   uncurryTuple,
   uncurryTuple3,
   uncurryTuple4,
@@ -72,26 +94,6 @@ import {
   zip4,
   zip5,
   zipToOptArray,
-  toString,
-  onBoth,
-  tryRun,
-  parseJson,
-  parseInt,
-  nonEmpty,
-  count,
-  flatBimap,
-  apply,
-  onFunc,
-  alt,
-  orElseAny,
-  noneIf,
-  noneWhen,
-  find,
-  altOpt,
-  isOrCrash,
-  assertType,
-  narrowOrCrash,
-  parseFloat,
 } from '../src/Opt';
 
 chai.use(spies);
@@ -828,6 +830,32 @@ describe('opt', () => {
     expect(
       none.onFunc(79) // None
           .orNull()).to.be.null;
+  });
+
+  it('min', () => {
+    const res1: Opt<number> = opt([] as number[]).min();
+    expect(res1.orNull()).to.be.null;
+    expect(opt([]).min().orNull()).to.be.null;
+    expect(none.min().orNull()).to.be.null;
+    expect(opt([1]).min().orNull()).to.be.eq(1);
+    expect(opt([1, 3]).min().orNull()).to.be.eq(1);
+    expect(opt([3, 1]).min().orNull()).to.be.eq(1);
+    expect(opt([5, 1, 3]).min().orNull()).to.be.eq(1);
+    expect(opt([1, 1, 1]).min().orNull()).to.be.eq(1);
+    expect(() => opt(0).min()).to.throw();
+  });
+
+  it('max', () => {
+    const res1: Opt<number> = opt([] as number[]).max();
+    expect(res1.orNull()).to.be.null;
+    expect(opt([]).max().orNull()).to.be.null;
+    expect(none.max().orNull()).to.be.null;
+    expect(opt([7]).max().orNull()).to.be.eq(7);
+    expect(opt([7, 3]).max().orNull()).to.be.eq(7);
+    expect(opt([3, 7]).max().orNull()).to.be.eq(7);
+    expect(opt([5, 7, 3]).max().orNull()).to.be.eq(7);
+    expect(opt([7, 7, 7]).max().orNull()).to.be.eq(7);
+    expect(() => opt(0).max()).to.throw();
   });
 });
 
@@ -2275,6 +2303,20 @@ describe('assertType', () => {
     const a: unknown = '' as unknown;
     const errMsg = 'not a number';
     expect(() => assertType(a, isNumber, errMsg)).to.throw(errMsg);
+  });
+});
+
+describe('min', () => {
+  it('returns minimum', () => {
+    const res: Opt<number> = min(opt([1, 4]));
+    expect(res.orNull()).to.be.eq(1);
+  });
+});
+
+describe('max', () => {
+  it('returns maximum', () => {
+    const res: Opt<number> = max(opt([1, 4]));
+    expect(res.orNull()).to.be.eq(4);
   });
 });
 
