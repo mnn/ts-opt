@@ -461,8 +461,9 @@ export abstract class Opt<T> {
   abstract forAll(p: (x: T) => boolean): boolean;
 
   /**
-   * Get inner value if [[Some]], or use passed `def` value for [[None]].
+   * Get inner value of [[Some]], or use passed `def` value for [[None]].
    *
+   * @example
    * ```ts
    * some(1).orElse(2) // 1
    * none.orElse(2) // 2
@@ -472,6 +473,24 @@ export abstract class Opt<T> {
    * @param def Default value.
    */
   abstract orElse(def: T): T;
+
+  /**
+   * Get inner value of [[Some]], or lazily use passed `def` value for [[None]].
+   *
+   * If a computation of a default value is not expensive (or has been already computed),
+   * use [[orElse]] instead.
+   *
+   * @example
+   * ```ts
+   * some(1).orElseLazy(() => 2) // 1
+   * none.orElseLazy(() => 2) // 2
+   * ```
+   *
+   * @see [[ts-opt.orElseLazy]]
+   *
+   * @param def
+   */
+  abstract orElseLazy(def: () => T): T;
 
   /**
    * Less strict version of [[orElse]].
@@ -1077,6 +1096,8 @@ class None<T> extends Opt<T> {
 
   orElse(def: T): T { return def; }
 
+  orElseLazy(def: () => T): T { return def(); }
+
   alt(def: Opt<T>): Opt<T> { return def; }
 
   altOpt(def: T | EmptyValue): OptSafe<T> { return opt(def); }
@@ -1194,6 +1215,8 @@ class Some<T> extends Opt<T> {
   }
 
   orElse(_def: T): T { return this._value; }
+
+  orElseLazy(_def: () => T): T { return this._value; }
 
   alt(_def: Opt<T>): Opt<T> { return this; }
 
@@ -1559,6 +1582,9 @@ export const forAll = <T>(p: (_: T) => boolean) => (x: Opt<T>): boolean => x.for
 
 /** @see [[Opt.orElse]] */
 export const orElse = <T>(e: T) => (x: Opt<T>): T => x.orElse(e);
+
+/** @see [[Opt.orElseLazy]] */
+export const orElseLazy = <T>(e: () => T) => (x: Opt<T>): T => x.orElseLazy(e);
 
 /** @see [[Opt.orElseAny]] */
 export const orElseAny = <U>(e: U) => <T>(x: Opt<T>): T | U => x.orElseAny(e);

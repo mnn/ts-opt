@@ -395,8 +395,9 @@ export declare abstract class Opt<T> {
      */
     abstract forAll(p: (x: T) => boolean): boolean;
     /**
-     * Get inner value if [[Some]], or use passed `def` value for [[None]].
+     * Get inner value of [[Some]], or use passed `def` value for [[None]].
      *
+     * @example
      * ```ts
      * some(1).orElse(2) // 1
      * none.orElse(2) // 2
@@ -406,6 +407,23 @@ export declare abstract class Opt<T> {
      * @param def Default value.
      */
     abstract orElse(def: T): T;
+    /**
+     * Get inner value of [[Some]], or lazily use passed `def` value for [[None]].
+     *
+     * If a computation of a default value is not expensive (or has been already computed),
+     * use [[orElse]] instead.
+     *
+     * @example
+     * ```ts
+     * some(1).orElseLazy(() => 2) // 1
+     * none.orElseLazy(() => 2) // 2
+     * ```
+     *
+     * @see [[ts-opt.orElseLazy]]
+     *
+     * @param def
+     */
+    abstract orElseLazy(def: () => T): T;
     /**
      * Less strict version of [[orElse]].
      *
@@ -911,6 +929,7 @@ declare class None<T> extends Opt<T> {
     exists(_p: (x: T) => boolean): boolean;
     forAll(_p: (x: T) => boolean): boolean;
     orElse(def: T): T;
+    orElseLazy(def: () => T): T;
     alt(def: Opt<T>): Opt<T>;
     altOpt(def: T | EmptyValue): OptSafe<T>;
     orElseAny<U>(def: U): U;
@@ -960,6 +979,7 @@ declare class Some<T> extends Opt<T> {
     onNone(_f: () => void): Opt<T>;
     onSome(f: (x: T) => void): Opt<T>;
     orElse(_def: T): T;
+    orElseLazy(_def: () => T): T;
     alt(_def: Opt<T>): Opt<T>;
     altOpt(_def: T | EmptyValue): OptSafe<T>;
     orElseAny<U>(_def: U): T;
@@ -1181,6 +1201,8 @@ export declare const exists: <T>(y: (_: T) => boolean) => (x: Opt<T>) => boolean
 export declare const forAll: <T>(p: (_: T) => boolean) => (x: Opt<T>) => boolean;
 /** @see [[Opt.orElse]] */
 export declare const orElse: <T>(e: T) => (x: Opt<T>) => T;
+/** @see [[Opt.orElseLazy]] */
+export declare const orElseLazy: <T>(e: () => T) => (x: Opt<T>) => T;
 /** @see [[Opt.orElseAny]] */
 export declare const orElseAny: <U>(e: U) => <T>(x: Opt<T>) => U | T;
 /** @see [[Opt.alt]] */

@@ -66,6 +66,7 @@ import {
   orCrash,
   orElse,
   orElseAny,
+  orElseLazy,
   orFalse,
   orNaN,
   orNull,
@@ -423,6 +424,22 @@ describe('opt', () => {
   it('orElse', () => {
     expect(none.orElse(0)).to.be.eq(0);
     expect(some(1).orElse(0)).to.be.eq(1);
+  });
+
+  it('orElseLazy', () => {
+    const noneF = chai.spy(() => 0);
+    const someF = chai.spy(() => 0);
+    expect(none.orElseLazy(noneF)).to.be.eq(0);
+    noneF.should.have.been.called();
+    expect(some(1).orElseLazy(someF)).to.be.eq(1);
+    someF.should.have.not.been.called();
+
+    expect(
+      some(1).orElseLazy(() => 2), // 1
+    ).to.be.eq(1);
+    expect(
+      none.orElseLazy(() => 2), // 2
+    ).to.be.eq(2);
   });
 
   it('orElseAny', () => {
@@ -1536,6 +1553,20 @@ describe('orElse', () => {
   });
   it('returns default value on none', () => {
     expect(orElse(0)(none)).to.be.eq(0);
+  });
+});
+
+describe('orElseLazy', () => {
+  it('calls function and returns its value for none', () => {
+    const noneF = chai.spy(() => 0);
+    expect(orElseLazy(noneF)(none)).to.be.eq(0);
+    noneF.should.have.been.called();
+  });
+
+  it('uses inner value for some and doesn\'t call the function', () => {
+    const someF = chai.spy(() => 0);
+    expect(orElseLazy(someF)(some(1))).to.be.eq(1);
+    someF.should.have.not.been.called();
   });
 });
 
