@@ -15,6 +15,19 @@ interface ConstInClassFn<T> {
     (): () => T | null;
     <E>(emptyValue: E): () => T | E;
 }
+interface FromObjectFn {
+    <O extends {
+        value: T;
+    }, T>(x: O): Opt<O['value']>;
+    <K extends keyof O & string, O extends object>(x: O, k: K): Opt<O[K]>;
+}
+interface ToObjectFn<T> {
+    (): ToObjectRes<T>;
+    <K extends string>(k: string): Record<K, T | null>;
+}
+interface ToObjectRes<T> {
+    value: T | null;
+}
 export declare const isString: (x: any) => x is string;
 export declare const toString: (x: {
     toString(): string;
@@ -80,6 +93,33 @@ export declare abstract class Opt<T> {
      * @see [[ts-opt.toArray]]
      */
     abstract toArray(): [] | [T];
+    /**
+     * Converts an object to [[Opt]].
+     *
+     * @example
+     * ```ts
+     * Opt.fromObject({value: 4}) // Some(4)
+     * Opt.fromObject({id: 4, something: '?'}, 'id') // Some(4)
+     * Opt.fromObject({value: null}) // None
+     * ```
+     *
+     * @param x
+     * @param k
+     */
+    static fromObject: FromObjectFn;
+    /**
+     * Convets [[Opt]] to an object.
+     *
+     * @example
+     * ```ts
+     * opt(1).toObject() // {value: 1}
+     * opt(undefined).toObject() // {value: null}
+     * opt(undefined).toObject('id') // {id: null}
+     * ```
+     *
+     * @param k
+     */
+    toObject: ToObjectFn<T>;
     /**
      * Applies function to the wrapped value and returns a new instance of [[Some]].
      *
@@ -1140,6 +1180,14 @@ export declare const fromArray: typeof Opt.fromArray;
  * @see [[Opt.toArray]]
  */
 export declare const toArray: <T>(x: Opt<T>) => [] | [T];
+/**
+ * @see [[Opt.fromObject]]
+ */
+export declare const fromObject: FromObjectFn;
+/**
+ * @see [[Opt.toObject]]
+ */
+export declare const toObject: <K extends string = "value">(k?: K | undefined) => <T>(x: Opt<T>) => Record<K, T | null>;
 declare type MapFn = <T, U>(f: (_: T) => U) => <I extends (Opt<T> | T[]), O extends (I extends Opt<T> ? Opt<U> : U[])>(x: I) => O;
 /**
  * Same as [[Opt.map]], but also supports arrays.

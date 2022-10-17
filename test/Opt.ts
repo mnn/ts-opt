@@ -33,6 +33,7 @@ import {
   flow,
   forAll,
   fromArray,
+  fromObject,
   head,
   id,
   isEmpty,
@@ -85,6 +86,7 @@ import {
   testRe,
   testReOrFalse,
   toArray,
+  toObject,
   toString,
   tryRun,
   uncurryTuple,
@@ -148,7 +150,7 @@ const flow2: <A, B = unknown, C = unknown>(f: (_: A) => B, g: (_: B) => C) => ((
 
 describe('opt', () => {
   beforeEach(() => {
-    sandbox.on(console, ['log']);
+    sandbox.on(console, ['log'], noop);
   });
 
   afterEach(() => {
@@ -312,6 +314,25 @@ describe('opt', () => {
   it('toArray', () => {
     expect(opt(1).toArray()).to.eql([1]);
     expect(opt(null).toArray()).to.eql([]);
+  });
+
+  it('toObject', () => {
+    expect(
+      opt(1).toObject(), // {value: 1}
+    ).to.be.eql({value: 1});
+    expect(
+      opt(undefined).toObject(), // {value: null}
+    ).to.be.eql({value: null});
+    expect(
+      opt(undefined).toObject('id'), // {id: null}
+    ).to.be.eql({id: null});
+
+    const a: { value: string | null } = opt('Madara').toObject();
+    // @ts-expect-error wrong type of value field
+    const b: { value: string | null } = opt(57).toObject();
+    const c: { c: number | null } = opt(57).toObject('c');
+    expect(c).to.be.eql({c: 57});
+    suppressUnused(a, b);
   });
 
   it('caseOf', () => {
@@ -904,6 +925,55 @@ describe('helper functions', () => {
     // expect(fromArray([1, 2]).orNull()).to.eq(1);
   });
 
+  describe('fromObject', () => {
+    interface Obj {
+      value: number;
+      otherValue: string;
+    }
+
+    const genObj = (): Obj => ({
+      value: 4,
+      otherValue: '7',
+    });
+
+    it('constucts opt from object with default field name', () => {
+      const a: Opt<number> = Opt.fromObject(genObj());
+      expect(a.orNull()).to.be.eq(4);
+    });
+
+    it('constucts opt from object with custom field name', () => {
+      const a: Opt<string> = Opt.fromObject(genObj(), 'otherValue');
+      expect(a.orNull()).to.be.eq('7');
+    });
+
+    it('checks field name and type', () => {
+      // @ts-expect-error invalid type of field
+      const a: Opt<boolean> = Opt.fromObject(genObj());
+      // @ts-expect-error invalid type of field
+      const b: Opt<boolean> = Opt.fromObject(genObj(), 'value');
+      // @ts-expect-error missing field
+      const c: Opt<boolean> = Opt.fromObject(genObj(), 'x');
+      suppressUnused(a, b, c);
+    });
+
+    it('example', () => {
+      expect(
+        Opt.fromObject({value: 4}) // Some(4)
+           .orNull(),
+      ).to.be.eq(4);
+
+      expect(
+        Opt.fromObject({id: 4, something: '?'}, 'id') // Some(4)
+           .orNull(),
+      ).to.be.eq(4);
+
+      expect(
+        Opt.fromObject({value: null}) // None
+           .orElseAny(''),
+      ).to.be.eq('');
+    });
+  });
+
   it('isOpt', () => {
     expect(isOpt(0)).to.be.false;
     expect(isOpt(undefined)).to.be.false;
@@ -1276,6 +1346,25 @@ describe('toArray', () => {
   it('converts opt to array', () => {
     expect(toArray(opt(1))).to.be.eql([1]);
     expect(toArray(none)).to.be.eql([]);
+  });
+});
+
+describe('fromObject', () => {
+  it('converts object to opt', () => {
+    expect(fromObject({value: 11}).orNull()).to.be.eq(11);
+    expect(fromObject({value: NaN}).orNull()).to.be.null;
+    // @ts-expect-error invalid field name
+    expect(fromObject({id: 7}, 'idx').orNull()).to.be.null;
+    expect(fromObject({id: 7}, 'id').orNull()).to.be.eq(7);
+  });
+});
+
+describe('toObject', () => {
+  it('converts opt to object', () => {
+    const b: { value: number | null } = toObject()(opt(57));
+    expect(b).to.be.eql({value: 57});
+    const c: { c: number | null } = toObject('c')(opt(57));
+    expect(c).to.be.eql({c: 57});
   });
 });
 
@@ -1841,7 +1930,7 @@ describe('narrowOrCrash', () => {
 
 describe('print', () => {
   beforeEach(() => {
-    sandbox.on(console, ['log']);
+    sandbox.on(console, ['log'], noop);
   });
 
   afterEach(() => {
@@ -2376,7 +2465,7 @@ interface TestUser {
 
 describe('pitfalls', () => {
   beforeEach(() => {
-    sandbox.on(console, ['log']);
+    sandbox.on(console, ['log'], noop);
   });
   afterEach(() => {
     sandbox.restore();

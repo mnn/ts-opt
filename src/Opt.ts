@@ -41,6 +41,22 @@ interface ConstInClassFn<T> {
   <E>(emptyValue: E): () => T | E;
 }
 
+interface FromObjectFn {
+  <O extends { value: T }, T>(x: O): Opt<O['value']>;
+
+  <K extends keyof O & string, O extends object>(x: O, k: K): Opt<O[K]>;
+}
+
+interface ToObjectFn<T> {
+  (): ToObjectRes<T>;
+
+  <K extends string>(k: string): Record<K, T | null>;
+}
+
+interface ToObjectRes<T> {
+  value: T | null;
+}
+
 export const isString = (x: any): x is string => typeof x === 'string';
 export const toString = (x: { toString(): string }): string => x.toString();
 export const isArray = (x: any): x is unknown[] => Array.isArray(x);
@@ -121,6 +137,39 @@ export abstract class Opt<T> {
    * @see [[ts-opt.toArray]]
    */
   abstract toArray(): [] | [T];
+
+  /**
+   * Converts an object to [[Opt]].
+   *
+   * @example
+   * ```ts
+   * Opt.fromObject({value: 4}) // Some(4)
+   * Opt.fromObject({id: 4, something: '?'}, 'id') // Some(4)
+   * Opt.fromObject({value: null}) // None
+   * ```
+   *
+   * @param x
+   * @param k
+   */
+  static fromObject: FromObjectFn = (x: object, k = 'value') => {
+    return opt((x as any)[k]);
+  };
+
+  /**
+   * Convets [[Opt]] to an object.
+   *
+   * @example
+   * ```ts
+   * opt(1).toObject() // {value: 1}
+   * opt(undefined).toObject() // {value: null}
+   * opt(undefined).toObject('id') // {id: null}
+   * ```
+   *
+   * @param k
+   */
+  toObject: ToObjectFn<T> = (k = 'value') => {
+    return {[k]: this.orNull()} as any;
+  };
 
   /**
    * Applies function to the wrapped value and returns a new instance of [[Some]].
@@ -1494,6 +1543,19 @@ export const fromArray = Opt.fromArray;
  * @see [[Opt.toArray]]
  */
 export const toArray = <T>(x: Opt<T>): [] | [T] => x.toArray();
+
+/**
+ * @see [[Opt.fromObject]]
+ */
+export const fromObject = Opt.fromObject;
+
+/**
+ * @see [[Opt.toObject]]
+ */
+export const toObject =
+  <K extends string = 'value'>(k?: K) =>
+    <T>(x: Opt<T>): Record<K, T | null> =>
+      x.toObject(k as any);
 
 type MapFn = <T, U>(f: (_: T) => U) => <I extends (Opt<T> | T[]), O extends (I extends Opt<T> ? Opt<U> : U[])>(x: I) => O;
 
