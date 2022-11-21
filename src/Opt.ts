@@ -2187,3 +2187,23 @@ export const min = <R>(x: Opt<R[]>): OptSafe<R> => x.min();
 
 /** @see [[Opt.max]] */
 export const max = <R>(x: Opt<R[]>): OptSafe<R> => x.max();
+
+const gen2Op = <T>(mode: 'all' | 'any', op: (a: T) => (b: T) => T): ((a: T | EmptyValue) => (b: T | EmptyValue) => Opt<T>) =>
+  (x: T | EmptyValue) => (y: T | EmptyValue): Opt<T> => {
+    const ox = opt(x);
+    const oy = opt(y);
+    const allRes = ox.zip(oy).map(uncurryTuple(op));
+    const anyResGen = () => allRes.alt(ox).alt(oy);
+    return mode === 'all' ? allRes : anyResGen();
+  };
+
+export const min2Num = (a: number) => (b: number): number => a < b ? a : b;
+export const min2All = gen2Op('all', min2Num);
+export const min2Any = gen2Op('any', min2Num);
+
+export const max2Num = (a: number) => (b: number): number => a > b ? a : b;
+export const max2All = gen2Op('all', max2Num);
+export const max2Any = gen2Op('any', max2Num);
+
+export const clamp = (minValue: number | EmptyValue) => (maxValue: number | EmptyValue) => (x: number | EmptyValue): Opt<number> =>
+    opt(x).act(max2Any(minValue), min2Any(maxValue));

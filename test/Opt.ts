@@ -17,6 +17,7 @@ import {
   chainFlow,
   chainToOpt,
   chainToOptFlow,
+  clamp,
   compose,
   contains,
   count,
@@ -47,7 +48,13 @@ import {
   mapFlow,
   mapOpt,
   max,
+  max2All,
+  max2Any,
+  max2Num,
   min,
+  min2All,
+  min2Any,
+  min2Num,
   narrow,
   narrowOrCrash,
   none,
@@ -2454,6 +2461,114 @@ describe('max', () => {
   it('returns maximum', () => {
     const res: Opt<number> = max(opt([1, 4]));
     expect(res.orNull()).to.be.eq(4);
+  });
+});
+
+describe('min2Num', () => {
+  it('returns minimum of two numbers', () => {
+    expect(min2Num(1)(2)).to.be.eq(1);
+    expect(min2Num(2)(1)).to.be.eq(1);
+    expect(min2Num(-2)(1)).to.be.eq(-2);
+    expect(min2Num(0)(0)).to.be.eq(0);
+  });
+});
+
+describe('min2All', () => {
+  it('returns minimum of two numbers', () => {
+    expect(min2All(1)(2).orNull()).to.be.eq(1);
+    expect(min2All(2)(1).orNull()).to.be.eq(1);
+  });
+  it('returns none when any input is empty value', () => {
+    expect(min2All(1)(undefined).orNull()).to.be.null;
+    expect(min2All(1)(null).orNull()).to.be.null;
+    expect(min2All(1)(NaN).orNull()).to.be.null;
+    expect(min2All(undefined)(1).orNull()).to.be.null;
+    expect(min2All(null)(1).orNull()).to.be.null;
+    expect(min2All(NaN)(1).orNull()).to.be.null;
+    expect(min2All(undefined)(undefined).orNull()).to.be.null;
+    expect(min2All(null)(null).orNull()).to.be.null;
+    expect(min2All(NaN)(NaN).orNull()).to.be.null;
+  });
+});
+
+describe('min2Any', () => {
+  it('returns minimum of two numbers', () => {
+    expect(min2Any(1)(2).orNull()).to.be.eq(1);
+    expect(min2Any(2)(1).orNull()).to.be.eq(1);
+  });
+  it('returns non-empty value when other input is empty', () => {
+    expect(min2Any(1)(null).orNull()).to.be.eq(1);
+    expect(min2Any(undefined)(1).orNull()).to.be.eq(1);
+  });
+  it('returns none when both inputs are empty values', () => {
+    expect(min2Any(undefined)(NaN).orNull()).to.be.null;
+    expect(min2Any(null)(undefined).orNull()).to.be.null;
+  });
+});
+
+describe('max2Num', () => {
+  it('returns maximum of two numbers', () => {
+    expect(max2Num(1)(2)).to.be.eq(2);
+    expect(max2Num(2)(1)).to.be.eq(2);
+    expect(max2Num(-2)(1)).to.be.eq(1);
+    expect(max2Num(0)(0)).to.be.eq(0);
+  });
+});
+
+describe('max2All', () => {
+  it('returns maximum of two numbers', () => {
+    expect(max2All(1)(2).orNull()).to.be.eq(2);
+    expect(max2All(2)(1).orNull()).to.be.eq(2);
+  });
+  it('returns none when any input is empty value', () => {
+    expect(max2All(1)(undefined).orNull()).to.be.null;
+    expect(max2All(1)(null).orNull()).to.be.null;
+    expect(max2All(1)(NaN).orNull()).to.be.null;
+    expect(max2All(undefined)(1).orNull()).to.be.null;
+    expect(max2All(null)(1).orNull()).to.be.null;
+    expect(max2All(NaN)(1).orNull()).to.be.null;
+    expect(max2All(undefined)(undefined).orNull()).to.be.null;
+    expect(max2All(null)(null).orNull()).to.be.null;
+    expect(max2All(NaN)(NaN).orNull()).to.be.null;
+  });
+});
+
+describe('max2Any', () => {
+  it('returns maximum of two numbers', () => {
+    expect(max2Any(1)(2).orNull()).to.be.eq(2);
+    expect(max2Any(2)(1).orNull()).to.be.eq(2);
+  });
+  it('returns non-empty value when other input is empty', () => {
+    expect(max2Any(1)(null).orNull()).to.be.eq(1);
+    expect(max2Any(undefined)(1).orNull()).to.be.eq(1);
+  });
+  it('returns none when both inputs are empty values', () => {
+    expect(max2Any(undefined)(NaN).orNull()).to.be.null;
+    expect(max2Any(null)(undefined).orNull()).to.be.null;
+  });
+});
+
+describe('clamp', () => {
+  it('clamps number to given interval', () => {
+    expect(clamp(0)(10)(5).orNull()).to.be.eq(5);
+    expect(clamp(0)(10)(-4).orNull()).to.be.eq(0);
+    expect(clamp(0)(10)(12).orNull()).to.be.eq(10);
+  });
+  it('clamps number if one side of interval is missing', () => {
+    expect(clamp(0)(undefined)(5).orNull()).to.be.eq(5);
+    expect(clamp(0)(null)(-1).orNull()).to.be.eq(0);
+    expect(clamp(NaN)(10)(5).orNull()).to.be.eq(5);
+    expect(clamp(undefined)(10)(12).orNull()).to.be.eq(10);
+  });
+  it('noop when both sides of interval are missing', () => {
+    expect(clamp(undefined)(undefined)(5).orNull()).to.be.eq(5);
+    expect(clamp(null)(null)(5).orNull()).to.be.eq(5);
+    expect(clamp(NaN)(NaN)(5).orNull()).to.be.eq(5);
+  });
+  it('returns none when value to clamp is an empty value', () => {
+    expect(clamp(0)(1)(undefined).orNull()).to.be.null;
+    expect(clamp(0)(1)(null).orUndef()).to.be.undefined;
+    expect(clamp(0)(1)(NaN).orNull()).to.be.null;
   });
 });
 
