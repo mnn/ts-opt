@@ -1666,4 +1666,11 @@ export declare const assertType: AssertTypeFunc;
 export declare const min: <R>(x: Opt<R[]>) => OptSafe<R>;
 /** @see [[Opt.max]] */
 export declare const max: <R>(x: Opt<R[]>) => OptSafe<R>;
+export declare const min2Num: (a: number) => (b: number) => number;
+export declare const min2All: (a: number | EmptyValue) => (b: number | EmptyValue) => Opt<number>;
+export declare const min2Any: (a: number | EmptyValue) => (b: number | EmptyValue) => Opt<number>;
+export declare const max2Num: (a: number) => (b: number) => number;
+export declare const max2All: (a: number | EmptyValue) => (b: number | EmptyValue) => Opt<number>;
+export declare const max2Any: (a: number | EmptyValue) => (b: number | EmptyValue) => Opt<number>;
+export declare const clamp: (minValue: number | EmptyValue) => (maxValue: number | EmptyValue) => (x: number | EmptyValue) => Opt<number>;
 export {};

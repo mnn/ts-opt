@@ -2470,6 +2470,7 @@ describe('min2Num', () => {
     expect(min2Num(2)(1)).to.be.eq(1);
     expect(min2Num(-2)(1)).to.be.eq(-2);
     expect(min2Num(0)(0)).to.be.eq(0);
+    expect(opt(4).map(min2Num(2)).orNull()).to.be.eq(2);
   });
 });
 
@@ -2512,6 +2513,7 @@ describe('max2Num', () => {
     expect(max2Num(2)(1)).to.be.eq(2);
     expect(max2Num(-2)(1)).to.be.eq(1);
     expect(max2Num(0)(0)).to.be.eq(0);
+    expect(opt(4).map(max2Num(10)).orNull()).to.be.eq(10);
   });
 });
 
@@ -2569,6 +2571,13 @@ describe('clamp', () => {
     expect(clamp(0)(1)(undefined).orNull()).to.be.null;
     expect(clamp(0)(1)(null).orUndef()).to.be.undefined;
     expect(clamp(0)(1)(NaN).orNull()).to.be.null;
+  });
+  it('works with opt', () => {
+    expect(opt(7).chain(clamp(0)(10)).orNull()).to.be.eq(7);
+    expect(opt(-1).chain(clamp(0)(10)).orNull()).to.be.eq(0);
+    expect(opt(12).chain(clamp(0)(10)).orNull()).to.be.eq(10);
+    expect(opt(5).act(clamp(0)(7), clamp(1)(3)).orNull()).to.be.eq(3);
+    expect(opt(5).act(clamp(1)(3), clamp(0)(7)).orNull()).to.be.eq(3);
   });
 });
 

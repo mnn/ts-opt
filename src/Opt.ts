@@ -2188,6 +2188,10 @@ export const min = <R>(x: Opt<R[]>): OptSafe<R> => x.min();
 /** @see [[Opt.max]] */
 export const max = <R>(x: Opt<R[]>): OptSafe<R> => x.max();
 
+// generate a function of two curried optional arguments
+// common - two some values lead to call of op, two nones returns none
+// all mode - all operands must be some, otherwise return none
+// any mode - if one operand is none, return the other (non-none) one
 const gen2Op = <T>(mode: 'all' | 'any', op: (a: T) => (b: T) => T): ((a: T | EmptyValue) => (b: T | EmptyValue) => Opt<T>) =>
   (x: T | EmptyValue) => (y: T | EmptyValue): Opt<T> => {
     const ox = opt(x);
@@ -2197,13 +2201,103 @@ const gen2Op = <T>(mode: 'all' | 'any', op: (a: T) => (b: T) => T): ((a: T | Emp
     return mode === 'all' ? allRes : anyResGen();
   };
 
+/**
+ * Get a lesser number from two given numbers.
+ *
+ * @example
+ * ```ts
+ * min2Num(1)(2) // 1
+ * ```
+ *
+ * @param a
+ */
 export const min2Num = (a: number) => (b: number): number => a < b ? a : b;
+
+/**
+ * Get a lesser number from two possibly empty numbers.
+ * Returns `None` when any operand is `None`.
+ *
+ * @example
+ * ```ts
+ * min2All(1)(2) // Some(1)
+ * min2All(1)(null) // None
+ * min2All(null)(null) // None
+ * ```
+ */
 export const min2All = gen2Op('all', min2Num);
+
+/**
+ * Get a lesser number from two possibly empty numbers.
+ * Returns `None` when both operands are `None`, otherwise returns the other (nonempty) operand.
+ *
+ * @example
+ * ```ts
+ * min2Any(1)(2) // Some(1)
+ * min2Any(1)(null) // Some(1)
+ * min2Any(null)(undefined) // None
+ * ```
+ */
 export const min2Any = gen2Op('any', min2Num);
 
+/**
+ * Get a larger number from two given numbers.
+ *
+ * @example
+ * ```ts
+ * max2Num(1)(2) // 2
+ * ```
+ *
+ * @param a
+ */
 export const max2Num = (a: number) => (b: number): number => a > b ? a : b;
+
+/**
+ * Get a larger number from two possibly empty numbers.
+ * Returns `None` when any operand is `None`.
+ *
+ * @example
+ * ```ts
+ * max2All(1)(2) // Some(2)
+ * max2All(1)(null) // None
+ * max2All(null)(null) // None
+ * ```
+ */
 export const max2All = gen2Op('all', max2Num);
+
+/**
+ * Get a larger number from two possibly empty numbers.
+ * Returns `None` when both operands are `None`, otherwise returns the other (nonempty) operand.
+ *
+ * @example
+ * ```ts
+ * max2Any(1)(2) // Some(2)
+ * max2Any(1)(null) // Some(1)
+ * max2Any(null)(undefined) // None
+ * ```
+ */
 export const max2Any = gen2Op('any', max2Num);
 
+/**
+ * Given range (where each part may be empty), clamp a given possibly empty number to the given range.
+ *
+ * @example
+ * ```ts
+ * clamp(0)(10)(5) // Some(5)
+ * clamp(0)(10)(-4) // Some(0)
+ * clamp(0)(10)(12) // Some(10)
+ *
+ * clamp(0)(undefined)(5) // Some(5)
+ * clamp(0)(null)(-1) // Some(0)
+ *
+ * clamp(NaN)(10)(5) // Some(5)
+ * clamp(undefined)(10)(12) // Some(10)
+ *
+ * clamp(undefined)(undefined)(5) // Some(5)
+ *
+ * clamp(0)(1)(null) // None
+ * ```
+ *
+ * @param minValue
+ */
 export const clamp = (minValue: number | EmptyValue) => (maxValue: number | EmptyValue) => (x: number | EmptyValue): Opt<number> =>
     opt(x).act(max2Any(minValue), min2Any(maxValue));

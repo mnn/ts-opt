@@ -21,7 +21,8 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.orElseAny = exports.orElseLazy = exports.orElse = exports.forAll = exports.exists = exports.contains = exports.pipe = exports.onBoth = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOptFlow = exports.actToOpt = exports.chainToOpt = exports.chainFlow = exports.act = exports.chain = exports.flatMap = exports.mapFlow = exports.map = exports.toObject = exports.fromObject = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = exports.isFunction = exports.isArray = exports.toString = exports.isString = void 0;
-exports.max = exports.min = exports.assertType = exports.isOrCrash = exports.onFunc = exports.apply = exports.parseFloat = exports.parseInt = exports.parseJson = exports.tryRun = exports.testReOrFalse = exports.testRe = exports.zipToOptArray = exports.last = exports.head = exports.at = exports.id = exports.isFull = exports.nonEmpty = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.prop = exports.equals = exports.print = exports.narrowOrCrash = exports.narrow = exports.find = exports.count = exports.noneWhen = exports.noneIf = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.flatBimap = exports.bimap = exports.altOpt = exports.alt = void 0;
+exports.min2Num = exports.max = exports.min = exports.assertType = exports.isOrCrash = exports.onFunc = exports.apply = exports.parseFloat = exports.parseInt = exports.parseJson = exports.tryRun = exports.testReOrFalse = exports.testRe = exports.zipToOptArray = exports.last = exports.head = exports.at = exports.id = exports.isFull = exports.nonEmpty = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.prop = exports.equals = exports.print = exports.narrowOrCrash = exports.narrow = exports.find = exports.count = exports.noneWhen = exports.noneIf = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.flatBimap = exports.bimap = exports.altOpt = exports.alt = void 0;
+exports.clamp = exports.max2Any = exports.max2All = exports.max2Num = exports.min2Any = exports.min2All = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 var errorSymbol = Symbol('Error');
@@ -1608,4 +1609,25 @@ exports.min = min;
 /** @see [[Opt.max]] */
 var max = function (x) { return x.max(); };
 exports.max = max;
+var gen2Op = function (mode, op) {
+    return function (x) { return function (y) {
+        var ox = exports.opt(x);
+        var oy = exports.opt(y);
+        var allRes = ox.zip(oy).map(exports.uncurryTuple(op));
+        var anyResGen = function () { return allRes.alt(ox).alt(oy); };
+        return mode === 'all' ? allRes : anyResGen();
+    }; };
+};
+var min2Num = function (a) { return function (b) { return a < b ? a : b; }; };
+exports.min2Num = min2Num;
+exports.min2All = gen2Op('all', exports.min2Num);
+exports.min2Any = gen2Op('any', exports.min2Num);
+var max2Num = function (a) { return function (b) { return a > b ? a : b; }; };
+exports.max2Num = max2Num;
+exports.max2All = gen2Op('all', exports.max2Num);
+exports.max2Any = gen2Op('any', exports.max2Num);
+var clamp = function (minValue) { return function (maxValue) { return function (x) {
+    return exports.opt(x).act(exports.max2Any(minValue), exports.min2Any(maxValue));
+}; }; };
+exports.clamp = clamp;
 //# sourceMappingURL=Opt.js.map
