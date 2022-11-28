@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - `toObject` and `fromObject`
+- `min2Num`, `min2All`, `min2Any`, `max2Num`, `max2All`, `max2Any` and `clamp`
 
 ## [4.1.0] - 2022-09-14
 ### Added
