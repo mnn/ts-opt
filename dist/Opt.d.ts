@@ -33,6 +33,7 @@ export declare const toString: (x: {
     toString(): string;
 }) => string;
 export declare const isArray: (x: any) => x is unknown[];
+export declare const isReadonlyArray: (x: any) => x is readonly unknown[];
 export declare const isFunction: (x: any) => x is Function;
 /**
  * Generic container class. It either holds exactly one value - [[Some]], or no value - [[None]] (empty).
@@ -81,7 +82,7 @@ export declare abstract class Opt<T> {
      *
      * @param x
      */
-    static fromArray<T>(x: [] | [T]): Opt<T>;
+    static fromArray<T>(x: readonly [] | readonly [T]): Opt<T>;
     /**
      * Converts `Opt` to an array.
      *
@@ -814,7 +815,7 @@ export declare abstract class Opt<T> {
      *
      * @param index
      */
-    abstract at<R extends (T extends (infer A)[] ? A : (T extends string ? string : never))>(index: number): OptSafe<R>;
+    abstract at<R extends (T extends readonly (infer A)[] ? A : (T extends string ? string : never))>(index: number): OptSafe<R>;
     /**
      * Get a first item of an array or a first character of a string.
      *
@@ -828,7 +829,7 @@ export declare abstract class Opt<T> {
      *
      * @see [[ts-opt.head]]
      */
-    head<R extends (T extends (infer A)[] ? A : (T extends string ? string : never))>(): OptSafe<R>;
+    head<R extends (T extends readonly (infer A)[] ? A : (T extends string ? string : never))>(): OptSafe<R>;
     /**
      * Get minimum from an array.
      *
@@ -839,7 +840,7 @@ export declare abstract class Opt<T> {
      * opt([]).min() // None
      * ```
      */
-    abstract min<R extends (T extends (infer A)[] ? A : never)>(): OptSafe<R>;
+    abstract min<R extends (T extends ReadonlyArray<infer A> ? A : never)>(): OptSafe<R>;
     /**
      * Get maximum from an array.
      *
@@ -850,7 +851,7 @@ export declare abstract class Opt<T> {
      * opt([]).max() // None
      * ```
      */
-    abstract max<R extends (T extends (infer A)[] ? A : never)>(): OptSafe<R>;
+    abstract max<R extends (T extends ReadonlyArray<infer A> ? A : never)>(): OptSafe<R>;
     /**
      * Get a last item of an array or a last character of a string.
      *
@@ -864,7 +865,7 @@ export declare abstract class Opt<T> {
      *
      * @see [[ts-opt.last]]
      */
-    last<R extends (T extends (infer A)[] ? A : (T extends string ? string : never))>(): OptSafe<R>;
+    last<R extends (T extends readonly (infer A)[] ? A : (T extends string ? string : never))>(): OptSafe<R>;
     /**
      * A convenience function to test this (`Opt<string>`) against a given regular expression.
      *
@@ -987,9 +988,9 @@ declare class None<T> extends Opt<T> {
     equals(other: Opt<T>, _comparator?: EqualityFunction): boolean;
     prop<K extends (T extends object ? keyof T : never)>(_key: K): OptSafe<T[K]>;
     swap<U>(_newVal: U): Opt<U>;
-    at<R extends (T extends (infer A)[] ? A : (T extends string ? string : never))>(_index: number): OptSafe<R>;
-    max<R extends (T extends (infer A)[] ? A : never)>(): OptSafe<R>;
-    min<R extends (T extends (infer A)[] ? A : never)>(): OptSafe<R>;
+    at<R extends (T extends readonly (infer A)[] ? A : (T extends string ? string : never))>(_index: number): OptSafe<R>;
+    max<R extends (T extends readonly (infer A)[] ? A : never)>(): OptSafe<R>;
+    min<R extends (T extends readonly (infer A)[] ? A : never)>(): OptSafe<R>;
 }
 /**
  * [[Opt]] with a value inside.
@@ -1037,9 +1038,9 @@ declare class Some<T> extends Opt<T> {
     equals(other: Opt<T>, comparator?: EqualityFunction): boolean;
     prop<K extends (T extends object ? keyof T : never)>(key: K): OptSafe<T[K]>;
     swap<U>(newVal: U): Opt<U>;
-    at<R extends (T extends (infer A)[] ? A : (T extends string ? string : never))>(index: number): OptSafe<R>;
-    min<R extends (T extends (infer A)[] ? A : never)>(): OptSafe<R>;
-    max<R extends (T extends (infer A)[] ? A : never)>(): OptSafe<R>;
+    at<R extends (T extends readonly (infer A)[] ? A : (T extends string ? string : never))>(index: number): OptSafe<R>;
+    min<R extends (T extends readonly (infer A)[] ? A : never)>(): OptSafe<R>;
+    max<R extends (T extends readonly (infer A)[] ? A : never)>(): OptSafe<R>;
 }
 declare const someSerializedType = "Opt/Some";
 declare const noneSerializedType = "Opt/None";
@@ -1086,7 +1087,7 @@ export declare const optFalsy: <T>(x: false | "" | 0 | T | null | undefined) => 
  * For empty array (`[]`) returns [[None]], otherwise acts same as [[opt]].
  * @param x
  */
-export declare const optEmptyArray: <T>(x: T[] | null | undefined) => OptSafe<T[]>;
+export declare const optEmptyArray: <T, A extends readonly T[] | T[]>(x: A | null | undefined) => OptSafe<A>;
 /**
  * For empty object (`{}`) returns [[None]], otherwise acts same as [[opt]].
  * @param x
@@ -1154,7 +1155,7 @@ export declare const apFn: <A, B>(f: (_: A) => B) => (oa: Opt<A>) => Opt<B>;
  * ```
  * @param xs
  */
-export declare const catOpts: <A>(xs: Opt<A>[]) => A[];
+export declare const catOpts: <A>(xs: readonly Opt<A>[]) => A[];
 /**
  * Similar to `Array.map`, but also allows omitting elements.
  * ```ts
@@ -1162,7 +1163,7 @@ export declare const catOpts: <A>(xs: Opt<A>[]) => A[];
  * ```
  * @param f
  */
-export declare const mapOpt: <A, B>(f: (_: A) => Opt<B>) => (xs: A[]) => B[];
+export declare const mapOpt: <A, B>(f: (_: A) => Opt<B>) => (xs: readonly A[]) => B[];
 /**
  * Unwraps one level of nested [[Opt]]s. Similar to `flatten` in other libraries or languages.
  * ```ts
@@ -1188,7 +1189,7 @@ export declare const fromObject: FromObjectFn;
  * @see [[Opt.toObject]]
  */
 export declare const toObject: <K extends string = "value">(k?: K | undefined) => <T>(x: Opt<T>) => Record<K, T | null>;
-declare type MapFn = <T, U>(f: (_: T) => U) => <I extends (Opt<T> | T[]), O extends (I extends Opt<T> ? Opt<U> : U[])>(x: I) => O;
+declare type MapFn = <T, U>(f: (_: T) => U) => <I extends (Opt<T> | readonly T[]), O extends (I extends Opt<T> ? Opt<U> : U[])>(x: I) => O;
 /**
  * Same as [[Opt.map]], but also supports arrays.
  * @see [[Opt.map]]
@@ -1197,7 +1198,7 @@ export declare const map: MapFn;
 /** @see [[Opt.mapFlow]] */
 export declare const mapFlow: MapFlowFn;
 interface FlatMapFn {
-    <T, U>(f: (_: T) => U[]): (x: T[]) => U[];
+    <T, U>(f: (_: T) => readonly U[]): (x: readonly T[]) => U[];
     <T, U>(f: (_: T) => Opt<U>): (x: Opt<T>) => Opt<U>;
 }
 /**
@@ -1263,7 +1264,7 @@ export declare const bimap: <T, U>(someF: (_: T) => U) => (noneF: () => U) => (x
 export declare const flatBimap: <T, U>(someF: (_: T) => Opt<U>) => (noneF: () => Opt<U>) => (x: Opt<T>) => Opt<U>;
 interface ZipFn {
     <T>(other: Opt<T>): <U>(x: Opt<U>) => Opt<[T, U]>;
-    <T>(other: T[]): <U>(x: U[]) => [T, U][];
+    <T>(other: readonly T[]): <U>(x: readonly U[]) => [T, U][];
 }
 /**
  * Same as [[Opt.zip]], but also supports arrays.
@@ -1288,7 +1289,7 @@ export declare const zip3: <T>(x: Opt<T>) => <A>(a: Opt<A>) => <B>(b: Opt<B>) =>
 export declare const zip4: <T>(x: Opt<T>) => <A>(a: Opt<A>) => <B>(b: Opt<B>) => <C>(c: Opt<C>) => Opt<[T, A, B, C]>;
 /** @see [[Opt.zip5]] */
 export declare const zip5: <T>(x: Opt<T>) => <A>(a: Opt<A>) => <B>(b: Opt<B>) => <C>(c: Opt<C>) => <D>(d: Opt<D>) => Opt<[T, A, B, C, D]>;
-declare type FilterFn = <T>(p: (_: T) => boolean) => <U extends Opt<T> | T[]>(x: U) => U extends Opt<T> ? Opt<T> : T[];
+declare type FilterFn = <T>(p: (_: T) => boolean) => <U extends Opt<T> | readonly T[]>(x: U) => U extends Opt<T> ? Opt<T> : T[];
 /**
  * Same as [[Opt.filter]], but also supports arrays.
  * @see [[Opt.filter]]
@@ -1298,7 +1299,7 @@ export declare const filter: FilterFn;
 export declare const noneIf: <T>(predicate: (_: T) => boolean) => (x: Opt<T>) => Opt<T>;
 /** @see [[Opt.noneWhen]] */
 export declare const noneWhen: <T>(returnNone: boolean) => (x: Opt<T>) => Opt<T>;
-declare type CountFn = <T>(p: (_: T) => boolean) => <U extends Opt<T> | T[]>(x: U) => U extends Opt<T> ? 0 | 1 : number;
+declare type CountFn = <T>(p: (_: T) => boolean) => <U extends Opt<T> | readonly T[]>(x: U) => U extends Opt<T> ? 0 | 1 : number;
 /**
  * Same as [[Opt.count]], but also supports arrays.
  *
@@ -1324,7 +1325,7 @@ export declare const count: CountFn;
  *
  * @param predicate
  */
-export declare const find: <T>(predicate: (_: T) => boolean) => (xs: T[]) => Opt<T>;
+export declare const find: <T>(predicate: (_: T) => boolean) => (xs: readonly T[]) => Opt<T>;
 /** @see [[Opt.narrow]] */
 export declare const narrow: <U>(guard: (value: any) => value is U) => <T>(x: Opt<T>) => Opt<U>;
 /** @see [[Opt.narrowOrCrash]] */
@@ -1512,21 +1513,21 @@ export declare const isFull: (x: PossiblyEmpty) => boolean;
  * @param x
  */
 export declare const id: <T>(x: T) => T;
-declare type AtFn = <T, R = T extends (infer A)[] ? OptSafe<A> : Opt<string>>(x: EmptyValue | T) => R;
+declare type AtFn = <T, R = T extends readonly (infer A)[] ? OptSafe<A> : Opt<string>>(x: EmptyValue | T) => R;
 /**
  * Same as [[Opt.at]], but also supports unwrapped arrays.
  * @see [[Opt.at]]
  * @param index
  */
 export declare const at: (index: number) => AtFn;
-declare type HeadFn = <T, R = T extends (infer A)[] ? OptSafe<A> : Opt<string>>(x: EmptyValue | T) => R;
+declare type HeadFn = <T, R = T extends readonly (infer A)[] ? OptSafe<A> : Opt<string>>(x: EmptyValue | T) => R;
 /**
  * Same as [[Opt.head]], but also supports unwrapped arrays.
  * @see [[Opt.head]]
  * @param x
  */
 export declare const head: HeadFn;
-declare type LastFn = <T, R = T extends (infer A)[] ? OptSafe<A> : Opt<string>>(x: EmptyValue | T) => R;
+declare type LastFn = <T, R = T extends readonly (infer A)[] ? OptSafe<A> : Opt<string>>(x: EmptyValue | T) => R;
 /**
  * Same as [[Opt.last]], but also supports unwrapped arrays.
  * @see [[Opt.last]]
@@ -1534,10 +1535,10 @@ declare type LastFn = <T, R = T extends (infer A)[] ? OptSafe<A> : Opt<string>>(
  */
 export declare const last: LastFn;
 interface ZipToOptArrayFn {
-    <A, B>(xs: [A, B]): Opt<[WithoutOptValues<A>, WithoutOptValues<B>]>;
-    <A, B, C>(xs: [A, B, C]): Opt<[WithoutOptValues<A>, WithoutOptValues<B>, WithoutOptValues<C>]>;
-    <A, B, C, D>(xs: [A, B, C, D]): Opt<[WithoutOptValues<A>, WithoutOptValues<B>, WithoutOptValues<C>, WithoutOptValues<D>]>;
-    <A, B, C, D, E>(xs: [A, B, C, D, E]): Opt<[WithoutOptValues<A>, WithoutOptValues<B>, WithoutOptValues<C>, WithoutOptValues<D>, WithoutOptValues<E>]>;
+    <A, B>(xs: readonly [A, B]): Opt<[WithoutOptValues<A>, WithoutOptValues<B>]>;
+    <A, B, C>(xs: readonly [A, B, C]): Opt<[WithoutOptValues<A>, WithoutOptValues<B>, WithoutOptValues<C>]>;
+    <A, B, C, D>(xs: readonly [A, B, C, D]): Opt<[WithoutOptValues<A>, WithoutOptValues<B>, WithoutOptValues<C>, WithoutOptValues<D>]>;
+    <A, B, C, D, E>(xs: readonly [A, B, C, D, E]): Opt<[WithoutOptValues<A>, WithoutOptValues<B>, WithoutOptValues<C>, WithoutOptValues<D>, WithoutOptValues<E>]>;
 }
 /**
  * Takes a tuple, wraps each element in [[Opt]] and applies appropriate [[Opt.zip]] function.
@@ -1663,9 +1664,9 @@ declare type AssertTypeFunc = <T>(x: unknown, guard: (x: unknown) => x is T, msg
  */
 export declare const assertType: AssertTypeFunc;
 /** @see [[Opt.min]] */
-export declare const min: <R>(x: Opt<R[]>) => OptSafe<R>;
+export declare const min: <R>(x: readonly R[] | Opt<readonly R[]>) => OptSafe<R>;
 /** @see [[Opt.max]] */
-export declare const max: <R>(x: Opt<R[]>) => OptSafe<R>;
+export declare const max: <R>(x: readonly R[] | Opt<readonly R[]>) => OptSafe<R>;
 /**
  * Get a lesser number from two given numbers.
  *

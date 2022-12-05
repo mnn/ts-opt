@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - **Breaking**: `min` and `max` now accept naked and read-only arrays - it *may* lead to worse type inference in more complex use cases
+- **Breaking**: Added support for readonly arrays to all array functions.
 
 ## [4.1.0] - 2022-09-14
 ### Added

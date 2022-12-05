@@ -41,6 +41,7 @@ import {
   isFull,
   isOpt,
   isOrCrash,
+  isReadonlyArray,
   isString,
   joinOpt,
   last,
@@ -786,6 +787,7 @@ describe('opt', () => {
     expect(opt(undefined as string | undefined).at(0).orNull()).to.be.null;
     const x: Opt<number> = opt([1]).at(0);
     suppressUnused(x);
+    expect(opt([4] as readonly number[]).at(0).orFalse()).to.be.eq(4);
   });
 
   it('head', () => {
@@ -793,6 +795,7 @@ describe('opt', () => {
     expect(opt([]).head().orFalse()).to.be.false;
     expect(opt(null).head().orFalse()).to.be.false;
     expect(opt('Palico').head().orFalse()).to.be.eq('P');
+    expect(opt([1, 2, 3] as readonly number[]).head().orFalse()).to.be.eq(1);
   });
 
   it('last', () => {
@@ -800,6 +803,7 @@ describe('opt', () => {
     expect(opt([]).last().orFalse()).to.be.false;
     expect(opt(null).last().orFalse()).to.be.false;
     expect(opt('Palico').last().orFalse()).to.be.eq('o');
+    expect(opt([1, 2, 3] as readonly number[]).last().orFalse()).to.be.eq(3);
   });
 
   describe('testReOrFalse', () => {
@@ -1092,6 +1096,9 @@ describe('catOpts', () => {
     expect(catOpts([none])).to.eql([]);
     expect(catOpts([opt(1), opt(null)])).to.eql([1]);
   });
+  it('supports read-only array', () => {
+    expect(catOpts([some(1)] as readonly Opt<number>[])).to.eql([1]);
+  });
 });
 
 describe('mapOpt', () => {
@@ -1103,6 +1110,9 @@ describe('mapOpt', () => {
   });
   it('maps and omits', () => {
     expect(mapOpt((x: number) => x > 0 ? opt(x) : none)([-1, 0, 1])).to.eql([1]);
+  });
+  it('works with readonly array', () => {
+    expect(mapOpt(opt)([1, 2, 3] as readonly number[])).to.eql([1, 2, 3]);
   });
 });
 
@@ -1345,7 +1355,11 @@ describe('joinOpt', () => {
 describe('fromArray', () => {
   it('creates opt from array', () => {
     expect(fromArray([7]).orNull()).to.be.eq(7);
-    expect(fromArray([]).orNull()).to.be.eq(null);
+    expect(fromArray([]).orNull()).to.be.null;
+  });
+  it('works with read-only array', () => {
+    expect(fromArray([7] as readonly [7]).orNull()).to.be.eq(7);
+    expect(fromArray([] as readonly []).orNull()).to.be.null;
   });
 });
 
@@ -1468,6 +1482,10 @@ describe('flatMap', () => {
       const r1: number[] = flatMap((x: number) => x > 2 ? [] : [x, x + 10])([1, 2, 3]);
       expect(r1).to.eql([1, 11, 2, 12]);
     });
+  });
+
+  it('works with readonly arrays', () => {
+    expect(flatMap((x: number) => [x + 1])([6] as readonly number[])).to.be.eql([7]);
   });
 });
 
@@ -1753,6 +1771,9 @@ describe('zip', () => {
       expect(zip([1, 2])([3])).to.be.eql([[1, 3]]);
       expect(zip([1])([3, 4])).to.be.eql([[1, 3]]);
     });
+    it('read-only', () => {
+      expect(zip([1] as readonly number[])([2] as readonly number[])).to.be.eql([[1, 2]]);
+    });
 
     it('example', () => {
       const formatAddress =
@@ -1813,6 +1834,9 @@ describe('filter', () => {
       expect(filter((x: number) => x > 1)([1])).to.be.eql([]);
       expect(filter(gt0)([-1, 0, 1])).to.be.eql([1]);
     });
+    it('read-only array', () => {
+      expect(filter(gt0)([-1, 0, 1] as readonly number[])).to.be.eql([1]);
+    });
   });
 });
 
@@ -1857,6 +1881,9 @@ describe('count', () => {
       expect(count(gt0)([-1])).to.be.eq(0);
       expect(count(gt0)([])).to.be.eq(0);
       expect(count(gt0)([-1, 1, 11])).to.be.eq(2);
+    });
+    it('read-only array', () => {
+      expect(count(gt0)([] as readonly number[])).to.be.eq(0);
     });
   });
 
@@ -1906,6 +1933,10 @@ describe('find', () => {
     expect(find(eq(4))([1]).orNull()).to.be.null;
     expect(find(eq(4))([1, 2, 3]).orNull()).to.be.null;
     expect(find((x: Data) => x.id === 0)([itemA, itemB, itemC]).orNull()).to.be.null;
+  });
+
+  it('works with read-only array', () => {
+    expect(find(eq(4))([] as readonly number[]).orNull()).to.be.null;
   });
 
   it('passes examples', () => {
@@ -2148,6 +2179,11 @@ describe('at', () => {
     expect(res3.orNull()).to.be.null;
   });
 
+  it('works with readonly array', () => {
+    const xs = [4] as readonly number[];
+    expect(at(0)(xs).orNull()).to.be.eq(4);
+  });
+
   it('works well with pipe/flow', () => {
     const res1: Opt<number> = pipe([20, 15], id, at(1), id);
     expect(res1.orNull()).to.be.eq(15);
@@ -2165,6 +2201,10 @@ describe('head', () => {
     expect(head(opt([1, 2, 3])).orFalse()).to.be.eq(1);
     expect(head(opt([])).orFalse()).to.be.false;
     expect(head(opt(null as null | number[])).orFalse()).to.be.false;
+  });
+
+  it('works with read-only arrays', () => {
+    expect(head([1, 2, 3] as readonly number[]).orFalse()).to.be.eq(1);
   });
 
   it('supports empty input values', () => {
@@ -2212,6 +2252,10 @@ describe('last', () => {
     expect(last(opt(null as null | number[])).orFalse()).to.be.false;
   });
 
+  it('works with read-only arrays', () => {
+    expect(last([1, 2, 3] as readonly number[]).orFalse()).to.be.eq(3);
+  });
+
   it('supports empty input values', () => {
     const input1: number[] | null = [] as number[] | null;
     const res1: Opt<number> = last(input1);
@@ -2253,6 +2297,10 @@ describe('zipToOptArray', () => {
     expect(zipToOptArray([1, true, '', 7]).orNull()).to.be.eql([1, true, '', 7]);
     expect(zipToOptArray([1, null, '', 7, false]).orNull()).to.be.null;
     expect(zipToOptArray([1, true, '', 7, false]).orNull()).to.be.eql([1, true, '', 7, false]);
+  });
+
+  it('works with readonly arrays', () => {
+    expect(zipToOptArray([1, null] as readonly [number | undefined, string | null]).orNull()).to.be.null;
   });
 });
 
@@ -2324,6 +2372,24 @@ describe('isArray', () => {
     expect(isArray(NaN)).to.be.false;
     expect(isArray(false)).to.be.false;
     expect(isArray('')).to.be.false;
+  });
+});
+
+describe('isReadonlyArray', () => {
+  it('pos', () => {
+    expect(isReadonlyArray([])).to.be.true;
+    expect(isReadonlyArray([null])).to.be.true;
+  });
+  it('narrows', () => {
+    const a: unknown = [] as unknown;
+    expect(isReadonlyArray(a)).to.be.true;
+    if (isReadonlyArray(a)) {
+      const b: readonly unknown[] = a;
+      suppressUnused(b);
+    }
+  });
+  it('neg', () => {
+    expect(isReadonlyArray('')).to.be.false;
   });
 });
 
