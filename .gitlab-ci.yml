@@ -1,5 +1,9 @@
 image: node:13.7.0
 
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH
+
 before_script:
 - npm install
 
@@ -24,3 +28,17 @@ release:
   artifacts:
     paths:
       - dist/src
+
+pages:
+  stage: deploy
+  script:
+    - npm run doc
+    - mkdir -p public
+    - cp doc public
+    - npm run readme
+  artifacts:
+    paths:
+      - public
+    expire_in: 1 day
+  rules:
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
