@@ -1666,11 +1666,97 @@ export declare const assertType: AssertTypeFunc;
 export declare const min: <R>(x: Opt<R[]>) => OptSafe<R>;
 /** @see [[Opt.max]] */
 export declare const max: <R>(x: Opt<R[]>) => OptSafe<R>;
+/**
+ * Get a lesser number from two given numbers.
+ *
+ * @example
+ * ```ts
+ * min2Num(1)(2) // 1
+ * ```
+ *
+ * @param a
+ */
 export declare const min2Num: (a: number) => (b: number) => number;
+/**
+ * Get a lesser number from two possibly empty numbers.
+ * Returns `None` when any operand is `None`.
+ *
+ * @example
+ * ```ts
+ * min2All(1)(2) // Some(1)
+ * min2All(1)(null) // None
+ * min2All(null)(null) // None
+ * ```
+ */
 export declare const min2All: (a: number | EmptyValue) => (b: number | EmptyValue) => Opt<number>;
+/**
+ * Get a lesser number from two possibly empty numbers.
+ * Returns `None` when both operands are `None`, otherwise returns the other (nonempty) operand.
+ *
+ * @example
+ * ```ts
+ * min2Any(1)(2) // Some(1)
+ * min2Any(1)(null) // Some(1)
+ * min2Any(null)(undefined) // None
+ * ```
+ */
 export declare const min2Any: (a: number | EmptyValue) => (b: number | EmptyValue) => Opt<number>;
+/**
+ * Get a larger number from two given numbers.
+ *
+ * @example
+ * ```ts
+ * max2Num(1)(2) // 2
+ * ```
+ *
+ * @param a
+ */
 export declare const max2Num: (a: number) => (b: number) => number;
+/**
+ * Get a larger number from two possibly empty numbers.
+ * Returns `None` when any operand is `None`.
+ *
+ * @example
+ * ```ts
+ * max2All(1)(2) // Some(2)
+ * max2All(1)(null) // None
+ * max2All(null)(null) // None
+ * ```
+ */
 export declare const max2All: (a: number | EmptyValue) => (b: number | EmptyValue) => Opt<number>;
+/**
+ * Get a larger number from two possibly empty numbers.
+ * Returns `None` when both operands are `None`, otherwise returns the other (nonempty) operand.
+ *
+ * @example
+ * ```ts
+ * max2Any(1)(2) // Some(2)
+ * max2Any(1)(null) // Some(1)
+ * max2Any(null)(undefined) // None
+ * ```
+ */
 export declare const max2Any: (a: number | EmptyValue) => (b: number | EmptyValue) => Opt<number>;
+/**
+ * Given range (where each part may be empty), clamp a given possibly empty number to the given range.
+ *
+ * @example
+ * ```ts
+ * clamp(0)(10)(5) // Some(5)
+ * clamp(0)(10)(-4) // Some(0)
+ * clamp(0)(10)(12) // Some(10)
+ *
+ * clamp(0)(undefined)(5) // Some(5)
+ * clamp(0)(null)(-1) // Some(0)
+ *
+ * clamp(NaN)(10)(5) // Some(5)
+ * clamp(undefined)(10)(12) // Some(10)
+ *
+ * clamp(undefined)(undefined)(5) // Some(5)
+ *
+ * clamp(0)(1)(null) // None
+ * ```
+ *
+ * @param minValue
+ */
 export declare const clamp: (minValue: number | EmptyValue) => (maxValue: number | EmptyValue) => (x: number | EmptyValue) => Opt<number>;
 export {};

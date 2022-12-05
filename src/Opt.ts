@@ -60,6 +60,7 @@ interface ToObjectRes<T> {
 export const isString = (x: any): x is string => typeof x === 'string';
 export const toString = (x: { toString(): string }): string => x.toString();
 export const isArray = (x: any): x is unknown[] => Array.isArray(x);
+export const isReadonlyArray = (x: any): x is ReadonlyArray<unknown> => Array.isArray(x);
 // eslint-disable-next-line @typescript-eslint/ban-types
 export const isFunction = (x: any): x is Function => typeof x === 'function';
 
@@ -955,7 +956,7 @@ export abstract class Opt<T> {
    * opt([]).min() // None
    * ```
    */
-  abstract min<R extends (T extends (infer A)[] ? A : never)>(): OptSafe<R>;
+  abstract min<R extends (T extends ReadonlyArray<infer A> ? A : never)>(): OptSafe<R>;
 
   /**
    * Get maximum from an array.
@@ -967,7 +968,7 @@ export abstract class Opt<T> {
    * opt([]).max() // None
    * ```
    */
-  abstract max<R extends (T extends (infer A)[] ? A : never)>(): OptSafe<R>;
+  abstract max<R extends (T extends ReadonlyArray<infer A> ? A : never)>(): OptSafe<R>;
 
   /**
    * Get a last item of an array or a last character of a string.
@@ -1195,11 +1196,11 @@ class None<T> extends Opt<T> {
     return none;
   }
 
-  max<R extends (T extends (infer A)[] ? A : never)>(): OptSafe<R> {
+  max<R extends (T extends ReadonlyArray<infer A> ? A : never)>(): OptSafe<R> {
     return none;
   }
 
-  min<R extends (T extends (infer A)[] ? A : never)>(): OptSafe<R> {
+  min<R extends (T extends ReadonlyArray<infer A> ? A : never)>(): OptSafe<R> {
     return none;
   }
 }
@@ -1340,14 +1341,14 @@ class Some<T> extends Opt<T> {
     }
   }
 
-  min<R extends (T extends (infer A)[] ? A : never)>(): OptSafe<R> {
+  min<R extends (T extends ReadonlyArray<infer A> ? A : never)>(): OptSafe<R> {
     const val = this._value;
     if (!isArray(val)) { throw new Error('Expected array.'); }
     if (val.length === 0) return none;
     return some(val.reduce((acc: R, x: any) => x < acc ? x : acc, val[0] as R)) as OptSafe<R>;
   }
 
-  max<R extends (T extends (infer A)[] ? A : never)>(): OptSafe<R> {
+  max<R extends (T extends ReadonlyArray<infer A> ? A : never)>(): OptSafe<R> {
     const val = this._value;
     if (!isArray(val)) { throw new Error('Expected array.'); }
     if (val.length === 0) return none;
@@ -2183,10 +2184,10 @@ export const assertType: AssertTypeFunc = (x, guard, msg = 'invalid value') => {
 };
 
 /** @see [[Opt.min]] */
-export const min = <R>(x: Opt<R[]>): OptSafe<R> => x.min();
+export const min = <R>(x: Opt<ReadonlyArray<R>> | ReadonlyArray<R>): OptSafe<R> => isReadonlyArray(x) ? opt(x).min() : x.min();
 
 /** @see [[Opt.max]] */
-export const max = <R>(x: Opt<R[]>): OptSafe<R> => x.max();
+export const max = <R>(x: Opt<ReadonlyArray<R>> | ReadonlyArray<R>): OptSafe<R> => isReadonlyArray(x) ? opt(x).max() : x.max();
 
 // generate a function of two curried optional arguments
 // common - two some values lead to call of op, two nones returns none
@@ -2300,4 +2301,4 @@ export const max2Any = gen2Op('any', max2Num);
  * @param minValue
  */
 export const clamp = (minValue: number | EmptyValue) => (maxValue: number | EmptyValue) => (x: number | EmptyValue): Opt<number> =>
-    opt(x).act(max2Any(minValue), min2Any(maxValue));
+  opt(x).act(max2Any(minValue), min2Any(maxValue));

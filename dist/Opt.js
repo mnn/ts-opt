@@ -1609,6 +1609,10 @@ exports.min = min;
 /** @see [[Opt.max]] */
 var max = function (x) { return x.max(); };
 exports.max = max;
+// generate a function of two curried optional arguments
+// common - two some values lead to call of op, two nones returns none
+// all mode - all operands must be some, otherwise return none
+// any mode - if one operand is none, return the other (non-none) one
 var gen2Op = function (mode, op) {
     return function (x) { return function (y) {
         var ox = exports.opt(x);
@@ -1618,14 +1622,100 @@ var gen2Op = function (mode, op) {
         return mode === 'all' ? allRes : anyResGen();
     }; };
 };
+/**
+ * Get a lesser number from two given numbers.
+ *
+ * @example
+ * ```ts
+ * min2Num(1)(2) // 1
+ * ```
+ *
+ * @param a
+ */
 var min2Num = function (a) { return function (b) { return a < b ? a : b; }; };
 exports.min2Num = min2Num;
+/**
+ * Get a lesser number from two possibly empty numbers.
+ * Returns `None` when any operand is `None`.
+ *
+ * @example
+ * ```ts
+ * min2All(1)(2) // Some(1)
+ * min2All(1)(null) // None
+ * min2All(null)(null) // None
+ * ```
+ */
 exports.min2All = gen2Op('all', exports.min2Num);
+/**
+ * Get a lesser number from two possibly empty numbers.
+ * Returns `None` when both operands are `None`, otherwise returns the other (nonempty) operand.
+ *
+ * @example
+ * ```ts
+ * min2Any(1)(2) // Some(1)
+ * min2Any(1)(null) // Some(1)
+ * min2Any(null)(undefined) // None
+ * ```
+ */
 exports.min2Any = gen2Op('any', exports.min2Num);
+/**
+ * Get a larger number from two given numbers.
+ *
+ * @example
+ * ```ts
+ * max2Num(1)(2) // 2
+ * ```
+ *
+ * @param a
+ */
 var max2Num = function (a) { return function (b) { return a > b ? a : b; }; };
 exports.max2Num = max2Num;
+/**
+ * Get a larger number from two possibly empty numbers.
+ * Returns `None` when any operand is `None`.
+ *
+ * @example
+ * ```ts
+ * max2All(1)(2) // Some(2)
+ * max2All(1)(null) // None
+ * max2All(null)(null) // None
+ * ```
+ */
 exports.max2All = gen2Op('all', exports.max2Num);
+/**
+ * Get a larger number from two possibly empty numbers.
+ * Returns `None` when both operands are `None`, otherwise returns the other (nonempty) operand.
+ *
+ * @example
+ * ```ts
+ * max2Any(1)(2) // Some(2)
+ * max2Any(1)(null) // Some(1)
+ * max2Any(null)(undefined) // None
+ * ```
+ */
 exports.max2Any = gen2Op('any', exports.max2Num);
+/**
+ * Given range (where each part may be empty), clamp a given possibly empty number to the given range.
+ *
+ * @example
+ * ```ts
+ * clamp(0)(10)(5) // Some(5)
+ * clamp(0)(10)(-4) // Some(0)
+ * clamp(0)(10)(12) // Some(10)
+ *
+ * clamp(0)(undefined)(5) // Some(5)
+ * clamp(0)(null)(-1) // Some(0)
+ *
+ * clamp(NaN)(10)(5) // Some(5)
+ * clamp(undefined)(10)(12) // Some(10)
+ *
+ * clamp(undefined)(undefined)(5) // Some(5)
+ *
+ * clamp(0)(1)(null) // None
+ * ```
+ *
+ * @param minValue
+ */
 var clamp = function (minValue) { return function (maxValue) { return function (x) {
     return exports.opt(x).act(exports.max2Any(minValue), exports.min2Any(maxValue));
 }; }; };

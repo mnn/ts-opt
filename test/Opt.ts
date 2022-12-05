@@ -2451,15 +2451,43 @@ describe('assertType', () => {
 });
 
 describe('min', () => {
-  it('returns minimum', () => {
+  it('returns minimum of wrapped array', () => {
     const res: Opt<number> = min(opt([1, 4]));
+    expect(res.orNull()).to.be.eq(1);
+  });
+  it('returns minimum of wrapped read-only array', () => {
+    const xs: ReadonlyArray<number> = [1, 4];
+    const res: Opt<number> = min(opt(xs));
+    expect(res.orNull()).to.be.eq(1);
+  });
+  it('works with naked arrays', () => {
+    const res: Opt<number> = min([1, 4]);
+    expect(res.orNull()).to.be.eq(1);
+  });
+  it('works with naked read-only arrays', () => {
+    const xs: ReadonlyArray<number> = [1, 4];
+    const res: Opt<number> = min(xs);
     expect(res.orNull()).to.be.eq(1);
   });
 });
 
 describe('max', () => {
-  it('returns maximum', () => {
+  it('returns maximum of wrapped array', () => {
     const res: Opt<number> = max(opt([1, 4]));
+    expect(res.orNull()).to.be.eq(4);
+  });
+  it('returns maximum of wrapped read-only array', () => {
+    const xs: ReadonlyArray<number> = [1, 4];
+    const res: Opt<number> = max(opt(xs));
+    expect(res.orNull()).to.be.eq(4);
+  });
+  it('works with naked arrays', () => {
+    const res: Opt<number> = max([1, 4]);
+    expect(res.orNull()).to.be.eq(4);
+  });
+  it('works with naked read-only arrays', () => {
+    const xs: ReadonlyArray<number> = [1, 4];
+    const res: Opt<number> = max(xs);
     expect(res.orNull()).to.be.eq(4);
   });
 });
