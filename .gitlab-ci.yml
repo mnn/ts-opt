@@ -34,7 +34,7 @@ pages:
   script:
     - npm run doc
     - mkdir -p public
-    - cp doc public
+    - cp -r doc public/
     - npm run readme
   artifacts:
     paths:
