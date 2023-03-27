@@ -313,7 +313,7 @@ export abstract class Opt<T> {
    * @see [[ts-opt.orCrash]]
    * @param msg Error message.
    */
-  abstract orCrash(msg: string): T;
+  abstract orCrash(msg: string): T | never;
 
   /**
    * Crash when called on [[None]], pass [[Opt]] instance on [[Some]].
@@ -884,10 +884,24 @@ export abstract class Opt<T> {
    * ```
    *
    * @see [[ts-opt.prop]]
+   * @see [[Opt.propOrCrash]]
    *
    * @param key
    */
   abstract prop<K extends (T extends object ? keyof T : never)>(key: K): OptSafe<T[K]>;
+
+  /**
+   * Get a field from a wrapped object. Crash if the field is missing or empty, or opt instance is [[None]].
+   * Shortcut of [[Opt.prop]] + [[Opt.orCrash]].
+   *
+   * @param key
+   */
+  propOrCrash< //
+    K extends (T extends object ? keyof T : never), //
+    R extends (T extends object ? WithoutOptValues<T[K]> | never : never) //
+    >(key: K): R {
+    return this.prop(key).orCrash(`missing ${key}`) as R;
+  }
 
   /**
    * Constructs a function which returns a value for [[Some]] or an empty value for [[None]] (default is `null`).
@@ -1793,9 +1807,76 @@ export const equals = <T>(other: Opt<T>, comparator: EqualityFunction = refCmp) 
   x.equals(other, comparator);
 
 /** @see [[Opt.prop]] */
-export const prop = <T extends object,
-  K extends (T extends object ? keyof T : never) = T extends object ? keyof T : never>(key: K) => (x: Opt<T>): OptSafe<T[K]> =>
+export const prop = < //
+  T extends object, //
+  K extends (T extends object ? keyof T : never) = T extends object ? keyof T : never //
+  >(key: K) => (x: Opt<T>): OptSafe<T[K]> =>
   x.prop(key);
+
+/**
+ * Similar to [[Opt.propOrCrash]], but also supports naked objects.
+ *
+ * @example
+ * ```ts
+ * interface Animal {
+ *   name?: string;
+ * }
+ * const a: Animal = {name: 'Spot'};
+ * propOrCrash<Animal>('name')(a) // 'Spot'
+ * ```
+ */
+export const propOrCrash = < //
+  T extends object, //
+  P extends Opt<T> | T = Opt<T> | T, //
+  K extends (P extends Opt<T> ? (T extends object ? keyof T : never) : (P extends object ? keyof P : never)) //
+    = P extends Opt<T> ? (T extends object ? keyof T : never) : (P extends object ? keyof P : never) //
+  >(key: K) => (x: P): WithoutOptValues<T[K]> =>
+  ((isOpt(x) ? x : opt(x)) as Opt<T>).propOrCrash(key as any) as unknown as WithoutOptValues<T[K]>;
+
+/**
+ * Utility function for generating property getter for one specific object.
+ * Functionally similar to [[propOrCrash]], but it has swapped arguments and only supports naked objects.
+ *
+ * @example
+ * ```ts
+ * interface Animal {
+ *   id: number;
+ *   name?: string;
+ * }
+ *
+ * const spot: Animal = {id: 36, name: 'Spot'};
+ * const getSpotProp = genNakedPropOrCrash(spot);
+ * getSpotProp('name') // 'Spot'
+ * getSpotProp('id') // 36
+ *
+ * const cow: Animal = {id: 36};
+ * const getCowProp = genNakedPropOrCrash(cow);
+ * getCowProp('name') // crashes with 'missing name'
+ * ```
+ *
+ * ---
+ *
+ * It is a shorter alternative of
+ * ```ts
+ * const o = opt(obj);
+ * o.propOrCrash('fieldA')
+ * o.propOrCrash('fieldB')
+ * ```
+ * ->
+ * ```ts
+ * const g = genNakedPropOrCrash(obj);
+ * g('fieldA')
+ * g('fieldB')
+ * ```
+ *
+ * Performance characterics are expected to be similar.
+ *
+ * @param obj
+ */
+export const genNakedPropOrCrash = <T extends object>(obj: T) => {
+  const o = opt(obj);
+  return <K extends keyof T>(k: K) => o.propOrCrash(k as any);
+};
 
 /** @see [[Opt.swap]] */
 export const swap = <U>(newValue: U) => <T>(x: Opt<T>): Opt<U> => x.swap(newValue);

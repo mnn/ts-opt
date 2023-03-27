@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `toObject` and `fromObject`
 - `min2Num`, `min2All`, `min2Any`, `max2Num`, `max2All`, `max2Any` and `clamp`
 - `filterByRe`
+- `propOrCrash` and `genNakedPropOrCrash`
 
 ### Changed
 - **Breaking**: `min` and `max` now accept naked and read-only arrays - it *may* lead to worse type inference in more complex use cases

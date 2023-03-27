@@ -35,6 +35,7 @@ import {
   forAll,
   fromArray,
   fromObject,
+  genNakedPropOrCrash,
   head,
   id,
   isEmpty,
@@ -87,6 +88,7 @@ import {
   pipe,
   print,
   prop,
+  propOrCrash,
   ReduxDevtoolsCompatibilityHelper,
   some,
   someOrCrash,
@@ -623,11 +625,11 @@ describe('opt', () => {
     suppressUnused(x, y);
     expect(
       opt('Luffy').filterByRe(/f+/)
-        .orNull()
+                  .orNull(),
     ).to.be.eq('Luffy');
     expect(
       opt('Robin').filterByRe(/f+/)
-        .orNull()
+                  .orNull(),
     ).to.be.null;
   });
 
@@ -763,6 +765,21 @@ describe('opt', () => {
     const getValue2 = (filter?: FilterPart): boolean | null => opt(filter).prop('values').map(xs => xs[0] === 'true').orNull();
     const getValue3 = (filter?: FilterPart): boolean | null => opt(filter).prop('values').map(head).map(eqAny('true')).orNull();
     suppressUnused(getValue2, getValue3);
+  });
+
+  it('propOrCrash', () => {
+    interface A {x?: number;}
+
+    const aFull: A = {x: 4};
+    const aEmpty: A = {};
+    const xFromA: number = opt(aFull).propOrCrash('x');
+    expect(xFromA).to.be.eq(4);
+    expect(() => opt(aEmpty).propOrCrash('x')).to.throw('missing x');
+    expect(() => {
+      // @ts-expect-error invalid field
+      const x = opt(aFull).propOrCrash('foo');
+      suppressUnused(x);
+    }).to.throw();
   });
 
   it('const', () => {
@@ -2033,6 +2050,90 @@ describe('prop', () => {
     expect(prop<ObjA>('a')(none).orNull()).to.be.null;
     // @ts-expect-error invalid field name
     prop<ObjA>('b');
+  });
+});
+
+describe('propOrCrash', () => {
+  interface A {x?: number;}
+
+  const aFull: A = {x: 4};
+  const aEmpty: A = {};
+  Object.freeze(aFull);
+  Object.freeze(aEmpty);
+
+  describe('opt', () => {
+    it('pos', () => {
+      const xFromA: number = propOrCrash<A>('x')(opt(aFull));
+      expect(xFromA).to.be.eq(4);
+      expect(pipe(opt(aFull), propOrCrash<A>('x'))).to.be.eq(4);
+    });
+
+    it('neg', () => {
+      expect(() => propOrCrash<A>('x')(opt(aEmpty))).to.throw('missing x');
+      expect(() => {
+        // @ts-expect-error missing field
+        const x = propOrCrash<A>('foo')(opt(aFull));
+        suppressUnused(x);
+      }).to.throw();
+    });
+  });
+
+  describe('naked object', () => {
+    it('pos', () => {
+      const xFromA: number = propOrCrash<A>('x')(aFull);
+      expect(xFromA).to.be.eq(4);
+      expect(pipe(aFull, propOrCrash<A>('x'))).to.be.eq(4);
+
+      interface Animal {
+        name?: string;
+      }
+
+      const a: Animal = {name: 'Spot'};
+      expect(
+        propOrCrash<Animal>('name')(a), // 'Spot'
+      ).to.be.eq('Spot');
+    });
+
+    it('neg', () => {
+      expect(() => propOrCrash<A>('x')(aEmpty)).to.throw('missing x');
+      expect(() => {
+        // @ts-expect-error missing field
+        const x = propOrCrash<A>('foo')(aFull);
+        suppressUnused(x);
+      }).to.throw();
+    });
+  });
+});
+
+describe('genNakedPropOrCrash', () => {
+  interface Animal {
+    id: number;
+    name?: string;
+  }
+
+  it('pos', () => {
+    const spot: Animal = {id: 36, name: 'Spot'};
+    Object.freeze(spot);
+    const getSpotProp = genNakedPropOrCrash(spot);
+    expect(
+      getSpotProp('name'), // 'Spot'
+    ).to.be.eq('Spot');
+    expect(
+      getSpotProp('id'), // 36
+    ).to.be.eq(36);
+  });
+
+  it('neg', () => {
+    const cow: Animal = {id: 36};
+    Object.freeze(cow);
+    const getCowProp = genNakedPropOrCrash(cow);
+    expect(() => {
+      getCowProp('name'); // crashes with 'missing name'
+    }).to.throw('missing name');
+    expect(() => {
+      // @ts-expect-error invalid field
+      getCowProp('nope');
+    }).to.throw('missing nope');
   });
 });
 

@@ -253,7 +253,7 @@ export declare abstract class Opt<T> {
      * @see [[ts-opt.orCrash]]
      * @param msg Error message.
      */
-    abstract orCrash(msg: string): T;
+    abstract orCrash(msg: string): T | never;
     /**
      * Crash when called on [[None]], pass [[Opt]] instance on [[Some]].
      *
@@ -774,10 +774,20 @@ export declare abstract class Opt<T> {
      * ```
      *
      * @see [[ts-opt.prop]]
+     * @see [[Opt.propOrCrash]]
      *
      * @param key
      */
     abstract prop<K extends (T extends object ? keyof T : never)>(key: K): OptSafe<T[K]>;
+    /**
+     * Get a field from a wrapped object. Crash if the field is missing or empty, or opt instance is [[None]].
+     * Shortcut of [[Opt.prop]] + [[Opt.orCrash]].
+     *
+     * @param key
+     */
+    propOrCrash<//
+    K extends (T extends object ? keyof T : never), //
+    R extends (T extends object ? WithoutOptValues<T[K]> | never : never)>(key: K): R;
     /**
      * Constructs a function which returns a value for [[Some]] or an empty value for [[None]] (default is `null`).
      * Optionally takes an empty value as a parameter.
@@ -1352,6 +1362,60 @@ export declare const print: (tag?: string | undefined) => <T>(x: T) => T;
 export declare const equals: <T>(other: Opt<T>, comparator?: EqualityFunction) => (x: Opt<T>) => boolean;
 /** @see [[Opt.prop]] */
 export declare const prop: <T extends object, K extends T extends object ? keyof T : never = T extends object ? keyof T : never>(key: K) => (x: Opt<T>) => OptSafe<T[K]>;
+/**
+ * Similar to [[Opt.propOrCrash]], but also supports naked objects.
+ *
+ * @example
+ * ```ts
+ * interface Animal {
+ *   name?: string;
+ * }
+ * const a: Animal = {name: 'Spot'};
+ * propOrCrash<Animal>('name')(a) // 'Spot'
+ * ```
+ */
+export declare const propOrCrash: <T extends object, P extends T | Opt<T> = T | Opt<T>, K extends P extends Opt<T> ? T extends object ? keyof T : never : P extends object ? keyof P : never = P extends Opt<T> ? T extends object ? keyof T : never : P extends object ? keyof P : never>(key: K) => (x: P) => NonNullable<T[K]>;
+/**
+ * Utility function for generating property getter for one specific object.
+ * Functionally similar to [[propOrCrash]], but it has swapped arguments and only supports naked objects.
+ *
+ * @example
+ * ```ts
+ * interface Animal {
+ *   id: number;
+ *   name?: string;
+ * }
+ *
+ * const spot: Animal = {id: 36, name: 'Spot'};
+ * const getSpotProp = genNakedPropOrCrash(spot);
+ * getSpotProp('name') // 'Spot'
+ * getSpotProp('id') // 36
+ *
+ * const cow: Animal = {id: 36};
+ * const getCowProp = genNakedPropOrCrash(cow);
+ * getCowProp('name') // crashes with 'missing name'
+ * ```
+ *
+ * ---
+ *
+ * It is a shorter alternative of
+ * ```ts
+ * const o = opt(obj);
+ * o.propOrCrash('fieldA')
+ * o.propOrCrash('fieldB')
+ * ```
+ * ->
+ * ```ts
+ * const g = genNakedPropOrCrash(obj);
+ * g('fieldA')
+ * g('fieldB')
+ * ```
+ *
+ * Performance characterics are expected to be similar.
+ *
+ * @param obj
+ */
+export declare const genNakedPropOrCrash: <T extends object>(obj: T) => <K extends keyof T>(k: K) => NonNullable<T> extends object ? NonNullable<(object & NonNullable<T>)[any]> : never;
 /** @see [[Opt.swap]] */
 export declare const swap: <U>(newValue: U) => <T>(x: Opt<T>) => Opt<U>;
 /**
