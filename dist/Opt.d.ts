@@ -635,6 +635,19 @@ export declare abstract class Opt<T> {
      */
     abstract filter(predicate: (_: T) => boolean): Opt<T>;
     /**
+     * Filter by regular expression.
+     * It is a shortcut function for [[Opt.filter]] + [[testRe]].
+     *
+     * @example
+     * ```ts
+     * opt('Luffy').filterByRe(/f+/) // Some('Luffy')
+     * opt('Robin').filterByRe(/f+/) // None
+     * ```
+     *
+     * @param regex
+     */
+    filterByRe<R extends (T extends string ? Opt<string> : never)>(regex: RegExp): R;
+    /**
      * Returns [[None]] if predicate holds, otherwise passes same instance of [[Opt]].
      *
      * @example

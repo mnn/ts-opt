@@ -312,6 +312,24 @@ var Opt = /** @class */ (function () {
      */
     Opt.prototype.chainToOpt = function (f) { return this.flatMap(function (x) { return exports.opt(f(x)); }); };
     /**
+     * Filter by regular expression.
+     * It is a shortcut function for [[Opt.filter]] + [[testRe]].
+     *
+     * @example
+     * ```ts
+     * opt('Luffy').filterByRe(/f+/) // Some('Luffy')
+     * opt('Robin').filterByRe(/f+/) // None
+     * ```
+     *
+     * @param regex
+     */
+    Opt.prototype.filterByRe = function (regex) {
+        if (this.isSome() && !exports.isString(this.value)) {
+            throw new Error("Expected string, got " + JSON.stringify(this.value) + ".");
+        }
+        return this.filter(exports.testRe(regex));
+    };
+    /**
      * Returns [[None]] if predicate holds, otherwise passes same instance of [[Opt]].
      *
      * @example

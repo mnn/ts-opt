@@ -608,6 +608,29 @@ describe('opt', () => {
     expect(none.filter(lt0).orNull()).to.be.null;
   });
 
+  it('filterByRe', () => {
+    const re1 = /b/;
+    expect(opt('').filterByRe(re1).orNull()).to.be.null;
+    expect(opt('abc').filterByRe(re1).orNull()).to.be.eq('abc');
+    expect(some('ac').filterByRe(re1).orNull()).to.be.null;
+    expect(none.filterByRe(re1).orNull()).to.be.null;
+    const x: Opt<string> = opt('b').filterByRe(re1);
+    const y: Opt<string> = opt('').filterByRe(re1);
+    expect(() => {
+      const z: never = opt(4).filterByRe(re1);
+      suppressUnused(z);
+    }).to.throw();
+    suppressUnused(x, y);
+    expect(
+      opt('Luffy').filterByRe(/f+/)
+        .orNull()
+    ).to.be.eq('Luffy');
+    expect(
+      opt('Robin').filterByRe(/f+/)
+        .orNull()
+    ).to.be.null;
+  });
+
   it('noneIf', () => {
     expect(some(1).noneIf(lt0).orNull()).to.be.eq(1);
     expect(some(1).noneIf(gt0).orNull()).to.be.null;
