@@ -987,12 +987,12 @@ describe('helper functions', () => {
       otherValue: '7',
     });
 
-    it('constucts opt from object with default field name', () => {
+    it('constructs opt from object with default field name', () => {
       const a: Opt<number> = Opt.fromObject(genObj());
       expect(a.orNull()).to.be.eq(4);
     });
 
-    it('constucts opt from object with custom field name', () => {
+    it('constructs opt from object with custom field name', () => {
       const a: Opt<string> = Opt.fromObject(genObj(), 'otherValue');
       expect(a.orNull()).to.be.eq('7');
     });
@@ -1195,6 +1195,7 @@ describe('isEmpty', () => {
   it('string', () => {
     expect(isEmpty('')).to.be.true;
     expect(isEmpty(' ')).to.be.false;
+    // noinspection SpellCheckingInspection
     expect(isEmpty('asddgflhjglůerhlt')).to.be.false;
   });
   it('number', () => {
@@ -2879,16 +2880,16 @@ describe('pitfalls', () => {
     const setA = (newA: number) => { a = newA; };
     expect(a).to.be.eq(0);
 
-    opt(null as number | null).map(setA); // a is unchanged
+    opt(null as number | null).map(setA); // `a` is unchanged
     expect(a).to.be.eq(0);
 
-    opt(null as number | null).onSome(setA); // a is unchanged
+    opt(null as number | null).onSome(setA); // `a` is unchanged
     expect(a).to.be.eq(0);
 
-    opt(2).map(setA); // a is now 2
+    opt(2).map(setA); // `a` is now 2
     expect(a).to.be.eq(2);
 
-    opt(4).onSome(setA); // a is now 4
+    opt(4).onSome(setA); // `a` is now 4
     expect(a).to.be.eq(4);
 
     expect(
