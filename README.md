@@ -5,7 +5,7 @@ ts-opt
 
 [![pipeline status](https://gitlab.com/monnef/ts-opt/badges/master/pipeline.svg)](https://gitlab.com/monnef/ts-opt/-/commits/master)
 [![coverage report](https://gitlab.com/monnef/ts-opt/badges/master/coverage.svg)](https://gitlab.com/monnef/ts-opt/-/commits/master)
-![minified + gzipped size](badge-size.svg)
+[![minified + gzipped size](badge-size.svg)](https://bundlephobia.com/package/ts-opt)
 [![npm version](https://badgen.net/npm/v/ts-opt)](https://npmjs.com/package/ts-opt)
 [![license](https://badgen.net/npm/license/ts-opt)](LICENSE.md)
 [![dependencies](badge-dependency.svg)](package.json)

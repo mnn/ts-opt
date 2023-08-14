@@ -62,7 +62,7 @@ const generatePackageSizeBadge = async () => {
         const totalSizeKb = (totalSize / 1024).toFixed(1);
         const packageSizeBadgeFormat = {
             label: 'minzipped',
-            message: `${totalSizeKb} kB`,
+            message: `~ ${totalSizeKb} kB`,
             color: 'blue',
             labelColor: 'grey',
         };
