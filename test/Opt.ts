@@ -2451,6 +2451,8 @@ describe('testReOrFalse', () => {
   it('neg', () => {
     expect(testReOrFalse(/\d/)(opt('x'))).to.be.false;
     expect(testReOrFalse(/\d/)(opt(null))).to.be.false;
+    expect(testReOrFalse(/\d/)(opt(undefined))).to.be.false;
+    expect(testReOrFalse(/\d/)(opt(''))).to.be.false;
   });
   it('use', () => {
     expect(pipe('7', opt, testReOrFalse(/\d/))).to.be.true;
@@ -2504,6 +2506,8 @@ describe('isReadonlyArray', () => {
   it('pos', () => {
     expect(isReadonlyArray([])).to.be.true;
     expect(isReadonlyArray([null])).to.be.true;
+    expect(isReadonlyArray([1])).to.be.true;
+    expect(isReadonlyArray(['x'])).to.be.true;
   });
   it('narrows', () => {
     const a: unknown = [] as unknown;
@@ -2515,6 +2519,11 @@ describe('isReadonlyArray', () => {
   });
   it('neg', () => {
     expect(isReadonlyArray('')).to.be.false;
+    expect(isReadonlyArray(undefined)).to.be.false;
+    expect(isReadonlyArray(null)).to.be.false;
+    expect(isReadonlyArray(0)).to.be.false;
+    expect(isReadonlyArray(NaN)).to.be.false;
+    expect(isReadonlyArray(false)).to.be.false;
   });
 });
 
