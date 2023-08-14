@@ -5,10 +5,10 @@ ts-opt
 
 [![pipeline status](https://gitlab.com/monnef/ts-opt/badges/master/pipeline.svg)](https://gitlab.com/monnef/ts-opt/-/commits/master)
 [![coverage report](https://gitlab.com/monnef/ts-opt/badges/master/coverage.svg)](https://gitlab.com/monnef/ts-opt/-/commits/master)
-[![minified + gzipped size](https://badgen.net/bundlephobia/minzip/ts-opt)](https://bundlephobia.com/package/ts-opt)
+![minified + gzipped size](badge-size.svg)
 [![npm version](https://badgen.net/npm/v/ts-opt)](https://npmjs.com/package/ts-opt)
 [![license](https://badgen.net/npm/license/ts-opt)](LICENSE.md)
-[![dependencies](https://badgen.net/bundlephobia/dependency-count/ts-opt)](https://bundlephobia.com/package/ts-opt)
+[![dependencies](badge-dependency.svg)](package.json)
 [![docs](https://img.shields.io/badge/docs-▽-blue)](#documentation)
 
 Typed Option/Maybe for TypeScript and JavaScript (based on Scala, Haskell and Sanctuary), created to simplify code involving optional values.
@@ -20,7 +20,7 @@ Features
   * but it is fully usable from JavaScript as well
 * 🔩 Pragmatic - doesn't force functional programming paradigm
 * 📏 100% Test Coverage
-* 🗜️ Lightweight - no dependencies, only around 4KiB gzip+minified
+* 🗜️ Lightweight - no dependencies, only around 5KiB gzip+minified
 
 Installation
 ===
