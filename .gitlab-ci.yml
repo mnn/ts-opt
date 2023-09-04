@@ -35,6 +35,7 @@ pages:
     - npm run doc
     - mkdir -p public
     - cp -r doc/* public/
+    - cp badge-*.svg public/
   artifacts:
     paths:
       - public
