@@ -312,6 +312,19 @@ var Opt = /** @class */ (function () {
      */
     Opt.prototype.chainToOpt = function (f) { return this.flatMap(function (x) { return exports.opt(f(x)); }); };
     /**
+     * Joins (flattens) nested Opt instance, turning an `Opt<Opt<T>>` into an `Opt<T>`.
+     * This is equivalent to calling `flatMap` with the identity function: `.join()` ~ `.flatMap(id)`.
+     *
+     * @example
+     * ```ts
+     * const nestedOpt: Opt<Opt<number>> = opt(opt(42)); // Some(Some(42))
+     * const flattenedOpt: Opt<number> = nestedOpt.join(); // Some(42)
+     * ```
+     */
+    Opt.prototype.join = function () {
+        return this.flatMap(exports.id);
+    };
+    /**
      * Filter by regular expression.
      * It is a shortcut function for [[Opt.filter]] + [[testRe]].
      *
@@ -960,6 +973,7 @@ exports.mapOpt = mapOpt;
  * joinOpt(some(some(1))) // Some(1)
  * ```
  * @param x
+ * @see [[Opt.join]]
  */
 var joinOpt = function (x) { return x.caseOf(function (y) { return y; }, function () { return exports.none; }); };
 exports.joinOpt = joinOpt;

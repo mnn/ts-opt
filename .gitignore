@@ -10,3 +10,6 @@ node_modules/
 public/
 doc/
 /lib/.precomp
+/copy_sources_to_one_file.raku
+/sources.txt
+/tmp.json

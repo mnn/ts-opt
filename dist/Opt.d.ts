@@ -249,6 +249,17 @@ export declare abstract class Opt<T> {
      */
     chainToOptFlow: ActToOptInClassFn<T>;
     /**
+     * Joins (flattens) nested Opt instance, turning an `Opt<Opt<T>>` into an `Opt<T>`.
+     * This is equivalent to calling `flatMap` with the identity function: `.join()` ~ `.flatMap(id)`.
+     *
+     * @example
+     * ```ts
+     * const nestedOpt: Opt<Opt<number>> = opt(opt(42)); // Some(Some(42))
+     * const flattenedOpt: Opt<number> = nestedOpt.join(); // Some(42)
+     * ```
+     */
+    join<U>(this: Opt<Opt<U>>): Opt<U>;
+    /**
      * Returns value when [[Some]], throws error with `msg` otherwise.
      * @see [[ts-opt.orCrash]]
      * @param msg Error message.
@@ -1194,6 +1205,7 @@ export declare const mapOpt: <A, B>(f: (_: A) => Opt<B>) => (xs: readonly A[]) =
  * joinOpt(some(some(1))) // Some(1)
  * ```
  * @param x
+ * @see [[Opt.join]]
  */
 export declare const joinOpt: <T>(x: Opt<Opt<T>>) => Opt<T>;
 /**

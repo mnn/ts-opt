@@ -559,6 +559,17 @@ describe('opt', () => {
     expect(opt(1).actToOpt(id, inc, inc).orNull()).to.be.eq(3);
   });
 
+  it('join', () => {
+    expect(opt(opt(1)).join().orNull()).to.be.eq(1);
+    expect(opt(none).join().orNull()).to.be.null;
+    expect(none.join().orNull()).to.be.null;
+    const a: Opt<number> = opt(2);
+    (() => {
+      // @ts-expect-error shouldn't work on non-nested opt
+      a.join();
+    });
+  });
+
   it('zip', () => {
     expect(some(1).zip(some(true)).orNull()).to.be.eql([1, true]);
     expect(some(1).zip(none).orNull()).to.be.null;
