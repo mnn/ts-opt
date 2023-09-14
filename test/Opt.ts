@@ -38,8 +38,12 @@ import {
   genNakedPropOrCrash,
   head,
   id,
+  isArray,
   isEmpty,
   isFull,
+  isFunction,
+  isNumber,
+  isObject,
   isOpt,
   isOrCrash,
   isReadonlyArray,
@@ -121,9 +125,6 @@ const lt0 = (x: number): boolean => x < 0;
 
 const randomNumOpt = (): Opt<number> => Math.random() > .5 ? none : some(Math.random());
 
-const isNumber = (x: any): x is number => typeof x === 'number';
-const isObject = (x: any): x is object => typeof x === 'object';
-const isArray = (x: any): x is unknown[] => Array.isArray(x);
 const join = (delim: string) => (xs: string[]): string => xs.join(delim);
 
 const eq = <T>(a: T) => (b: T) => a === b;
@@ -2537,6 +2538,54 @@ describe('isReadonlyArray', () => {
     expect(isReadonlyArray(false)).to.be.false;
   });
 });
+
+describe('isFunction', () => {
+  it('pos', () => {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    expect(isFunction(() => {})).to.be.true;
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    expect(isFunction(function () {})).to.be.true;
+  });
+  it('neg', () => {
+    expect(isFunction(undefined)).to.be.false;
+    expect(isFunction(null)).to.be.false;
+    expect(isFunction(0)).to.be.false;
+    expect(isFunction(NaN)).to.be.false;
+    expect(isFunction(false)).to.be.false;
+  })
+});
+
+describe('isObject', () => {
+  it('pos', () => {
+    expect(isObject({})).to.be.true;
+    expect(isObject({ a: 1 })).to.be.true;
+    class A {}
+    expect(isObject(new A())).to.be.true;
+  });
+  it('neg', () => {
+    expect(isObject(undefined)).to.be.false;
+    expect(isObject(null)).to.be.false;
+    expect(isObject(0)).to.be.false;
+    expect(isObject(NaN)).to.be.false;
+    expect(isObject(false)).to.be.false;
+  });
+});
+
+describe('isNumber', () => {
+  it('pos', () => {
+    expect(isNumber(0)).to.be.true;
+    expect(isNumber(1)).to.be.true;
+    expect(isNumber(1.1)).to.be.true;
+    expect(isNumber(NaN)).to.be.true;
+  });
+  it('neg', () => {
+    expect(isNumber(undefined)).to.be.false;
+    expect(isNumber(null)).to.be.false;
+    expect(isNumber({})).to.be.false;
+    expect(isNumber([])).to.be.false;
+    expect(isNumber(false)).to.be.false;
+  })
+})
 
 describe('tryRun', () => {
   it('runs ok', () => {

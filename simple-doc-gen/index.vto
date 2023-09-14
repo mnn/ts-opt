@@ -1,0 +1,19 @@
+<html>
+<head>
+<meta charset="utf-8">
+<title>Index</title>
+</head>
+<body>
+<h1>Index</h1>
+{{- for cls of data }}
+	<h2>{{ cls.className }}</h2>
+	<ul>
+	{{- for member of cls.members -}}
+		<li>
+		 <a href="{{ cls.className }}/{{ member.name }}.html">{{ member.name }}</a>
+		</li>
+	{{ /for }}
+	</ul>
+{{ /for }}
+</body>
+</html>

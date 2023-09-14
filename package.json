@@ -22,7 +22,9 @@
     "test": "nyc -r html -e .ts -x \"test/*.ts\" mocha -r ts-node/register test/**/*.ts && nyc report --check-coverage --branches 100 --functions 100 --lines 100 --statements 100",
     "test:no-coverage": "mocha -r ts-node/register test/**/*.ts",
     "test:watch": "chokidar --initial 'src/**/*.ts' 'test/**/*.ts' -c 'clear ; npm --silent run test:no-coverage -- --reporter dot'",
-    "doc": "typedoc --out doc --listInvalidSymbolLinks src/Opt.ts --sort source-order --categorizeByGroup false",
+    "doc": "run-s doc-typedoc doc-simple-doc",
+    "doc-typedoc": "typedoc --out doc --listInvalidSymbolLinks src/Opt.ts --sort source-order --categorizeByGroup false",
+    "doc-simple-doc": "node simple-doc-gen/main.js",
     "build": "tsc --outDir ./dist -p . ",
     "badges": "node utils/gen-badges.mjs",
     "build-all": "run-s clean gen-flowy build doc badges",
@@ -45,11 +47,13 @@
     "@types/chai": "4.2.14",
     "@types/chai-spies": "1.0.3",
     "@types/mocha": "8.2.0",
+    "@types/shelljs": "0.8.12",
     "@typescript-eslint/eslint-plugin": "5.27.0",
     "@typescript-eslint/parser": "5.27.0",
     "badge-maker": "3.3.1",
     "chai": "4.2.0",
     "chai-spies": "1.0.0",
+    "cheerio": "1.0.0-rc.12",
     "chokidar-cli": "3.0.0",
     "eslint": "7.32.0",
     "gzip-size": "7.0.0",
@@ -58,10 +62,12 @@
     "npm-run-all": "4.1.5",
     "nyc": "15.1.0",
     "rimraf": "3.0.2",
+    "shelljs": "0.8.5",
     "ts-node": "9.1.1",
     "typedoc": "0.22.11",
     "typedoc-plugin-not-exported": "0.1.6",
     "typescript": "4.2.3",
-    "uglify-js": "3.17.4"
+    "uglify-js": "3.17.4",
+    "ventojs": "0.8.0"
   }
 }

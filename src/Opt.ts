@@ -63,6 +63,8 @@ export const isArray = (x: any): x is unknown[] => Array.isArray(x);
 export const isReadonlyArray = (x: any): x is readonly unknown[] => Array.isArray(x);
 // eslint-disable-next-line @typescript-eslint/ban-types
 export const isFunction = (x: any): x is Function => typeof x === 'function';
+export const isObject = (value: any): value is object => value !== null && typeof value === 'object';
+export const isNumber = (x: any): x is number => typeof x === 'number';
 
 const debugPrint = (tag?: string, ...xs: unknown[]) => {
   console.log(...[...opt(tag).map(x => [`[${x}]`]).orElse([]), ...xs]);

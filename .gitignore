@@ -9,6 +9,7 @@ node_modules/
 **/.HTF
 public/
 doc/
+simple-doc/
 /lib/.precomp
 /copy_sources_to_one_file.raku
 /sources.txt
