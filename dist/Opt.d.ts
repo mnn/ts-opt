@@ -35,6 +35,8 @@ export declare const toString: (x: {
 export declare const isArray: (x: any) => x is unknown[];
 export declare const isReadonlyArray: (x: any) => x is readonly unknown[];
 export declare const isFunction: (x: any) => x is Function;
+export declare const isObject: (value: any) => value is object;
+export declare const isNumber: (x: any) => x is number;
 /**
  * Generic container class. It either holds exactly one value - [[Some]], or no value - [[None]] (empty).
  *
