@@ -33,8 +33,10 @@ pages:
   stage: deploy
   script:
     - npm run doc
+    - npm run doc-simple
     - mkdir -p public
     - cp -r doc/* public/
+    - cp -r simple-doc public/
     - cp badge-*.svg public/
   artifacts:
     paths:
