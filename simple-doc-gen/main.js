@@ -22,8 +22,28 @@ const groupBy = (f) => (xs) => xs.reduce((acc, x) => {
 // workaround for ESM-only support of ventojs
 let vto;
 
-const processMember = (memberEl, options) => {
-    return memberEl.attr('data-className', options.className);
+const processMember = ($, memberEl, options) => {
+    memberEl.attr('data-className', options.className);
+    memberEl.find('a').each((i, rEl) => {
+        const el = $(rEl);
+        const href = el.attr('href');
+        if (!href) return;
+        const newHref = href.replace(
+            /^(?:[a-zA-Z.]+\/)?([a-zA-Z]+)\.html#(.+)/,
+            (match, clsName, memberName) => `../${clsName === 'modules' ? 'Root' : clsName}/${memberName}.html`
+        );
+        el.attr('data-origHref', href)
+        if (newHref === href) {
+            if (href.includes('monnef/ts-opt')) {
+                // link to sources
+            } else {
+                el.attr('href', '..');
+            }
+        } else {
+            el.attr('href', newHref);
+        }
+    })
+    return memberEl;
 }
 
 const processFile = (inputFilePath, options = {className: null}) => {
@@ -36,7 +56,7 @@ const processFile = (inputFilePath, options = {className: null}) => {
         return {
             name: el.find('a.tsd-anchor').prop('id'),
             type: pipe(el.attr('class').split(/\s+/).find(x => x.startsWith(tsdKindPrefix)), dropStr(tsdKindPrefix.length)),
-            html: $.html(processMember(el, options))
+            html: $.html(processMember($, el, options))
         }
     }).toArray();
     const membersWithOptions = members.map(member => ({
@@ -80,7 +100,11 @@ const main = async () => {
             sortKey
         };
     }).sort((a, b) => a.sortKey.localeCompare(b.sortKey));
-    const indexResult = await indexTemplate({members: dataCombined, membersByClassName: membersByClassNameRaw, data: membersByClassNameStructured});
+    const indexResult = await indexTemplate({
+        members: dataCombined,
+        membersByClassName: membersByClassNameRaw,
+        data: membersByClassNameStructured
+    });
     ShellString(indexResult.content).to(path.join(outDirPath, 'index.html'));
 };
 main();

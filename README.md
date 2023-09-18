@@ -151,6 +151,8 @@ All methods are documented, if you don't see a description please make sure you 
 * Main [Opt](https://monnef.gitlab.io/ts-opt/classes/Opt.html) class
 * [Module](https://monnef.gitlab.io/ts-opt/modules.html) (constructors and helper functions)
 
+["Simple" documentation](https://monnef.gitlab.io/ts-opt/docs/simple-doc)
+
 Pitfalls
 ===
 
