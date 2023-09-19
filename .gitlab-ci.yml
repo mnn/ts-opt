@@ -33,7 +33,7 @@ pages:
   stage: deploy
   script:
     - npm run doc
-    - npm run doc-simple
+    - npm run doc-simple:build
     - mkdir -p public
     - cp -r doc/* public/
     - cp -r simple-doc public/
