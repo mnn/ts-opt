@@ -22,28 +22,37 @@ const groupBy = (f) => (xs) => xs.reduce((acc, x) => {
 // workaround for ESM-only support of ventojs
 let vto;
 
+const processUrl = url => {
+    if (!url) return null;
+
+    const regex = /^(?:[a-zA-Z.]+\/)?([a-zA-Z]+)\.html#(.+)/;
+    const match = url.match(regex);
+
+    if (match) {
+        const [_, clsName, memberName] = match;
+        return `../${clsName === 'modules' ? 'Root' : clsName}/${memberName}.html`;
+    }
+    const isLinkToLibSources = url.includes('monnef/ts-opt');
+    if (isLinkToLibSources) return null;
+    return '..';
+};
+
 const processMember = ($, memberEl, options) => {
     memberEl.attr('data-className', options.className);
     memberEl.find('a').each((i, rEl) => {
         const el = $(rEl);
         const href = el.attr('href');
-        if (!href) return;
-        const newHref = href.replace(
-            /^(?:[a-zA-Z.]+\/)?([a-zA-Z]+)\.html#(.+)/,
-            (match, clsName, memberName) => `../${clsName === 'modules' ? 'Root' : clsName}/${memberName}.html`
-        );
-        el.attr('data-origHref', href)
-        if (newHref === href) {
-            if (href.includes('monnef/ts-opt')) {
-                // link to sources
-            } else {
-                el.attr('href', '..');
-            }
-        } else {
-            el.attr('href', newHref);
-        }
-    })
+
+        el.attr('data-origHref', href);
+        const newHref = processUrl(href);
+        el.attr('href', newHref);
+    });
     return memberEl;
+};
+
+const ITEM_KINDS = {
+    member: 'member',
+    class: 'class'
 }
 
 const processFile = (inputFilePath, options = {className: null}) => {
@@ -56,7 +65,8 @@ const processFile = (inputFilePath, options = {className: null}) => {
         return {
             name: el.find('a.tsd-anchor').prop('id'),
             type: pipe(el.attr('class').split(/\s+/).find(x => x.startsWith(tsdKindPrefix)), dropStr(tsdKindPrefix.length)),
-            html: $.html(processMember($, el, options))
+            html: $.html(processMember($, el, options)),
+            kind: ITEM_KINDS.member
         }
     }).toArray();
     const membersWithOptions = members.map(member => ({
@@ -106,5 +116,6 @@ const main = async () => {
         data: membersByClassNameStructured
     });
     ShellString(indexResult.content).to(path.join(outDirPath, 'index.html'));
+    cat(path.join(scriptPath, 'styles.css')).to(path.join(outDirPath, 'styles.css'));
 };
 main();
