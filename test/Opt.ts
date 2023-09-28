@@ -112,6 +112,17 @@ import {
   zip4,
   zip5,
   zipToOptArray,
+  not,
+  and,
+  or,
+  xor,
+  bool,
+  inc,
+  dec,
+  crash,
+  eq,
+  eqAny,
+  noop,
 } from '../src/Opt';
 
 chai.use(spies);
@@ -119,19 +130,12 @@ const {expect} = chai;
 chai.should();
 const sandbox = chai.spy.sandbox();
 
-const inc = (x: number) => x + 1;
 const gt0 = (x: number): boolean => x > 0;
 const lt0 = (x: number): boolean => x < 0;
 
 const randomNumOpt = (): Opt<number> => Math.random() > .5 ? none : some(Math.random());
 
 const join = (delim: string) => (xs: string[]): string => xs.join(delim);
-
-const eq = <T>(a: T) => (b: T) => a === b;
-const eqAny = (a: unknown) => (b: unknown) => a === b;
-
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const noop = (..._args: unknown[]): void => {};
 
 type EnumAB = 'a' | 'b';
 type Enum12 = 1 | 2;
@@ -3054,5 +3058,92 @@ describe('data flow', () => {
     expect(
       pipe(x, opt, f, orElse(4), g, orElse('a')),
     ).to.be.eq('22');
+  });
+});
+
+describe('not', () => {
+  it('negates boolean', () => {
+    expect(not(true)).to.be.false;
+    expect(not(false)).to.be.true;
+  });
+});
+
+describe('and', () => {
+  it('logical and of two booleans', () => {
+    expect(and(true)(false)).to.be.false;
+    expect(and(true)(true)).to.be.true;
+  });
+});
+
+describe('or', () => {
+  it('logical or of two booleans', () => {
+    expect(or(true)(false)).to.be.true;
+    expect(or(false)(false)).to.be.false;
+  });
+});
+
+describe('xor', () => {
+  it('logical xor of two booleans', () => {
+    expect(xor(true)(false)).to.be.true;
+    expect(xor(true)(true)).to.be.false;
+  });
+});
+
+describe('bool', () => {
+  it('returns one of two values based on condition', () => {
+    expect(bool(0)(1)(true)).to.eq(1);
+    expect(bool('no')('yes')(false)).to.eq('no');
+    expect(opt(true).map(bool(0)(1)).orNull()).to.eq(1);
+    expect(opt(false).map(bool(0)(1)).orNull()).to.eq(0);
+  });
+});
+
+describe('inc', () => {
+  it('increments number by 1', () => {
+    expect(inc(5)).to.eq(6);
+  });
+});
+
+describe('dec', () => {
+  it('decrements number by 1', () => {
+    expect(dec(5)).to.eq(4);
+  });
+});
+
+describe('crash', () => {
+  it('throws error with message', () => {
+    expect(() => {
+      crash('Zeref?');
+    }).to.throw('Zeref?');
+  });
+});
+
+describe('eq', () => {
+  it('checks equality', () => {
+    expect(eq(5)(5)).to.be.true;
+    expect(eq(5)(6)).to.be.false;
+    expect(eq('hello')('hello')).to.be.true;
+    expect(eq('hello')('Hi')).to.be.false;
+    expect(eq({})({})).to.be.false;
+    expect(opt(1).map(eq(1)).orNull()).to.be.true;
+    // @ts-expect-error type mismatch
+    expect(opt('').map(eq(2)).orNull()).to.be.false;
+  });
+});
+
+describe('eqAny', () => {
+  it('checks equality', () => {
+    expect(eqAny('hello')('hello')).to.be.true;
+    expect(eqAny('hello')('Hi')).to.be.false;
+    expect(opt(1).map(eqAny('hello')).orNull()).to.be.false;
+    expect(opt(1).map(eqAny(1)).orNull()).to.be.true;
+    expect(opt('').map(eqAny(2)).orNull()).to.be.false;
+  });
+});
+
+describe('noop', () => {
+  it('returns undefined', () => {
+    // noinspection JSVoidFunctionReturnValueUsed
+    expect(noop()).to.be.undefined;
   });
 });

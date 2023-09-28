@@ -1463,6 +1463,20 @@ export const some = <T>(x: T) => Object.freeze(new Some(x));
 /**
  * Main constructor function - for `undefined`, `null` and `NaN` returns [[None]].
  * Anything else is wrapped into [[Some]].
+ * @example
+ * ```ts
+ * opt(0) // Some(0)
+ * opt(1) // Some(1)
+ * opt(true) // Some(true)
+ * opt('Kagome') // Some('Kagome')
+ * opt([]) // Some([])
+ * opt([1]) // Some([1])
+ * opt({}) // Some({})
+ * opt({a: 0}) // Some({a: 0})
+ * opt(undefined) // None
+ * opt(null) // None
+ * opt(NaN) // None
+ * ```
  * @param x
  */
 export const opt = <T>(x: T | undefined | null): OptSafe<T> =>
@@ -2419,3 +2433,153 @@ export const max2Any = gen2Op('any', max2Num);
  */
 export const clamp = (minValue: number | EmptyValue) => (maxValue: number | EmptyValue) => (x: number | EmptyValue): Opt<number> =>
   opt(x).act(max2Any(minValue), min2Any(maxValue));
+
+/**
+ * Logical negation of a boolean value.
+ *
+ * @example
+ * ```ts
+ * not(true) // false
+ * not(false) // true
+ * ```
+ *
+ * @param x
+ * @returns The negated boolean value
+ */
+export const not = (x: boolean): boolean => !x;
+
+/**
+ * Logical AND of two boolean values.
+ *
+ * @example
+ * ```ts
+ * and(true)(false) // false
+ * and(true)(true) // true
+ * ```
+ *
+ * @param x
+ * @returns
+ */
+export const and = (x: boolean) => (y: boolean): boolean => x && y;
+
+/**
+ * Logical OR of two boolean values.
+ *
+ * @example
+ * ```ts
+ * or(true)(false) // true
+ * or(false)(false) // false
+ * ```
+ *
+ * @param x
+ * @returns
+ */
+export const or = (x: boolean) => (y: boolean): boolean => x || y;
+
+/**
+ * Logical XOR (exclusive OR) of two boolean values.
+ *
+ * @example
+ * ```ts
+ * xor(true)(false) // true
+ * xor(true)(true) // false
+ * ```
+ *
+ * @param x
+ * @returns
+ */
+export const xor = (x: boolean) => (y: boolean): boolean => x !== y;
+
+/**
+ * Returns one of two values based on a boolean condition.
+ *
+ * @example
+ * ```ts
+ * bool(0)(1)(true) // 1
+ * bool('no')('yes')(false) // 'no'
+ * ```
+ *
+ * @param falseValue
+ * @returns
+ */
+export const bool = <T>(falseValue: T) => (trueValue: T) => (cond: boolean) => cond ? trueValue : falseValue;
+
+/**
+ * Increments a number by 1.
+ *
+ * @example
+ * ```ts
+ * inc(5) // 6
+ * ```
+ *
+ * @param x - The number to increment
+ * @returns The number incremented by 1
+ */
+export const inc = (x: number): number => x + 1;
+
+/**
+ * Decrements a number by 1.
+ *
+ * @example
+ * ```ts
+ * dec(5) // 4
+ * ```
+ *
+ * @param x - The number to decrement
+ * @returns The number decremented by 1
+ */
+export const dec = (x: number): number => x - 1;
+
+/**
+ * Throws an error with a given message.
+ *
+ * @example
+ * ```ts
+ * crash('Zeref?') // throws Error
+ * ```
+ *
+ * @param msg - The error message
+ * @returns Nothing (function never returns due to exception)
+ */
+export const crash = (msg: string): never => { throw new Error(msg); };
+
+// TODO: customizable comparator
+/**
+ * Checks equality between two values of type T using strict equality.
+ *
+ * @example
+ * ```ts
+ * eq(5)(5) // true
+ * eq(5)(6) // false
+ * eq({})({}) // false
+ * ```
+ *
+ * @param a - The first value to compare
+ * @returns A function that takes another value and returns whether it is strictly equal to the first value
+ */
+export const eq = <T>(a: T) => (b: T) => a === b;
+
+// TODO: customizable comparator
+/**
+ * Checks equality between two values of any type using strict equality.
+ *
+ * @example
+ * ```ts
+ * eqAny('hello')('hello') // true
+ * eqAny('hello')('Hi') // false
+ * eqAny('')(2) // false
+ * ```
+ *
+ * @param a - The first value to compare
+ * @returns A function that takes another value and returns whether it is strictly equal to the first value
+ */
+export const eqAny = (a: unknown) => (b: unknown) => a === b;
+
+/**
+ * A no-operation function that simply returns undefined.
+ * Can be used as a placeholder callback.
+ *
+ * @returns undefined
+ */
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+export const noop = (..._args: unknown[]): void => {};
