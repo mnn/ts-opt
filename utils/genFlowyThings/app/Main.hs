@@ -25,7 +25,7 @@ main = do
   putStrLn "// Don't modify manually, generated via utils/genFlowyThings  !!"
   putStrLn "// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
   putStrLn ""
-  putStrLn "import { Opt } from './Opt';"
+  putStrLn "import { Opt, OptSafe } from './Opt';"
   putStrLn ""
   gen genPipe 10
   gen genMapFlow 10

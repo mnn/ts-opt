@@ -22,7 +22,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.forAll = exports.exists = exports.contains = exports.pipe = exports.onBoth = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOptFlow = exports.actToOpt = exports.chainToOpt = exports.chainFlow = exports.act = exports.chain = exports.flatMap = exports.mapFlow = exports.map = exports.toObject = exports.fromObject = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = exports.isNumber = exports.isObject = exports.isFunction = exports.isReadonlyArray = exports.isArray = exports.toString = exports.isString = void 0;
 exports.onFunc = exports.apply = exports.parseFloat = exports.parseInt = exports.parseJson = exports.tryRun = exports.testReOrFalse = exports.testRe = exports.zipToOptArray = exports.last = exports.head = exports.at = exports.id = exports.isFull = exports.nonEmpty = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.genNakedPropOrCrash = exports.propOrCrash = exports.prop = exports.equals = exports.print = exports.narrowOrCrash = exports.narrow = exports.find = exports.count = exports.noneWhen = exports.noneIf = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.flatBimap = exports.bimap = exports.altOpt = exports.alt = exports.orElseAny = exports.orElseLazy = exports.orElse = void 0;
-exports.clamp = exports.max2Any = exports.max2All = exports.max2Num = exports.min2Any = exports.min2All = exports.min2Num = exports.max = exports.min = exports.assertType = exports.isOrCrash = void 0;
+exports.noop = exports.eqAny = exports.eq = exports.crash = exports.dec = exports.inc = exports.bool = exports.xor = exports.or = exports.and = exports.not = exports.clamp = exports.max2Any = exports.max2All = exports.max2Num = exports.min2Any = exports.min2All = exports.min2Num = exports.max = exports.min = exports.assertType = exports.isOrCrash = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 var errorSymbol = Symbol('Error');
@@ -855,6 +855,20 @@ exports.some = some;
 /**
  * Main constructor function - for `undefined`, `null` and `NaN` returns [[None]].
  * Anything else is wrapped into [[Some]].
+ * @example
+ * ```ts
+ * opt(0) // Some(0)
+ * opt(1) // Some(1)
+ * opt(true) // Some(true)
+ * opt('Kagome') // Some('Kagome')
+ * opt([]) // Some([])
+ * opt([1]) // Some([1])
+ * opt({}) // Some({})
+ * opt({a: 0}) // Some({a: 0})
+ * opt(undefined) // None
+ * opt(null) // None
+ * opt(NaN) // None
+ * ```
  * @param x
  */
 var opt = function (x) {
@@ -1828,4 +1842,161 @@ var clamp = function (minValue) { return function (maxValue) { return function (
     return exports.opt(x).act(exports.max2Any(minValue), exports.min2Any(maxValue));
 }; }; };
 exports.clamp = clamp;
+/**
+ * Logical negation of a boolean value.
+ *
+ * @example
+ * ```ts
+ * not(true) // false
+ * not(false) // true
+ * ```
+ *
+ * @param x
+ * @returns The negated boolean value
+ */
+var not = function (x) { return !x; };
+exports.not = not;
+/**
+ * Logical AND of two boolean values.
+ *
+ * @example
+ * ```ts
+ * and(true)(false) // false
+ * and(true)(true) // true
+ * ```
+ *
+ * @param x
+ * @returns
+ */
+var and = function (x) { return function (y) { return x && y; }; };
+exports.and = and;
+/**
+ * Logical OR of two boolean values.
+ *
+ * @example
+ * ```ts
+ * or(true)(false) // true
+ * or(false)(false) // false
+ * ```
+ *
+ * @param x
+ * @returns
+ */
+var or = function (x) { return function (y) { return x || y; }; };
+exports.or = or;
+/**
+ * Logical XOR (exclusive OR) of two boolean values.
+ *
+ * @example
+ * ```ts
+ * xor(true)(false) // true
+ * xor(true)(true) // false
+ * ```
+ *
+ * @param x
+ * @returns
+ */
+var xor = function (x) { return function (y) { return x !== y; }; };
+exports.xor = xor;
+/**
+ * Returns one of two values based on a boolean condition.
+ *
+ * @example
+ * ```ts
+ * bool(0)(1)(true) // 1
+ * bool('no')('yes')(false) // 'no'
+ * ```
+ *
+ * @param falseValue
+ * @returns
+ */
+var bool = function (falseValue) { return function (trueValue) { return function (cond) { return cond ? trueValue : falseValue; }; }; };
+exports.bool = bool;
+// TODO: boolLazy
+// TODO: imperative variant of bool?
+/**
+ * Increments a number by 1.
+ *
+ * @example
+ * ```ts
+ * inc(5) // 6
+ * ```
+ *
+ * @param x - The number to increment
+ * @returns The number incremented by 1
+ */
+var inc = function (x) { return x + 1; };
+exports.inc = inc;
+/**
+ * Decrements a number by 1.
+ *
+ * @example
+ * ```ts
+ * dec(5) // 4
+ * ```
+ *
+ * @param x - The number to decrement
+ * @returns The number decremented by 1
+ */
+var dec = function (x) { return x - 1; };
+exports.dec = dec;
+/**
+ * Throws an error with a given message.
+ *
+ * @example
+ * ```ts
+ * crash('Zeref?') // throws Error
+ * ```
+ *
+ * @param msg - The error message
+ * @returns Nothing (function never returns due to exception)
+ */
+var crash = function (msg) { throw new Error(msg); };
+exports.crash = crash;
+// TODO: customizable comparator
+/**
+ * Checks equality between two values of type T using strict equality.
+ *
+ * @example
+ * ```ts
+ * eq(5)(5) // true
+ * eq(5)(6) // false
+ * eq({})({}) // false
+ * ```
+ *
+ * @param a - The first value to compare
+ * @returns A function that takes another value and returns whether it is strictly equal to the first value
+ */
+var eq = function (a) { return function (b) { return a === b; }; };
+exports.eq = eq;
+// TODO: customizable comparator
+/**
+ * Checks equality between two values of any type using strict equality.
+ *
+ * @example
+ * ```ts
+ * eqAny('hello')('hello') // true
+ * eqAny('hello')('Hi') // false
+ * eqAny('')(2) // false
+ * ```
+ *
+ * @param a - The first value to compare
+ * @returns A function that takes another value and returns whether it is strictly equal to the first value
+ */
+var eqAny = function (a) { return function (b) { return a === b; }; };
+exports.eqAny = eqAny;
+/**
+ * A no-operation function that simply returns undefined.
+ * Can be used as a placeholder callback.
+ *
+ * @returns undefined
+ */
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+var noop = function () {
+    var _args = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        _args[_i] = arguments[_i];
+    }
+};
+exports.noop = noop;
 //# sourceMappingURL=Opt.js.map

@@ -66,7 +66,7 @@ mkCaseFn mkArgsTypes' resGenType ifo n j =
       processRes ResIsRaw = id
       processRes ResIsOpt = wrapInOpt
       processRes ResIsNullable = wrapInNullable
-      fNum IfoAsc = j 
+      fNum IfoAsc = j
       fNum IfoDesc = n - j + 1
    in [qq|f{fNum ifo}: (_: {args !! 0}) => {processRes resGenType $ args !! 1}|]
 
@@ -125,7 +125,7 @@ genActToOpt inCls n = genInterface "ActToOpt" (intWithTtoHasTypeParam inCls) inC
     mkCase i =
       let fParts = [1 .. i] <&> mkCaseFn mkArgsTypes' ResIsNullable IfoAsc i & joinComma
           prefix = "<" <> joinComma (mkArgsTypes' i & bool id tail isInClass') <> ">"
-          retType :: Text = bool "(x: Opt<I>) => " "" isInClass' <> "Opt<R>"
+          retType :: Text = bool "(x: Opt<I>) => " "" isInClass' <> "OptSafe<R>"
        in [qq|$prefix($fParts): $retType;|]
 
 genFlow :: InterfaceInClass -> Int -> Text

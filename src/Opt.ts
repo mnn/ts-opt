@@ -26,7 +26,10 @@ type WithoutOptValues<T> = NonNullable<T>;
 type EmptyValue = null | undefined;
 
 type AnyFunc = (...args: any) => any;
-type OptSafe<T> = Opt<WithoutOptValues<T>>;
+/**
+ * @internal
+ */
+export type OptSafe<T> = Opt<WithoutOptValues<T>>;
 
 /* istanbul ignore next */
 class OperationNotAvailable<TypeGot, TypeExpected> {
@@ -2503,6 +2506,10 @@ export const xor = (x: boolean) => (y: boolean): boolean => x !== y;
  * @returns
  */
 export const bool = <T>(falseValue: T) => (trueValue: T) => (cond: boolean) => cond ? trueValue : falseValue;
+
+// TODO: boolLazy
+
+// TODO: imperative variant of bool?
 
 /**
  * Increments a number by 1.

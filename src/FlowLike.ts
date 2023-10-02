@@ -2,7 +2,7 @@
 // Don't modify manually, generated via utils/genFlowyThings  !!
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-import { Opt } from './Opt';
+import { Opt, OptSafe } from './Opt';
 
 export interface PipeInClassFn<T> {
   <R>(f1: (_: Opt<T>) => R): R;
@@ -83,29 +83,29 @@ export interface ActFn {
 }
 
 export interface ActToOptInClassFn<T> {
-  <R>(f1: (_: T) => R | undefined | null): Opt<R>;
-  <A1, R>(f1: (_: T) => A1 | undefined | null, f2: (_: A1) => R | undefined | null): Opt<R>;
-  <A1, A2, R>(f1: (_: T) => A1 | undefined | null, f2: (_: A1) => A2 | undefined | null, f3: (_: A2) => R | undefined | null): Opt<R>;
-  <A1, A2, A3, R>(f1: (_: T) => A1 | undefined | null, f2: (_: A1) => A2 | undefined | null, f3: (_: A2) => A3 | undefined | null, f4: (_: A3) => R | undefined | null): Opt<R>;
-  <A1, A2, A3, A4, R>(f1: (_: T) => A1 | undefined | null, f2: (_: A1) => A2 | undefined | null, f3: (_: A2) => A3 | undefined | null, f4: (_: A3) => A4 | undefined | null, f5: (_: A4) => R | undefined | null): Opt<R>;
-  <A1, A2, A3, A4, A5, R>(f1: (_: T) => A1 | undefined | null, f2: (_: A1) => A2 | undefined | null, f3: (_: A2) => A3 | undefined | null, f4: (_: A3) => A4 | undefined | null, f5: (_: A4) => A5 | undefined | null, f6: (_: A5) => R | undefined | null): Opt<R>;
-  <A1, A2, A3, A4, A5, A6, R>(f1: (_: T) => A1 | undefined | null, f2: (_: A1) => A2 | undefined | null, f3: (_: A2) => A3 | undefined | null, f4: (_: A3) => A4 | undefined | null, f5: (_: A4) => A5 | undefined | null, f6: (_: A5) => A6 | undefined | null, f7: (_: A6) => R | undefined | null): Opt<R>;
-  <A1, A2, A3, A4, A5, A6, A7, R>(f1: (_: T) => A1 | undefined | null, f2: (_: A1) => A2 | undefined | null, f3: (_: A2) => A3 | undefined | null, f4: (_: A3) => A4 | undefined | null, f5: (_: A4) => A5 | undefined | null, f6: (_: A5) => A6 | undefined | null, f7: (_: A6) => A7 | undefined | null, f8: (_: A7) => R | undefined | null): Opt<R>;
-  <A1, A2, A3, A4, A5, A6, A7, A8, R>(f1: (_: T) => A1 | undefined | null, f2: (_: A1) => A2 | undefined | null, f3: (_: A2) => A3 | undefined | null, f4: (_: A3) => A4 | undefined | null, f5: (_: A4) => A5 | undefined | null, f6: (_: A5) => A6 | undefined | null, f7: (_: A6) => A7 | undefined | null, f8: (_: A7) => A8 | undefined | null, f9: (_: A8) => R | undefined | null): Opt<R>;
-  <A1, A2, A3, A4, A5, A6, A7, A8, A9, R>(f1: (_: T) => A1 | undefined | null, f2: (_: A1) => A2 | undefined | null, f3: (_: A2) => A3 | undefined | null, f4: (_: A3) => A4 | undefined | null, f5: (_: A4) => A5 | undefined | null, f6: (_: A5) => A6 | undefined | null, f7: (_: A6) => A7 | undefined | null, f8: (_: A7) => A8 | undefined | null, f9: (_: A8) => A9 | undefined | null, f10: (_: A9) => R | undefined | null): Opt<R>;
+  <R>(f1: (_: T) => R | undefined | null): OptSafe<R>;
+  <A1, R>(f1: (_: T) => A1 | undefined | null, f2: (_: A1) => R | undefined | null): OptSafe<R>;
+  <A1, A2, R>(f1: (_: T) => A1 | undefined | null, f2: (_: A1) => A2 | undefined | null, f3: (_: A2) => R | undefined | null): OptSafe<R>;
+  <A1, A2, A3, R>(f1: (_: T) => A1 | undefined | null, f2: (_: A1) => A2 | undefined | null, f3: (_: A2) => A3 | undefined | null, f4: (_: A3) => R | undefined | null): OptSafe<R>;
+  <A1, A2, A3, A4, R>(f1: (_: T) => A1 | undefined | null, f2: (_: A1) => A2 | undefined | null, f3: (_: A2) => A3 | undefined | null, f4: (_: A3) => A4 | undefined | null, f5: (_: A4) => R | undefined | null): OptSafe<R>;
+  <A1, A2, A3, A4, A5, R>(f1: (_: T) => A1 | undefined | null, f2: (_: A1) => A2 | undefined | null, f3: (_: A2) => A3 | undefined | null, f4: (_: A3) => A4 | undefined | null, f5: (_: A4) => A5 | undefined | null, f6: (_: A5) => R | undefined | null): OptSafe<R>;
+  <A1, A2, A3, A4, A5, A6, R>(f1: (_: T) => A1 | undefined | null, f2: (_: A1) => A2 | undefined | null, f3: (_: A2) => A3 | undefined | null, f4: (_: A3) => A4 | undefined | null, f5: (_: A4) => A5 | undefined | null, f6: (_: A5) => A6 | undefined | null, f7: (_: A6) => R | undefined | null): OptSafe<R>;
+  <A1, A2, A3, A4, A5, A6, A7, R>(f1: (_: T) => A1 | undefined | null, f2: (_: A1) => A2 | undefined | null, f3: (_: A2) => A3 | undefined | null, f4: (_: A3) => A4 | undefined | null, f5: (_: A4) => A5 | undefined | null, f6: (_: A5) => A6 | undefined | null, f7: (_: A6) => A7 | undefined | null, f8: (_: A7) => R | undefined | null): OptSafe<R>;
+  <A1, A2, A3, A4, A5, A6, A7, A8, R>(f1: (_: T) => A1 | undefined | null, f2: (_: A1) => A2 | undefined | null, f3: (_: A2) => A3 | undefined | null, f4: (_: A3) => A4 | undefined | null, f5: (_: A4) => A5 | undefined | null, f6: (_: A5) => A6 | undefined | null, f7: (_: A6) => A7 | undefined | null, f8: (_: A7) => A8 | undefined | null, f9: (_: A8) => R | undefined | null): OptSafe<R>;
+  <A1, A2, A3, A4, A5, A6, A7, A8, A9, R>(f1: (_: T) => A1 | undefined | null, f2: (_: A1) => A2 | undefined | null, f3: (_: A2) => A3 | undefined | null, f4: (_: A3) => A4 | undefined | null, f5: (_: A4) => A5 | undefined | null, f6: (_: A5) => A6 | undefined | null, f7: (_: A6) => A7 | undefined | null, f8: (_: A7) => A8 | undefined | null, f9: (_: A8) => A9 | undefined | null, f10: (_: A9) => R | undefined | null): OptSafe<R>;
 }
 
 export interface ActToOptFn {
-  <I, R>(f1: (_: I) => R | undefined | null): (x: Opt<I>) => Opt<R>;
-  <I, A1, R>(f1: (_: I) => A1 | undefined | null, f2: (_: A1) => R | undefined | null): (x: Opt<I>) => Opt<R>;
-  <I, A1, A2, R>(f1: (_: I) => A1 | undefined | null, f2: (_: A1) => A2 | undefined | null, f3: (_: A2) => R | undefined | null): (x: Opt<I>) => Opt<R>;
-  <I, A1, A2, A3, R>(f1: (_: I) => A1 | undefined | null, f2: (_: A1) => A2 | undefined | null, f3: (_: A2) => A3 | undefined | null, f4: (_: A3) => R | undefined | null): (x: Opt<I>) => Opt<R>;
-  <I, A1, A2, A3, A4, R>(f1: (_: I) => A1 | undefined | null, f2: (_: A1) => A2 | undefined | null, f3: (_: A2) => A3 | undefined | null, f4: (_: A3) => A4 | undefined | null, f5: (_: A4) => R | undefined | null): (x: Opt<I>) => Opt<R>;
-  <I, A1, A2, A3, A4, A5, R>(f1: (_: I) => A1 | undefined | null, f2: (_: A1) => A2 | undefined | null, f3: (_: A2) => A3 | undefined | null, f4: (_: A3) => A4 | undefined | null, f5: (_: A4) => A5 | undefined | null, f6: (_: A5) => R | undefined | null): (x: Opt<I>) => Opt<R>;
-  <I, A1, A2, A3, A4, A5, A6, R>(f1: (_: I) => A1 | undefined | null, f2: (_: A1) => A2 | undefined | null, f3: (_: A2) => A3 | undefined | null, f4: (_: A3) => A4 | undefined | null, f5: (_: A4) => A5 | undefined | null, f6: (_: A5) => A6 | undefined | null, f7: (_: A6) => R | undefined | null): (x: Opt<I>) => Opt<R>;
-  <I, A1, A2, A3, A4, A5, A6, A7, R>(f1: (_: I) => A1 | undefined | null, f2: (_: A1) => A2 | undefined | null, f3: (_: A2) => A3 | undefined | null, f4: (_: A3) => A4 | undefined | null, f5: (_: A4) => A5 | undefined | null, f6: (_: A5) => A6 | undefined | null, f7: (_: A6) => A7 | undefined | null, f8: (_: A7) => R | undefined | null): (x: Opt<I>) => Opt<R>;
-  <I, A1, A2, A3, A4, A5, A6, A7, A8, R>(f1: (_: I) => A1 | undefined | null, f2: (_: A1) => A2 | undefined | null, f3: (_: A2) => A3 | undefined | null, f4: (_: A3) => A4 | undefined | null, f5: (_: A4) => A5 | undefined | null, f6: (_: A5) => A6 | undefined | null, f7: (_: A6) => A7 | undefined | null, f8: (_: A7) => A8 | undefined | null, f9: (_: A8) => R | undefined | null): (x: Opt<I>) => Opt<R>;
-  <I, A1, A2, A3, A4, A5, A6, A7, A8, A9, R>(f1: (_: I) => A1 | undefined | null, f2: (_: A1) => A2 | undefined | null, f3: (_: A2) => A3 | undefined | null, f4: (_: A3) => A4 | undefined | null, f5: (_: A4) => A5 | undefined | null, f6: (_: A5) => A6 | undefined | null, f7: (_: A6) => A7 | undefined | null, f8: (_: A7) => A8 | undefined | null, f9: (_: A8) => A9 | undefined | null, f10: (_: A9) => R | undefined | null): (x: Opt<I>) => Opt<R>;
+  <I, R>(f1: (_: I) => R | undefined | null): (x: Opt<I>) => OptSafe<R>;
+  <I, A1, R>(f1: (_: I) => A1 | undefined | null, f2: (_: A1) => R | undefined | null): (x: Opt<I>) => OptSafe<R>;
+  <I, A1, A2, R>(f1: (_: I) => A1 | undefined | null, f2: (_: A1) => A2 | undefined | null, f3: (_: A2) => R | undefined | null): (x: Opt<I>) => OptSafe<R>;
+  <I, A1, A2, A3, R>(f1: (_: I) => A1 | undefined | null, f2: (_: A1) => A2 | undefined | null, f3: (_: A2) => A3 | undefined | null, f4: (_: A3) => R | undefined | null): (x: Opt<I>) => OptSafe<R>;
+  <I, A1, A2, A3, A4, R>(f1: (_: I) => A1 | undefined | null, f2: (_: A1) => A2 | undefined | null, f3: (_: A2) => A3 | undefined | null, f4: (_: A3) => A4 | undefined | null, f5: (_: A4) => R | undefined | null): (x: Opt<I>) => OptSafe<R>;
+  <I, A1, A2, A3, A4, A5, R>(f1: (_: I) => A1 | undefined | null, f2: (_: A1) => A2 | undefined | null, f3: (_: A2) => A3 | undefined | null, f4: (_: A3) => A4 | undefined | null, f5: (_: A4) => A5 | undefined | null, f6: (_: A5) => R | undefined | null): (x: Opt<I>) => OptSafe<R>;
+  <I, A1, A2, A3, A4, A5, A6, R>(f1: (_: I) => A1 | undefined | null, f2: (_: A1) => A2 | undefined | null, f3: (_: A2) => A3 | undefined | null, f4: (_: A3) => A4 | undefined | null, f5: (_: A4) => A5 | undefined | null, f6: (_: A5) => A6 | undefined | null, f7: (_: A6) => R | undefined | null): (x: Opt<I>) => OptSafe<R>;
+  <I, A1, A2, A3, A4, A5, A6, A7, R>(f1: (_: I) => A1 | undefined | null, f2: (_: A1) => A2 | undefined | null, f3: (_: A2) => A3 | undefined | null, f4: (_: A3) => A4 | undefined | null, f5: (_: A4) => A5 | undefined | null, f6: (_: A5) => A6 | undefined | null, f7: (_: A6) => A7 | undefined | null, f8: (_: A7) => R | undefined | null): (x: Opt<I>) => OptSafe<R>;
+  <I, A1, A2, A3, A4, A5, A6, A7, A8, R>(f1: (_: I) => A1 | undefined | null, f2: (_: A1) => A2 | undefined | null, f3: (_: A2) => A3 | undefined | null, f4: (_: A3) => A4 | undefined | null, f5: (_: A4) => A5 | undefined | null, f6: (_: A5) => A6 | undefined | null, f7: (_: A6) => A7 | undefined | null, f8: (_: A7) => A8 | undefined | null, f9: (_: A8) => R | undefined | null): (x: Opt<I>) => OptSafe<R>;
+  <I, A1, A2, A3, A4, A5, A6, A7, A8, A9, R>(f1: (_: I) => A1 | undefined | null, f2: (_: A1) => A2 | undefined | null, f3: (_: A2) => A3 | undefined | null, f4: (_: A3) => A4 | undefined | null, f5: (_: A4) => A5 | undefined | null, f6: (_: A5) => A6 | undefined | null, f7: (_: A6) => A7 | undefined | null, f8: (_: A7) => A8 | undefined | null, f9: (_: A8) => A9 | undefined | null, f10: (_: A9) => R | undefined | null): (x: Opt<I>) => OptSafe<R>;
 }
 
 export interface FlowFn {

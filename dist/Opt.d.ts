@@ -5,7 +5,6 @@ declare type SuperUnionOf<T, U> = Exclude<U, T> extends never ? NotObject<T> : n
 declare type WithoutOptValues<T> = NonNullable<T>;
 declare type EmptyValue = null | undefined;
 declare type AnyFunc = (...args: any) => any;
-declare type OptSafe<T> = Opt<WithoutOptValues<T>>;
 declare class OperationNotAvailable<TypeGot, TypeExpected> {
     readonly '@@type': symbol;
     _notUsed1?: TypeGot;
@@ -1105,6 +1104,20 @@ export declare const some: <T>(x: T) => Readonly<Some<T>>;
 /**
  * Main constructor function - for `undefined`, `null` and `NaN` returns [[None]].
  * Anything else is wrapped into [[Some]].
+ * @example
+ * ```ts
+ * opt(0) // Some(0)
+ * opt(1) // Some(1)
+ * opt(true) // Some(true)
+ * opt('Kagome') // Some('Kagome')
+ * opt([]) // Some([])
+ * opt([1]) // Some([1])
+ * opt({}) // Some({})
+ * opt({a: 0}) // Some({a: 0})
+ * opt(undefined) // None
+ * opt(null) // None
+ * opt(NaN) // None
+ * ```
  * @param x
  */
 export declare const opt: <T>(x: T | null | undefined) => OptSafe<T>;
@@ -1851,4 +1864,140 @@ export declare const max2Any: (a: number | EmptyValue) => (b: number | EmptyValu
  * @param minValue
  */
 export declare const clamp: (minValue: number | EmptyValue) => (maxValue: number | EmptyValue) => (x: number | EmptyValue) => Opt<number>;
+/**
+ * Logical negation of a boolean value.
+ *
+ * @example
+ * ```ts
+ * not(true) // false
+ * not(false) // true
+ * ```
+ *
+ * @param x
+ * @returns The negated boolean value
+ */
+export declare const not: (x: boolean) => boolean;
+/**
+ * Logical AND of two boolean values.
+ *
+ * @example
+ * ```ts
+ * and(true)(false) // false
+ * and(true)(true) // true
+ * ```
+ *
+ * @param x
+ * @returns
+ */
+export declare const and: (x: boolean) => (y: boolean) => boolean;
+/**
+ * Logical OR of two boolean values.
+ *
+ * @example
+ * ```ts
+ * or(true)(false) // true
+ * or(false)(false) // false
+ * ```
+ *
+ * @param x
+ * @returns
+ */
+export declare const or: (x: boolean) => (y: boolean) => boolean;
+/**
+ * Logical XOR (exclusive OR) of two boolean values.
+ *
+ * @example
+ * ```ts
+ * xor(true)(false) // true
+ * xor(true)(true) // false
+ * ```
+ *
+ * @param x
+ * @returns
+ */
+export declare const xor: (x: boolean) => (y: boolean) => boolean;
+/**
+ * Returns one of two values based on a boolean condition.
+ *
+ * @example
+ * ```ts
+ * bool(0)(1)(true) // 1
+ * bool('no')('yes')(false) // 'no'
+ * ```
+ *
+ * @param falseValue
+ * @returns
+ */
+export declare const bool: <T>(falseValue: T) => (trueValue: T) => (cond: boolean) => T;
+/**
+ * Increments a number by 1.
+ *
+ * @example
+ * ```ts
+ * inc(5) // 6
+ * ```
+ *
+ * @param x - The number to increment
+ * @returns The number incremented by 1
+ */
+export declare const inc: (x: number) => number;
+/**
+ * Decrements a number by 1.
+ *
+ * @example
+ * ```ts
+ * dec(5) // 4
+ * ```
+ *
+ * @param x - The number to decrement
+ * @returns The number decremented by 1
+ */
+export declare const dec: (x: number) => number;
+/**
+ * Throws an error with a given message.
+ *
+ * @example
+ * ```ts
+ * crash('Zeref?') // throws Error
+ * ```
+ *
+ * @param msg - The error message
+ * @returns Nothing (function never returns due to exception)
+ */
+export declare const crash: (msg: string) => never;
+/**
+ * Checks equality between two values of type T using strict equality.
+ *
+ * @example
+ * ```ts
+ * eq(5)(5) // true
+ * eq(5)(6) // false
+ * eq({})({}) // false
+ * ```
+ *
+ * @param a - The first value to compare
+ * @returns A function that takes another value and returns whether it is strictly equal to the first value
+ */
+export declare const eq: <T>(a: T) => (b: T) => boolean;
+/**
+ * Checks equality between two values of any type using strict equality.
+ *
+ * @example
+ * ```ts
+ * eqAny('hello')('hello') // true
+ * eqAny('hello')('Hi') // false
+ * eqAny('')(2) // false
+ * ```
+ *
+ * @param a - The first value to compare
+ * @returns A function that takes another value and returns whether it is strictly equal to the first value
+ */
+export declare const eqAny: (a: unknown) => (b: unknown) => boolean;
+/**
+ * A no-operation function that simply returns undefined.
+ * Can be used as a placeholder callback.
+ *
+ * @returns undefined
+ */
+export declare const noop: (..._args: unknown[]) => void;
 export {};
