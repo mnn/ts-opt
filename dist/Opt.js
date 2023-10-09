@@ -20,9 +20,9 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from) {
     return to;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.forAll = exports.exists = exports.contains = exports.pipe = exports.onBoth = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOptFlow = exports.actToOpt = exports.chainToOpt = exports.chainFlow = exports.act = exports.chain = exports.flatMap = exports.mapFlow = exports.map = exports.toObject = exports.fromObject = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.ReduxDevtoolsCompatibilityHelper = exports.Opt = exports.isNumber = exports.isObject = exports.isFunction = exports.isReadonlyArray = exports.isArray = exports.toString = exports.isString = void 0;
-exports.onFunc = exports.apply = exports.parseFloat = exports.parseInt = exports.parseJson = exports.tryRun = exports.testReOrFalse = exports.testRe = exports.zipToOptArray = exports.last = exports.head = exports.at = exports.id = exports.isFull = exports.nonEmpty = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.genNakedPropOrCrash = exports.propOrCrash = exports.prop = exports.equals = exports.print = exports.narrowOrCrash = exports.narrow = exports.find = exports.count = exports.noneWhen = exports.noneIf = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.flatBimap = exports.bimap = exports.altOpt = exports.alt = exports.orElseAny = exports.orElseLazy = exports.orElse = void 0;
-exports.noop = exports.eqAny = exports.eq = exports.crash = exports.dec = exports.inc = exports.bool = exports.xor = exports.or = exports.and = exports.not = exports.clamp = exports.max2Any = exports.max2All = exports.max2Num = exports.min2Any = exports.min2All = exports.min2Num = exports.max = exports.min = exports.assertType = exports.isOrCrash = void 0;
+exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOptFlow = exports.actToOpt = exports.chainToOpt = exports.chainFlow = exports.act = exports.chain = exports.flatMap = exports.mapFlow = exports.map = exports.toObject = exports.fromObject = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.deserializeUnsafe = exports.deserializeOrCrash = exports.deserialize = exports.serialize = exports.ReduxDevtoolsCompatibilityHelper = exports.isOptSerialized = exports.Opt = exports.isUnknown = exports.isNumber = exports.isObject = exports.isFunction = exports.isReadonlyArray = exports.isArray = exports.toString = exports.isString = void 0;
+exports.testReOrFalse = exports.testRe = exports.zipToOptArray = exports.last = exports.head = exports.at = exports.id = exports.isFull = exports.nonEmpty = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.genNakedPropOrCrash = exports.propOrCrash = exports.prop = exports.equals = exports.print = exports.narrowOrCrash = exports.narrow = exports.find = exports.count = exports.noneWhen = exports.noneIf = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.flatBimap = exports.bimap = exports.altOpt = exports.alt = exports.orElseAny = exports.orElseLazy = exports.orElse = exports.forAll = exports.exists = exports.contains = exports.pipe = exports.onBoth = exports.caseOf = void 0;
+exports.noop = exports.eqAny = exports.eq = exports.crash = exports.dec = exports.inc = exports.bool = exports.xor = exports.or = exports.and = exports.not = exports.clamp = exports.max2Any = exports.max2All = exports.max2Num = exports.min2Any = exports.min2All = exports.min2Num = exports.max = exports.min = exports.assertType = exports.isOrCrash = exports.onFunc = exports.apply = exports.parseFloat = exports.parseInt = exports.parseJson = exports.tryRun = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 var errorSymbol = Symbol('Error');
@@ -49,6 +49,8 @@ var isObject = function (value) { return value !== null && typeof value === 'obj
 exports.isObject = isObject;
 var isNumber = function (x) { return typeof x === 'number'; };
 exports.isNumber = isNumber;
+var isUnknown = function (_) { return true; };
+exports.isUnknown = isUnknown;
 var debugPrint = function (tag) {
     var xs = [];
     for (var _i = 1; _i < arguments.length; _i++) {
@@ -296,6 +298,20 @@ var Opt = /** @class */ (function () {
      */
     Opt.fromArray = function (x) { return exports.opt(x[0]); };
     /**
+     * Serializes [[Opt]] to a plain JavaScript object.
+     * @see [[ts-opt.serialize]]
+     */
+    Opt.prototype.serialize = function () {
+        return exports.serialize(this);
+    };
+    /**
+     * Deserializes [[Opt]] from a plain JavaScript object.
+     * @see [[ts-opt.deserialize]]
+     */
+    Opt.deserialize = function (x, guard) {
+        return exports.deserialize(x, guard);
+    };
+    /**
      * @alias [[flatMap]]
      * @see [[ts-opt.chain]]
      * @param f
@@ -417,7 +433,7 @@ var Opt = /** @class */ (function () {
      * @param key
      */
     Opt.prototype.propOrCrash = function (key) {
-        return this.prop(key).orCrash("missing " + key);
+        return this.prop(key).orCrash("missing " + String(key));
     };
     /**
      * Get a first item of an array or a first character of a string.
@@ -805,37 +821,134 @@ var Some = /** @class */ (function (_super) {
 }(Opt));
 var someSerializedType = 'Opt/Some';
 var noneSerializedType = 'Opt/None';
+var isOptSerialized = function (x) {
+    if (typeof x !== 'object' || x === null) {
+        return false;
+    }
+    if ('type' in x) {
+        // @ts-expect-error because TS can't infer `type` field is actually there, despite it being checked line before...
+        return x.type === someSerializedType || x.type === noneSerializedType;
+    }
+    else {
+        return false;
+    }
+};
+exports.isOptSerialized = isOptSerialized;
+/**
+ * A helper class for providing compatibility with Redux DevTools.
+ */
 var ReduxDevtoolsCompatibilityHelper = /** @class */ (function () {
     function ReduxDevtoolsCompatibilityHelper() {
     }
     ReduxDevtoolsCompatibilityHelper.replacer = function (_key, value) {
-        if (exports.isOpt(value)) {
-            var res = value.isEmpty ? { type: noneSerializedType } : {
-                type: someSerializedType,
-                value: value.orCrash('failed to extract value from Some'),
-            };
-            return res;
-        }
-        else {
-            return value;
-        }
+        return exports.isOpt(value) ? exports.serialize(value) : value;
     };
     ReduxDevtoolsCompatibilityHelper.reviver = function (_key, value) {
         if (!value || typeof value !== 'object') {
             return value;
         }
-        switch (value.type) {
-            case noneSerializedType:
-                return exports.none;
-            case someSerializedType:
-                return exports.some(value.value);
-            default:
-                return value;
-        }
+        var deser = exports.deserialize(value, exports.isUnknown);
+        if (deser.tag === 'failure')
+            return value;
+        return deser.value;
     };
     return ReduxDevtoolsCompatibilityHelper;
 }());
 exports.ReduxDevtoolsCompatibilityHelper = ReduxDevtoolsCompatibilityHelper;
+/**
+ * Serializes an Opt instance to a plain JavaScript object.
+ *
+ * @example
+ * ```ts
+ * serialize(none) // { type: 'Opt/None' }
+ * serialize(opt(1)) // { type: 'Opt/Some', value: 1 }
+ * ```
+ *
+ * @param x [[Opt]] instance to serialize
+ * @returns serialized Opt instance as an [[OptSerialized]] object
+ */
+var serialize = function (x) {
+    if (x.isEmpty) {
+        return { type: noneSerializedType };
+    }
+    else {
+        return {
+            type: someSerializedType,
+            value: x.orCrash('failed to extract value from Some'),
+        };
+    }
+};
+exports.serialize = serialize;
+/**
+ * Deserializes a plain JavaScript object to an Opt instance.
+ *
+ * @example
+ * ```ts
+ * deserialize({ type: 'Opt/None' }, isNumber) // { tag: 'success', value: none }
+ * deserialize({ type: 'Opt/Some', value: 0 }, isNumber) // { tag: 'success', value: some(0) }
+ * deserialize({ type: 'Opt/Some', value: 'not a number' }, isNumber) // { tag: 'failure', reason: 'failed to validate inner type' }
+ * ```
+ *
+ * @see [[serialize]]
+ * @param x serialized Opt object (expected shape is [[OptSerialized]])
+ * @param guard function to validate the inner type
+ * @returns deserialization result as a [[DeserializationResult]] object
+ */
+var deserialize = function (x, guard) {
+    if (!exports.isOptSerialized(x))
+        return { tag: 'failure', reason: 'not OptSerialized' };
+    switch (x.type) {
+        case noneSerializedType:
+            return { tag: 'success', value: exports.none };
+        case someSerializedType:
+            if (!guard(x.value))
+                return { tag: 'failure', reason: 'failed to validate inner type' };
+            return { tag: 'success', value: exports.some(x.value) };
+    }
+};
+exports.deserialize = deserialize;
+/**
+ * Deserializes the input value or throws an error if deserialization fails.
+ *
+ * @example
+ * ```ts
+ * deserializeOrCrash({ type: 'Opt/None' }, isNumber) // none
+ * deserializeOrCrash({ type: 'Opt/Some', value: 0 }, isNumber) // some(0)
+ * deserializeOrCrash({ type: 'Opt/Some', value: 'not a number' }, isNumber) // exception thrown
+ * deserializeOrCrash(4, isNumber) // exception thrown
+ * ```
+ *
+ * @param x input value to be deserialized
+ * @param guard guard function to validate the inner type
+ * @return deserialized value as an [[Opt]] instance
+ */
+var deserializeOrCrash = function (x, guard) {
+    var deser = exports.deserialize(x, guard);
+    if (deser.tag === 'failure') {
+        throw new Error(deser.reason);
+    }
+    return deser.value;
+};
+exports.deserializeOrCrash = deserializeOrCrash;
+/**
+ * Unsafe version of [[deserializeOrCrash]].
+ * Deserialization failure is indistinguishable from deserialized [[None]].
+ * It is usually better to use [[deserialize]] or [[deserializeOrCrash]].
+ *
+ * @example
+ * ```ts
+ * deserializeUnsafe({ type: 'Opt/None' }) // none
+ * deserializeUnsafe({ type: 'Opt/Some', value: 0 }) // some(0)
+ * deserializeUnsafe(9) // none
+ * ```
+ *
+ * @param x input value to be deserialized
+ * @returns deserialized value as an [[Opt]] instance
+ */
+var deserializeUnsafe = function (x) {
+    return exports.tryRun(function () { return exports.deserializeOrCrash(x, exports.isUnknown); }).join();
+};
+exports.deserializeUnsafe = deserializeUnsafe;
 var isNoneValue = function (x) {
     return x === undefined || x === null || Number.isNaN(x);
 };

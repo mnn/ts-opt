@@ -68,6 +68,7 @@ export const isReadonlyArray = (x: any): x is readonly unknown[] => Array.isArra
 export const isFunction = (x: any): x is Function => typeof x === 'function';
 export const isObject = (value: any): value is object => value !== null && typeof value === 'object';
 export const isNumber = (x: any): x is number => typeof x === 'number';
+export const isUnknown = (_: unknown): _ is unknown => true;
 
 const debugPrint = (tag?: string, ...xs: unknown[]) => {
   console.log(...[...opt(tag).map(x => [`[${x}]`]).orElse([]), ...xs]);
@@ -176,6 +177,22 @@ export abstract class Opt<T> {
   toObject: ToObjectFn<T> = (k = 'value') => {
     return {[k]: this.orNull()} as any;
   };
+
+  /**
+   * Serializes [[Opt]] to a plain JavaScript object.
+   * @see [[ts-opt.serialize]]
+   */
+  serialize(): OptSerialized<T> {
+    return serialize(this);
+  }
+
+  /**
+   * Deserializes [[Opt]] from a plain JavaScript object.
+   * @see [[ts-opt.deserialize]]
+   */
+  static deserialize<T>(x: unknown, guard: (x: unknown) => x is T): DeserializationResult<T> {
+    return deserialize(x, guard);
+  }
 
   /**
    * Applies function to the wrapped value and returns a new instance of [[Some]].
@@ -919,7 +936,7 @@ export abstract class Opt<T> {
     K extends (T extends object ? keyof T : never), //
     R extends (T extends object ? WithoutOptValues<T[K]> | never : never) //
     >(key: K): R {
-    return this.prop(key).orCrash(`missing ${key}`) as R;
+    return this.prop(key).orCrash(`missing ${String(key)}`) as R;
   }
 
   /**
@@ -1410,39 +1427,146 @@ class Some<T> extends Opt<T> {
 
 const someSerializedType = 'Opt/Some';
 const noneSerializedType = 'Opt/None';
-type OptSerialized =
-  {
-    type: typeof noneSerializedType;
-  } | {
-    type: typeof someSerializedType,
-    value: any,
-  };
 
+export type NoneSerialized = {
+  type: typeof noneSerializedType;
+};
+
+export type SomeSerialized<T> = {
+  type: typeof someSerializedType,
+  value: T,
+};
+
+/**
+ * Represents a serialized Opt type, which can be either [[NoneSerialized]] or [[SomeSerialized]].
+ */
+export type OptSerialized<T> = NoneSerialized | SomeSerialized<T>;
+
+export const isOptSerialized = (x: unknown): x is OptSerialized<unknown> => {
+  if (typeof x !== 'object' || x === null) { return false; }
+  if ('type' in x) {
+    // @ts-expect-error because TS can't infer `type` field is actually there, despite it being checked line before...
+    return x.type === someSerializedType || x.type === noneSerializedType;
+  } else {
+    return false;
+  }
+}
+
+/**
+ * A helper class for providing compatibility with Redux DevTools.
+ */
 export class ReduxDevtoolsCompatibilityHelper {
-  static replacer(_key: unknown, value: any): any | OptSerialized {
-    if (isOpt(value)) {
-      const res: OptSerialized =
-        value.isEmpty ? {type: noneSerializedType} as const : {
-          type: someSerializedType,
-          value: value.orCrash('failed to extract value from Some'),
-        } as const;
-      return res;
-    } else {
-      return value;
-    }
+  static replacer(_key: unknown, value: any): any | OptSerialized<unknown> {
+    return isOpt(value) ? serialize(value) : value;
   }
 
   static reviver(_key: unknown, value: any): any {
     if (!value || typeof value !== 'object') { return value; }
-    switch (value.type) {
-      case noneSerializedType:
-        return none;
-      case someSerializedType:
-        return some(value.value);
-      default:
-        return value;
-    }
+    const deser = deserialize(value, isUnknown);
+    if (deser.tag === 'failure') return value;
+    return deser.value;
   }
+}
+
+/**
+ * Serializes an Opt instance to a plain JavaScript object.
+ *
+ * @example
+ * ```ts
+ * serialize(none) // { type: 'Opt/None' }
+ * serialize(opt(1)) // { type: 'Opt/Some', value: 1 }
+ * ```
+ *
+ * @param x [[Opt]] instance to serialize
+ * @returns serialized Opt instance as an [[OptSerialized]] object
+ */
+export const serialize = <T>(x: Opt<T>): OptSerialized<T> => {
+  if (x.isEmpty) {
+    return {type: noneSerializedType};
+  } else {
+    return {
+      type: someSerializedType,
+      value: x.orCrash('failed to extract value from Some'),
+    };
+  }
+};
+
+export type DeserializationSuccess<T> = {
+  tag: 'success',
+  value: Opt<T>,
+}
+
+export type DeserializationFailure = {
+  tag: 'failure',
+  reason: string,
+}
+
+export type DeserializationResult<T> = DeserializationSuccess<T> | DeserializationFailure;
+
+/**
+ * Deserializes a plain JavaScript object to an Opt instance.
+ *
+ * @example
+ * ```ts
+ * deserialize({ type: 'Opt/None' }, isNumber) // { tag: 'success', value: none }
+ * deserialize({ type: 'Opt/Some', value: 0 }, isNumber) // { tag: 'success', value: some(0) }
+ * deserialize({ type: 'Opt/Some', value: 'not a number' }, isNumber) // { tag: 'failure', reason: 'failed to validate inner type' }
+ * ```
+ *
+ * @see [[serialize]]
+ * @param x serialized Opt object (expected shape is [[OptSerialized]])
+ * @param guard function to validate the inner type
+ * @returns deserialization result as a [[DeserializationResult]] object
+ */
+export const deserialize = <T>(x: unknown, guard: (x: unknown) => x is T): DeserializationResult<T> => {
+  if (!isOptSerialized(x)) return {tag: 'failure', reason: 'not OptSerialized'};
+  switch (x.type) {
+    case noneSerializedType:
+      return { tag: 'success', value: none };
+    case someSerializedType:
+      if (!guard(x.value)) return { tag: 'failure', reason: 'failed to validate inner type' };
+      return { tag: 'success', value: some(x.value) };
+  }
+}
+
+/**
+ * Deserializes the input value or throws an error if deserialization fails.
+ *
+ * @example
+ * ```ts
+ * deserializeOrCrash({ type: 'Opt/None' }, isNumber) // none
+ * deserializeOrCrash({ type: 'Opt/Some', value: 0 }, isNumber) // some(0)
+ * deserializeOrCrash({ type: 'Opt/Some', value: 'not a number' }, isNumber) // exception thrown
+ * deserializeOrCrash(4, isNumber) // exception thrown
+ * ```
+ *
+ * @param x input value to be deserialized
+ * @param guard guard function to validate the inner type
+ * @return deserialized value as an [[Opt]] instance
+ */
+export const deserializeOrCrash = <T>(x: unknown, guard: (x: unknown) => x is T): Opt<T> => {
+  const deser = deserialize(x, guard);
+  if (deser.tag === 'failure') { throw new Error(deser.reason); }
+  return deser.value;
+}
+
+/**
+ * Unsafe version of [[deserializeOrCrash]].
+ * Deserialization failure is indistinguishable from deserialized [[None]].
+ * It is usually better to use [[deserialize]] or [[deserializeOrCrash]].
+ *
+ * @example
+ * ```ts
+ * deserializeUnsafe({ type: 'Opt/None' }) // none
+ * deserializeUnsafe({ type: 'Opt/Some', value: 0 }) // some(0)
+ * deserializeUnsafe(9) // none
+ * ```
+ *
+ * @param x input value to be deserialized
+ * @returns deserialized value as an [[Opt]] instance
+ */
+export const deserializeUnsafe = (x: unknown): Opt<unknown> => {
+  return tryRun(() => deserializeOrCrash(x, isUnknown)).join();
 }
 
 const isNoneValue = (x: any): x is EmptyValue => {

@@ -6,12 +6,14 @@ import {
   actToOpt,
   alt,
   altOpt,
+  and,
   ap,
   apFn,
   apply,
   assertType,
   at,
   bimap,
+  bool,
   caseOf,
   catOpts,
   chainFlow,
@@ -21,10 +23,19 @@ import {
   compose,
   contains,
   count,
+  crash,
   curryTuple,
   curryTuple3,
   curryTuple4,
   curryTuple5,
+  dec,
+  DeserializationResult,
+  DeserializationSuccess,
+  deserialize,
+  deserializeOrCrash,
+  deserializeUnsafe,
+  eq,
+  eqAny,
   equals,
   exists,
   filter,
@@ -38,6 +49,7 @@ import {
   genNakedPropOrCrash,
   head,
   id,
+  inc,
   isArray,
   isEmpty,
   isFull,
@@ -67,6 +79,8 @@ import {
   noneIf,
   nonEmpty,
   noneWhen,
+  noop,
+  not,
   onBoth,
   onFunc,
   opt,
@@ -77,6 +91,7 @@ import {
   optFalsy,
   optNegative,
   optZero,
+  or,
   orCrash,
   orElse,
   orElseAny,
@@ -94,6 +109,7 @@ import {
   prop,
   propOrCrash,
   ReduxDevtoolsCompatibilityHelper,
+  serialize,
   some,
   someOrCrash,
   swap,
@@ -107,22 +123,12 @@ import {
   uncurryTuple3,
   uncurryTuple4,
   uncurryTuple5,
+  xor,
   zip,
   zip3,
   zip4,
   zip5,
-  zipToOptArray,
-  not,
-  and,
-  or,
-  xor,
-  bool,
-  inc,
-  dec,
-  crash,
-  eq,
-  eqAny,
-  noop,
+  zipToOptArray
 } from '../src/Opt';
 
 chai.use(spies);
@@ -348,6 +354,17 @@ describe('opt', () => {
     const c: { c: number | null } = opt(57).toObject('c');
     expect(c).to.be.eql({c: 57});
     suppressUnused(a, b);
+  });
+
+  it('serialize', () => {
+    expect(opt(1).serialize()).to.be.eql({type:'Opt/Some', value: 1});
+    expect(opt(null).serialize()).to.be.eql({type:'Opt/None'});
+  });
+
+  it('deserialize', () => {
+    const res = Opt.deserialize({type: 'Opt/Some', value: 1}, isNumber);
+    expectSuccessDeserializationResult(res);
+    expect(res.value.orNull()).to.be.eql(1);
   });
 
   it('caseOf', () => {
@@ -1398,6 +1415,89 @@ describe('ReduxDevtoolsCompatibilityHelper', () => {
     expect(someRevived.orNull()).to.be.eq(248);
     const someUndefRevived = f('a', {type: 'Opt/Some'});
     expect(someUndefRevived.orNull()).to.be.eq(undefined);
+  });
+});
+
+describe('serialize', () => {
+  it('serializes', () => {
+    const f = serialize;
+    expect(f(none)).to.be.eql({type: 'Opt/None'});
+    expect(f(some(1))).to.be.eql({type: 'Opt/Some', value: 1});
+    expect(f(opt('Cid'))).to.be.eql({type: 'Opt/Some', value: 'Cid'});
+    expect(f(opt({name: 'Cid'}))).to.be.eql({type: 'Opt/Some', value: {name: 'Cid'}});
+  });
+});
+
+const expectSuccessDeserializationResult: (x: DeserializationResult<any>) => asserts x is DeserializationSuccess<any> = x => {
+  expect(x.tag).to.be.eq('success');
+}
+
+describe('deserialize', () => {
+  it('deserializes None', () => {
+    const input = { type: 'Opt/None' };
+    const result = deserialize(input, (x: unknown): x is number => typeof x === 'number');
+    expectSuccessDeserializationResult(result);
+    expect(result.value.isEmpty).to.be.true;
+  });
+
+  it('deserializes Some with valid inner type', () => {
+    const input = { type: 'Opt/Some', value: 0 };
+    const result = deserialize(input, (x: unknown): x is number => typeof x === 'number');
+    expectSuccessDeserializationResult(result);
+    expect(result.value.orNull()).to.be.eq(0);
+  });
+
+  it('fails to deserialize Some with invalid inner type', () => {
+    const input = { type: 'Opt/Some', value: 'not a number' };
+    const result = deserialize(input, (x: unknown): x is number => typeof x === 'number');
+    expect(result).to.deep.equal({ tag: 'failure', reason: 'failed to validate inner type' });
+  });
+
+  it('fails to deserialize invalid type in type field', () => {
+    const input = { type: 'InvalidType' };
+    const result = deserialize(input, (x: unknown): x is number => typeof x === 'number');
+    expect(result).to.deep.equal({ tag: 'failure', reason: 'not OptSerialized' });
+  });
+
+  it('fails to deserialize invalid input type', () => {
+    const result = deserialize(4, (x: unknown): x is number => typeof x === 'number');
+    expect(result).to.deep.equal({ tag: 'failure', reason: 'not OptSerialized' });
+  });
+});
+
+describe('deserializeOrCrash', () => {
+  it('deserializes without crashing', () => {
+    const input = { type: 'Opt/Some', value: 4 };
+    const result = deserializeOrCrash(input, isNumber);
+    expect(result.orNull()).to.be.eq(4);
+  });
+
+  it('throws an error on invalid inner type', () => {
+    const input = { type: 'Opt/Some', value: 'not a number' };
+    expect(() => deserializeOrCrash(input, isNumber)).to.throw(Error, 'failed to validate inner type');
+  });
+
+  it('throws an error on invalid input type', () => {
+    expect(() => deserializeOrCrash(4, isNumber)).to.throw(Error, 'not OptSerialized');
+  });
+});
+
+describe('deserializeUnsafe', () => {
+  it('deserializes without crashing', () => {
+    const input = { type: 'Opt/Some', value: 2 };
+    const result = deserializeUnsafe(input);
+    expect(result.orNull()).to.be.eq(2);
+  });
+
+  it('returns None on invalid input type (not object)', () => {
+    const result = deserializeUnsafe(9);
+    expect(result.orNull()).to.be.null;
+  })
+
+  it('returns None on invalid input field type', () => {
+    const input = { type: 'Zenos' };
+    const result = deserializeUnsafe(input);
+    expect(result.orNull()).to.be.null;
   });
 });
 

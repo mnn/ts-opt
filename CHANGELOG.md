@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - `join` method
 - functions `not`, `and`, `or`, `xor`, `bool`, `inc`, `dec`, `crash`, `eq`, `eqAny`, `noop`
+- better (de)serialization: function/methods `serialize`, `deserialize`, `deserializeOrCrash` and `deserializeUnsafe`
+
 ### Changed
 - improved return type of `actToOpt` method and function
 
