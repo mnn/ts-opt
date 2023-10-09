@@ -18,7 +18,7 @@ lint:
 test:
   script:
     - npm run build
-    - npm run test
+    - CI=true npm run test
 
 release:
   only:

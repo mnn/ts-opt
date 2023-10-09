@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`jestSnapshotSerializer renders correctly Opt prop 1`] = `
+<Component
+  none={None}
+  null={Some(null)}
+  num={Some(0)}
+  obj={Some({"a":4})}
+  str={Some("cat ears")}
+  undef={Some(undefined)}
+/>
+`;

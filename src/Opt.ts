@@ -1569,6 +1569,16 @@ export const deserializeUnsafe = (x: unknown): Opt<unknown> => {
   return tryRun(() => deserializeOrCrash(x, isUnknown)).join();
 }
 
+interface JestSnapshotSerializer {
+  serialize(val: unknown): string;
+  test(val: unknown): boolean;
+}
+
+export const jestSnapshotSerializer: JestSnapshotSerializer = {
+  serialize: (val: Opt<unknown>) => val.toString(),
+  test: val => isOpt(val),
+};
+
 const isNoneValue = (x: any): x is EmptyValue => {
   return x === undefined || x === null || Number.isNaN(x);
 };

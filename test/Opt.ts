@@ -1,6 +1,10 @@
 /* tslint:disable:no-unused-expression no-console */
 import * as chai from 'chai';
 import * as spies from 'chai-spies';
+import * as React from 'react';
+import * as chaiJestSnapshot from 'chai-jest-snapshot';
+import { performance } from 'perf_hooks';
+
 import {
   act,
   actToOpt,
@@ -60,6 +64,7 @@ import {
   isOrCrash,
   isReadonlyArray,
   isString,
+  jestSnapshotSerializer,
   joinOpt,
   last,
   map,
@@ -131,8 +136,13 @@ import {
   zipToOptArray
 } from '../src/Opt';
 
+(global as any).performance = performance;
+require('jsdom-global')();
+
 chai.use(spies);
 const {expect} = chai;
+chai.use(chaiJestSnapshot);
+chaiJestSnapshot.addSerializer(jestSnapshotSerializer);
 chai.should();
 const sandbox = chai.spy.sandbox();
 
@@ -3245,5 +3255,21 @@ describe('noop', () => {
   it('returns undefined', () => {
     // noinspection JSVoidFunctionReturnValueUsed
     expect(noop()).to.be.undefined;
+  });
+});
+
+describe('jestSnapshotSerializer', () => {
+  before(() => {
+    chaiJestSnapshot.resetSnapshotRegistry();
+  });
+
+  beforeEach(function () {
+    chaiJestSnapshot.configureUsingMochaContext(this);
+  });
+
+  it('renders correctly Opt prop', () => {
+    const Component = (props: Record<string, Opt<unknown>>) => React.createElement('div', null,JSON.stringify(props));
+    const component = React.createElement(Component, {num: opt(0), none: none, obj: opt({a: 4}), str: opt('cat ears'), undef: some(undefined), null: some(null)});
+    expect(component).to.matchSnapshot('test/jestSnapshotSerializer.snapshot', 'opt prop');
   });
 });
