@@ -1179,6 +1179,11 @@ export declare const deserializeOrCrash: <T>(x: unknown, guard: (x: unknown) => 
  * @returns deserialized value as an [[Opt]] instance
  */
 export declare const deserializeUnsafe: (x: unknown) => Opt<unknown>;
+interface JestSnapshotSerializer {
+    serialize(val: unknown): string;
+    test(val: unknown): boolean;
+}
+export declare const jestSnapshotSerializer: JestSnapshotSerializer;
 /**
  * Single global instance of [[None]].
  */

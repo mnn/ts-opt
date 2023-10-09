@@ -3,7 +3,6 @@ import * as chai from 'chai';
 import * as spies from 'chai-spies';
 import * as React from 'react';
 import * as chaiJestSnapshot from 'chai-jest-snapshot';
-import { performance } from 'perf_hooks';
 
 import {
   act,
@@ -135,9 +134,6 @@ import {
   zip5,
   zipToOptArray
 } from '../src/Opt';
-
-(global as any).performance = performance;
-require('jsdom-global')();
 
 chai.use(spies);
 const {expect} = chai;
