@@ -410,6 +410,45 @@ Not using specialized methods and other common bad uses
 | `.map(pred).orTrue()`                                    | `.forAll(pred)`            |
 | `found.prop('id').nonEmpty ? found.prop('id') : opt(id)` | `found.prop('id').alt(id)` |
 
+Integrations
+===
+
+Redux DevTools
+---
+Your store setup:
+
+```ts
+import {ReduxDevtoolsCompatibilityHelper} from 'ts-opt';
+import {composeWithDevTools} from 'redux-devtools-extension';
+
+const composeEnhancers = composeWithDevTools ({
+  serialize: ReduxDevtoolsCompatibilityHelper,
+  // other custom devTools options
+});
+const store = createStore (reducer, /* preloadedState, */ composeEnhancers (
+  applyMiddleware (...middleware),
+  // other store enhancers if any
+));
+```
+
+Jest Snapshot Serializer
+---
+`jest.config.js`:
+
+```js
+module.exports = {
+  // other configuration options
+  snapshotSerializers: ['ts-opt/jest-snapshot-serializer'],
+};
+```
+
+or you could use `expect.addSnapshotSerializer` in your test setup:
+
+```ts
+import optSerializer from 'ts-opt/jest-snapshot-serializer';
+expect.addSnapshotSerializer(optSerializer);
+```
+
 Development
 ===
 

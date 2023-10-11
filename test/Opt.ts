@@ -63,7 +63,6 @@ import {
   isOrCrash,
   isReadonlyArray,
   isString,
-  jestSnapshotSerializer,
   joinOpt,
   last,
   map,
@@ -134,6 +133,7 @@ import {
   zip5,
   zipToOptArray
 } from '../src/Opt';
+import jestSnapshotSerializer from '../src/jest-snapshot-serializer';
 
 chai.use(spies);
 const {expect} = chai;
