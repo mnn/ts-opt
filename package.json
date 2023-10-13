@@ -14,6 +14,10 @@
   ],
   "main": "dist/Opt.js",
   "types": "dist/Opt.d.ts",
+  "exports": {
+    ".": "./dist/Opt.js",
+    "./": "./dist/"
+  },
   "author": "monnef",
   "license": "MIT",
   "scripts": {

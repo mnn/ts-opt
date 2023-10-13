@@ -11,3 +11,7 @@ const jestSnapshotSerializer: JestSnapshotSerializer = {
 };
 
 export default jestSnapshotSerializer;
+module.exports = {
+  ...jestSnapshotSerializer,
+  default: jestSnapshotSerializer
+}
