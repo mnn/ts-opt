@@ -20,9 +20,9 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from) {
     return to;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOptFlow = exports.actToOpt = exports.chainToOpt = exports.chainFlow = exports.act = exports.chain = exports.flatMap = exports.mapFlow = exports.map = exports.toObject = exports.fromObject = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.deserializeUnsafe = exports.deserializeOrCrash = exports.deserialize = exports.serialize = exports.ReduxDevtoolsCompatibilityHelper = exports.isOptSerialized = exports.Opt = exports.isUnknown = exports.isNumber = exports.isObject = exports.isFunction = exports.isReadonlyArray = exports.isArray = exports.toString = exports.isString = void 0;
-exports.testReOrFalse = exports.testRe = exports.zipToOptArray = exports.last = exports.head = exports.at = exports.id = exports.isFull = exports.nonEmpty = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.genNakedPropOrCrash = exports.propOrCrash = exports.prop = exports.equals = exports.print = exports.narrowOrCrash = exports.narrow = exports.find = exports.count = exports.noneWhen = exports.noneIf = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.flatBimap = exports.bimap = exports.altOpt = exports.alt = exports.orElseAny = exports.orElseLazy = exports.orElse = exports.forAll = exports.exists = exports.contains = exports.pipe = exports.onBoth = exports.caseOf = void 0;
-exports.noop = exports.eqAny = exports.eq = exports.crash = exports.dec = exports.inc = exports.bool = exports.xor = exports.or = exports.and = exports.not = exports.clamp = exports.max2Any = exports.max2All = exports.max2Num = exports.min2Any = exports.min2All = exports.min2Num = exports.max = exports.min = exports.assertType = exports.isOrCrash = exports.onFunc = exports.apply = exports.parseFloat = exports.parseInt = exports.parseJson = exports.tryRun = void 0;
+exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOptFlow = exports.actToOpt = exports.chainToOpt = exports.chainFlow = exports.act = exports.chain = exports.flatMap = exports.mapFlow = exports.map = exports.toObject = exports.fromObject = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optArrayOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.deserializeUnsafe = exports.deserializeOrCrash = exports.deserialize = exports.serialize = exports.ReduxDevtoolsCompatibilityHelper = exports.isOptSerialized = exports.Opt = exports.isUnknown = exports.isNumber = exports.isObject = exports.isFunction = exports.isReadonlyArray = exports.isArray = exports.toString = exports.isString = void 0;
+exports.zipToOptArray = exports.last = exports.head = exports.at = exports.id = exports.isFull = exports.nonEmpty = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.genNakedPropOrCrash = exports.propOrCrash = exports.prop = exports.equals = exports.print = exports.narrowOrCrash = exports.narrow = exports.find = exports.count = exports.noneWhen = exports.noneIfEmpty = exports.noneIf = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.flatBimap = exports.bimap = exports.altOpt = exports.alt = exports.orElseAny = exports.orElseLazy = exports.orElse = exports.forAll = exports.exists = exports.contains = exports.pipe = exports.onBoth = exports.caseOf = exports.orNaN = void 0;
+exports.noop = exports.eqAny = exports.eq = exports.crash = exports.dec = exports.inc = exports.bool = exports.xor = exports.or = exports.and = exports.not = exports.clamp = exports.max2Any = exports.max2All = exports.max2Num = exports.min2Any = exports.min2All = exports.min2Num = exports.max = exports.min = exports.assertType = exports.isOrCrash = exports.onFunc = exports.apply = exports.parseFloat = exports.parseInt = exports.parseJson = exports.tryRun = exports.testReOrFalse = exports.testRe = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 var errorSymbol = Symbol('Error');
@@ -375,6 +375,20 @@ var Opt = /** @class */ (function () {
      */
     Opt.prototype.noneIf = function (predicate) {
         return this.filter(function (x) { return !predicate(x); });
+    };
+    /**
+     * Returns [[None]] if opt holds a value for which [[isEmpty]] returns `true`, otherwise passes opt unchanged.
+     *
+     * @example
+     * ```ts
+     * opt('x').noneIfEmpty() // Some('x')
+     * opt('').noneIfEmpty() // None
+     * opt([]).noneIfEmpty() // None
+     * opt({}).noneIfEmpty() // None
+     * ```
+     */
+    Opt.prototype.noneIfEmpty = function () {
+        return this.noneIf(exports.isEmpty);
     };
     /**
      * Returns [[None]] when given `true`, otherwise passes opt unchanged.
@@ -1040,6 +1054,23 @@ exports.optZero = optZero;
 var optNegative = function (x) { return typeof x === 'number' && x < 0 ? exports.none : exports.opt(x); };
 exports.optNegative = optNegative;
 /**
+ * Converts optional array of optional values to opt-wrapped array with empty values discarded.
+ *
+ * @example
+ * ```ts
+ * optArrayOpt(undefined) // None
+ * optArrayOpt([]) // Some([])
+ * optArrayOpt([1]) // Some([1])
+ * optArrayOpt([0, null, undefined, 1]) // Some([0, 1])
+ * ```
+ *
+ * @param xs
+ */
+var optArrayOpt = function (xs) {
+    return exports.opt(xs).mapFlow(function (ys) { return ys.map(exports.opt); }, exports.catOpts);
+};
+exports.optArrayOpt = optArrayOpt;
+/**
  * Is given value an instance of [[Opt]]?
  * @param x
  */
@@ -1287,6 +1318,11 @@ exports.filter = filter;
 /** @see [[Opt.noneIf]] */
 var noneIf = function (predicate) { return function (x) { return x.noneIf(predicate); }; };
 exports.noneIf = noneIf;
+/** @see [[Opt.noneIfEmpty]] */
+var noneIfEmpty = function (x) {
+    return x.noneIfEmpty();
+};
+exports.noneIfEmpty = noneIfEmpty;
 /** @see [[Opt.noneWhen]] */
 var noneWhen = function (returnNone) { return function (x) { return x.noneWhen(returnNone); }; };
 exports.noneWhen = noneWhen;

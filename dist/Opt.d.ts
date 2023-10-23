@@ -683,6 +683,18 @@ export declare abstract class Opt<T> {
      */
     noneIf(predicate: (_: T) => boolean): Opt<T>;
     /**
+     * Returns [[None]] if opt holds a value for which [[isEmpty]] returns `true`, otherwise passes opt unchanged.
+     *
+     * @example
+     * ```ts
+     * opt('x').noneIfEmpty() // Some('x')
+     * opt('').noneIfEmpty() // None
+     * opt([]).noneIfEmpty() // None
+     * opt({}).noneIfEmpty() // None
+     * ```
+     */
+    noneIfEmpty(this: Opt<PossiblyEmpty>): Opt<WithoutPossiblyEmptyEmptyValues<T>>;
+    /**
      * Returns [[None]] when given `true`, otherwise passes opt unchanged.
      *
      * @example
@@ -1255,6 +1267,20 @@ export declare const optZero: <T>(x: 0 | T | null | undefined) => OptSafe<T>;
  */
 export declare const optNegative: (x: number | undefined | null) => OptSafe<number>;
 /**
+ * Converts optional array of optional values to opt-wrapped array with empty values discarded.
+ *
+ * @example
+ * ```ts
+ * optArrayOpt(undefined) // None
+ * optArrayOpt([]) // Some([])
+ * optArrayOpt([1]) // Some([1])
+ * optArrayOpt([0, null, undefined, 1]) // Some([0, 1])
+ * ```
+ *
+ * @param xs
+ */
+export declare const optArrayOpt: <T>(xs: EmptyValue | (EmptyValue | T)[]) => OptSafe<T[]>;
+/**
  * Is given value an instance of [[Opt]]?
  * @param x
  */
@@ -1437,6 +1463,8 @@ declare type FilterFn = <T>(p: (_: T) => boolean) => <U extends Opt<T> | readonl
 export declare const filter: FilterFn;
 /** @see [[Opt.noneIf]] */
 export declare const noneIf: <T>(predicate: (_: T) => boolean) => (x: Opt<T>) => Opt<T>;
+/** @see [[Opt.noneIfEmpty]] */
+export declare const noneIfEmpty: <T extends PossiblyEmpty>(x: Opt<T>) => Opt<Exclude<T, "" | [] | EmptyValue | None<any>>>;
 /** @see [[Opt.noneWhen]] */
 export declare const noneWhen: <T>(returnNone: boolean) => (x: Opt<T>) => Opt<T>;
 declare type CountFn = <T>(p: (_: T) => boolean) => <U extends Opt<T> | readonly T[]>(x: U) => U extends Opt<T> ? 0 | 1 : number;
@@ -1655,6 +1683,7 @@ declare type UncurryTuple5Fn = <A, B, C, D, E, F>(_: (_: A) => (_: B) => (_: C) 
  */
 export declare const uncurryTuple5: UncurryTuple5Fn;
 declare type PossiblyEmpty = Opt<unknown> | unknown[] | null | undefined | Map<unknown, unknown> | Set<unknown> | object | string | number;
+declare type WithoutPossiblyEmptyEmptyValues<T> = Exclude<T, '' | [] | typeof none | EmptyValue>;
 /**
  * Similar to `isEmpty` from lodash, but also supports [[Opt]]s.
  * Returns `true` for [[None]], `[]`, `null`, `undefined`, empty map, empty set, empty object, `''` and `NaN`.

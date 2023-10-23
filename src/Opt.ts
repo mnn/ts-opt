@@ -793,6 +793,21 @@ export abstract class Opt<T> {
   }
 
   /**
+   * Returns [[None]] if opt holds a value for which [[isEmpty]] returns `true`, otherwise passes opt unchanged.
+   *
+   * @example
+   * ```ts
+   * opt('x').noneIfEmpty() // Some('x')
+   * opt('').noneIfEmpty() // None
+   * opt([]).noneIfEmpty() // None
+   * opt({}).noneIfEmpty() // None
+   * ```
+   */
+  noneIfEmpty(this: Opt<PossiblyEmpty>): Opt<WithoutPossiblyEmptyEmptyValues<T>> {
+    return this.noneIf(isEmpty) as unknown as Opt<WithoutPossiblyEmptyEmptyValues<T>>;
+  }
+
+  /**
    * Returns [[None]] when given `true`, otherwise passes opt unchanged.
    *
    * @example
@@ -1660,6 +1675,22 @@ export const optZero = <T>(x: T | undefined | null | 0): OptSafe<T> => x === 0 ?
 export const optNegative = (x: number | undefined | null): OptSafe<number> => typeof x === 'number' && x < 0 ? none : opt(x);
 
 /**
+ * Converts optional array of optional values to opt-wrapped array with empty values discarded.
+ *
+ * @example
+ * ```ts
+ * optArrayOpt(undefined) // None
+ * optArrayOpt([]) // Some([])
+ * optArrayOpt([1]) // Some([1])
+ * optArrayOpt([0, null, undefined, 1]) // Some([0, 1])
+ * ```
+ *
+ * @param xs
+ */
+export const optArrayOpt = <T>(xs: (T | EmptyValue)[] | EmptyValue): OptSafe<T[]> =>
+  opt(xs).mapFlow(ys => ys.map(opt), catOpts)
+
+/**
  * Is given value an instance of [[Opt]]?
  * @param x
  */
@@ -1903,6 +1934,10 @@ export const filter: FilterFn = (p: any) => (x: any) => x.filter(p);
 
 /** @see [[Opt.noneIf]] */
 export const noneIf = <T>(predicate: (_: T) => boolean) => (x: Opt<T>): Opt<T> => x.noneIf(predicate);
+
+/** @see [[Opt.noneIfEmpty]] */
+export const noneIfEmpty = <T extends PossiblyEmpty>(x: Opt<T>): Opt<WithoutPossiblyEmptyEmptyValues<T>> =>
+  x.noneIfEmpty();
 
 /** @see [[Opt.noneWhen]] */
 export const noneWhen = <T>(returnNone: boolean) => (x: Opt<T>): Opt<T> => x.noneWhen(returnNone);
@@ -2179,6 +2214,8 @@ type PossiblyEmpty =
   object |
   string |
   number;
+
+type WithoutPossiblyEmptyEmptyValues<T> = Exclude<T, '' | [] | typeof none | EmptyValue>;
 
 /**
  * Similar to `isEmpty` from lodash, but also supports [[Opt]]s.

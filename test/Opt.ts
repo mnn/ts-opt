@@ -80,6 +80,7 @@ import {
   narrowOrCrash,
   none,
   noneIf,
+  noneIfEmpty,
   nonEmpty,
   noneWhen,
   noop,
@@ -88,6 +89,7 @@ import {
   onFunc,
   opt,
   Opt,
+  optArrayOpt,
   optEmptyArray,
   optEmptyObject,
   optEmptyString,
@@ -678,6 +680,27 @@ describe('opt', () => {
     expect(none.noneIf(lt0).orNull()).to.be.null;
   });
 
+  it('noneIfEmpty', () => {
+      expect(opt(1).noneIfEmpty().orNull()).to.be.eq(1);
+      expect(opt([1]).noneIfEmpty().orNull()).to.be.eql([1]);
+      expect(opt({a:1}).noneIfEmpty().orNull()).to.be.eql({a:1});
+      expect(opt(NaN).noneIfEmpty().orNull()).to.be.null;
+      expect(opt([]).noneIfEmpty().orNull()).to.be.null;
+      expect(opt({}).noneIfEmpty().orNull()).to.be.null;
+      const arr: number[] = [];
+      const arrRes: Opt<number[]> = opt(arr).noneIfEmpty();
+      // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+      const str: string = 'x';
+      const strRes: Opt<string> = opt(str).noneIfEmpty();
+      const maybeEmptyStr: 'a' | '' = '' as 'a' | '';
+      const maybeEmptyStrRes: Opt<'a'> = opt(maybeEmptyStr).noneIfEmpty();
+      const maybeEmptyArr: [] | [number] = [] as [] | [number];
+      const maybeEmptyArrRes: Opt<[number]> = opt(maybeEmptyArr).noneIfEmpty();
+      // @ts-expect-error [] is not assignable to [number]
+      const maybeEmptyArrResFail: Opt<[]> = opt(maybeEmptyArr).noneIfEmpty();
+      suppressUnused(arrRes, strRes, maybeEmptyStrRes,maybeEmptyArrRes, maybeEmptyArrResFail);
+  })
+
   it('noneWhen', () => {
     expect(
       opt(1).noneWhen(false) // Some(1)
@@ -1152,6 +1175,19 @@ describe('optNegative', () => {
     expect(optNegative(1).isEmpty).to.be.false;
     expect(optNegative(1).orNull()).to.be.eq(1);
     expect(optNegative(10000).isEmpty).to.be.false;
+  });
+});
+
+describe('optArrayOpt', () => {
+  it('construction', () => {
+    expect(optArrayOpt(undefined).isEmpty).to.be.true;
+    expect(optArrayOpt(null).isEmpty).to.be.true;
+    expect(optArrayOpt([]).isEmpty).to.be.false;
+    expect(optArrayOpt([]).orNull()).to.be.eql([]);
+    expect(optArrayOpt([0]).isEmpty).to.be.false;
+    expect(optArrayOpt([0]).orNull()).to.eql([0]);
+    expect(optArrayOpt([0, null, undefined, 1]).isEmpty).to.be.false;
+    expect(optArrayOpt([0, null, undefined, 1]).orNull()).to.eql([0, 1]);
   });
 });
 
@@ -2011,6 +2047,19 @@ describe('noneIf', () => {
     expect(noneIf(gt0)(opt(5)).orNull()).to.be.null;
   });
 });
+
+describe('noneIfEmpty', () => {
+  it('passes opt when not empty', () => {
+    expect(noneIfEmpty(opt(1)).orNull()).to.be.eq(1);
+    expect(noneIfEmpty(opt([1])).orNull()).to.be.eql([1]);
+    expect(noneIfEmpty(opt({a:1})).orNull()).to.be.eql({a:1});
+  });
+  it('returns none when empty', () => {
+    expect(noneIfEmpty(opt(NaN)).orNull()).to.be.null;
+    expect(noneIfEmpty(opt([])).orNull()).to.be.null;
+    expect(noneIfEmpty(opt({})).orNull()).to.be.null;
+  });
+})
 
 describe('noneWhen', () => {
   it('passes opt on false', () => {
