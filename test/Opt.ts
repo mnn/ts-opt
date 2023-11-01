@@ -112,6 +112,7 @@ import {
   pipe,
   print,
   prop,
+  propNaked,
   propOrCrash,
   ReduxDevtoolsCompatibilityHelper,
   serialize,
@@ -156,6 +157,7 @@ type Enum12 = 1 | 2;
 type EnumABC = 'a' | 'b' | 'c';
 type ObjA = { a: boolean };
 type ObjB = { b: number };
+type ObjC = { c: string | null; cc?: string; };
 type ObjAB = ObjA & ObjB;
 
 interface WidenPBase<T> {
@@ -2224,6 +2226,38 @@ describe('prop', () => {
     prop<ObjA>('b');
   });
 });
+
+describe('propNaked', () => {
+  it('works directly', () => {
+    expect(propNaked<ObjA>('a')({a: true}).orNull()).to.be.true;
+    expect(propNaked<ObjC>('c')({c: null}).orNull()).to.be.null;
+    expect(propNaked<ObjC>('cc')({c: null}).orNull()).to.be.null;
+    expect(propNaked<ObjC>('cc')({c: null, cc: 'cc'}).orNull()).to.be.eq('cc');
+    const nul: ObjA | null = null as unknown as ObjA | null;
+    expect(propNaked<ObjA>('a')(nul).orNull()).to.be.null;
+  });
+  it('works with array', () => {
+    const xs: Opt<boolean>[] = [{a: true}].map(propNaked('a'));
+    expect(xs.map(orNull)).to.eql([true]);
+  });
+  it('works with opt', () => {
+     const x: Opt<ObjA> = opt({a: true});
+     expect(x.chain(propNaked('a')).orNull()).to.be.true;
+     const aOpt: Opt<boolean> = x.chain(propNaked('a'));
+     expect(aOpt.orNull()).to.be.true;
+  });
+  it(`doesn't allow getting non-existing field`, () => {
+    const x: Opt<ObjA> = opt({a: true});
+    // @ts-expect-error invalid field
+    propNaked<ObjA>('b')(x);
+    // @ts-expect-error invalid field
+    propNaked('b')(x);
+    // @ts-expect-error invalid field
+    propNaked<ObjA | null>('b')(null);
+    // @ts-expect-error invalid field (null doesn't have any fields)
+    propNaked<null>('b')(null);
+  });
+})
 
 describe('propOrCrash', () => {
   interface A {x?: number;}

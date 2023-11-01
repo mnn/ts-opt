@@ -1508,6 +1508,20 @@ export declare const equals: <T>(other: Opt<T>, comparator?: EqualityFunction) =
 /** @see [[Opt.prop]] */
 export declare const prop: <T extends object, K extends T extends object ? keyof T : never = T extends object ? keyof T : never>(key: K) => (x: Opt<T>) => OptSafe<T[K]>;
 /**
+ * Similar to [[Opt.prop]], but it is designed for naked objects (not wrapped in opt).
+ *
+ * @example
+ * ```ts
+ * type ObjA = {a: boolean};
+ * propNaked<ObjA>('a')(null) // None
+ * propNaked<ObjA>('a')({a: true}) // Some(true)
+ *
+ * type ObjC = {c: string | null};
+ * propNaked<ObjC>('c')({c: null}) // None
+ * ```
+ */
+export declare const propNaked: <T extends object | EmptyValue, K extends T extends object ? keyof T : never = T extends object ? keyof T : never>(key: K) => (x: EmptyValue | T) => OptSafe<T[K]>;
+/**
  * Similar to [[Opt.propOrCrash]], but also supports naked objects.
  *
  * @example
