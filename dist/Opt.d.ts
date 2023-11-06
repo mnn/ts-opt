@@ -2087,6 +2087,27 @@ export declare const inc: (x: number) => number;
  */
 export declare const dec: (x: number) => number;
 /**
+ * Prepends a string to a given string.
+ *
+ * @example
+ * ```ts
+ * prependStr('foo')('bar') // 'foobar'
+ * opt('bar').map(prependStr('foo')) // Some('foobar')
+ * ```
+ */
+export declare const prependStr: <P extends string>(prefix: P) => <X extends string>(str: X) => `${P}${X}`;
+/**
+ * Appends a string to a given string.
+ *
+ * @example
+ * ```ts
+ * appendStr('bar')('foo') // 'foobar'
+ * opt('foo').map(appendStr('bar')) // Some('foobar')
+ * opt('foo' as const).map(appendStr('bar')) // Some('foobar'), type is Opt<'foobar'>
+ * ```
+ */
+export declare const appendStr: <S extends string>(suffix: S) => <X extends string>(str: X) => `${X}${S}`;
+/**
  * Throws an error with a given message.
  *
  * @example

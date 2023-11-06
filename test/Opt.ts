@@ -12,6 +12,7 @@ import {
   and,
   ap,
   apFn,
+  appendStr,
   apply,
   assertType,
   at,
@@ -110,6 +111,7 @@ import {
   parseInt,
   parseJson,
   pipe,
+  prependStr,
   print,
   prop,
   propNaked,
@@ -3298,6 +3300,52 @@ describe('dec', () => {
     expect(dec(5)).to.eq(4);
   });
 });
+
+describe('prependStr', () => {
+  it('prepends string', () => {
+    expect(prependStr('Inu')('yasha')).to.eq('Inuyasha');
+    expect(prependStr('foo')('bar')).to.eq('foobar');
+  });
+  it('type checks', () => {
+    const inu = 'Inu' as const;
+    const yasha = 'yasha' as const;
+    const exp = 'Inuyasha' as const;
+    const res: typeof exp = prependStr(inu)(yasha);
+    expect(res).to.eq(exp);
+  });
+  it('refuses wrong type', () => {
+    // @ts-expect-error type mismatch
+    const res: 'x' = prependStr('a' as const)('b' as const);
+    suppressUnused(res);
+  });
+  it('usable with opt', () => {
+    expect(opt('bar').map(prependStr('foo')).orNull()).to.eq('foobar');
+  });
+});
+
+describe('appendStr', () => {
+  it('appends string', () => {
+    expect(appendStr('yasha')('Inu')).to.eq('Inuyasha');
+    expect(appendStr('bar')('foo')).to.eq('foobar');
+  })
+  it('type checks', () => {
+    const inu = 'Inu' as const;
+    const yasha = 'yasha' as const;
+    const exp = 'Inuyasha' as const;
+    const res: typeof exp = appendStr(yasha)(inu);
+    expect(res).to.eq(exp);
+  });
+  it('refuses wrong type', () => {
+    // @ts-expect-error type mismatch
+    const res: 'x' = appendStr('a' as const)('b' as const);
+    suppressUnused(res);
+  });
+  it('usable with opt', () => {
+    expect(opt('foo').map(appendStr('bar')).orNull()).to.eq('foobar');
+    const r: 'foobar' | null = opt('foo' as const).map(appendStr('bar')).orNull();
+    suppressUnused(r);
+  });
+})
 
 describe('crash', () => {
   it('throws error with message', () => {
