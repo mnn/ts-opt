@@ -14,10 +14,14 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOptFlow = exports.actToOpt = exports.chainToOpt = exports.chainFlow = exports.act = exports.chain = exports.flatMap = exports.mapFlow = exports.map = exports.toObject = exports.fromObject = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optArrayOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.deserializeUnsafe = exports.deserializeOrCrash = exports.deserialize = exports.serialize = exports.ReduxDevtoolsCompatibilityHelper = exports.isOptSerialized = exports.Opt = exports.isUnknown = exports.isNumber = exports.isObject = exports.isFunction = exports.isReadonlyArray = exports.isArray = exports.toString = exports.isString = void 0;
@@ -56,13 +60,13 @@ var debugPrint = function (tag) {
     for (var _i = 1; _i < arguments.length; _i++) {
         xs[_i - 1] = arguments[_i];
     }
-    console.log.apply(console, __spreadArray(__spreadArray([], exports.opt(tag).map(function (x) { return ["[" + x + "]"]; }).orElse([])), xs));
+    console.log.apply(console, __spreadArray(__spreadArray([], (0, exports.opt)(tag).map(function (x) { return ["[".concat(x, "]")]; }).orElse([]), true), xs, true));
 };
 /**
- * Generic container class. It either holds exactly one value - [[Some]], or no value - [[None]] (empty).
+ * Generic container class. It either holds exactly one value - {@link Some}, or no value - {@link None} (empty).
  *
  * It simplifies working with possibly empty values and provides many methods/functions which allow creation of processing pipelines (commonly known as "fluent
- * API" in OOP or [[pipe|chain of reverse applications]] in FP).
+ * API" in OOP or {@link Opt.pipe|chain of reverse applications} in FP).
  *
  * @typeparam T Wrapped value type.
  */
@@ -72,7 +76,7 @@ var Opt = /** @class */ (function () {
     function Opt() {
         var _this = this;
         /**
-         * Convets [[Opt]] to an object.
+         * Convets {@link Opt} to an object.
          *
          * @example
          * ```ts
@@ -89,7 +93,7 @@ var Opt = /** @class */ (function () {
             return _a = {}, _a[k] = _this.orNull(), _a;
         };
         /**
-         * Similar to [[map]], but supports more functions which are called in succession, each on a result of a previous one.
+         * Similar to {@link Opt.map}, but supports more functions which are called in succession, each on a result of a previous one.
          *
          * @example
          * ```ts
@@ -98,7 +102,7 @@ var Opt = /** @class */ (function () {
          * opt(4).mapFlow(sq, dec) // Some(15)
          * opt(null).mapFlow(sq, dec) // None
          * ```
-         * @see [[ts-opt.mapFlow]]
+         * @see {@link mapFlow}
          * @param fs
          */
         this.mapFlow = function () {
@@ -109,8 +113,8 @@ var Opt = /** @class */ (function () {
             return fs.reduce(function (acc, x) { return acc.map(x); }, _this);
         };
         /**
-         * Similar to [[chain]] (in other languages called `bind` or `>>=`), but supports more functions passed at once (resembles `do` notation in Haskell).
-         * It is used to model a sequence of operations where each operation can fail (can return [[None]]).
+         * Similar to {@link Opt.chain} (in other languages called `bind` or `>>=`), but supports more functions passed at once (resembles `do` notation in Haskell).
+         * It is used to model a sequence of operations where each operation can fail (can return {@link None}).
          *
          * ```ts
          * // does addition when first argument is number
@@ -138,7 +142,7 @@ var Opt = /** @class */ (function () {
          * ); // Some(4)
          * ```
          *
-         * @see [[ts-opt.act]]
+         * @see {@link act}
          * @param fs
          */
         this.act = function () {
@@ -149,8 +153,8 @@ var Opt = /** @class */ (function () {
             return fs.reduce(function (acc, x) { return acc.chain(x); }, _this);
         };
         /**
-         * @alias [[act]]
-         * @see [[ts-opt.chainFlow]]
+         * @alias {@link Opt.act}
+         * @see {@link chainFlow}
          * @param args
          */
         this.chainFlow = function () {
@@ -161,7 +165,7 @@ var Opt = /** @class */ (function () {
             return _this.act.apply(_this, args);
         };
         /**
-         * Similar to [[act]], but functions return empty values instead of [[Opt]].
+         * Similar to {@link act}, but functions return empty values instead of {@link Opt}.
          * It is useful for typical JavaScript functions (e.g. lodash), properly handles `undefined`/`null`/`NaN` at any point of the chain.
          *
          * ```ts
@@ -175,7 +179,7 @@ var Opt = /** @class */ (function () {
          * ); // None
          * ```
          *
-         * @see [[ts-opt.actToOpt]]
+         * @see {@link actToOpt}
          *
          * @param fs
          */
@@ -187,8 +191,8 @@ var Opt = /** @class */ (function () {
             return fs.reduce(function (acc, x) { return acc.chainToOpt(x); }, _this);
         };
         /**
-         * @alias [[actToOpt]]
-         * @see [[ts-opt.chainToOptFlow]]
+         * @alias {@link Opt.actToOpt}
+         * @see {@link chainToOptFlow}
          * @param args
          */
         this.chainToOptFlow = function () {
@@ -218,7 +222,7 @@ var Opt = /** @class */ (function () {
          * ) // true
          * ```
          *
-         * @see [[ts-opt.pipe]]
+         * @see {@link pipe}
          *
          * @param fs Functions in call chain
          */
@@ -230,7 +234,7 @@ var Opt = /** @class */ (function () {
             return fs.reduce(function (acc, x) { return x(acc); }, _this);
         };
         /**
-         * Constructs a function which returns a value for [[Some]] or an empty value for [[None]] (default is `null`).
+         * Constructs a function which returns a value for {@link Some} or an empty value for {@link None} (default is `null`).
          * Optionally takes an empty value as a parameter.
          *
          * @example
@@ -254,9 +258,9 @@ var Opt = /** @class */ (function () {
     }
     Object.defineProperty(Opt.prototype, "nonEmpty", {
         /**
-         * `false` for [[Some]], `true` for [[None]].
+         * `false` for {@link Some}, `true` for {@link None}.
          *
-         * If you need to narrow a type to [[Some]], use [[Opt.isSome]].
+         * If you need to narrow a type to {@link Some}, use {@link Opt.isSome}.
          */
         get: function () { return !this.isEmpty; },
         enumerable: false,
@@ -264,23 +268,23 @@ var Opt = /** @class */ (function () {
     });
     Object.defineProperty(Opt.prototype, "isFull", {
         /**
-         * @alias [[Opt.nonEmpty]]
+         * @alias {@link Opt.nonEmpty}
          */
         get: function () { return this.nonEmpty; },
         enumerable: false,
         configurable: true
     });
     /**
-     * Is this instance of [[Some]]?
+     * Is this instance of {@link Some}?
      */
     Opt.prototype.isSome = function () { return this.nonEmpty; };
     /**
-     * Is this instance of [[None]]?
+     * Is this instance of {@link None}?
      */
     Opt.prototype.isNone = function () { return this.isEmpty; };
     Object.defineProperty(Opt.prototype, "length", {
         /**
-         * `1` for [[Some]], `0` for [[None]].
+         * `1` for {@link Some}, `0` for {@link None}.
          */
         get: function () { return this.isEmpty ? 0 : 1; },
         enumerable: false,
@@ -296,29 +300,29 @@ var Opt = /** @class */ (function () {
      *
      * @param x
      */
-    Opt.fromArray = function (x) { return exports.opt(x[0]); };
+    Opt.fromArray = function (x) { return (0, exports.opt)(x[0]); };
     /**
-     * Serializes [[Opt]] to a plain JavaScript object.
-     * @see [[ts-opt.serialize]]
+     * Serializes {@link Opt} to a plain JavaScript object.
+     * @see {@link serialize}
      */
     Opt.prototype.serialize = function () {
-        return exports.serialize(this);
+        return (0, exports.serialize)(this);
     };
     /**
-     * Deserializes [[Opt]] from a plain JavaScript object.
-     * @see [[ts-opt.deserialize]]
+     * Deserializes {@link Opt} from a plain JavaScript object.
+     * @see {@link deserialize}
      */
     Opt.deserialize = function (x, guard) {
-        return exports.deserialize(x, guard);
+        return (0, exports.deserialize)(x, guard);
     };
     /**
-     * @alias [[flatMap]]
-     * @see [[ts-opt.chain]]
+     * @alias {@link flatMap}
+     * @see {@link chain}
      * @param f
      */
     Opt.prototype.chain = function (f) { return this.flatMap(f); };
     /**
-     * Combination of [[flatMap]] and [[opt]] functions.
+     * Combination of {@link Opt.flatMap} and {@link opt} functions.
      *
      * @example
      * ```ts
@@ -326,11 +330,11 @@ var Opt = /** @class */ (function () {
      * some(2).chainToOpt(x => x === 1 ? null : x + 1) // Some(3)
      * ```
      *
-     * @see [[ts-opt.chainToOpt]]
+     * @see {@link chainToOpt}
      *
      * @param f
      */
-    Opt.prototype.chainToOpt = function (f) { return this.flatMap(function (x) { return exports.opt(f(x)); }); };
+    Opt.prototype.chainToOpt = function (f) { return this.flatMap(function (x) { return (0, exports.opt)(f(x)); }); };
     /**
      * Joins (flattens) nested Opt instance, turning an `Opt<Opt<T>>` into an `Opt<T>`.
      * This is equivalent to calling `flatMap` with the identity function: `.join()` ~ `.flatMap(id)`.
@@ -346,7 +350,7 @@ var Opt = /** @class */ (function () {
     };
     /**
      * Filter by regular expression.
-     * It is a shortcut function for [[Opt.filter]] + [[testRe]].
+     * It is a shortcut function for {@link Opt.filter} + {@link testRe}.
      *
      * @example
      * ```ts
@@ -357,27 +361,27 @@ var Opt = /** @class */ (function () {
      * @param regex
      */
     Opt.prototype.filterByRe = function (regex) {
-        if (this.isSome() && !exports.isString(this.value)) {
-            throw new Error("Expected string, got " + JSON.stringify(this.value) + ".");
+        if (this.isSome() && !(0, exports.isString)(this.value)) {
+            throw new Error("Expected string, got ".concat(JSON.stringify(this.value), "."));
         }
-        return this.filter(exports.testRe(regex));
+        return this.filter((0, exports.testRe)(regex));
     };
     /**
-     * Returns [[None]] if predicate holds, otherwise passes same instance of [[Opt]].
+     * Returns {@link None} if predicate holds, otherwise passes same instance of {@link Opt}.
      *
      * @example
      * ```ts
      * opt(1).noneIf(x => x > 0); // None
      * opt(-1).noneIf(x => x > 0); // Some(-1)
      * ```
-     * @see [[filter]]
+     * @see {@link filter}
      * @param predicate
      */
     Opt.prototype.noneIf = function (predicate) {
         return this.filter(function (x) { return !predicate(x); });
     };
     /**
-     * Returns [[None]] if opt holds a value for which [[isEmpty]] returns `true`, otherwise passes opt unchanged.
+     * Returns {@link None} if opt holds a value for which {@link isEmpty} returns `true`, otherwise passes opt unchanged.
      *
      * @example
      * ```ts
@@ -391,7 +395,7 @@ var Opt = /** @class */ (function () {
         return this.noneIf(exports.isEmpty);
     };
     /**
-     * Returns [[None]] when given `true`, otherwise passes opt unchanged.
+     * Returns {@link None} when given `true`, otherwise passes opt unchanged.
      *
      * @example
      * ```ts
@@ -405,10 +409,10 @@ var Opt = /** @class */ (function () {
         return this.noneIf(function (_) { return returnNone; });
     };
     /**
-     * Returns `0` or `1` for [[Some]] depending on whether the predicate holds.
-     * Returns `0` for [[None]].
+     * Returns `0` or `1` for {@link Some} depending on whether the predicate holds.
+     * Returns `0` for {@link None}.
      *
-     * It is a combination of [[Opt.filter]] and [[Opt.length]].
+     * It is a combination of {@link Opt.filter} and {@link Opt.length}.
      *
      * @example
      * ```ts
@@ -416,7 +420,7 @@ var Opt = /** @class */ (function () {
      * opt('Ichi').count(x => x.length > 3) // 1
      * ```
      *
-     * @see [[ts-opt.count]]
+     * @see {@link count}
      * @param predicate
      */
     Opt.prototype.count = function (predicate) {
@@ -441,13 +445,13 @@ var Opt = /** @class */ (function () {
         return this;
     };
     /**
-     * Get a field from a wrapped object. Crash if the field is missing or empty, or opt instance is [[None]].
-     * Shortcut of [[Opt.prop]] + [[Opt.orCrash]].
+     * Get a field from a wrapped object. Crash if the field is missing or empty, or opt instance is {@link None}.
+     * Shortcut of {@link Opt.prop} + {@link Opt.orCrash}.
      *
      * @param key
      */
     Opt.prototype.propOrCrash = function (key) {
-        return this.prop(key).orCrash("missing " + String(key));
+        return this.prop(key).orCrash("missing ".concat(String(key)));
     };
     /**
      * Get a first item of an array or a first character of a string.
@@ -460,7 +464,7 @@ var Opt = /** @class */ (function () {
      * opt('Palico').head() // Some('P')
      * ```
      *
-     * @see [[ts-opt.head]]
+     * @see {@link head}
      */
     Opt.prototype.head = function () { return this.at(0); };
     /**
@@ -474,7 +478,7 @@ var Opt = /** @class */ (function () {
      * opt('Palico').last() // Some('o')
      * ```
      *
-     * @see [[ts-opt.last]]
+     * @see {@link last}
      */
     Opt.prototype.last = function () { return this.at(-1); };
     /**
@@ -486,14 +490,14 @@ var Opt = /** @class */ (function () {
      * opt('b').testReOrFalse(/a/) // false
      * ```
      *
-     * @see [[ts-opt.testReOrFalse]]
+     * @see {@link testReOrFalse}
      *
      * @param re Regular expression
      */
     Opt.prototype.testReOrFalse = function (re) {
         if (this.isEmpty)
             return false;
-        return this.narrow(exports.isString).someOrCrash("testReOrFalse only works on Opt<string>").map(exports.testRe(re)).orFalse();
+        return this.narrow(exports.isString).someOrCrash("testReOrFalse only works on Opt<string>").map((0, exports.testRe)(re)).orFalse();
     };
     Object.defineProperty(Opt.prototype, "end", {
         /**
@@ -513,13 +517,13 @@ var Opt = /** @class */ (function () {
         configurable: true
     });
     /**
-     * Apply (call) a function inside [[Some]]. Does nothing for [[None]].
+     * Apply (call) a function inside {@link Some}. Does nothing for {@link None}.
      *
      * @example
      * ```ts
      * const add = (a: number, b: number) => a + b;
      * opt(add).apply(2, 3) // Some(5)
-     * none.apply(0).orNull() // None
+     * none.apply(0) // None
      * ```
      *
      * @example It can also be used with curried functions.
@@ -528,9 +532,9 @@ var Opt = /** @class */ (function () {
      * opt(sub).apply(10).apply(3) // Some(7)
      * ```
      *
-     * @note [[apply]] is only available for functions, otherwise an exception will be thrown when called on [[Some]].
+     * @note {@link apply} is only available for functions, otherwise an exception will be thrown when called on {@link Some}.
      *
-     * @see [[onFunc]] for imperative version
+     * @see {@link Opt.onFunc} for imperative version
      *
      * @param args Parameters passed to wrapped function.
      * @return `opt`-wrapped result from the function
@@ -542,15 +546,15 @@ var Opt = /** @class */ (function () {
         }
         if (this.isSome()) {
             var val = this.value;
-            if (exports.isFunction(val)) {
-                return exports.opt(val.apply(void 0, args));
+            if ((0, exports.isFunction)(val)) {
+                return (0, exports.opt)(val.apply(void 0, args));
             }
-            throw new Error("Invalid input - expected function, got " + typeof val + ".");
+            throw new Error("Invalid input - expected function, got ".concat(typeof val, "."));
         }
         return exports.none;
     };
     /**
-     * Apply (call) a function inside [[Some]]. Does nothing for [[None]].
+     * Apply (call) a function inside {@link Some}. Does nothing for {@link None}.
      *
      * @example Both lines do the same thing
      * ```ts
@@ -565,13 +569,13 @@ var Opt = /** @class */ (function () {
      * none.onFunc(79) // None
      * ```
      *
-     * @note [[onFunc]] is only available for functions, otherwise an exception will be thrown when called on [[Some]].
+     * @note {@link onFunc} is only available for functions, otherwise an exception will be thrown when called on {@link Some}.
      * @imperative
      *
-     * @see [[apply]] for functional version
+     * @see {@link Opt.apply} for functional version
      *
      * @param args
-     * @return Unchanged [[Opt]] instance
+     * @return Unchanged {@link Opt} instance
      */
     Opt.prototype.onFunc = function () {
         var args = [];
@@ -580,17 +584,17 @@ var Opt = /** @class */ (function () {
         }
         if (this.isSome()) {
             var val = this.value;
-            if (exports.isFunction(val)) {
+            if ((0, exports.isFunction)(val)) {
                 val.apply(void 0, args);
             }
             else {
-                throw new Error("Invalid input - expected function, got " + typeof val + ".");
+                throw new Error("Invalid input - expected function, got ".concat(typeof val, "."));
             }
         }
         return this;
     };
     /**
-     * Converts an object to [[Opt]].
+     * Converts an object to {@link Opt}.
      *
      * @example
      * ```ts
@@ -604,15 +608,16 @@ var Opt = /** @class */ (function () {
      */
     Opt.fromObject = function (x, k) {
         if (k === void 0) { k = 'value'; }
-        return exports.opt(x[k]);
+        return (0, exports.opt)(x[k]);
     };
     return Opt;
 }());
 exports.Opt = Opt;
 /**
- * Empty [[Opt]].
+ * Empty {@link Opt}.
  * @notExported
- * @see [[Opt]]
+ * @see {@link opt}
+ * @see {@link none}
  */
 var None = /** @class */ (function (_super) {
     __extends(None, _super);
@@ -655,9 +660,9 @@ var None = /** @class */ (function (_super) {
     None.prototype.orElse = function (def) { return def; };
     None.prototype.orElseLazy = function (def) { return def(); };
     None.prototype.alt = function (def) { return def; };
-    None.prototype.altOpt = function (def) { return exports.opt(def); };
+    None.prototype.altOpt = function (def) { return (0, exports.opt)(def); };
     None.prototype.orElseAny = function (def) { return def; };
-    None.prototype.bimap = function (_someF, noneF) { return exports.opt(noneF()); };
+    None.prototype.bimap = function (_someF, noneF) { return (0, exports.opt)(noneF()); };
     None.prototype.flatBimap = function (_someF, noneF) { return noneF(); };
     None.prototype.toString = function () { return 'None'; };
     None.prototype.zip = function (_other) { return exports.none; };
@@ -694,9 +699,9 @@ var None = /** @class */ (function (_super) {
     return None;
 }(Opt));
 /**
- * [[Opt]] with a value inside.
+ * {@link Opt} with a value inside.
  * @notExported
- * @see [[Opt]]
+ * @see {@link Opt}
  */
 var Some = /** @class */ (function (_super) {
     __extends(Some, _super);
@@ -722,7 +727,7 @@ var Some = /** @class */ (function (_super) {
         return f(this._value);
     };
     Some.prototype.map = function (f) {
-        return exports.some(f(this._value));
+        return (0, exports.some)(f(this._value));
     };
     Some.prototype.orCrash = function (_msg) { return this._value; };
     Some.prototype.someOrCrash = function (_msg) { return this; };
@@ -749,21 +754,21 @@ var Some = /** @class */ (function (_super) {
     Some.prototype.alt = function (_def) { return this; };
     Some.prototype.altOpt = function (_def) { return this; };
     Some.prototype.orElseAny = function (_def) { return this._value; };
-    Some.prototype.bimap = function (someF, _noneF) { return exports.opt(someF(this._value)); };
+    Some.prototype.bimap = function (someF, _noneF) { return (0, exports.opt)(someF(this._value)); };
     Some.prototype.flatBimap = function (someF, _noneF) { return someF(this._value); };
-    Some.prototype.toString = function () { return "Some(" + JSON.stringify(this._value) + ")"; };
+    Some.prototype.toString = function () { return "Some(".concat(JSON.stringify(this._value), ")"); };
     Some.prototype.zip = function (other) {
         if (other.isEmpty) {
             return exports.none;
         }
-        return exports.opt([this._value, other.orCrash('bug in isEmpty or orCrash')]);
+        return (0, exports.opt)([this._value, other.orCrash('bug in isEmpty or orCrash')]);
     };
     Some.prototype.zip3 = function (x, y) {
         if (x.isEmpty || y.isEmpty) {
             return exports.none;
         }
         var _a = [x.orCrash('bug in isEmpty or orCrash'), y.orCrash('bug in isEmpty or orCrash')], xVal = _a[0], yVal = _a[1];
-        return exports.opt([this._value, xVal, yVal]);
+        return (0, exports.opt)([this._value, xVal, yVal]);
     };
     Some.prototype.zip4 = function (x, y, z) {
         var args = [x, y, z];
@@ -771,7 +776,7 @@ var Some = /** @class */ (function (_super) {
             return exports.none;
         }
         var _a = args.map(function (a) { return a.orCrash('bug in isEmpty or orCrash'); }), xVal = _a[0], yVal = _a[1], zVal = _a[2];
-        return exports.opt([this._value, xVal, yVal, zVal]);
+        return (0, exports.opt)([this._value, xVal, yVal, zVal]);
     };
     Some.prototype.zip5 = function (x, y, z, zz) {
         var args = [x, y, z, zz];
@@ -779,7 +784,7 @@ var Some = /** @class */ (function (_super) {
             return exports.none;
         }
         var _a = args.map(function (a) { return a.orCrash('bug in isEmpty or orCrash'); }), xVal = _a[0], yVal = _a[1], zVal = _a[2], zzVal = _a[3];
-        return exports.opt([this._value, xVal, yVal, zVal, zzVal]);
+        return (0, exports.opt)([this._value, xVal, yVal, zVal, zzVal]);
     };
     Some.prototype.filter = function (predicate) { return predicate(this._value) ? this : exports.none; };
     Some.prototype.narrow = function (guard) {
@@ -799,15 +804,15 @@ var Some = /** @class */ (function (_super) {
         }
         return comparator(this._value, other.orCrash('Some expected'));
     };
-    Some.prototype.prop = function (key) { return exports.opt(this._value[key]); };
+    Some.prototype.prop = function (key) { return (0, exports.opt)(this._value[key]); };
     Some.prototype.swap = function (newVal) {
-        return exports.some(newVal);
+        return (0, exports.some)(newVal);
     };
     Some.prototype.at = function (index) {
         var val = this._value;
-        if (Array.isArray(val) || exports.isString(val)) {
+        if (Array.isArray(val) || (0, exports.isString)(val)) {
             var processedIndex = (index < 0 ? val.length : 0) + index;
-            return exports.opt(val[processedIndex]);
+            return (0, exports.opt)(val[processedIndex]);
         }
         else {
             throw new Error("`Opt#at` can only be used on arrays and strings");
@@ -815,21 +820,21 @@ var Some = /** @class */ (function (_super) {
     };
     Some.prototype.min = function () {
         var val = this._value;
-        if (!exports.isArray(val)) {
+        if (!(0, exports.isArray)(val)) {
             throw new Error('Expected array.');
         }
         if (val.length === 0)
             return exports.none;
-        return exports.some(val.reduce(function (acc, x) { return x < acc ? x : acc; }, val[0]));
+        return (0, exports.some)(val.reduce(function (acc, x) { return x < acc ? x : acc; }, val[0]));
     };
     Some.prototype.max = function () {
         var val = this._value;
-        if (!exports.isArray(val)) {
+        if (!(0, exports.isArray)(val)) {
             throw new Error('Expected array.');
         }
         if (val.length === 0)
             return exports.none;
-        return exports.some(val.reduce(function (acc, x) { return x > acc ? x : acc; }, val[0]));
+        return (0, exports.some)(val.reduce(function (acc, x) { return x > acc ? x : acc; }, val[0]));
     };
     return Some;
 }(Opt));
@@ -840,7 +845,6 @@ var isOptSerialized = function (x) {
         return false;
     }
     if ('type' in x) {
-        // @ts-expect-error because TS can't infer `type` field is actually there, despite it being checked line before...
         return x.type === someSerializedType || x.type === noneSerializedType;
     }
     else {
@@ -855,13 +859,13 @@ var ReduxDevtoolsCompatibilityHelper = /** @class */ (function () {
     function ReduxDevtoolsCompatibilityHelper() {
     }
     ReduxDevtoolsCompatibilityHelper.replacer = function (_key, value) {
-        return exports.isOpt(value) ? exports.serialize(value) : value;
+        return (0, exports.isOpt)(value) ? (0, exports.serialize)(value) : value;
     };
     ReduxDevtoolsCompatibilityHelper.reviver = function (_key, value) {
         if (!value || typeof value !== 'object') {
             return value;
         }
-        var deser = exports.deserialize(value, exports.isUnknown);
+        var deser = (0, exports.deserialize)(value, exports.isUnknown);
         if (deser.tag === 'failure')
             return value;
         return deser.value;
@@ -878,8 +882,8 @@ exports.ReduxDevtoolsCompatibilityHelper = ReduxDevtoolsCompatibilityHelper;
  * serialize(opt(1)) // { type: 'Opt/Some', value: 1 }
  * ```
  *
- * @param x [[Opt]] instance to serialize
- * @returns serialized Opt instance as an [[OptSerialized]] object
+ * @param x {@link Opt} instance to serialize
+ * @returns serialized Opt instance as an {@link OptSerialized} object
  */
 var serialize = function (x) {
     if (x.isEmpty) {
@@ -903,13 +907,13 @@ exports.serialize = serialize;
  * deserialize({ type: 'Opt/Some', value: 'not a number' }, isNumber) // { tag: 'failure', reason: 'failed to validate inner type' }
  * ```
  *
- * @see [[serialize]]
- * @param x serialized Opt object (expected shape is [[OptSerialized]])
+ * @see {@link serialize}
+ * @param x serialized Opt object (expected shape is {@link OptSerialized})
  * @param guard function to validate the inner type
- * @returns deserialization result as a [[DeserializationResult]] object
+ * @returns deserialization result as a {@link DeserializationResult} object
  */
 var deserialize = function (x, guard) {
-    if (!exports.isOptSerialized(x))
+    if (!(0, exports.isOptSerialized)(x))
         return { tag: 'failure', reason: 'not OptSerialized' };
     switch (x.type) {
         case noneSerializedType:
@@ -917,7 +921,7 @@ var deserialize = function (x, guard) {
         case someSerializedType:
             if (!guard(x.value))
                 return { tag: 'failure', reason: 'failed to validate inner type' };
-            return { tag: 'success', value: exports.some(x.value) };
+            return { tag: 'success', value: (0, exports.some)(x.value) };
     }
 };
 exports.deserialize = deserialize;
@@ -934,10 +938,10 @@ exports.deserialize = deserialize;
  *
  * @param x input value to be deserialized
  * @param guard guard function to validate the inner type
- * @return deserialized value as an [[Opt]] instance
+ * @return deserialized value as an {@link Opt} instance
  */
 var deserializeOrCrash = function (x, guard) {
-    var deser = exports.deserialize(x, guard);
+    var deser = (0, exports.deserialize)(x, guard);
     if (deser.tag === 'failure') {
         throw new Error(deser.reason);
     }
@@ -945,9 +949,9 @@ var deserializeOrCrash = function (x, guard) {
 };
 exports.deserializeOrCrash = deserializeOrCrash;
 /**
- * Unsafe version of [[deserializeOrCrash]].
- * Deserialization failure is indistinguishable from deserialized [[None]].
- * It is usually better to use [[deserialize]] or [[deserializeOrCrash]].
+ * Unsafe version of {@link deserializeOrCrash}.
+ * Deserialization failure is indistinguishable from deserialized {@link None}.
+ * It is usually better to use {@link deserialize} or {@link deserializeOrCrash}.
  *
  * @example
  * ```ts
@@ -957,31 +961,31 @@ exports.deserializeOrCrash = deserializeOrCrash;
  * ```
  *
  * @param x input value to be deserialized
- * @returns deserialized value as an [[Opt]] instance
+ * @returns deserialized value as an {@link Opt} instance
  */
 var deserializeUnsafe = function (x) {
-    return exports.tryRun(function () { return exports.deserializeOrCrash(x, exports.isUnknown); }).join();
+    return (0, exports.tryRun)(function () { return (0, exports.deserializeOrCrash)(x, exports.isUnknown); }).join();
 };
 exports.deserializeUnsafe = deserializeUnsafe;
 var isNoneValue = function (x) {
     return x === undefined || x === null || Number.isNaN(x);
 };
 /**
- * Single global instance of [[None]].
+ * Single global instance of {@link None}.
  */
 exports.none = Object.freeze(new None());
 /**
- * Constructs [[Some]].
+ * Constructs {@link Some}.
  *
- * Warning: Usually it is [[opt]] you are looking for.
+ * Warning: Usually it is {@link opt} you are looking for.
  * Only in rare cases you want to have for example `Some(undefined)`.
  * @param x
  */
 var some = function (x) { return Object.freeze(new Some(x)); };
 exports.some = some;
 /**
- * Main constructor function - for `undefined`, `null` and `NaN` returns [[None]].
- * Anything else is wrapped into [[Some]].
+ * Main constructor function - for `undefined`, `null` and `NaN` returns {@link None}.
+ * Anything else is wrapped into {@link Some}.
  * @example
  * ```ts
  * opt(0) // Some(0)
@@ -999,11 +1003,11 @@ exports.some = some;
  * @param x
  */
 var opt = function (x) {
-    return isNoneValue(x) ? exports.none : exports.some(x);
+    return isNoneValue(x) ? exports.none : (0, exports.some)(x);
 };
 exports.opt = opt;
 /**
- * For falsy values returns [[None]], otherwise acts same as [[opt]].
+ * For falsy values returns {@link None}, otherwise acts same as {@link opt}.
  * ```ts
  * optFalsy(''); // None
  * optFalsy(0); // None
@@ -1012,36 +1016,36 @@ exports.opt = opt;
  * ```
  * @param x
  */
-var optFalsy = function (x) { return x ? exports.some(x) : exports.none; };
+var optFalsy = function (x) { return x ? (0, exports.some)(x) : exports.none; };
 exports.optFalsy = optFalsy;
 /**
- * For empty array (`[]`) returns [[None]], otherwise acts same as [[opt]].
+ * For empty array (`[]`) returns {@link None}, otherwise acts same as {@link opt}.
  * @param x
  */
-var optEmptyArray = function (x) { return exports.opt(x).filter(function (y) { return y.length > 0; }); };
+var optEmptyArray = function (x) { return (0, exports.opt)(x).filter(function (y) { return y.length > 0; }); };
 exports.optEmptyArray = optEmptyArray;
 /**
- * For empty object (`{}`) returns [[None]], otherwise acts same as [[opt]].
+ * For empty object (`{}`) returns {@link None}, otherwise acts same as {@link opt}.
  * @param x
  */
 var optEmptyObject = function (x) {
-    return exports.opt(x).filter(function (y) { return Object.keys(y).length !== 0; });
+    return (0, exports.opt)(x).filter(function (y) { return Object.keys(y).length !== 0; });
 };
 exports.optEmptyObject = optEmptyObject;
 /**
- * For empty string (`''`) returns [[None]], otherwise acts same as [[opt]].
+ * For empty string (`''`) returns {@link None}, otherwise acts same as {@link opt}.
  * @param x
  */
-var optEmptyString = function (x) { return x === '' ? exports.none : exports.opt(x); };
+var optEmptyString = function (x) { return x === '' ? exports.none : (0, exports.opt)(x); };
 exports.optEmptyString = optEmptyString;
 /**
- * For a number `0` returns [[None]], otherwise acts same as [[opt]].
+ * For a number `0` returns {@link None}, otherwise acts same as {@link opt}.
  * @param x
  */
-var optZero = function (x) { return x === 0 ? exports.none : exports.opt(x); };
+var optZero = function (x) { return x === 0 ? exports.none : (0, exports.opt)(x); };
 exports.optZero = optZero;
 /**
- * For numbers lesser than `0` returns [[None]], otherwise acts same as [[opt]].
+ * For numbers lesser than `0` returns {@link None}, otherwise acts same as {@link opt}.
  * Useful for strange functions which return `-1` or other negative numbers on failure.
  * ```ts
  * optNegative(undefined) // None
@@ -1051,7 +1055,7 @@ exports.optZero = optZero;
  * ```
  * @param x
  */
-var optNegative = function (x) { return typeof x === 'number' && x < 0 ? exports.none : exports.opt(x); };
+var optNegative = function (x) { return typeof x === 'number' && x < 0 ? exports.none : (0, exports.opt)(x); };
 exports.optNegative = optNegative;
 /**
  * Converts optional array of optional values to opt-wrapped array with empty values discarded.
@@ -1067,11 +1071,11 @@ exports.optNegative = optNegative;
  * @param xs
  */
 var optArrayOpt = function (xs) {
-    return exports.opt(xs).mapFlow(function (ys) { return ys.map(exports.opt); }, exports.catOpts);
+    return (0, exports.opt)(xs).mapFlow(function (ys) { return ys.map(exports.opt); }, exports.catOpts);
 };
 exports.optArrayOpt = optArrayOpt;
 /**
- * Is given value an instance of [[Opt]]?
+ * Is given value an instance of {@link Opt}?
  * @param x
  */
 var isOpt = function (x) { return x instanceof Opt; };
@@ -1080,7 +1084,7 @@ exports.isOpt = isOpt;
  * ```ts
  * <A, B>(of: Opt<(_: A) => B>) => (oa: Opt<A>): Opt<B>
  * ```
- * Apply `oa` to function `of`. If any argument is [[None]] then result is [[None]].
+ * Apply `oa` to function `of`. If any argument is {@link None} then result is {@link None}.
  * ```ts
  * ap(opt(x => x > 0))(opt(1)) // Opt(true)
  * ap(opt(x => x > 0))(none) // None
@@ -1098,7 +1102,7 @@ exports.ap = ap;
  * ```ts
  * <A, B>(f: (_: A) => B) => (oa: Opt<A>): Opt<B>
  * ```
- * Apply `oa` to function `f`. If argument is [[None]] then result is [[None]].
+ * Apply `oa` to function `f`. If argument is {@link None} then result is {@link None}.
  * ```ts
  * apFn(x => x > 0)(opt(1)) // Opt(true)
  * apFn(x => x > 0)(none) // None
@@ -1106,17 +1110,17 @@ exports.ap = ap;
  * @typeparam A input of function `f`
  * @typeparam B output of function `f`
  */
-var apFn = function (f) { return function (oa) { return exports.ap(exports.opt(f))(oa); }; };
+var apFn = function (f) { return function (oa) { return (0, exports.ap)((0, exports.opt)(f))(oa); }; };
 exports.apFn = apFn;
 /**
- * Transforms array of opts into an array where [[None]]s are omitted and [[Some]]s are unwrapped.
+ * Transforms array of opts into an array where {@link None}s are omitted and {@link Some}s are unwrapped.
  * ```ts
  * catOpts([opt(1), opt(null)]) // [1]
  * ```
  * @param xs
  */
 var catOpts = function (xs) {
-    return xs.reduce(function (acc, x) { return x.caseOf(function (y) { return __spreadArray(__spreadArray([], acc), [y]); }, function () { return acc; }); }, []);
+    return xs.reduce(function (acc, x) { return x.caseOf(function (y) { return __spreadArray(__spreadArray([], acc, true), [y], false); }, function () { return acc; }); }, []);
 };
 exports.catOpts = catOpts;
 /**
@@ -1126,34 +1130,34 @@ exports.catOpts = catOpts;
  * ```
  * @param f
  */
-var mapOpt = function (f) { return function (xs) { return exports.catOpts(xs.map(f)); }; };
+var mapOpt = function (f) { return function (xs) { return (0, exports.catOpts)(xs.map(f)); }; };
 exports.mapOpt = mapOpt;
 /**
- * Unwraps one level of nested [[Opt]]s. Similar to `flatten` in other libraries or languages.
+ * Unwraps one level of nested {@link Opt}s. Similar to `flatten` in other libraries or languages.
  * ```ts
  * joinOpt(some(none)) // None
  * joinOpt(some(some(1))) // Some(1)
  * ```
  * @param x
- * @see [[Opt.join]]
+ * @see {@link Opt.join}
  */
 var joinOpt = function (x) { return x.caseOf(function (y) { return y; }, function () { return exports.none; }); };
 exports.joinOpt = joinOpt;
 /**
- * @see [[Opt.fromArray]]
+ * @see {@link Opt.fromArray}
  */
 exports.fromArray = Opt.fromArray;
 /**
- * @see [[Opt.toArray]]
+ * @see {@link Opt.toArray}
  */
 var toArray = function (x) { return x.toArray(); };
 exports.toArray = toArray;
 /**
- * @see [[Opt.fromObject]]
+ * @see {@link Opt.fromObject}
  */
 exports.fromObject = Opt.fromObject;
 /**
- * @see [[Opt.toObject]]
+ * @see {@link Opt.toObject}
  */
 var toObject = function (k) {
     return function (x) {
@@ -1162,12 +1166,12 @@ var toObject = function (k) {
 };
 exports.toObject = toObject;
 /**
- * Same as [[Opt.map]], but also supports arrays.
- * @see [[Opt.map]]
+ * Same as {@link Opt.map}, but also supports arrays.
+ * @see {@link Opt.map}
  */
 var map = function (f) { return function (x) { return x.map(f); }; };
 exports.map = map;
-/** @see [[Opt.mapFlow]] */
+/** @see {@link Opt.mapFlow} */
 var mapFlow = function () {
     var fs = [];
     for (var _i = 0; _i < arguments.length; _i++) {
@@ -1177,14 +1181,14 @@ var mapFlow = function () {
 };
 exports.mapFlow = mapFlow;
 /**
- * Same as [[Opt.flatMap]], but also supports arrays.
- * @see [[Opt.flatMap]]
+ * Same as {@link Opt.flatMap}, but also supports arrays.
+ * @see {@link Opt.flatMap}
  */
-var flatMap = function (f) { return function (x) { return exports.isOpt(x) ? x.flatMap(f) : x.map(f).flat(); }; };
+var flatMap = function (f) { return function (x) { return (0, exports.isOpt)(x) ? x.flatMap(f) : x.map(f).flat(); }; };
 exports.flatMap = flatMap;
-/** @see [[Opt.flatMap]] */
+/** @see {@link Opt.flatMap} */
 exports.chain = exports.flatMap;
-/** @see [[Opt.act]] */
+/** @see {@link Opt.act} */
 var act = function () {
     var fs = [];
     for (var _i = 0; _i < arguments.length; _i++) {
@@ -1193,12 +1197,12 @@ var act = function () {
     return function (x) { return fs.reduce(function (acc, x) { return acc.chain(x); }, x); };
 };
 exports.act = act;
-/** @see [[Opt.chainFlow]] */
+/** @see {@link Opt.chainFlow} */
 exports.chainFlow = exports.act;
-/** @see [[Opt.chainToOpt]] */
+/** @see {@link Opt.chainToOpt} */
 var chainToOpt = function (f) { return function (x) { return x.chainToOpt(f); }; };
 exports.chainToOpt = chainToOpt;
-/** @see [[Opt.actToOpt]] */
+/** @see {@link Opt.actToOpt} */
 var actToOpt = function () {
     var fs = [];
     for (var _i = 0; _i < arguments.length; _i++) {
@@ -1207,39 +1211,39 @@ var actToOpt = function () {
     return function (x) { return fs.reduce(function (acc, x) { return acc.chainToOpt(x); }, x); };
 };
 exports.actToOpt = actToOpt;
-/** @see [[Opt.chainToOptFlow]] */
+/** @see {@link Opt.chainToOptFlow} */
 exports.chainToOptFlow = exports.actToOpt;
-/** @see [[Opt.someOrCrash]] */
+/** @see {@link Opt.someOrCrash} */
 var someOrCrash = function (msg) { return function (x) { return x.someOrCrash(msg); }; };
 exports.someOrCrash = someOrCrash;
-/** @see [[Opt.orCrash]] */
+/** @see {@link Opt.orCrash} */
 var orCrash = function (msg) { return function (x) { return x.orCrash(msg); }; };
 exports.orCrash = orCrash;
-/** @see [[Opt.orUndef]] */
+/** @see {@link Opt.orUndef} */
 var orUndef = function (x) { return x.orUndef(); };
 exports.orUndef = orUndef;
-/** @see [[Opt.orNull]] */
+/** @see {@link Opt.orNull} */
 var orNull = function (x) { return x.orNull(); };
 exports.orNull = orNull;
-/** @see [[Opt.orFalse]] */
+/** @see {@link Opt.orFalse} */
 var orFalse = function (x) { return x.orFalse(); };
 exports.orFalse = orFalse;
-/** @see [[Opt.orTrue]] */
+/** @see {@link Opt.orTrue} */
 var orTrue = function (x) { return x.orTrue(); };
 exports.orTrue = orTrue;
-/** @see [[Opt.orNaN]] */
+/** @see {@link Opt.orNaN} */
 var orNaN = function (x) { return x.orNaN(); };
 exports.orNaN = orNaN;
-/** @see [[Opt.caseOf]] */
+/** @see {@link Opt.caseOf} */
 var caseOf = function (onSome) { return function (onNone) { return function (x) { return x.caseOf(onSome, onNone); }; }; };
 exports.caseOf = caseOf;
-/** @see [[Opt.onBoth]] */
+/** @see {@link Opt.onBoth} */
 var onBoth = function (onSome) { return function (onNone) { return function (x) { return x.onBoth(onSome, onNone); }; }; };
 exports.onBoth = onBoth;
 /**
- * Similar to [[Opt.pipe]], but the first argument is the input.
- * Supports arbitrary input type, not just [[Opt]].
- * @see [[Opt.pipe]]
+ * Similar to {@link Opt.pipe}, but the first argument is the input.
+ * Supports arbitrary input type, not just {@link Opt}.
+ * @see {@link Opt.pipe}
  */
 var pipe = function (x) {
     var fs = [];
@@ -1249,39 +1253,39 @@ var pipe = function (x) {
     return fs.reduce(function (acc, y) { return y(acc); }, x);
 };
 exports.pipe = pipe;
-/** @see [[Opt.contains]] */
+/** @see {@link Opt.contains} */
 var contains = function (y) { return function (x) { return x.contains(y); }; };
 exports.contains = contains;
-/** @see [[Opt.exists]] */
+/** @see {@link Opt.exists} */
 var exists = function (y) { return function (x) { return x.exists(y); }; };
 exports.exists = exists;
-/** @see [[Opt.forAll]] */
+/** @see {@link Opt.forAll} */
 var forAll = function (p) { return function (x) { return x.forAll(p); }; };
 exports.forAll = forAll;
-/** @see [[Opt.orElse]] */
+/** @see {@link Opt.orElse} */
 var orElse = function (e) { return function (x) { return x.orElse(e); }; };
 exports.orElse = orElse;
-/** @see [[Opt.orElseLazy]] */
+/** @see {@link Opt.orElseLazy} */
 var orElseLazy = function (e) { return function (x) { return x.orElseLazy(e); }; };
 exports.orElseLazy = orElseLazy;
-/** @see [[Opt.orElseAny]] */
+/** @see {@link Opt.orElseAny} */
 var orElseAny = function (e) { return function (x) { return x.orElseAny(e); }; };
 exports.orElseAny = orElseAny;
-/** @see [[Opt.alt]] */
+/** @see {@link Opt.alt} */
 var alt = function (def) { return function (x) { return x.alt(def); }; };
 exports.alt = alt;
-/** @see [[Opt.altOpt]] */
+/** @see {@link Opt.altOpt} */
 var altOpt = function (def) { return function (x) { return x.altOpt(def); }; };
 exports.altOpt = altOpt;
-/** @see [[Opt.bimap]] */
+/** @see {@link Opt.bimap} */
 var bimap = function (someF) { return function (noneF) { return function (x) { return x.bimap(someF, noneF); }; }; };
 exports.bimap = bimap;
-/** @see [[Opt.flatBimap]] */
+/** @see {@link Opt.flatBimap} */
 var flatBimap = function (someF) { return function (noneF) { return function (x) { return x.flatBimap(someF, noneF); }; }; };
 exports.flatBimap = flatBimap;
-var zipArray = function (a, b) { return __spreadArray([], Array(Math.min(b.length, a.length))).map(function (_, i) { return [a[i], b[i]]; }); };
+var zipArray = function (a, b) { return __spreadArray([], Array(Math.min(b.length, a.length)), true).map(function (_, i) { return [a[i], b[i]]; }); };
 /**
- * Same as [[Opt.zip]], but also supports arrays.
+ * Same as {@link Opt.zip}, but also supports arrays.
  *
  * @example
  * ```ts
@@ -1294,40 +1298,40 @@ var zipArray = function (a, b) { return __spreadArray([], Array(Math.min(b.lengt
  * formatAddress(undefined, undefined) // ''
  * ```
  *
- * @see [[Opt.zip]]
+ * @see {@link Opt.zip}
  */
-var zip = function (x) { return function (other) { return exports.isOpt(x) ? x.zip(other) : zipArray(x, other); }; };
+var zip = function (x) { return function (other) { return (0, exports.isOpt)(x) ? x.zip(other) : zipArray(x, other); }; };
 exports.zip = zip;
-/** @see [[Opt.zip3]] */
+/** @see {@link Opt.zip3} */
 var zip3 = function (x) { return function (a) { return function (b) { return x.zip3(a, b); }; }; };
 exports.zip3 = zip3;
-/** @see [[Opt.zip4]] */
+/** @see {@link Opt.zip4} */
 var zip4 = function (x) { return function (a) { return function (b) { return function (c) { return x.zip4(a, b, c); }; }; }; };
 exports.zip4 = zip4;
-/** @see [[Opt.zip5]] */
+/** @see {@link Opt.zip5} */
 var zip5 = function (x) { return function (a) { return function (b) { return function (c) { return function (d) {
     return x.zip5(a, b, c, d);
 }; }; }; }; };
 exports.zip5 = zip5;
 /**
- * Same as [[Opt.filter]], but also supports arrays.
- * @see [[Opt.filter]]
+ * Same as {@link Opt.filter}, but also supports arrays.
+ * @see {@link Opt.filter}
  */
 var filter = function (p) { return function (x) { return x.filter(p); }; };
 exports.filter = filter;
-/** @see [[Opt.noneIf]] */
+/** @see {@link Opt.noneIf} */
 var noneIf = function (predicate) { return function (x) { return x.noneIf(predicate); }; };
 exports.noneIf = noneIf;
-/** @see [[Opt.noneIfEmpty]] */
+/** @see {@link Opt.noneIfEmpty} */
 var noneIfEmpty = function (x) {
     return x.noneIfEmpty();
 };
 exports.noneIfEmpty = noneIfEmpty;
-/** @see [[Opt.noneWhen]] */
+/** @see {@link Opt.noneWhen} */
 var noneWhen = function (returnNone) { return function (x) { return x.noneWhen(returnNone); }; };
 exports.noneWhen = noneWhen;
 /**
- * Same as [[Opt.count]], but also supports arrays.
+ * Same as {@link Opt.count}, but also supports arrays.
  *
  * @example
  * ```ts
@@ -1336,21 +1340,21 @@ exports.noneWhen = noneWhen;
  * count(greaterThanZero)([-3, 0, 5, 10]) // 2
  * ```
  *
- * @see [[Opt.count]]
+ * @see {@link Opt.count}
  */
 var count = function (p) { return function (x) {
-    if (exports.isOpt(x)) {
+    if ((0, exports.isOpt)(x)) {
         return x.count(p);
     }
-    if (exports.isArray(x)) {
+    if ((0, exports.isArray)(x)) {
         return x.filter(p).length;
     }
-    throw new Error("Invalid input to count, only Opt and Array are supported: " + JSON.stringify(x));
+    throw new Error("Invalid input to count, only Opt and Array are supported: ".concat(JSON.stringify(x)));
 }; };
 exports.count = count;
 /**
- * Find a first item which holds true for a given predicate and return it wrapped in [[Some]].
- * Return [[None]] when no match is found.
+ * Find a first item which holds true for a given predicate and return it wrapped in {@link Some}.
+ * Return {@link None} when no match is found.
  *
  * @example
  * ```ts
@@ -1360,20 +1364,20 @@ exports.count = count;
  *
  * @param predicate
  */
-var find = function (predicate) { return function (xs) { return exports.opt(xs.find(function (x) { return predicate(x); })); }; };
+var find = function (predicate) { return function (xs) { return (0, exports.opt)(xs.find(function (x) { return predicate(x); })); }; };
 exports.find = find;
-/** @see [[Opt.narrow]] */
+/** @see {@link Opt.narrow} */
 var narrow = function (guard) { return function (x) { return x.narrow(guard); }; };
 exports.narrow = narrow;
-/** @see [[Opt.narrowOrCrash]] */
+/** @see {@link Opt.narrowOrCrash} */
 var narrowOrCrash = function (guard, crashMessage) { return function (x) { return x.narrowOrCrash(guard, crashMessage); }; };
 exports.narrowOrCrash = narrowOrCrash;
 /**
- * Same as [[Opt.print]], but supports arbitrary argument types.
- * @see [[Opt.print]]
+ * Same as {@link Opt.print}, but supports arbitrary argument types.
+ * @see {@link Opt.print}
  */
 var print = function (tag) { return function (x) {
-    if (exports.isOpt(x)) {
+    if ((0, exports.isOpt)(x)) {
         x.print(tag);
     }
     else {
@@ -1382,7 +1386,7 @@ var print = function (tag) { return function (x) {
     return x;
 }; };
 exports.print = print;
-/** @see [[Opt.equals]] */
+/** @see {@link Opt.equals} */
 var equals = function (other, comparator) {
     if (comparator === void 0) { comparator = refCmp; }
     return function (x) {
@@ -1390,13 +1394,13 @@ var equals = function (other, comparator) {
     };
 };
 exports.equals = equals;
-/** @see [[Opt.prop]] */
+/** @see {@link Opt.prop} */
 var prop = function (key) { return function (x) {
     return x.prop(key);
 }; };
 exports.prop = prop;
 /**
- * Similar to [[Opt.prop]], but it is designed for naked objects (not wrapped in opt).
+ * Similar to {@link Opt.prop}, but it is designed for naked objects (not wrapped in opt).
  *
  * @example
  * ```ts
@@ -1408,10 +1412,10 @@ exports.prop = prop;
  * propNaked<ObjC>('c')({c: null}) // None
  * ```
  */
-var propNaked = function (key) { return function (x) { return exports.opt(x).prop(key); }; };
+var propNaked = function (key) { return function (x) { return (0, exports.opt)(x).prop(key); }; };
 exports.propNaked = propNaked;
 /**
- * Similar to [[Opt.propOrCrash]], but also supports naked objects.
+ * Similar to {@link Opt.propOrCrash}, but also supports naked objects.
  *
  * @example
  * ```ts
@@ -1423,12 +1427,12 @@ exports.propNaked = propNaked;
  * ```
  */
 var propOrCrash = function (key) { return function (x) {
-    return (exports.isOpt(x) ? x : exports.opt(x)).propOrCrash(key);
+    return ((0, exports.isOpt)(x) ? x : (0, exports.opt)(x)).propOrCrash(key);
 }; };
 exports.propOrCrash = propOrCrash;
 /**
  * Utility function for generating property getter for one specific object.
- * Functionally similar to [[propOrCrash]], but it has swapped arguments and only supports naked objects.
+ * Functionally similar to {@link propOrCrash}, but it has swapped arguments and only supports naked objects.
  *
  * @example
  * ```ts
@@ -1467,16 +1471,16 @@ exports.propOrCrash = propOrCrash;
  * @param obj
  */
 var genNakedPropOrCrash = function (obj) {
-    var o = exports.opt(obj);
+    var o = (0, exports.opt)(obj);
     return function (k) { return o.propOrCrash(k); };
 };
 exports.genNakedPropOrCrash = genNakedPropOrCrash;
-/** @see [[Opt.swap]] */
+/** @see {@link Opt.swap} */
 var swap = function (newValue) { return function (x) { return x.swap(newValue); }; };
 exports.swap = swap;
 /**
  * Takes functions and builds a function which consecutively calls each given function with a result from a previous one.
- * Similar to [[Opt.pipe]], but doesn't take input directly, instead returns a function which can be called repeatedly with different inputs.
+ * Similar to {@link Opt.pipe}, but doesn't take input directly, instead returns a function which can be called repeatedly with different inputs.
  *
  * ```ts
  * flow( // 1. 63
@@ -1507,7 +1511,7 @@ exports.flow = flow;
 /**
  * Composes given functions (in the mathematical sense).
  *
- * Unlike [[flow]] and [[pipe]], functions passed to [[compose]] are applied (called) from last to first.
+ * Unlike {@link flow} and {@link pipe}, functions passed to {@link compose} are applied (called) from last to first.
  *
  * ```ts
  * const f = (x: number): number => x * x;
@@ -1545,34 +1549,34 @@ exports.compose = compose;
  *   ) // Some(5)
  * ```
  *
- * @see [[uncurryTuple]]
+ * @see {@link uncurryTuple}
  * @param f
  */
 var curryTuple = function (f) { return function (a) { return function (b) { return f([a, b]); }; }; };
 exports.curryTuple = curryTuple;
 /**
  * Transforms the given function of three arguments from "tuple curried" format to curried one.
- * @see [[curryTuple]]
+ * @see {@link curryTuple}
  * @param f
  */
 var curryTuple3 = function (f) { return function (a) { return function (b) { return function (c) { return f([a, b, c]); }; }; }; };
 exports.curryTuple3 = curryTuple3;
 /**
  * Transforms the given function of four arguments from "tuple curried" format to curried one.
- * @see [[curryTuple]]
+ * @see {@link curryTuple}
  * @param f
  */
 var curryTuple4 = function (f) { return function (a) { return function (b) { return function (c) { return function (d) { return f([a, b, c, d]); }; }; }; }; };
 exports.curryTuple4 = curryTuple4;
 /**
  * Transforms the given function of five arguments from "tuple curried" format to curried one.
- * @see [[curryTuple]]
+ * @see {@link curryTuple}
  * @param f
  */
 var curryTuple5 = function (f) { return function (a) { return function (b) { return function (c) { return function (d) { return function (e) { return f([a, b, c, d, e]); }; }; }; }; }; };
 exports.curryTuple5 = curryTuple5;
 /**
- * Transforms the given function of two arguments from curried format to "tuple curried" which can be used with [[Opt.zip]].
+ * Transforms the given function of two arguments from curried format to "tuple curried" which can be used with {@link Opt.zip}.
  *
  * ```ts
  * const sub = (x: number) => (y: number) => x - y;
@@ -1581,7 +1585,7 @@ exports.curryTuple5 = curryTuple5;
  *   .map(uncurryTuple(sub)) // Some(3)
  * ```
  *
- * @see [[curryTuple]]
+ * @see {@link curryTuple}
  * @param f
  */
 var uncurryTuple = function (f) { return function (_a) {
@@ -1590,8 +1594,8 @@ var uncurryTuple = function (f) { return function (_a) {
 }; };
 exports.uncurryTuple = uncurryTuple;
 /**
- * Transforms the given function of three arguments from curried format to "tuple curried" which can be used with [[Opt.zip3]].
- * @see [[uncurryTuple]]
+ * Transforms the given function of three arguments from curried format to "tuple curried" which can be used with {@link Opt.zip3}.
+ * @see {@link uncurryTuple}
  * @param f
  */
 var uncurryTuple3 = function (f) { return function (_a) {
@@ -1600,8 +1604,8 @@ var uncurryTuple3 = function (f) { return function (_a) {
 }; };
 exports.uncurryTuple3 = uncurryTuple3;
 /**
- * Transforms the given function of four arguments from curried format to "tuple curried" which can be used with [[Opt.zip4]].
- * @see [[uncurryTuple]]
+ * Transforms the given function of four arguments from curried format to "tuple curried" which can be used with {@link Opt.zip4}.
+ * @see {@link uncurryTuple}
  * @param f
  */
 var uncurryTuple4 = function (f) { return function (_a) {
@@ -1610,8 +1614,8 @@ var uncurryTuple4 = function (f) { return function (_a) {
 }; };
 exports.uncurryTuple4 = uncurryTuple4;
 /**
- * Transforms the given function of five arguments from curried format to "tuple curried" which can be used with [[Opt.zip5]].
- * @see [[uncurryTuple]]
+ * Transforms the given function of five arguments from curried format to "tuple curried" which can be used with {@link Opt.zip5}.
+ * @see {@link uncurryTuple}
  * @param f
  */
 var uncurryTuple5 = function (f) { return function (_a) {
@@ -1620,8 +1624,8 @@ var uncurryTuple5 = function (f) { return function (_a) {
 }; };
 exports.uncurryTuple5 = uncurryTuple5;
 /**
- * Similar to `isEmpty` from lodash, but also supports [[Opt]]s.
- * Returns `true` for [[None]], `[]`, `null`, `undefined`, empty map, empty set, empty object, `''` and `NaN`.
+ * Similar to `isEmpty` from lodash, but also supports {@link Opt}s.
+ * Returns `true` for {@link None}, `[]`, `null`, `undefined`, empty map, empty set, empty object, `''` and `NaN`.
  * Otherwise returns `false`.
  *
  * @example
@@ -1637,7 +1641,7 @@ exports.uncurryTuple5 = uncurryTuple5;
  * @param x
  */
 var isEmpty = function (x) {
-    if (exports.isOpt(x)) {
+    if ((0, exports.isOpt)(x)) {
         return x.isEmpty;
     }
     if (Array.isArray(x)) {
@@ -1658,12 +1662,12 @@ var isEmpty = function (x) {
     if (typeof x === 'number') {
         return Number.isNaN(x);
     }
-    throw new Error("Unexpected input type: " + typeof x);
+    throw new Error("Unexpected input type: ".concat(typeof x));
 };
 exports.isEmpty = isEmpty;
 /**
- * Negated version of [[isEmpty]].
- * `nonEmpty(x)` is the same as `!isEmpty(x)`. It can be useful when composing functions (e.g. via [[pipe]]).
+ * Negated version of {@link isEmpty}.
+ * `nonEmpty(x)` is the same as `!isEmpty(x)`. It can be useful when composing functions (e.g. via {@link pipe}).
  *
  * @example
  * ```ts
@@ -1678,13 +1682,13 @@ exports.isEmpty = isEmpty;
  * ) // true
  * ```
  *
- * @see [[isEmpty]]
+ * @see {@link isEmpty}
  * @param x
  */
-var nonEmpty = function (x) { return !exports.isEmpty(x); };
+var nonEmpty = function (x) { return !(0, exports.isEmpty)(x); };
 exports.nonEmpty = nonEmpty;
-/** @alias [[nonEmpty]] */
-var isFull = function (x) { return exports.nonEmpty(x); };
+/** @alias {@link nonEmpty} */
+var isFull = function (x) { return (0, exports.nonEmpty)(x); };
 exports.isFull = isFull;
 /**
  * Identity function.
@@ -1699,36 +1703,36 @@ exports.isFull = isFull;
 var id = function (x) { return x; };
 exports.id = id;
 /**
- * Same as [[Opt.at]], but also supports unwrapped arrays.
- * @see [[Opt.at]]
+ * Same as {@link Opt.at}, but also supports unwrapped arrays.
+ * @see {@link Opt.at}
  * @param index
  */
 var at = function (index) { return function (x) {
-    return (exports.isOpt(x) ? x : exports.opt(x)).at(index);
+    return ((0, exports.isOpt)(x) ? x : (0, exports.opt)(x)).at(index);
 }; };
 exports.at = at;
 /**
- * Same as [[Opt.head]], but also supports unwrapped arrays.
- * @see [[Opt.head]]
+ * Same as {@link Opt.head}, but also supports unwrapped arrays.
+ * @see {@link Opt.head}
  * @param x
  */
-var head = function (x) { return (exports.isOpt(x) ? x : exports.opt(x)).head(); };
+var head = function (x) { return ((0, exports.isOpt)(x) ? x : (0, exports.opt)(x)).head(); };
 exports.head = head;
 /**
- * Same as [[Opt.last]], but also supports unwrapped arrays.
- * @see [[Opt.last]]
+ * Same as {@link Opt.last}, but also supports unwrapped arrays.
+ * @see {@link Opt.last}
  * @param x
  */
-var last = function (x) { return (exports.isOpt(x) ? x : exports.opt(x)).last(); };
+var last = function (x) { return ((0, exports.isOpt)(x) ? x : (0, exports.opt)(x)).last(); };
 exports.last = last;
 var lenToZipFn = {
-    2: exports.uncurryTuple(exports.zip),
-    3: exports.uncurryTuple3(exports.zip3),
-    4: exports.uncurryTuple4(exports.zip4),
-    5: exports.uncurryTuple5(exports.zip5),
+    2: (0, exports.uncurryTuple)(exports.zip),
+    3: (0, exports.uncurryTuple3)(exports.zip3),
+    4: (0, exports.uncurryTuple4)(exports.zip4),
+    5: (0, exports.uncurryTuple5)(exports.zip5),
 };
 /**
- * Takes a tuple, wraps each element in [[Opt]] and applies appropriate [[Opt.zip]] function.
+ * Takes a tuple, wraps each element in {@link Opt} and applies appropriate {@link Opt.zip} function.
  *
  * @example
  * ```ts
@@ -1736,7 +1740,7 @@ var lenToZipFn = {
  * zipToOptArray([1, true, '', 7, false]) // Some<[1, true, '', 7, false]>: Opt<[number, boolean, string, number, boolean]>
  * ```
  *
- * Useful as a replacement to `zip*` functions when construction of [[Opt]]s happens in parameters of the function.
+ * Useful as a replacement to `zip*` functions when construction of {@link Opt}s happens in parameters of the function.
  * ```ts
  * zipToOptArray([1, null, '', 7, false])
  * // is same as
@@ -1746,7 +1750,7 @@ var lenToZipFn = {
  * @param xs
  */
 var zipToOptArray = function (xs) {
-    return exports.opt(lenToZipFn[xs.length]).orCrash("Invalid input array length " + xs.length)(xs.map(exports.opt));
+    return (0, exports.opt)(lenToZipFn[xs.length]).orCrash("Invalid input array length ".concat(xs.length))(xs.map(exports.opt));
 };
 exports.zipToOptArray = zipToOptArray;
 /**
@@ -1764,11 +1768,11 @@ exports.zipToOptArray = zipToOptArray;
  */
 var testRe = function (re) { return function (x) { return re.test(x); }; };
 exports.testRe = testRe;
-/** @see [[Opt.testReOrFalse]] */
+/** @see {@link Opt.testReOrFalse} */
 var testReOrFalse = function (re) { return function (x) { return x.testReOrFalse(re); }; };
 exports.testReOrFalse = testReOrFalse;
 /**
- * Runs a given function. Result is wrapped by [[opt]]. Returns [[None]] when the function throws.
+ * Runs a given function. Result is wrapped by {@link opt}. Returns {@link None} when the function throws.
  *
  * @example
  * ```ts
@@ -1780,7 +1784,7 @@ exports.testReOrFalse = testReOrFalse;
  */
 var tryRun = function (f) {
     try {
-        return exports.opt(f());
+        return (0, exports.opt)(f());
     }
     catch (e) {
         return exports.none;
@@ -1788,7 +1792,7 @@ var tryRun = function (f) {
 };
 exports.tryRun = tryRun;
 /**
- * Parses JSON. The result is passed to [[opt]], any error results in [[None]].
+ * Parses JSON. The result is passed to {@link opt}, any error results in {@link None}.
  *
  * @example
  * ```ts
@@ -1797,15 +1801,15 @@ exports.tryRun = tryRun;
  * parseJson('null') // None - valid JSON (according to the new standard), but opt(null) is None
  * ```
  *
- * Typical use is to call [[Opt.narrow]] afterwards to validate parsed data and get proper type.
+ * Typical use is to call {@link Opt.narrow} afterwards to validate parsed data and get proper type.
  *
  * @param x
  */
-var parseJson = function (x) { return exports.tryRun(function () { return JSON.parse(x); }); };
+var parseJson = function (x) { return (0, exports.tryRun)(function () { return JSON.parse(x); }); };
 exports.parseJson = parseJson;
 /**
  * Parses integer (same semantics as `Number.parseInt`).
- * The result is wrapped into [[opt]] (so `NaN` will become [[None]]).
+ * The result is wrapped into {@link opt} (so `NaN` will become {@link None}).
  *
  * @example
  * ```ts
@@ -1816,11 +1820,11 @@ exports.parseJson = parseJson;
  *
  * @param x
  */
-var parseInt = function (x) { return exports.opt(Number.parseInt(x, 10)); };
+var parseInt = function (x) { return (0, exports.opt)(Number.parseInt(x, 10)); };
 exports.parseInt = parseInt;
 /**
  * Parses float (same semantics as `Number.parseFloat`).
- * The result is wrapped into [[opt]] (so `NaN` will become [[None]]).
+ * The result is wrapped into {@link opt} (so `NaN` will become {@link None}).
  *
  * @example
  * ```ts
@@ -1831,9 +1835,9 @@ exports.parseInt = parseInt;
  *
  * @param x
  */
-var parseFloat = function (x) { return exports.opt(Number.parseFloat(x)); };
+var parseFloat = function (x) { return (0, exports.opt)(Number.parseFloat(x)); };
 exports.parseFloat = parseFloat;
-/** @see [[Opt.apply]] */
+/** @see {@link Opt.apply} */
 var apply = function () {
     var args = [];
     for (var _i = 0; _i < arguments.length; _i++) {
@@ -1842,7 +1846,7 @@ var apply = function () {
     return function (x) { return x.apply.apply(x, args); };
 };
 exports.apply = apply;
-/** @see [[Opt.onFunc]] */
+/** @see {@link Opt.onFunc} */
 var onFunc = function () {
     var args = [];
     for (var _i = 0; _i < arguments.length; _i++) {
@@ -1866,7 +1870,7 @@ exports.onFunc = onFunc;
 var isOrCrash = function (guard, msg) {
     if (msg === void 0) { msg = 'invalid value'; }
     return function (x) {
-        return exports.some(x).narrow(guard).orCrash(msg);
+        return (0, exports.some)(x).narrow(guard).orCrash(msg);
     };
 };
 exports.isOrCrash = isOrCrash;
@@ -1886,14 +1890,14 @@ exports.isOrCrash = isOrCrash;
  */
 var assertType = function (x, guard, msg) {
     if (msg === void 0) { msg = 'invalid value'; }
-    exports.isOrCrash(guard, msg)(x);
+    (0, exports.isOrCrash)(guard, msg)(x);
 };
 exports.assertType = assertType;
-/** @see [[Opt.min]] */
-var min = function (x) { return exports.isReadonlyArray(x) ? exports.opt(x).min() : x.min(); };
+/** @see {@link Opt.min} */
+var min = function (x) { return (0, exports.isReadonlyArray)(x) ? (0, exports.opt)(x).min() : x.min(); };
 exports.min = min;
-/** @see [[Opt.max]] */
-var max = function (x) { return exports.isReadonlyArray(x) ? exports.opt(x).max() : x.max(); };
+/** @see {@link Opt.max} */
+var max = function (x) { return (0, exports.isReadonlyArray)(x) ? (0, exports.opt)(x).max() : x.max(); };
 exports.max = max;
 // generate a function of two curried optional arguments
 // common - two some values lead to call of op, two nones returns none
@@ -1901,9 +1905,9 @@ exports.max = max;
 // any mode - if one operand is none, return the other (non-none) one
 var gen2Op = function (mode, op) {
     return function (x) { return function (y) {
-        var ox = exports.opt(x);
-        var oy = exports.opt(y);
-        var allRes = ox.zip(oy).map(exports.uncurryTuple(op));
+        var ox = (0, exports.opt)(x);
+        var oy = (0, exports.opt)(y);
+        var allRes = ox.zip(oy).map((0, exports.uncurryTuple)(op));
         var anyResGen = function () { return allRes.alt(ox).alt(oy); };
         return mode === 'all' ? allRes : anyResGen();
     }; };
@@ -2003,7 +2007,7 @@ exports.max2Any = gen2Op('any', exports.max2Num);
  * @param minValue
  */
 var clamp = function (minValue) { return function (maxValue) { return function (x) {
-    return exports.opt(x).act(exports.max2Any(minValue), exports.min2Any(maxValue));
+    return (0, exports.opt)(x).act((0, exports.max2Any)(minValue), (0, exports.min2Any)(maxValue));
 }; }; };
 exports.clamp = clamp;
 /**
@@ -2114,7 +2118,7 @@ exports.dec = dec;
  * ```
  */
 var prependStr = function (prefix) { return function (str) {
-    return "" + prefix + str;
+    return "".concat(prefix).concat(str);
 }; };
 exports.prependStr = prependStr;
 /**
@@ -2128,7 +2132,7 @@ exports.prependStr = prependStr;
  * ```
  */
 var appendStr = function (suffix) { return function (str) {
-    return "" + str + suffix;
+    return "".concat(str).concat(suffix);
 }; };
 exports.appendStr = appendStr;
 /**
@@ -2177,7 +2181,7 @@ exports.eq = eq;
 var eqAny = function (a) { return function (b) { return a === b; }; };
 exports.eqAny = eqAny;
 /**
- * A no-operation function that simply returns undefined.
+ * A no-operation function that simply returns `undefined`.
  * Can be used as a placeholder callback.
  *
  * @returns undefined

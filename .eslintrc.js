@@ -18,5 +18,8 @@ module.exports = {
             },
         ],
         '@typescript-eslint/no-explicit-any': 'off',
+        '@typescript-eslint/array-type': 'error',
+        '@typescript-eslint/no-empty-function': 'error',
+        '@typescript-eslint/no-inferrable-types': 'error',
     },
 };

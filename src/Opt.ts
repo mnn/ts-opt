@@ -75,10 +75,10 @@ const debugPrint = (tag?: string, ...xs: unknown[]) => {
 };
 
 /**
- * Generic container class. It either holds exactly one value - [[Some]], or no value - [[None]] (empty).
+ * Generic container class. It either holds exactly one value - {@link Some}, or no value - {@link None} (empty).
  *
  * It simplifies working with possibly empty values and provides many methods/functions which allow creation of processing pipelines (commonly known as "fluent
- * API" in OOP or [[pipe|chain of reverse applications]] in FP).
+ * API" in OOP or {@link Opt.pipe|chain of reverse applications} in FP).
  *
  * @typeparam T Wrapped value type.
  */
@@ -88,36 +88,36 @@ export abstract class Opt<T> {
   constructor() { }
 
   /**
-   * `false` for [[Some]], `true` for [[None]].
+   * `false` for {@link Some}, `true` for {@link None}.
    *
-   * @see [[ts-opt.isEmpty]]
+   * @see {@link isEmpty}
    */
   abstract get isEmpty(): boolean;
 
   /**
-   * `false` for [[Some]], `true` for [[None]].
+   * `false` for {@link Some}, `true` for {@link None}.
    *
-   * If you need to narrow a type to [[Some]], use [[Opt.isSome]].
+   * If you need to narrow a type to {@link Some}, use {@link Opt.isSome}.
    */
   get nonEmpty(): boolean { return !this.isEmpty; }
 
   /**
-   * @alias [[Opt.nonEmpty]]
+   * @alias {@link Opt.nonEmpty}
    */
   get isFull(): boolean { return this.nonEmpty; }
 
   /**
-   * Is this instance of [[Some]]?
+   * Is this instance of {@link Some}?
    */
   isSome(): this is Some<T> { return this.nonEmpty; }
 
   /**
-   * Is this instance of [[None]]?
+   * Is this instance of {@link None}?
    */
   isNone(): this is None<T> { return this.isEmpty; }
 
   /**
-   * `1` for [[Some]], `0` for [[None]].
+   * `1` for {@link Some}, `0` for {@link None}.
    */
   get length(): 0 | 1 { return this.isEmpty ? 0 : 1; }
 
@@ -141,12 +141,12 @@ export abstract class Opt<T> {
    * some(1).toArray() // [1]
    * none.toArray() // []
    * ```
-   * @see [[ts-opt.toArray]]
+   * @see {@link toArray}
    */
   abstract toArray(): [] | [T];
 
   /**
-   * Converts an object to [[Opt]].
+   * Converts an object to {@link Opt}.
    *
    * @example
    * ```ts
@@ -163,7 +163,7 @@ export abstract class Opt<T> {
   };
 
   /**
-   * Convets [[Opt]] to an object.
+   * Convets {@link Opt} to an object.
    *
    * @example
    * ```ts
@@ -179,38 +179,38 @@ export abstract class Opt<T> {
   };
 
   /**
-   * Serializes [[Opt]] to a plain JavaScript object.
-   * @see [[ts-opt.serialize]]
+   * Serializes {@link Opt} to a plain JavaScript object.
+   * @see {@link serialize}
    */
   serialize(): OptSerialized<T> {
     return serialize(this);
   }
 
   /**
-   * Deserializes [[Opt]] from a plain JavaScript object.
-   * @see [[ts-opt.deserialize]]
+   * Deserializes {@link Opt} from a plain JavaScript object.
+   * @see {@link deserialize}
    */
   static deserialize<T>(x: unknown, guard: (x: unknown) => x is T): DeserializationResult<T> {
     return deserialize(x, guard);
   }
 
   /**
-   * Applies function to the wrapped value and returns a new instance of [[Some]].
+   * Applies function to the wrapped value and returns a new instance of {@link Some}.
    *
    * ```
    * some(1).map(x => x + 1) // Some(2)
    * none.map(x => x + 1) // None
    * ```
    *
-   * @see [[onSome]] for imperative variant (for use with callback)
-   * @see [[ts-opt.map]]
+   * @see {@link onSome} for imperative variant (for use with callback)
+   * @see {@link map}
    *
    * @param f
    */
   abstract map<U>(f: (_: T) => U): Opt<U>;
 
   /**
-   * Similar to [[map]], but supports more functions which are called in succession, each on a result of a previous one.
+   * Similar to {@link Opt.map}, but supports more functions which are called in succession, each on a result of a previous one.
    *
    * @example
    * ```ts
@@ -219,13 +219,13 @@ export abstract class Opt<T> {
    * opt(4).mapFlow(sq, dec) // Some(15)
    * opt(null).mapFlow(sq, dec) // None
    * ```
-   * @see [[ts-opt.mapFlow]]
+   * @see {@link mapFlow}
    * @param fs
    */
   mapFlow: MapFlowInClassFn<T> = (...fs: any[]) => fs.reduce((acc, x) => acc.map(x), this);
 
   /**
-   * Similar to [[map]], but function is expected to return [[Opt]] which will be returned.
+   * Similar to {@link Opt.map}, but function is expected to return {@link Opt} which will be returned.
    * Useful for including steps which may fail or return no value.
    *
    * ```
@@ -233,21 +233,21 @@ export abstract class Opt<T> {
    * none.flatMap(x => some(1)) // None
    * ```
    *
-   * @see [[ts-opt.flatMap]]
+   * @see {@link flatMap}
    * @param f
    */
   abstract flatMap<U>(f: (_: T) => Opt<U>): Opt<U>;
 
   /**
-   * @alias [[flatMap]]
-   * @see [[ts-opt.chain]]
+   * @alias {@link flatMap}
+   * @see {@link chain}
    * @param f
    */
   chain<U>(f: (_: T) => Opt<U>): Opt<U> { return this.flatMap(f); }
 
   /**
-   * Similar to [[chain]] (in other languages called `bind` or `>>=`), but supports more functions passed at once (resembles `do` notation in Haskell).
-   * It is used to model a sequence of operations where each operation can fail (can return [[None]]).
+   * Similar to {@link Opt.chain} (in other languages called `bind` or `>>=`), but supports more functions passed at once (resembles `do` notation in Haskell).
+   * It is used to model a sequence of operations where each operation can fail (can return {@link None}).
    *
    * ```ts
    * // does addition when first argument is number
@@ -275,20 +275,20 @@ export abstract class Opt<T> {
    * ); // Some(4)
    * ```
    *
-   * @see [[ts-opt.act]]
+   * @see {@link act}
    * @param fs
    */
   act: ActInClassFn<T> = (...fs: any[]) => fs.reduce((acc, x) => acc.chain(x), this);
 
   /**
-   * @alias [[act]]
-   * @see [[ts-opt.chainFlow]]
+   * @alias {@link Opt.act}
+   * @see {@link chainFlow}
    * @param args
    */
   chainFlow: ActInClassFn<T> = (...args: any[]) => (this.act as any)(...args);
 
   /**
-   * Combination of [[flatMap]] and [[opt]] functions.
+   * Combination of {@link Opt.flatMap} and {@link opt} functions.
    *
    * @example
    * ```ts
@@ -296,14 +296,14 @@ export abstract class Opt<T> {
    * some(2).chainToOpt(x => x === 1 ? null : x + 1) // Some(3)
    * ```
    *
-   * @see [[ts-opt.chainToOpt]]
+   * @see {@link chainToOpt}
    *
    * @param f
    */
   chainToOpt<U>(f: (_: T) => U | undefined | null): OptSafe<U> { return this.flatMap(x => opt(f(x))); }
 
   /**
-   * Similar to [[act]], but functions return empty values instead of [[Opt]].
+   * Similar to {@link act}, but functions return empty values instead of {@link Opt}.
    * It is useful for typical JavaScript functions (e.g. lodash), properly handles `undefined`/`null`/`NaN` at any point of the chain.
    *
    * ```ts
@@ -317,15 +317,15 @@ export abstract class Opt<T> {
    * ); // None
    * ```
    *
-   * @see [[ts-opt.actToOpt]]
+   * @see {@link actToOpt}
    *
    * @param fs
    */
   actToOpt: ActToOptInClassFn<T> = (...fs: any[]) => fs.reduce((acc, x) => acc.chainToOpt(x), this);
 
   /**
-   * @alias [[actToOpt]]
-   * @see [[ts-opt.chainToOptFlow]]
+   * @alias {@link Opt.actToOpt}
+   * @see {@link chainToOptFlow}
    * @param args
    */
   chainToOptFlow: ActToOptInClassFn<T> = (...args: any[]) => (this.act as any)(...args);
@@ -345,14 +345,21 @@ export abstract class Opt<T> {
   }
 
   /**
-   * Returns value when [[Some]], throws error with `msg` otherwise.
-   * @see [[ts-opt.orCrash]]
+   * Returns value when {@link Some}, throws error with `msg` otherwise.
+   *
+   * @example
+   * ```ts
+   * opt(null).orCrash('unexpected empty value') // crashes with Error('unexpected empty value')
+   * opt(1).orCrash('unexpected empty value') // 1
+   * ```
+   *
+   * @see {@link orCrash}
    * @param msg Error message.
    */
   abstract orCrash(msg: string): T | never;
 
   /**
-   * Crash when called on [[None]], pass [[Opt]] instance on [[Some]].
+   * Crash when called on {@link None}, pass {@link Opt} instance on {@link Some}.
    *
    * @example
    * ```ts
@@ -360,69 +367,71 @@ export abstract class Opt<T> {
    * none.someOrCrash('fail') // throws
    * ```
    *
-   * @see [[ts-opt.someOrCrash]]
+   * @see {@link someOrCrash}
    *
    * @param msg
    */
   abstract someOrCrash(msg: string): Some<T>;
 
   /**
-   * Returns value for [[Some]] or `undefined` for [[None]].
+   * Returns value for {@link Some} or `undefined` for {@link None}.
    *
    * @example
    * ```ts
    * some(1).orUndef() // 1
    * none.orUndef() // undefined
    * ```
-   * @see [[ts-opt.orUndef]]
+   * @see {@link orUndef}
    */
   abstract orUndef(): T | undefined;
 
   /**
-   * Returns value for [[Some]] or `null` for [[None]].
+   * Returns value for {@link Some} or `null` for {@link None}.
    *
    * @example
    * ```ts
    * some(1).orNull() // 1
    * none.orNull() // null
    * ```
-   * @see [[ts-opt.orNull]]
+   * @see {@link orNull}
    */
   abstract orNull(): T | null;
 
   /**
-   * Returns inner value for [[Some]], `false` for [[None]].
+   * Returns inner value for {@link Some}, `false` for {@link None}.
    *
    * @example
    * ```ts
    * some(1).orFalse() // 1
    * none.orFalse() // false
    * ```
-   * @see [[ts-opt.orFalse]]
+   * @see {@link Opt.exists}
+   * @see {@link orFalse}
    */
   abstract orFalse(): T | false;
 
   /**
-   * Returns inner value for [[Some]], `true` for [[None]].
+   * Returns inner value for {@link Some}, `true` for {@link None}.
    *
    * @example
    * ```ts
    * some(1).orTrue() // 1
    * none.orTrue() // true
    * ```
-   * @see [[ts-opt.orTrue]]
+   * @see {@link Opt.forAll}
+   * @see {@link orTrue}
    */
   abstract orTrue(): T | true;
 
   /**
-   * Returns inner value for [[Some]], `NaN` for [[None]].
+   * Returns inner value for {@link Some}, `NaN` for {@link None}.
    *
    * @example
    * ```ts
    * some(1).orNaN() // 1
    * none.orNaN() // NaN
    * ```
-   * @see [[ts-opt.orNaN]]
+   * @see {@link orNaN}
    */
   abstract orNaN(): T | number;
 
@@ -434,16 +443,16 @@ export abstract class Opt<T> {
    * none.caseOf(x => x + 1, () => 0) // 0
    * ```
    *
-   * @see [[onBoth]] for imperative version
-   * @see [[ts-opt.caseOf]]
+   * @see {@link Opt.onBoth} for imperative version
+   * @see {@link caseOf}
    *
-   * @param onSome Processing function for [[Some]].
-   * @param onNone Processing function for [[None]].
+   * @param someCase Processing function for {@link Some}.
+   * @param noneCase Processing function for {@link None}.
    */
-  abstract caseOf<R>(onSome: (x: T) => R, onNone: () => R): R;
+  abstract caseOf<R>(someCase: (x: T) => R, noneCase: () => R): R;
 
   /**
-   * Calls appropriate callback and returns without change current instance of [[Opt]].
+   * Calls appropriate callback and returns without change current instance of {@link Opt}.
    *
    * ```ts
    * // prints 1, returns some(1)
@@ -453,8 +462,8 @@ export abstract class Opt<T> {
    * none.onBoth(x => console.log(x), () => console.log('none'))
    * ```
    *
-   * @see [[caseOf]] for functional version
-   * @see [[ts-opt.onBoth]]
+   * @see {@link Opt.caseOf} for functional version
+   * @see {@link onBoth}
    * @imperative
    *
    * @param onSome
@@ -463,14 +472,14 @@ export abstract class Opt<T> {
   abstract onBoth(onSome: (x: T) => void, onNone: () => void): Opt<T>;
 
   /**
-   * Calls `f` on [[Some]] with its value, does nothing for [[None]].
+   * Calls `f` on {@link Some} with its value, does nothing for {@link None}.
    * @imperative
    * @param f
    */
   abstract onSome(f: (x: T) => void): Opt<T>;
 
   /**
-   * Calls `f` on [[None]], does nothing for [[Some]].
+   * Calls `f` on {@link None}, does nothing for {@link Some}.
    * @imperative
    * @param f
    */
@@ -496,14 +505,14 @@ export abstract class Opt<T> {
    * ) // true
    * ```
    *
-   * @see [[ts-opt.pipe]]
+   * @see {@link pipe}
    *
    * @param fs Functions in call chain
    */
   pipe: PipeInClassFn<T> = (...fs: any[]) => fs.reduce((acc, x) => x(acc), this);
 
   /**
-   * Compares inner value with given value using `===`. Always `false` for [[None]].
+   * Compares inner value with given value using `===`. Always `false` for {@link None}.
    *
    * ```ts
    * some(1).contains(1) // true
@@ -511,14 +520,14 @@ export abstract class Opt<T> {
    * none.contains(undefined) // false
    * ```
    *
-   * @see [[ts-opt.contains]]
+   * @see {@link contains}
    *
    * @param x
    */
   abstract contains(x: T): boolean;
 
   /**
-   * Applies `p` to inner value and passes result. Always `false` for [[None]].
+   * Applies `p` to inner value and passes result. Always `false` for {@link None}.
    *
    * ```ts
    * some(0).exists(x => x > 0) // false
@@ -526,14 +535,14 @@ export abstract class Opt<T> {
    * none.exists(x => x > 0) // false
    * ```
    *
-   * @see [[ts-opt.exists]]
+   * @see {@link exists}
    *
    * @param p Predicate.
    */
   abstract exists(p: (x: T) => boolean): boolean;
 
   /**
-   * Applies `p` to inner value and passes result. Always `true` for [[None]].
+   * Applies `p` to inner value and passes result. Always `true` for {@link None}.
    *
    * @example
    * ```ts
@@ -541,30 +550,30 @@ export abstract class Opt<T> {
    * some(1).forAll(x => x > 0) // true
    * none.forAll(x => x > 0) // true
    * ```
-   * @see [[ts-opt.forAll]]
+   * @see {@link forAll}
    * @param p Predicate.
    */
   abstract forAll(p: (x: T) => boolean): boolean;
 
   /**
-   * Get inner value of [[Some]], or use passed `def` value for [[None]].
+   * Get inner value of {@link Some}, or use passed `def` value for {@link None}.
    *
    * @example
    * ```ts
    * some(1).orElse(2) // 1
    * none.orElse(2) // 2
    * ```
-   * @see [[ts-opt.orElse]]
+   * @see {@link orElse}
    *
    * @param def Default value.
    */
   abstract orElse(def: T): T;
 
   /**
-   * Get inner value of [[Some]], or lazily use passed `def` value for [[None]].
+   * Get inner value of {@link Some}, or lazily use passed `def` value for {@link None}.
    *
    * If a computation of a default value is not expensive (or has been already computed),
-   * use [[orElse]] instead.
+   * use {@link orElse} instead.
    *
    * @example
    * ```ts
@@ -572,14 +581,14 @@ export abstract class Opt<T> {
    * none.orElseLazy(() => 2) // 2
    * ```
    *
-   * @see [[ts-opt.orElseLazy]]
+   * @see {@link orElseLazy}
    *
    * @param def
    */
   abstract orElseLazy(def: () => T): T;
 
   /**
-   * Less strict version of [[orElse]].
+   * Less strict version of {@link orElse}.
    *
    * @example
    * ```ts
@@ -592,7 +601,8 @@ export abstract class Opt<T> {
   abstract orElseAny<U>(def: U): T | U;
 
   /**
-   * Return `this` for [[Some]], `def` for [[None]].
+   * Return `this` for {@link Some}, `def` for {@link None}.
+   * It represents an alternative on {@link Opt}s.
    *
    * @example
    * ```ts
@@ -622,7 +632,7 @@ export abstract class Opt<T> {
   abstract alt(def: Opt<T>): Opt<T>;
 
   /**
-   * Return `this` for [[Some]], `def` wrapped in `opt` for [[None]].
+   * Return `this` for {@link Some}, `def` wrapped in `opt` for {@link None}.
    *
    * @example
    * ```ts
@@ -637,7 +647,7 @@ export abstract class Opt<T> {
   abstract altOpt(def: T | EmptyValue): OptSafe<T>;
 
   /**
-   * Similar to [[caseOf]] but doesn't unwrap value.
+   * Similar to {@link caseOf} but doesn't unwrap value.
    *
    * @example
    * ```ts
@@ -645,7 +655,7 @@ export abstract class Opt<T> {
    * none.bimap(x => x + 1, () => 0) // Some(0)
    * ```
    *
-   * @see [[ts-opt.bimap]]
+   * @see {@link bimap}
    *
    * @param someF
    * @param noneF
@@ -653,7 +663,7 @@ export abstract class Opt<T> {
   abstract bimap<U>(someF: (_: T) => U, noneF: () => U): Opt<U>;
 
   /**
-   * Similar to [[bimap]], but accepts functions returning [[Opt]].
+   * Similar to {@link Opt.bimap}, but accepts functions returning {@link Opt}.
    *
    * @example
    * ```ts
@@ -662,7 +672,7 @@ export abstract class Opt<T> {
    * some(5).flatBimap(x => none, () => some(0)) // None
    * ```
    *
-   * @see [[ts-opt.flatBimap]]
+   * @see {@link flatBimap}
    *
    * @param someF
    * @param noneF
@@ -670,7 +680,7 @@ export abstract class Opt<T> {
   abstract flatBimap<U>(someF: (_: T) => Opt<U>, noneF: () => Opt<U>): Opt<U>;
 
   /**
-   * Formats [[Opt]] to string. In case of [[Some]] inner value is converted using `JSON.stringify`.
+   * Formats {@link Opt} to string. In case of {@link Some} inner value is converted using `JSON.stringify`.
    *
    * @example
    * ```ts
@@ -678,12 +688,12 @@ export abstract class Opt<T> {
    * none.toString() // 'None'
    * ```
    *
-   * @see [[ts-opt.toString]]
+   * @see {@link toString}
    */
   abstract toString(): string;
 
   /**
-   * Joins two optional values to a pair. If either of them is [[None]] then the result is [[None]].
+   * Joins two optional values to a pair. If either of them is {@link None} then the result is {@link None}.
    *
    * @example
    * ```ts
@@ -704,21 +714,21 @@ export abstract class Opt<T> {
    * formatAddress(undefined, undefined) // ''
    * ```
    *
-   * @see [[ts-opt.zip]]
+   * @see {@link zip}
    *
    * @param other
    */
   abstract zip<U>(other: Opt<U>): Opt<[T, U]>;
 
   /**
-   * Same as [[zip]], but with one more optional.
+   * Same as {@link Opt.zip}, but with one more optional.
    *
    * @example
    * ```ts
    * some(1).zip3(some('a'), some(false)) // Some([1, 'a', false])
    * none.zip3(some(1), some(2)) // None
    * ```
-   * @see [[ts-opt.zip3]]
+   * @see {@link zip3}
    *
    * @param x
    * @param y
@@ -726,8 +736,8 @@ export abstract class Opt<T> {
   abstract zip3<X, Y>(x: Opt<X>, y: Opt<Y>): Opt<[T, X, Y]>;
 
   /**
-   * Same as [[zip3]], but with one more optional.
-   * @see [[ts-opt.zip4]]
+   * Same as {@link Opt.zip3}, but with one more optional.
+   * @see {@link zip4}
    * @param x
    * @param y
    * @param z
@@ -735,8 +745,8 @@ export abstract class Opt<T> {
   abstract zip4<X, Y, Z>(x: Opt<X>, y: Opt<Y>, z: Opt<Z>): Opt<[T, X, Y, Z]>;
 
   /**
-   * Same as [[zip4]], but with one more optional.
-   * @see [[ts-opt.zip5]]
+   * Same as {@link Opt.zip4}, but with one more optional.
+   * @see {@link zip5}
    * @param x
    * @param y
    * @param z
@@ -745,22 +755,22 @@ export abstract class Opt<T> {
   abstract zip5<X, Y, Z, ZZ>(x: Opt<X>, y: Opt<Y>, z: Opt<Z>, zz: Opt<ZZ>): Opt<[T, X, Y, Z, ZZ]>;
 
   /**
-   * Returns [[Some]] with same value if predicate holds, [[None]] otherwise.
+   * Returns {@link Some} with same value if predicate holds, {@link None} otherwise.
    *
    * @example
    * ```ts
    * opt(1).filter(x => x > 0); // Some(1)
    * opt(-1).filter(x => x > 0); // None
    * ```
-   * @see [[noneIf]]
-   * @see [[ts-opt.filter]]
+   * @see {@link noneIf}
+   * @see {@link filter}
    * @param predicate
    */
   abstract filter(predicate: (_: T) => boolean): Opt<T>;
 
   /**
    * Filter by regular expression.
-   * It is a shortcut function for [[Opt.filter]] + [[testRe]].
+   * It is a shortcut function for {@link Opt.filter} + {@link testRe}.
    *
    * @example
    * ```ts
@@ -778,14 +788,14 @@ export abstract class Opt<T> {
   }
 
   /**
-   * Returns [[None]] if predicate holds, otherwise passes same instance of [[Opt]].
+   * Returns {@link None} if predicate holds, otherwise passes same instance of {@link Opt}.
    *
    * @example
    * ```ts
    * opt(1).noneIf(x => x > 0); // None
    * opt(-1).noneIf(x => x > 0); // Some(-1)
    * ```
-   * @see [[filter]]
+   * @see {@link filter}
    * @param predicate
    */
   noneIf(predicate: (_: T) => boolean): Opt<T> {
@@ -793,7 +803,7 @@ export abstract class Opt<T> {
   }
 
   /**
-   * Returns [[None]] if opt holds a value for which [[isEmpty]] returns `true`, otherwise passes opt unchanged.
+   * Returns {@link None} if opt holds a value for which {@link isEmpty} returns `true`, otherwise passes opt unchanged.
    *
    * @example
    * ```ts
@@ -808,7 +818,7 @@ export abstract class Opt<T> {
   }
 
   /**
-   * Returns [[None]] when given `true`, otherwise passes opt unchanged.
+   * Returns {@link None} when given `true`, otherwise passes opt unchanged.
    *
    * @example
    * ```ts
@@ -823,10 +833,10 @@ export abstract class Opt<T> {
   }
 
   /**
-   * Returns `0` or `1` for [[Some]] depending on whether the predicate holds.
-   * Returns `0` for [[None]].
+   * Returns `0` or `1` for {@link Some} depending on whether the predicate holds.
+   * Returns `0` for {@link None}.
    *
-   * It is a combination of [[Opt.filter]] and [[Opt.length]].
+   * It is a combination of {@link Opt.filter} and {@link Opt.length}.
    *
    * @example
    * ```ts
@@ -834,7 +844,7 @@ export abstract class Opt<T> {
    * opt('Ichi').count(x => x.length > 3) // 1
    * ```
    *
-   * @see [[ts-opt.count]]
+   * @see {@link count}
    * @param predicate
    */
   count(predicate: (_: T) => boolean): 0 | 1 {
@@ -842,7 +852,7 @@ export abstract class Opt<T> {
   }
 
   /**
-   * Narrows type inside [[Opt]] using given type guard.
+   * Narrows type inside {@link Opt} using given type guard.
    *
    * @example
    * ```ts
@@ -850,16 +860,16 @@ export abstract class Opt<T> {
    * some(1 as string | number).narrow(isString) // None: Opt<string>
    * ```
    *
-   * @see [[ts-opt.narrow]]
+   * @see {@link narrow}
    *
    * @param guard
    */
   abstract narrow<U>(guard: (value: any) => value is U): Opt<U>;
 
   /**
-   * Similar to [[Opt.narrow]], but crashes on a narrowing failure.
+   * Similar to {@link Opt.narrow}, but crashes on a narrowing failure.
    *
-   * @see [[Opt.narrow]]
+   * @see {@link Opt.narrow}
    *
    * @param guard
    * @param crashMessage
@@ -876,7 +886,7 @@ export abstract class Opt<T> {
    * none.print('x') // logs '[x]', 'None'; returns None
    * ```
    *
-   * @see [[ts-opt.print]]
+   * @see {@link print}
    *
    * @param tag
    */
@@ -899,7 +909,7 @@ export abstract class Opt<T> {
    * some({a: 1}).equals(some({a: 1}), jsonCmp) // true (comparing values converted to JSON)
    * ```
    *
-   * @see [[ts-opt.equals]]
+   * @see {@link equals}
    *
    * @param other
    * @param comparator
@@ -934,16 +944,16 @@ export abstract class Opt<T> {
    * const xValue = opt(a).prop('x').orCrash('missing prop x'); // 1
    * ```
    *
-   * @see [[ts-opt.prop]]
-   * @see [[Opt.propOrCrash]]
+   * @see {@link prop}
+   * @see {@link Opt.propOrCrash}
    *
    * @param key
    */
   abstract prop<K extends (T extends object ? keyof T : never)>(key: K): OptSafe<T[K]>;
 
   /**
-   * Get a field from a wrapped object. Crash if the field is missing or empty, or opt instance is [[None]].
-   * Shortcut of [[Opt.prop]] + [[Opt.orCrash]].
+   * Get a field from a wrapped object. Crash if the field is missing or empty, or opt instance is {@link None}.
+   * Shortcut of {@link Opt.prop} + {@link Opt.orCrash}.
    *
    * @param key
    */
@@ -955,7 +965,7 @@ export abstract class Opt<T> {
   }
 
   /**
-   * Constructs a function which returns a value for [[Some]] or an empty value for [[None]] (default is `null`).
+   * Constructs a function which returns a value for {@link Some} or an empty value for {@link None} (default is `null`).
    * Optionally takes an empty value as a parameter.
    *
    * @example
@@ -977,7 +987,7 @@ export abstract class Opt<T> {
   };
 
   /**
-   * Swaps value inside (for [[None]] it's noop).
+   * Swaps value inside (for {@link None} it's noop).
    *
    * @example
    * ```ts
@@ -987,16 +997,16 @@ export abstract class Opt<T> {
    *
    * Same as `map(const(newValue))`.
    *
-   * @see [[ts-opt.swap]]
+   * @see {@link swap}
    *
    * @param newValue
    */
   abstract swap<U>(newValue: U): Opt<U>;
 
   /**
-   * Get an item at given index of an array/string wrapped in [[Opt]].
-   * Resulting value is wrapped in [[Opt]].
-   * Non-existent index results in [[None]].
+   * Get an item at given index of an array/string wrapped in {@link Opt}.
+   * Resulting value is wrapped in {@link Opt}.
+   * Non-existent index results in {@link None}.
    * Negative index is interpreted as an index from the end of the array (e.g. a last item of an array lies on an `index` equal to `-1`).
    *
    * @example
@@ -1009,7 +1019,7 @@ export abstract class Opt<T> {
    * opt('Palico').at(0) // Some('P')
    * ```
    *
-   * @see [[ts-opt.at]]
+   * @see {@link at}
    *
    * @param index
    */
@@ -1026,7 +1036,7 @@ export abstract class Opt<T> {
    * opt('Palico').head() // Some('P')
    * ```
    *
-   * @see [[ts-opt.head]]
+   * @see {@link head}
    */
   head<R extends (T extends readonly (infer A)[] ? A : (T extends string ? string : never))>(): OptSafe<R> { return this.at(0); }
 
@@ -1040,7 +1050,7 @@ export abstract class Opt<T> {
    * opt([]).min() // None
    * ```
    */
-  abstract min<R extends (T extends ReadonlyArray<infer A> ? A : never)>(): OptSafe<R>;
+  abstract min<R extends (T extends readonly (infer A)[] ? A : never)>(): OptSafe<R>;
 
   /**
    * Get maximum from an array.
@@ -1052,7 +1062,7 @@ export abstract class Opt<T> {
    * opt([]).max() // None
    * ```
    */
-  abstract max<R extends (T extends ReadonlyArray<infer A> ? A : never)>(): OptSafe<R>;
+  abstract max<R extends (T extends readonly (infer A)[] ? A : never)>(): OptSafe<R>;
 
   /**
    * Get a last item of an array or a last character of a string.
@@ -1065,7 +1075,7 @@ export abstract class Opt<T> {
    * opt('Palico').last() // Some('o')
    * ```
    *
-   * @see [[ts-opt.last]]
+   * @see {@link last}
    */
   last<R extends (T extends readonly (infer A)[] ? A : (T extends string ? string : never))>(): OptSafe<R> { return this.at(-1); }
 
@@ -1078,7 +1088,7 @@ export abstract class Opt<T> {
    * opt('b').testReOrFalse(/a/) // false
    * ```
    *
-   * @see [[ts-opt.testReOrFalse]]
+   * @see {@link testReOrFalse}
    *
    * @param re Regular expression
    */
@@ -1102,13 +1112,13 @@ export abstract class Opt<T> {
   get end(): void { return undefined; }
 
   /**
-   * Apply (call) a function inside [[Some]]. Does nothing for [[None]].
+   * Apply (call) a function inside {@link Some}. Does nothing for {@link None}.
    *
    * @example
    * ```ts
    * const add = (a: number, b: number) => a + b;
    * opt(add).apply(2, 3) // Some(5)
-   * none.apply(0).orNull() // None
+   * none.apply(0) // None
    * ```
    *
    * @example It can also be used with curried functions.
@@ -1117,9 +1127,9 @@ export abstract class Opt<T> {
    * opt(sub).apply(10).apply(3) // Some(7)
    * ```
    *
-   * @note [[apply]] is only available for functions, otherwise an exception will be thrown when called on [[Some]].
+   * @note {@link apply} is only available for functions, otherwise an exception will be thrown when called on {@link Some}.
    *
-   * @see [[onFunc]] for imperative version
+   * @see {@link Opt.onFunc} for imperative version
    *
    * @param args Parameters passed to wrapped function.
    * @return `opt`-wrapped result from the function
@@ -1137,7 +1147,7 @@ export abstract class Opt<T> {
   }
 
   /**
-   * Apply (call) a function inside [[Some]]. Does nothing for [[None]].
+   * Apply (call) a function inside {@link Some}. Does nothing for {@link None}.
    *
    * @example Both lines do the same thing
    * ```ts
@@ -1152,13 +1162,13 @@ export abstract class Opt<T> {
    * none.onFunc(79) // None
    * ```
    *
-   * @note [[onFunc]] is only available for functions, otherwise an exception will be thrown when called on [[Some]].
+   * @note {@link onFunc} is only available for functions, otherwise an exception will be thrown when called on {@link Some}.
    * @imperative
    *
-   * @see [[apply]] for functional version
+   * @see {@link Opt.apply} for functional version
    *
    * @param args
-   * @return Unchanged [[Opt]] instance
+   * @return Unchanged {@link Opt} instance
    */
   onFunc<A extends (T extends AnyFunc ? Parameters<T> : never)>(...args: A): Opt<T> {
     if (this.isSome()) {
@@ -1174,9 +1184,10 @@ export abstract class Opt<T> {
 }
 
 /**
- * Empty [[Opt]].
+ * Empty {@link Opt}.
  * @notExported
- * @see [[Opt]]
+ * @see {@link opt}
+ * @see {@link none}
  */
 class None<T> extends Opt<T> {
   readonly '@@type' = noneSymbol;
@@ -1290,9 +1301,9 @@ class None<T> extends Opt<T> {
 }
 
 /**
- * [[Opt]] with a value inside.
+ * {@link Opt} with a value inside.
  * @notExported
- * @see [[Opt]]
+ * @see {@link Opt}
  */
 class Some<T> extends Opt<T> {
   readonly '@@type' = someSymbol;
@@ -1453,14 +1464,13 @@ export type SomeSerialized<T> = {
 };
 
 /**
- * Represents a serialized Opt type, which can be either [[NoneSerialized]] or [[SomeSerialized]].
+ * Represents a serialized {@link Opt} type, which can be either {@link NoneSerialized} or {@link SomeSerialized}.
  */
 export type OptSerialized<T> = NoneSerialized | SomeSerialized<T>;
 
 export const isOptSerialized = (x: unknown): x is OptSerialized<unknown> => {
   if (typeof x !== 'object' || x === null) { return false; }
   if ('type' in x) {
-    // @ts-expect-error because TS can't infer `type` field is actually there, despite it being checked line before...
     return x.type === someSerializedType || x.type === noneSerializedType;
   } else {
     return false;
@@ -1492,8 +1502,8 @@ export class ReduxDevtoolsCompatibilityHelper {
  * serialize(opt(1)) // { type: 'Opt/Some', value: 1 }
  * ```
  *
- * @param x [[Opt]] instance to serialize
- * @returns serialized Opt instance as an [[OptSerialized]] object
+ * @param x {@link Opt} instance to serialize
+ * @returns serialized Opt instance as an {@link OptSerialized} object
  */
 export const serialize = <T>(x: Opt<T>): OptSerialized<T> => {
   if (x.isEmpty) {
@@ -1528,10 +1538,10 @@ export type DeserializationResult<T> = DeserializationSuccess<T> | Deserializati
  * deserialize({ type: 'Opt/Some', value: 'not a number' }, isNumber) // { tag: 'failure', reason: 'failed to validate inner type' }
  * ```
  *
- * @see [[serialize]]
- * @param x serialized Opt object (expected shape is [[OptSerialized]])
+ * @see {@link serialize}
+ * @param x serialized Opt object (expected shape is {@link OptSerialized})
  * @param guard function to validate the inner type
- * @returns deserialization result as a [[DeserializationResult]] object
+ * @returns deserialization result as a {@link DeserializationResult} object
  */
 export const deserialize = <T>(x: unknown, guard: (x: unknown) => x is T): DeserializationResult<T> => {
   if (!isOptSerialized(x)) return {tag: 'failure', reason: 'not OptSerialized'};
@@ -1557,7 +1567,7 @@ export const deserialize = <T>(x: unknown, guard: (x: unknown) => x is T): Deser
  *
  * @param x input value to be deserialized
  * @param guard guard function to validate the inner type
- * @return deserialized value as an [[Opt]] instance
+ * @return deserialized value as an {@link Opt} instance
  */
 export const deserializeOrCrash = <T>(x: unknown, guard: (x: unknown) => x is T): Opt<T> => {
   const deser = deserialize(x, guard);
@@ -1566,9 +1576,9 @@ export const deserializeOrCrash = <T>(x: unknown, guard: (x: unknown) => x is T)
 }
 
 /**
- * Unsafe version of [[deserializeOrCrash]].
- * Deserialization failure is indistinguishable from deserialized [[None]].
- * It is usually better to use [[deserialize]] or [[deserializeOrCrash]].
+ * Unsafe version of {@link deserializeOrCrash}.
+ * Deserialization failure is indistinguishable from deserialized {@link None}.
+ * It is usually better to use {@link deserialize} or {@link deserializeOrCrash}.
  *
  * @example
  * ```ts
@@ -1578,7 +1588,7 @@ export const deserializeOrCrash = <T>(x: unknown, guard: (x: unknown) => x is T)
  * ```
  *
  * @param x input value to be deserialized
- * @returns deserialized value as an [[Opt]] instance
+ * @returns deserialized value as an {@link Opt} instance
  */
 export const deserializeUnsafe = (x: unknown): Opt<unknown> => {
   return tryRun(() => deserializeOrCrash(x, isUnknown)).join();
@@ -1589,22 +1599,22 @@ const isNoneValue = (x: any): x is EmptyValue => {
 };
 
 /**
- * Single global instance of [[None]].
+ * Single global instance of {@link None}.
  */
 export const none: None<any> = Object.freeze(new None());
 
 /**
- * Constructs [[Some]].
+ * Constructs {@link Some}.
  *
- * Warning: Usually it is [[opt]] you are looking for.
+ * Warning: Usually it is {@link opt} you are looking for.
  * Only in rare cases you want to have for example `Some(undefined)`.
  * @param x
  */
 export const some = <T>(x: T) => Object.freeze(new Some(x));
 
 /**
- * Main constructor function - for `undefined`, `null` and `NaN` returns [[None]].
- * Anything else is wrapped into [[Some]].
+ * Main constructor function - for `undefined`, `null` and `NaN` returns {@link None}.
+ * Anything else is wrapped into {@link Some}.
  * @example
  * ```ts
  * opt(0) // Some(0)
@@ -1625,7 +1635,7 @@ export const opt = <T>(x: T | undefined | null): OptSafe<T> =>
   isNoneValue(x) ? none : some(x as WithoutOptValues<T>);
 
 /**
- * For falsy values returns [[None]], otherwise acts same as [[opt]].
+ * For falsy values returns {@link None}, otherwise acts same as {@link opt}.
  * ```ts
  * optFalsy(''); // None
  * optFalsy(0); // None
@@ -1637,32 +1647,32 @@ export const opt = <T>(x: T | undefined | null): OptSafe<T> =>
 export const optFalsy = <T>(x: T | undefined | null | '' | false | 0): OptSafe<T> => x ? some(x as WithoutOptValues<T>) : none;
 
 /**
- * For empty array (`[]`) returns [[None]], otherwise acts same as [[opt]].
+ * For empty array (`[]`) returns {@link None}, otherwise acts same as {@link opt}.
  * @param x
  */
 export const optEmptyArray = <T, A extends readonly T[] | T[]>(x: A | undefined | null): OptSafe<A> => opt(x).filter(y => y.length > 0);
 
 /**
- * For empty object (`{}`) returns [[None]], otherwise acts same as [[opt]].
+ * For empty object (`{}`) returns {@link None}, otherwise acts same as {@link opt}.
  * @param x
  */
 export const optEmptyObject = <T extends object>(x: T | undefined | null): OptSafe<T> =>
   opt(x).filter(y => Object.keys(y).length !== 0);
 
 /**
- * For empty string (`''`) returns [[None]], otherwise acts same as [[opt]].
+ * For empty string (`''`) returns {@link None}, otherwise acts same as {@link opt}.
  * @param x
  */
 export const optEmptyString = <T>(x: T | undefined | null | ''): OptSafe<T> => x === '' ? none : opt(x);
 
 /**
- * For a number `0` returns [[None]], otherwise acts same as [[opt]].
+ * For a number `0` returns {@link None}, otherwise acts same as {@link opt}.
  * @param x
  */
 export const optZero = <T>(x: T | undefined | null | 0): OptSafe<T> => x === 0 ? none : opt(x);
 
 /**
- * For numbers lesser than `0` returns [[None]], otherwise acts same as [[opt]].
+ * For numbers lesser than `0` returns {@link None}, otherwise acts same as {@link opt}.
  * Useful for strange functions which return `-1` or other negative numbers on failure.
  * ```ts
  * optNegative(undefined) // None
@@ -1691,7 +1701,7 @@ export const optArrayOpt = <T>(xs: (T | EmptyValue)[] | EmptyValue): OptSafe<T[]
   opt(xs).mapFlow(ys => ys.map(opt), catOpts)
 
 /**
- * Is given value an instance of [[Opt]]?
+ * Is given value an instance of {@link Opt}?
  * @param x
  */
 export const isOpt = (x: unknown): x is Opt<unknown> => x instanceof Opt;
@@ -1700,7 +1710,7 @@ export const isOpt = (x: unknown): x is Opt<unknown> => x instanceof Opt;
  * ```ts
  * <A, B>(of: Opt<(_: A) => B>) => (oa: Opt<A>): Opt<B>
  * ```
- * Apply `oa` to function `of`. If any argument is [[None]] then result is [[None]].
+ * Apply `oa` to function `of`. If any argument is {@link None} then result is {@link None}.
  * ```ts
  * ap(opt(x => x > 0))(opt(1)) // Opt(true)
  * ap(opt(x => x > 0))(none) // None
@@ -1717,7 +1727,7 @@ export const ap = <A, B>(of: Opt<(_: A) => B>) => (oa: Opt<A>): Opt<B> =>
  * ```ts
  * <A, B>(f: (_: A) => B) => (oa: Opt<A>): Opt<B>
  * ```
- * Apply `oa` to function `f`. If argument is [[None]] then result is [[None]].
+ * Apply `oa` to function `f`. If argument is {@link None} then result is {@link None}.
  * ```ts
  * apFn(x => x > 0)(opt(1)) // Opt(true)
  * apFn(x => x > 0)(none) // None
@@ -1728,7 +1738,7 @@ export const ap = <A, B>(of: Opt<(_: A) => B>) => (oa: Opt<A>): Opt<B> =>
 export const apFn = <A, B>(f: (_: A) => B) => (oa: Opt<A>): Opt<B> => ap(opt(f))(oa);
 
 /**
- * Transforms array of opts into an array where [[None]]s are omitted and [[Some]]s are unwrapped.
+ * Transforms array of opts into an array where {@link None}s are omitted and {@link Some}s are unwrapped.
  * ```ts
  * catOpts([opt(1), opt(null)]) // [1]
  * ```
@@ -1747,33 +1757,33 @@ export const catOpts = <A>(xs: readonly Opt<A>[]): A[] =>
 export const mapOpt = <A, B>(f: (_: A) => Opt<B>) => (xs: readonly A[]): B[] => catOpts(xs.map(f));
 
 /**
- * Unwraps one level of nested [[Opt]]s. Similar to `flatten` in other libraries or languages.
+ * Unwraps one level of nested {@link Opt}s. Similar to `flatten` in other libraries or languages.
  * ```ts
  * joinOpt(some(none)) // None
  * joinOpt(some(some(1))) // Some(1)
  * ```
  * @param x
- * @see [[Opt.join]]
+ * @see {@link Opt.join}
  */
 export const joinOpt = <T>(x: Opt<Opt<T>>): Opt<T> => x.caseOf<Opt<T>>(y => y, () => none);
 
 /**
- * @see [[Opt.fromArray]]
+ * @see {@link Opt.fromArray}
  */
 export const fromArray = Opt.fromArray;
 
 /**
- * @see [[Opt.toArray]]
+ * @see {@link Opt.toArray}
  */
 export const toArray = <T>(x: Opt<T>): [] | [T] => x.toArray();
 
 /**
- * @see [[Opt.fromObject]]
+ * @see {@link Opt.fromObject}
  */
 export const fromObject = Opt.fromObject;
 
 /**
- * @see [[Opt.toObject]]
+ * @see {@link Opt.toObject}
  */
 export const toObject =
   <K extends string = 'value'>(k?: K) =>
@@ -1783,12 +1793,12 @@ export const toObject =
 type MapFn = <T, U>(f: (_: T) => U) => <I extends (Opt<T> | readonly T[]), O extends (I extends Opt<T> ? Opt<U> : U[])>(x: I) => O;
 
 /**
- * Same as [[Opt.map]], but also supports arrays.
- * @see [[Opt.map]]
+ * Same as {@link Opt.map}, but also supports arrays.
+ * @see {@link Opt.map}
  */
 export const map: MapFn = (f: any) => (x: any) => x.map(f);
 
-/** @see [[Opt.mapFlow]] */
+/** @see {@link Opt.mapFlow} */
 export const mapFlow: MapFlowFn = (...fs: any[]) => <T>(x: Opt<T>) => fs.reduce((acc, x) => acc.map(x), x);
 
 // type FlatMapFn = <T, U, O extends (Opt<U> | U[])>(f: (_: T) => O) => <I extends (O extends Opt<U> ? Opt<T> : T[])>(x: I) => O;
@@ -1799,91 +1809,91 @@ interface FlatMapFn {
 }
 
 /**
- * Same as [[Opt.flatMap]], but also supports arrays.
- * @see [[Opt.flatMap]]
+ * Same as {@link Opt.flatMap}, but also supports arrays.
+ * @see {@link Opt.flatMap}
  */
 export const flatMap: FlatMapFn = (f: any) => (x: any) => isOpt(x) ? x.flatMap(f) : x.map(f).flat();
 
-/** @see [[Opt.flatMap]] */
+/** @see {@link Opt.flatMap} */
 export const chain = flatMap;
 
-/** @see [[Opt.act]] */
+/** @see {@link Opt.act} */
 export const act: ActFn = <I>(...fs: any[]) => (x: Opt<I>) => fs.reduce((acc, x) => acc.chain(x), x);
 
-/** @see [[Opt.chainFlow]] */
+/** @see {@link Opt.chainFlow} */
 export const chainFlow: ActFn = act;
 
-/** @see [[Opt.chainToOpt]] */
+/** @see {@link Opt.chainToOpt} */
 export const chainToOpt = <T, U>(f: (_: T) => U | undefined | null) => (x: Opt<T>): OptSafe<U> => x.chainToOpt(f);
 
-/** @see [[Opt.actToOpt]] */
+/** @see {@link Opt.actToOpt} */
 export const actToOpt: ActToOptFn = <I>(...fs: any[]) => (x: Opt<I>) => fs.reduce((acc, x) => acc.chainToOpt(x), x);
 
-/** @see [[Opt.chainToOptFlow]] */
+/** @see {@link Opt.chainToOptFlow} */
 export const chainToOptFlow: ActToOptFn = actToOpt;
 
-/** @see [[Opt.someOrCrash]] */
+/** @see {@link Opt.someOrCrash} */
 export const someOrCrash = <T>(msg: string) => (x: Opt<T>): Some<T> => x.someOrCrash(msg);
 
-/** @see [[Opt.orCrash]] */
+/** @see {@link Opt.orCrash} */
 export const orCrash = <T>(msg: string) => (x: Opt<T>): T => x.orCrash(msg);
 
-/** @see [[Opt.orUndef]] */
+/** @see {@link Opt.orUndef} */
 export const orUndef = <T>(x: Opt<T>): T | undefined => x.orUndef();
 
-/** @see [[Opt.orNull]] */
+/** @see {@link Opt.orNull} */
 export const orNull = <T>(x: Opt<T>): T | null => x.orNull();
 
-/** @see [[Opt.orFalse]] */
+/** @see {@link Opt.orFalse} */
 export const orFalse = <T>(x: Opt<T>): T | false => x.orFalse();
 
-/** @see [[Opt.orTrue]] */
+/** @see {@link Opt.orTrue} */
 export const orTrue = <T>(x: Opt<T>): T | true => x.orTrue();
 
-/** @see [[Opt.orNaN]] */
+/** @see {@link Opt.orNaN} */
 export const orNaN = <T>(x: Opt<T>): T | number => x.orNaN();
 
-/** @see [[Opt.caseOf]] */
+/** @see {@link Opt.caseOf} */
 export const caseOf = <T, R>(onSome: (x: T) => R) => (onNone: () => R) => (x: Opt<T>): R => x.caseOf(onSome, onNone);
 
-/** @see [[Opt.onBoth]] */
+/** @see {@link Opt.onBoth} */
 export const onBoth = <T>(onSome: (x: T) => void) => (onNone: () => void) => (x: Opt<T>): Opt<T> => x.onBoth(onSome, onNone);
 
 /**
- * Similar to [[Opt.pipe]], but the first argument is the input.
- * Supports arbitrary input type, not just [[Opt]].
- * @see [[Opt.pipe]]
+ * Similar to {@link Opt.pipe}, but the first argument is the input.
+ * Supports arbitrary input type, not just {@link Opt}.
+ * @see {@link Opt.pipe}
  */
 export const pipe: PipeFn = <I>(x: I, ...fs: any[]) => fs.reduce((acc, y) => y(acc), x);
 
-/** @see [[Opt.contains]] */
+/** @see {@link Opt.contains} */
 export const contains = <T>(y: T) => (x: Opt<T>): boolean => x.contains(y);
 
-/** @see [[Opt.exists]] */
+/** @see {@link Opt.exists} */
 export const exists = <T>(y: (_: T) => boolean) => (x: Opt<T>): boolean => x.exists(y);
 
-/** @see [[Opt.forAll]] */
+/** @see {@link Opt.forAll} */
 export const forAll = <T>(p: (_: T) => boolean) => (x: Opt<T>): boolean => x.forAll(p);
 
-/** @see [[Opt.orElse]] */
+/** @see {@link Opt.orElse} */
 export const orElse = <T>(e: T) => (x: Opt<T>): T => x.orElse(e);
 
-/** @see [[Opt.orElseLazy]] */
+/** @see {@link Opt.orElseLazy} */
 export const orElseLazy = <T>(e: () => T) => (x: Opt<T>): T => x.orElseLazy(e);
 
-/** @see [[Opt.orElseAny]] */
+/** @see {@link Opt.orElseAny} */
 export const orElseAny = <U>(e: U) => <T>(x: Opt<T>): T | U => x.orElseAny(e);
 
-/** @see [[Opt.alt]] */
+/** @see {@link Opt.alt} */
 export const alt = <T>(def: Opt<T>) => (x: Opt<T>): Opt<T> => x.alt(def);
 
-/** @see [[Opt.altOpt]] */
+/** @see {@link Opt.altOpt} */
 export const altOpt = <T>(def: T) => (x: Opt<T>): OptSafe<T> => x.altOpt(def);
 
-/** @see [[Opt.bimap]] */
+/** @see {@link Opt.bimap} */
 export const bimap = <T, U>(someF: (_: T) => U) => (noneF: () => U) => (x: Opt<T>): Opt<U> => x.bimap(someF, noneF);
 
-/** @see [[Opt.flatBimap]] */
+/** @see {@link Opt.flatBimap} */
 export const flatBimap = <T, U>(someF: (_: T) => Opt<U>) => (noneF: () => Opt<U>) => (x: Opt<T>): Opt<U> => x.flatBimap(someF, noneF);
 
 interface ZipFn {
@@ -1895,7 +1905,7 @@ interface ZipFn {
 const zipArray = <T, U>(a: readonly T[], b: readonly U[]): [T, U][] => [...Array(Math.min(b.length, a.length))].map((_, i) => [a[i], b[i]]);
 
 /**
- * Same as [[Opt.zip]], but also supports arrays.
+ * Same as {@link Opt.zip}, but also supports arrays.
  *
  * @example
  * ```ts
@@ -1908,18 +1918,18 @@ const zipArray = <T, U>(a: readonly T[], b: readonly U[]): [T, U][] => [...Array
  * formatAddress(undefined, undefined) // ''
  * ```
  *
- * @see [[Opt.zip]]
+ * @see {@link Opt.zip}
  */
 export const zip: ZipFn = (x: any) => (other: any): any => isOpt(x) ? x.zip(other) : zipArray(x, other);
 
-/** @see [[Opt.zip3]] */
+/** @see {@link Opt.zip3} */
 export const zip3 = <T>(x: Opt<T>) => <A>(a: Opt<A>) => <B>(b: Opt<B>): Opt<[T, A, B]> => x.zip3(a, b);
 
-/** @see [[Opt.zip4]] */
+/** @see {@link Opt.zip4} */
 export const zip4 =
   <T>(x: Opt<T>) => <A>(a: Opt<A>) => <B>(b: Opt<B>) => <C>(c: Opt<C>): Opt<[T, A, B, C]> => x.zip4(a, b, c);
 
-/** @see [[Opt.zip5]] */
+/** @see {@link Opt.zip5} */
 export const zip5 =
   <T>(x: Opt<T>) => <A>(a: Opt<A>) => <B>(b: Opt<B>) => <C>(c: Opt<C>) => <D>(d: Opt<D>): Opt<[T, A, B, C, D]> =>
     x.zip5(a, b, c, d);
@@ -1927,25 +1937,25 @@ export const zip5 =
 type FilterFn = <T>(p: (_: T) => boolean) => <U extends Opt<T> | readonly T[]>(x: U) => U extends Opt<T> ? Opt<T> : T[];
 
 /**
- * Same as [[Opt.filter]], but also supports arrays.
- * @see [[Opt.filter]]
+ * Same as {@link Opt.filter}, but also supports arrays.
+ * @see {@link Opt.filter}
  */
 export const filter: FilterFn = (p: any) => (x: any) => x.filter(p);
 
-/** @see [[Opt.noneIf]] */
+/** @see {@link Opt.noneIf} */
 export const noneIf = <T>(predicate: (_: T) => boolean) => (x: Opt<T>): Opt<T> => x.noneIf(predicate);
 
-/** @see [[Opt.noneIfEmpty]] */
+/** @see {@link Opt.noneIfEmpty} */
 export const noneIfEmpty = <T extends PossiblyEmpty>(x: Opt<T>): Opt<WithoutPossiblyEmptyEmptyValues<T>> =>
   x.noneIfEmpty();
 
-/** @see [[Opt.noneWhen]] */
+/** @see {@link Opt.noneWhen} */
 export const noneWhen = <T>(returnNone: boolean) => (x: Opt<T>): Opt<T> => x.noneWhen(returnNone);
 
 type CountFn = <T>(p: (_: T) => boolean) => <U extends Opt<T> | readonly T[]>(x: U) => U extends Opt<T> ? 0 | 1 : number;
 
 /**
- * Same as [[Opt.count]], but also supports arrays.
+ * Same as {@link Opt.count}, but also supports arrays.
  *
  * @example
  * ```ts
@@ -1954,7 +1964,7 @@ type CountFn = <T>(p: (_: T) => boolean) => <U extends Opt<T> | readonly T[]>(x:
  * count(greaterThanZero)([-3, 0, 5, 10]) // 2
  * ```
  *
- * @see [[Opt.count]]
+ * @see {@link Opt.count}
  */
 export const count: CountFn = (p: any) => (x: any): any => {
   if (isOpt(x)) { return x.count(p); }
@@ -1963,8 +1973,8 @@ export const count: CountFn = (p: any) => (x: any): any => {
 };
 
 /**
- * Find a first item which holds true for a given predicate and return it wrapped in [[Some]].
- * Return [[None]] when no match is found.
+ * Find a first item which holds true for a given predicate and return it wrapped in {@link Some}.
+ * Return {@link None} when no match is found.
  *
  * @example
  * ```ts
@@ -1976,15 +1986,15 @@ export const count: CountFn = (p: any) => (x: any): any => {
  */
 export const find = <T>(predicate: (_: T) => boolean) => (xs: readonly T[]): Opt<T> => opt(xs.find(x => predicate(x)));
 
-/** @see [[Opt.narrow]] */
+/** @see {@link Opt.narrow} */
 export const narrow = <U>(guard: (value: any) => value is U) => <T>(x: Opt<T>): Opt<U> => x.narrow(guard);
 
-/** @see [[Opt.narrowOrCrash]] */
+/** @see {@link Opt.narrowOrCrash} */
 export const narrowOrCrash = <T, U>(guard: (value: any) => value is U, crashMessage?: string) => (x: Opt<T>): Opt<U> => x.narrowOrCrash(guard, crashMessage);
 
 /**
- * Same as [[Opt.print]], but supports arbitrary argument types.
- * @see [[Opt.print]]
+ * Same as {@link Opt.print}, but supports arbitrary argument types.
+ * @see {@link Opt.print}
  */
 export const print = (tag?: string) => <T>(x: T): T => {
   if (isOpt(x)) {
@@ -1995,11 +2005,11 @@ export const print = (tag?: string) => <T>(x: T): T => {
   return x;
 };
 
-/** @see [[Opt.equals]] */
+/** @see {@link Opt.equals} */
 export const equals = <T>(other: Opt<T>, comparator: EqualityFunction = refCmp) => (x: Opt<T>): boolean =>
   x.equals(other, comparator);
 
-/** @see [[Opt.prop]] */
+/** @see {@link Opt.prop} */
 export const prop = < //
   T extends object, //
   K extends (T extends object ? keyof T : never) = T extends object ? keyof T : never //
@@ -2007,7 +2017,7 @@ export const prop = < //
   x.prop(key);
 
 /**
- * Similar to [[Opt.prop]], but it is designed for naked objects (not wrapped in opt).
+ * Similar to {@link Opt.prop}, but it is designed for naked objects (not wrapped in opt).
  *
  * @example
  * ```ts
@@ -2025,7 +2035,7 @@ export const propNaked = < //
 >(key: K) => (x: T | EmptyValue): OptSafe<T[K]> => opt(x).prop(key);
 
 /**
- * Similar to [[Opt.propOrCrash]], but also supports naked objects.
+ * Similar to {@link Opt.propOrCrash}, but also supports naked objects.
  *
  * @example
  * ```ts
@@ -2046,7 +2056,7 @@ export const propOrCrash = < //
 
 /**
  * Utility function for generating property getter for one specific object.
- * Functionally similar to [[propOrCrash]], but it has swapped arguments and only supports naked objects.
+ * Functionally similar to {@link propOrCrash}, but it has swapped arguments and only supports naked objects.
  *
  * @example
  * ```ts
@@ -2089,12 +2099,12 @@ export const genNakedPropOrCrash = <T extends object>(obj: T) => {
   return <K extends keyof T>(k: K) => o.propOrCrash(k as any);
 };
 
-/** @see [[Opt.swap]] */
+/** @see {@link Opt.swap} */
 export const swap = <U>(newValue: U) => <T>(x: Opt<T>): Opt<U> => x.swap(newValue);
 
 /**
  * Takes functions and builds a function which consecutively calls each given function with a result from a previous one.
- * Similar to [[Opt.pipe]], but doesn't take input directly, instead returns a function which can be called repeatedly with different inputs.
+ * Similar to {@link Opt.pipe}, but doesn't take input directly, instead returns a function which can be called repeatedly with different inputs.
  *
  * ```ts
  * flow( // 1. 63
@@ -2119,7 +2129,7 @@ export const flow: FlowFn = (...fs: any[]) => (x: any) => fs.reduce((acc, x) => 
 /**
  * Composes given functions (in the mathematical sense).
  *
- * Unlike [[flow]] and [[pipe]], functions passed to [[compose]] are applied (called) from last to first.
+ * Unlike {@link flow} and {@link pipe}, functions passed to {@link compose} are applied (called) from last to first.
  *
  * ```ts
  * const f = (x: number): number => x * x;
@@ -2152,7 +2162,7 @@ type CurryTupleFn = <A, B, C>(_: (_: [A, B]) => C) => (_: A) => (_: B) => C;
  *   ) // Some(5)
  * ```
  *
- * @see [[uncurryTuple]]
+ * @see {@link uncurryTuple}
  * @param f
  */
 export const curryTuple: CurryTupleFn = f => a => b => f([a, b]);
@@ -2160,7 +2170,7 @@ export const curryTuple: CurryTupleFn = f => a => b => f([a, b]);
 type CurryTuple3Fn = <A, B, C, D>(_: (_: [A, B, C]) => D) => (_: A) => (_: B) => (_: C) => D;
 /**
  * Transforms the given function of three arguments from "tuple curried" format to curried one.
- * @see [[curryTuple]]
+ * @see {@link curryTuple}
  * @param f
  */
 export const curryTuple3: CurryTuple3Fn = f => a => b => c => f([a, b, c]);
@@ -2168,7 +2178,7 @@ export const curryTuple3: CurryTuple3Fn = f => a => b => c => f([a, b, c]);
 type CurryTuple4Fn = <A, B, C, D, E>(_: (_: [A, B, C, D]) => E) => (_: A) => (_: B) => (_: C) => (_: D) => E;
 /**
  * Transforms the given function of four arguments from "tuple curried" format to curried one.
- * @see [[curryTuple]]
+ * @see {@link curryTuple}
  * @param f
  */
 export const curryTuple4: CurryTuple4Fn = f => a => b => c => d => f([a, b, c, d]);
@@ -2176,7 +2186,7 @@ export const curryTuple4: CurryTuple4Fn = f => a => b => c => d => f([a, b, c, d
 type CurryTuple5Fn = <A, B, C, D, E, F>(_: (_: [A, B, C, D, E]) => F) => (_: A) => (_: B) => (_: C) => (_: D) => (_: E) => F;
 /**
  * Transforms the given function of five arguments from "tuple curried" format to curried one.
- * @see [[curryTuple]]
+ * @see {@link curryTuple}
  * @param f
  */
 export const curryTuple5: CurryTuple5Fn = f => a => b => c => d => e => f([a, b, c, d, e]);
@@ -2184,7 +2194,7 @@ export const curryTuple5: CurryTuple5Fn = f => a => b => c => d => e => f([a, b,
 
 type UncurryTupleFn = <A, B, C>(_: (_: A) => (_: B) => C) => (_: [A, B]) => C;
 /**
- * Transforms the given function of two arguments from curried format to "tuple curried" which can be used with [[Opt.zip]].
+ * Transforms the given function of two arguments from curried format to "tuple curried" which can be used with {@link Opt.zip}.
  *
  * ```ts
  * const sub = (x: number) => (y: number) => x - y;
@@ -2193,31 +2203,31 @@ type UncurryTupleFn = <A, B, C>(_: (_: A) => (_: B) => C) => (_: [A, B]) => C;
  *   .map(uncurryTuple(sub)) // Some(3)
  * ```
  *
- * @see [[curryTuple]]
+ * @see {@link curryTuple}
  * @param f
  */
 export const uncurryTuple: UncurryTupleFn = f => ([a, b]) => f(a)(b);
 
 type UncurryTuple3Fn = <A, B, C, D>(_: (_: A) => (_: B) => (_: C) => D) => (_: [A, B, C]) => D;
 /**
- * Transforms the given function of three arguments from curried format to "tuple curried" which can be used with [[Opt.zip3]].
- * @see [[uncurryTuple]]
+ * Transforms the given function of three arguments from curried format to "tuple curried" which can be used with {@link Opt.zip3}.
+ * @see {@link uncurryTuple}
  * @param f
  */
 export const uncurryTuple3: UncurryTuple3Fn = f => ([a, b, c]) => f(a)(b)(c);
 
 type UncurryTuple4Fn = <A, B, C, D, E>(_: (_: A) => (_: B) => (_: C) => (_: D) => E) => (_: [A, B, C, D]) => E;
 /**
- * Transforms the given function of four arguments from curried format to "tuple curried" which can be used with [[Opt.zip4]].
- * @see [[uncurryTuple]]
+ * Transforms the given function of four arguments from curried format to "tuple curried" which can be used with {@link Opt.zip4}.
+ * @see {@link uncurryTuple}
  * @param f
  */
 export const uncurryTuple4: UncurryTuple4Fn = f => ([a, b, c, d]) => f(a)(b)(c)(d);
 
 type UncurryTuple5Fn = <A, B, C, D, E, F>(_: (_: A) => (_: B) => (_: C) => (_: D) => (_: E) => F) => (_: [A, B, C, D, E]) => F;
 /**
- * Transforms the given function of five arguments from curried format to "tuple curried" which can be used with [[Opt.zip5]].
- * @see [[uncurryTuple]]
+ * Transforms the given function of five arguments from curried format to "tuple curried" which can be used with {@link Opt.zip5}.
+ * @see {@link uncurryTuple}
  * @param f
  */
 export const uncurryTuple5: UncurryTuple5Fn = f => ([a, b, c, d, e]) => f(a)(b)(c)(d)(e);
@@ -2236,8 +2246,8 @@ type PossiblyEmpty =
 type WithoutPossiblyEmptyEmptyValues<T> = Exclude<T, '' | [] | typeof none | EmptyValue>;
 
 /**
- * Similar to `isEmpty` from lodash, but also supports [[Opt]]s.
- * Returns `true` for [[None]], `[]`, `null`, `undefined`, empty map, empty set, empty object, `''` and `NaN`.
+ * Similar to `isEmpty` from lodash, but also supports {@link Opt}s.
+ * Returns `true` for {@link None}, `[]`, `null`, `undefined`, empty map, empty set, empty object, `''` and `NaN`.
  * Otherwise returns `false`.
  *
  * @example
@@ -2264,8 +2274,8 @@ export const isEmpty = (x: PossiblyEmpty): boolean => {
 };
 
 /**
- * Negated version of [[isEmpty]].
- * `nonEmpty(x)` is the same as `!isEmpty(x)`. It can be useful when composing functions (e.g. via [[pipe]]).
+ * Negated version of {@link isEmpty}.
+ * `nonEmpty(x)` is the same as `!isEmpty(x)`. It can be useful when composing functions (e.g. via {@link pipe}).
  *
  * @example
  * ```ts
@@ -2280,12 +2290,12 @@ export const isEmpty = (x: PossiblyEmpty): boolean => {
  * ) // true
  * ```
  *
- * @see [[isEmpty]]
+ * @see {@link isEmpty}
  * @param x
  */
 export const nonEmpty = (x: PossiblyEmpty): boolean => !isEmpty(x);
 
-/** @alias [[nonEmpty]] */
+/** @alias {@link nonEmpty} */
 export const isFull = (x: PossiblyEmpty): boolean => nonEmpty(x);
 
 /**
@@ -2303,8 +2313,8 @@ export const id = <T>(x: T): T => x;
 type AtFn = <T, R = T extends readonly (infer A)[] ? OptSafe<A> : Opt<string>>(x: EmptyValue | T) => R;
 
 /**
- * Same as [[Opt.at]], but also supports unwrapped arrays.
- * @see [[Opt.at]]
+ * Same as {@link Opt.at}, but also supports unwrapped arrays.
+ * @see {@link Opt.at}
  * @param index
  */
 export const at: (index: number) => AtFn = (index: number) => (x: any): any =>
@@ -2313,8 +2323,8 @@ export const at: (index: number) => AtFn = (index: number) => (x: any): any =>
 type HeadFn = <T, R = T extends readonly (infer A)[] ? OptSafe<A> : Opt<string>>(x: EmptyValue | T) => R;
 
 /**
- * Same as [[Opt.head]], but also supports unwrapped arrays.
- * @see [[Opt.head]]
+ * Same as {@link Opt.head}, but also supports unwrapped arrays.
+ * @see {@link Opt.head}
  * @param x
  */
 export const head: HeadFn = (x: any): any => (isOpt(x) ? x : opt(x)).head();
@@ -2322,8 +2332,8 @@ export const head: HeadFn = (x: any): any => (isOpt(x) ? x : opt(x)).head();
 type LastFn = <T, R = T extends readonly (infer A)[] ? OptSafe<A> : Opt<string>>(x: EmptyValue | T) => R;
 
 /**
- * Same as [[Opt.last]], but also supports unwrapped arrays.
- * @see [[Opt.last]]
+ * Same as {@link Opt.last}, but also supports unwrapped arrays.
+ * @see {@link Opt.last}
  * @param x
  */
 export const last: LastFn = (x: any): any => (isOpt(x) ? x : opt(x)).last();
@@ -2345,7 +2355,7 @@ const lenToZipFn = {
   5: uncurryTuple5(zip5),
 };
 /**
- * Takes a tuple, wraps each element in [[Opt]] and applies appropriate [[Opt.zip]] function.
+ * Takes a tuple, wraps each element in {@link Opt} and applies appropriate {@link Opt.zip} function.
  *
  * @example
  * ```ts
@@ -2353,7 +2363,7 @@ const lenToZipFn = {
  * zipToOptArray([1, true, '', 7, false]) // Some<[1, true, '', 7, false]>: Opt<[number, boolean, string, number, boolean]>
  * ```
  *
- * Useful as a replacement to `zip*` functions when construction of [[Opt]]s happens in parameters of the function.
+ * Useful as a replacement to `zip*` functions when construction of {@link Opt}s happens in parameters of the function.
  * ```ts
  * zipToOptArray([1, null, '', 7, false])
  * // is same as
@@ -2380,11 +2390,11 @@ export const zipToOptArray: ZipToOptArrayFn = (xs: readonly unknown[]): Opt<any>
  */
 export const testRe = (re: RegExp) => (x: string): boolean => re.test(x);
 
-/** @see [[Opt.testReOrFalse]] */
+/** @see {@link Opt.testReOrFalse} */
 export const testReOrFalse = (re: RegExp) => (x: Opt<string>): boolean => x.testReOrFalse(re);
 
 /**
- * Runs a given function. Result is wrapped by [[opt]]. Returns [[None]] when the function throws.
+ * Runs a given function. Result is wrapped by {@link opt}. Returns {@link None} when the function throws.
  *
  * @example
  * ```ts
@@ -2403,7 +2413,7 @@ export const tryRun = <T>(f: () => T): Opt<T> => {
 };
 
 /**
- * Parses JSON. The result is passed to [[opt]], any error results in [[None]].
+ * Parses JSON. The result is passed to {@link opt}, any error results in {@link None}.
  *
  * @example
  * ```ts
@@ -2412,7 +2422,7 @@ export const tryRun = <T>(f: () => T): Opt<T> => {
  * parseJson('null') // None - valid JSON (according to the new standard), but opt(null) is None
  * ```
  *
- * Typical use is to call [[Opt.narrow]] afterwards to validate parsed data and get proper type.
+ * Typical use is to call {@link Opt.narrow} afterwards to validate parsed data and get proper type.
  *
  * @param x
  */
@@ -2420,7 +2430,7 @@ export const parseJson = (x: string): Opt<unknown> => tryRun(() => JSON.parse(x)
 
 /**
  * Parses integer (same semantics as `Number.parseInt`).
- * The result is wrapped into [[opt]] (so `NaN` will become [[None]]).
+ * The result is wrapped into {@link opt} (so `NaN` will become {@link None}).
  *
  * @example
  * ```ts
@@ -2435,7 +2445,7 @@ export const parseInt = (x: string): Opt<number> => opt(Number.parseInt(x, 10));
 
 /**
  * Parses float (same semantics as `Number.parseFloat`).
- * The result is wrapped into [[opt]] (so `NaN` will become [[None]]).
+ * The result is wrapped into {@link opt} (so `NaN` will become {@link None}).
  *
  * @example
  * ```ts
@@ -2448,14 +2458,14 @@ export const parseInt = (x: string): Opt<number> => opt(Number.parseInt(x, 10));
  */
 export const parseFloat = (x: string): Opt<number> => opt(Number.parseFloat(x));
 
-/** @see [[Opt.apply]] */
+/** @see {@link Opt.apply} */
 export const apply = < //
   T extends AnyFunc,
   R extends ReturnType<T>,
   A extends Parameters<T> //
   >(...args: A) => (x: Opt<T>): Opt<R> => x.apply(...args);
 
-/** @see [[Opt.onFunc]] */
+/** @see {@link Opt.onFunc} */
 export const onFunc = < //
   T extends AnyFunc,
   A extends Parameters<T> //
@@ -2496,11 +2506,11 @@ export const assertType: AssertTypeFunc = (x, guard, msg = 'invalid value') => {
   isOrCrash(guard, msg)(x);
 };
 
-/** @see [[Opt.min]] */
-export const min = <R>(x: Opt<ReadonlyArray<R>> | ReadonlyArray<R>): OptSafe<R> => isReadonlyArray(x) ? opt(x).min() : x.min();
+/** @see {@link Opt.min} */
+export const min = <R>(x: Opt<readonly R[]> | readonly R[]): OptSafe<R> => isReadonlyArray(x) ? opt(x).min() : x.min();
 
-/** @see [[Opt.max]] */
-export const max = <R>(x: Opt<ReadonlyArray<R>> | ReadonlyArray<R>): OptSafe<R> => isReadonlyArray(x) ? opt(x).max() : x.max();
+/** @see {@link Opt.max} */
+export const max = <R>(x: Opt<readonly R[]> | readonly R[]): OptSafe<R> => isReadonlyArray(x) ? opt(x).max() : x.max();
 
 // generate a function of two curried optional arguments
 // common - two some values lead to call of op, two nones returns none
@@ -2787,7 +2797,7 @@ export const eq = <T>(a: T) => (b: T) => a === b;
 export const eqAny = (a: unknown) => (b: unknown) => a === b;
 
 /**
- * A no-operation function that simply returns undefined.
+ * A no-operation function that simply returns `undefined`.
  * Can be used as a placeholder callback.
  *
  * @returns undefined

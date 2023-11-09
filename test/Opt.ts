@@ -1596,9 +1596,11 @@ describe('orCrash', () => {
   const f = flow2(opt, orCrash('msg'));
   it('crashes on none', () => {
     expect(() => f(null)).to.throw;
+    expect(() => opt(null).orCrash('unexpected empty value')).to.throw;
   });
   it('returns value on some', () => {
     expect(f(1)).to.eq(1);
+    expect(opt(1).orCrash('unexpected empty value')).to.eq(1);
   });
 });
 
@@ -2911,7 +2913,7 @@ describe('min', () => {
     expect(res.orNull()).to.be.eq(1);
   });
   it('returns minimum of wrapped read-only array', () => {
-    const xs: ReadonlyArray<number> = [1, 4];
+    const xs: readonly number[] = [1, 4];
     const res: Opt<number> = min(opt(xs));
     expect(res.orNull()).to.be.eq(1);
   });
@@ -2920,7 +2922,7 @@ describe('min', () => {
     expect(res.orNull()).to.be.eq(1);
   });
   it('works with naked read-only arrays', () => {
-    const xs: ReadonlyArray<number> = [1, 4];
+    const xs: readonly number[] = [1, 4];
     const res: Opt<number> = min(xs);
     expect(res.orNull()).to.be.eq(1);
   });
@@ -2932,7 +2934,7 @@ describe('max', () => {
     expect(res.orNull()).to.be.eq(4);
   });
   it('returns maximum of wrapped read-only array', () => {
-    const xs: ReadonlyArray<number> = [1, 4];
+    const xs: readonly number[] = [1, 4];
     const res: Opt<number> = max(opt(xs));
     expect(res.orNull()).to.be.eq(4);
   });
@@ -2941,7 +2943,7 @@ describe('max', () => {
     expect(res.orNull()).to.be.eq(4);
   });
   it('works with naked read-only arrays', () => {
-    const xs: ReadonlyArray<number> = [1, 4];
+    const xs: readonly number[] = [1, 4];
     const res: Opt<number> = max(xs);
     expect(res.orNull()).to.be.eq(4);
   });
