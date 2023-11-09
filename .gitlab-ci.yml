@@ -1,30 +1,33 @@
-image: node:15.8.0
+image: node:20.9.0
 
 workflow:
   rules:
     - if: $CI_COMMIT_BRANCH
 
 before_script:
-- npm install
+  - corepack enable
+  - corepack prepare pnpm@latest-8 --activate
+  - pnpm config set store-dir .pnpm-store
+  - pnpm install --frozen-lockfile
 
 cache:
   paths:
-    - node_modules/
+    - .pnpm-store/
 
 lint:
   script:
-    - npm run lint
+    - pnpm lint
 
 test:
   script:
-    - npm run build
-    - CI=true npm run test
+    - pnpm build
+    - CI=true pnpm test
 
 release:
   only:
     - tags
   script:
-    - npm run build
+    - pnpm build
   artifacts:
     paths:
       - dist/src
@@ -32,8 +35,8 @@ release:
 pages:
   stage: deploy
   script:
-    - npm run doc
-    - npm run doc-simple:build
+    - pnpm doc
+    - pnpm doc-simple:build
     - mkdir -p public
     - cp -r doc/* public/
     - cp -r simple-doc public/
