@@ -31,11 +31,14 @@ const processUrl = url => {
     if (match) {
         const [_, category, fileName, memberName] = match;
         const debugInfo = `category: <<${category}>>, fileName: <<${fileName}>>, memberName: <<${memberName}>>`;
-        if (category === 'classes' && !memberName) return {href:`..`, debugInfo: 'class | ' + debugInfo};
+        if (category === 'classes' && !memberName) return {href: `..`, debugInfo: 'class | ' + debugInfo};
         const fileNameStartsWithUpperCase = fileName && fileName?.[0] === fileName?.[0].toUpperCase();
-        if (!category && !memberName && fileNameStartsWithUpperCase) return {href:`..`, debugInfo: 'probably class | ' + debugInfo};
+        if (!category && !memberName && fileNameStartsWithUpperCase) return {
+            href: `..`,
+            debugInfo: 'probably class | ' + debugInfo
+        };
         return {
-            href:`../${!memberName ? 'Root' : fileName}/${memberName ?? fileName}.html`,
+            href: `../${!memberName ? 'Root' : fileName}/${memberName ?? fileName}.html`,
             debugInfo: 'main return | ' + debugInfo
         };
     }
@@ -107,7 +110,7 @@ const processFile = (inputFilePath, options = {className: null}) => {
             const firstText = el.children().first().text();
             const expectedFromText = ['Type Parameters', 'Hierarchy'].includes(firstText);
             const expectedFromClass = ['tsd-index-panel', 'tsd-comment'].some(cls => el.hasClass(cls));
-            if (!expectedFromText && !expectedFromClass) console.log('no name for member in', inputFilePath, '\n* firstText:',JSON.stringify(firstText), '\n* html:\n', $.html(el), '\n\n');
+            if (!expectedFromText && !expectedFromClass) console.log('no name for member in', inputFilePath, '\n* firstText:', JSON.stringify(firstText), '\n* html:\n', $.html(el), '\n\n');
             return;
         }
 
@@ -125,8 +128,20 @@ const processFile = (inputFilePath, options = {className: null}) => {
     return membersWithOptions;
 };
 
-const genPathForMember = (memberDescriptor) =>
+const genPathForMember = memberDescriptor =>
     path.join(outDirPath, memberDescriptor.className ?? 'Root', memberDescriptor.name + '.html')
+
+const genClassNameSortKey = className => {
+    if (className === 'Root') {
+        return '_' + className;
+    } else if (className === 'Opt') {
+        return '__Opt';
+    } else if (className.includes('internal')) {
+        return 'zz' + className;
+    } else {
+        return className;
+    }
+}
 
 const main = async () => {
     console.log('Simple Doc Gen');
@@ -156,7 +171,7 @@ const main = async () => {
     const membersByClassNameRaw = groupBy(x => x.className)(dataCombined);
     const membersByClassNameStructured = Object.entries(membersByClassNameRaw).map(([rawClsName, members]) => {
         const className = rawClsName === 'null' ? 'Root' : rawClsName;
-        const sortKey = className === 'Root' ? ('_' + className) : (className === 'Opt' ? '__Opt' : className);
+        const sortKey = genClassNameSortKey(className);
         return {
             className,
             members,
