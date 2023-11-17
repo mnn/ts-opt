@@ -26,9 +26,6 @@ type WithoutOptValues<T> = NonNullable<T>;
 type EmptyValue = null | undefined;
 
 type AnyFunc = (...args: any) => any;
-/**
- * @internal
- */
 export type OptSafe<T> = Opt<WithoutOptValues<T>>;
 
 /* istanbul ignore next */
