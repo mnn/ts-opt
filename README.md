@@ -153,6 +153,15 @@ All methods are documented, if you don't see a description please make sure you 
 
 ["Simple" documentation](https://monnef.gitlab.io/ts-opt/simple-doc)
 
+Custom GPTs
+---
+
+A ChatGPT subscription is required, and it may not be suitable for more advanced use cases or refactoring (they tend to hallucinate a lot). Consulting the documentation is recommended.
+
+* [Possibly ts-opt v2](https://chat.openai.com/g/g-3iYPOC6yz-possibly-ts-opt-v2) - docs, source code, tests, several detailed examples and some short QA texts
+* [Possibly ts-opt v1.0](https://chat.openai.com/g/g-sLbu6qTni-possibly-ts-opt-v1-0) - only docs
+
+
 Pitfalls
 ===
 
