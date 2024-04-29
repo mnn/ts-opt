@@ -51,7 +51,7 @@ import {
   fromArray,
   fromObject,
   genNakedPropOrCrash,
-  head,
+  headIn,
   id,
   inc,
   isArray,
@@ -65,15 +65,15 @@ import {
   isReadonlyArray,
   isString,
   joinOpt,
-  last,
+  lastIn,
   map,
   mapFlow,
   mapOpt,
-  max,
+  maxIn,
   max2All,
   max2Any,
   max2Num,
-  min,
+  minIn,
   min2All,
   min2Any,
   min2Num,
@@ -136,7 +136,11 @@ import {
   zip3,
   zip4,
   zip5,
-  zipToOptArray
+  zipToOptArray,
+  head,
+  last,
+  min,
+  max
 } from '../src/Opt';
 import jestSnapshotSerializer from '../src/jest-snapshot-serializer';
 
@@ -896,20 +900,20 @@ describe('opt', () => {
     expect(opt([4] as readonly number[]).at(0).orFalse()).to.be.eq(4);
   });
 
-  it('head', () => {
-    expect(opt([1, 2, 3]).head().orFalse()).to.be.eq(1);
-    expect(opt([]).head().orFalse()).to.be.false;
-    expect(opt(null).head().orFalse()).to.be.false;
-    expect(opt('Palico').head().orFalse()).to.be.eq('P');
-    expect(opt([1, 2, 3] as readonly number[]).head().orFalse()).to.be.eq(1);
+  it('headIn', () => {
+    expect(opt([1, 2, 3]).headIn().orFalse()).to.be.eq(1);
+    expect(opt([]).headIn().orFalse()).to.be.false;
+    expect(opt(null).headIn().orFalse()).to.be.false;
+    expect(opt('Palico').headIn().orFalse()).to.be.eq('P');
+    expect(opt([1, 2, 3] as readonly number[]).headIn().orFalse()).to.be.eq(1);
   });
 
-  it('last', () => {
-    expect(opt([1, 2, 3]).last().orFalse()).to.be.eq(3);
-    expect(opt([]).last().orFalse()).to.be.false;
-    expect(opt(null).last().orFalse()).to.be.false;
-    expect(opt('Palico').last().orFalse()).to.be.eq('o');
-    expect(opt([1, 2, 3] as readonly number[]).last().orFalse()).to.be.eq(3);
+  it('lastIn', () => {
+    expect(opt([1, 2, 3]).lastIn().orFalse()).to.be.eq(3);
+    expect(opt([]).lastIn().orFalse()).to.be.false;
+    expect(opt(null).lastIn().orFalse()).to.be.false;
+    expect(opt('Palico').lastIn().orFalse()).to.be.eq('o');
+    expect(opt([1, 2, 3] as readonly number[]).lastIn().orFalse()).to.be.eq(3);
   });
 
   describe('testReOrFalse', () => {
@@ -993,30 +997,30 @@ describe('opt', () => {
           .orNull()).to.be.null;
   });
 
-  it('min', () => {
-    const res1: Opt<number> = opt([] as number[]).min();
+  it('minIn', () => {
+    const res1: Opt<number> = opt([] as number[]).minIn();
     expect(res1.orNull()).to.be.null;
-    expect(opt([]).min().orNull()).to.be.null;
-    expect(none.min().orNull()).to.be.null;
-    expect(opt([1]).min().orNull()).to.be.eq(1);
-    expect(opt([1, 3]).min().orNull()).to.be.eq(1);
-    expect(opt([3, 1]).min().orNull()).to.be.eq(1);
-    expect(opt([5, 1, 3]).min().orNull()).to.be.eq(1);
-    expect(opt([1, 1, 1]).min().orNull()).to.be.eq(1);
-    expect(() => opt(0).min()).to.throw();
+    expect(opt([]).minIn().orNull()).to.be.null;
+    expect(none.minIn().orNull()).to.be.null;
+    expect(opt([1]).minIn().orNull()).to.be.eq(1);
+    expect(opt([1, 3]).minIn().orNull()).to.be.eq(1);
+    expect(opt([3, 1]).minIn().orNull()).to.be.eq(1);
+    expect(opt([5, 1, 3]).minIn().orNull()).to.be.eq(1);
+    expect(opt([1, 1, 1]).minIn().orNull()).to.be.eq(1);
+    expect(() => opt(0).minIn()).to.throw();
   });
 
-  it('max', () => {
-    const res1: Opt<number> = opt([] as number[]).max();
+  it('maxIn', () => {
+    const res1: Opt<number> = opt([] as number[]).maxIn();
     expect(res1.orNull()).to.be.null;
-    expect(opt([]).max().orNull()).to.be.null;
-    expect(none.max().orNull()).to.be.null;
-    expect(opt([7]).max().orNull()).to.be.eq(7);
-    expect(opt([7, 3]).max().orNull()).to.be.eq(7);
-    expect(opt([3, 7]).max().orNull()).to.be.eq(7);
-    expect(opt([5, 7, 3]).max().orNull()).to.be.eq(7);
-    expect(opt([7, 7, 7]).max().orNull()).to.be.eq(7);
-    expect(() => opt(0).max()).to.throw();
+    expect(opt([]).maxIn().orNull()).to.be.null;
+    expect(none.maxIn().orNull()).to.be.null;
+    expect(opt([7]).maxIn().orNull()).to.be.eq(7);
+    expect(opt([7, 3]).maxIn().orNull()).to.be.eq(7);
+    expect(opt([3, 7]).maxIn().orNull()).to.be.eq(7);
+    expect(opt([5, 7, 3]).maxIn().orNull()).to.be.eq(7);
+    expect(opt([7, 7, 7]).maxIn().orNull()).to.be.eq(7);
+    expect(() => opt(0).maxIn()).to.throw();
   });
 });
 
@@ -2532,9 +2536,7 @@ describe('head', () => {
   it('returns first element of array', () => {
     expect(head([1, 2, 3]).orFalse()).to.be.eq(1);
     expect(head([]).orFalse()).to.be.false;
-    expect(head(opt([1, 2, 3])).orFalse()).to.be.eq(1);
-    expect(head(opt([])).orFalse()).to.be.false;
-    expect(head(opt(null as null | number[])).orFalse()).to.be.false;
+    expect(head(null).orFalse()).to.be.false;
   });
 
   it('works with read-only arrays', () => {
@@ -2577,13 +2579,50 @@ describe('head', () => {
   });
 });
 
+describe('headIn', () => {
+  it('returns first element of array', () => {
+    expect(headIn(opt([1, 2, 3])).orFalse()).to.be.eq(1);
+    expect(headIn(opt([])).orFalse()).to.be.false;
+    expect(headIn(opt(null as null | number[])).orFalse()).to.be.false;
+  });
+
+  it('works with read-only arrays', () => {
+    expect(headIn(opt([1, 2, 3] as readonly number[])).orFalse()).to.be.eq(1);
+  });
+
+  it('returns first character of string', () => {
+    const res1: Opt<string> = headIn(opt('Palico'));
+    expect(res1.orNull()).to.be.eq('P');
+    const res2: Opt<string> = headIn(opt(''));
+    expect(res2.orNull()).to.be.null;
+    const res3: Opt<string> = headIn(opt(null as string | null));
+    expect(res3.orNull()).to.be.null;
+  });
+
+  it('works well with pipe/flow', () => {
+    const res1: Opt<number> = pipe([1, 2, 3], opt, headIn, id);
+    expect(res1.orNull()).to.be.eq(1);
+    const res2: Opt<string> = pipe('Yami', opt, headIn, id);
+    expect(res2.orNull()).to.be.eq('Y');
+    const f: (_: number[] | null) => Opt<number> = flow(opt, headIn, id);
+    const res3: Opt<number> = f([1]);
+    expect(res3.orNull()).to.be.eq(1);
+    expect(f([]).orNull()).to.be.null;
+    const g: (_: string | null) => Opt<string> = flow(opt, headIn, id);
+    expect(g('Noelle').orNull()).to.be.eq('N');
+    expect(g('').orNull()).to.be.null;
+    expect(g(null).orFalse()).to.be.false;
+    const h = flow(opt, headIn, id);
+    expect(h([0]).orNull()).to.be.eq(0);
+    expect(h('Yuno').orNull()).to.be.eq('Y');
+  });
+});
+
 describe('last', () => {
   it('returns last element of array', () => {
     expect(last([1, 2, 3]).orFalse()).to.be.eq(3);
     expect(last([]).orFalse()).to.be.false;
-    expect(last(opt([1, 2, 3])).orFalse()).to.be.eq(3);
-    expect(last(opt([])).orFalse()).to.be.false;
-    expect(last(opt(null as null | number[])).orFalse()).to.be.false;
+    expect(last(undefined).orFalse()).to.be.false;
   });
 
   it('works with read-only arrays', () => {
@@ -2608,6 +2647,32 @@ describe('last', () => {
     expect(pipe([], last, orNull)).to.be.null;
     expect(pipe('2015', last, orNull)).to.be.eq('5');
     expect(pipe('', last, orNull)).to.be.null;
+  });
+});
+
+describe('lastIn', () => {
+  it('returns last element of array', () => {
+    expect(lastIn(opt([1, 2, 3])).orFalse()).to.be.eq(3);
+    expect(lastIn(opt([])).orFalse()).to.be.false;
+    expect(lastIn(opt(null as null | number[])).orFalse()).to.be.false;
+  });
+
+  it('works with read-only arrays', () => {
+    expect(lastIn(opt([1, 2, 3] as readonly number[])).orFalse()).to.be.eq(3);
+  });
+
+  it('returns last element of string', () => {
+    const res1: Opt<string> = lastIn(opt('Palico'));
+    expect(res1.orFalse()).to.be.eq('o');
+    expect(lastIn(opt('')).orFalse()).to.be.false;
+  });
+
+  it('works well with pipe/flow', () => {
+    const res1: number | null = pipe([20, 15], opt, lastIn, orNull);
+    expect(res1).to.be.eq(15);
+    expect(pipe([], opt, lastIn, orNull)).to.be.null;
+    expect(pipe('2015', opt, lastIn, orNull)).to.be.eq('5');
+    expect(pipe('', opt, lastIn, orNull)).to.be.null;
   });
 });
 
@@ -2908,43 +2973,49 @@ describe('assertType', () => {
 });
 
 describe('min', () => {
-  it('returns minimum of wrapped array', () => {
-    const res: Opt<number> = min(opt([1, 4]));
-    expect(res.orNull()).to.be.eq(1);
-  });
-  it('returns minimum of wrapped read-only array', () => {
-    const xs: readonly number[] = [1, 4];
-    const res: Opt<number> = min(opt(xs));
-    expect(res.orNull()).to.be.eq(1);
-  });
-  it('works with naked arrays', () => {
+  it('returns minimum of array', () => {
     const res: Opt<number> = min([1, 4]);
     expect(res.orNull()).to.be.eq(1);
   });
-  it('works with naked read-only arrays', () => {
+  it('returns minimum of read-only array', () => {
     const xs: readonly number[] = [1, 4];
     const res: Opt<number> = min(xs);
     expect(res.orNull()).to.be.eq(1);
   });
 });
 
+describe('minIn', () => {
+  it('returns minimum of wrapped array', () => {
+    const res: Opt<number> = minIn(opt([1, 4]));
+    expect(res.orNull()).to.be.eq(1);
+  });
+  it('returns minimum of wrapped read-only array', () => {
+    const xs: readonly number[] = [1, 4];
+    const res: Opt<number> = minIn(opt(xs));
+    expect(res.orNull()).to.be.eq(1);
+  });
+});
+
 describe('max', () => {
+  it('returns maximum of array', () => {
+    const res: Opt<number> = max([1, 4]);
+    expect(res.orNull()).to.be.eq(4);
+  });
+  it('returns maximum of read-only array', () => {
+    const xs: readonly number[] = [1, 4];
+    const res: Opt<number> = max(xs);
+    expect(res.orNull()).to.be.eq(4);
+  });
+});
+
+describe('maxIn', () => {
   it('returns maximum of wrapped array', () => {
-    const res: Opt<number> = max(opt([1, 4]));
+    const res: Opt<number> = maxIn(opt([1, 4]));
     expect(res.orNull()).to.be.eq(4);
   });
   it('returns maximum of wrapped read-only array', () => {
     const xs: readonly number[] = [1, 4];
-    const res: Opt<number> = max(opt(xs));
-    expect(res.orNull()).to.be.eq(4);
-  });
-  it('works with naked arrays', () => {
-    const res: Opt<number> = max([1, 4]);
-    expect(res.orNull()).to.be.eq(4);
-  });
-  it('works with naked read-only arrays', () => {
-    const xs: readonly number[] = [1, 4];
-    const res: Opt<number> = max(xs);
+    const res: Opt<number> = maxIn(opt(xs));
     expect(res.orNull()).to.be.eq(4);
   });
 });

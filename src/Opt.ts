@@ -1030,54 +1030,54 @@ export abstract class Opt<T> {
    *
    * @example
    * ```ts
-   * opt([1, 2, 3]).head() // Some(1)
-   * opt([]).head() // None
-   * opt(null).head() // None
-   * opt('Palico').head() // Some('P')
+   * opt([1, 2, 3]).headIn() // Some(1)
+   * opt([]).headIn() // None
+   * opt(null).headIn() // None
+   * opt('Palico').headIn() // Some('P')
    * ```
    *
    * @see {@link head}
    */
-  head<R extends (T extends readonly (infer A)[] ? A : (T extends string ? string : never))>(): OptSafe<R> { return this.at(0); }
+  headIn<R extends (T extends readonly (infer A)[] ? A : (T extends string ? string : never))>(): OptSafe<R> { return this.at(0); }
 
   /**
    * Get minimum from an array.
    *
    * @example
    * ```ts
-   * opt([5, 1, 3]).min() // Some(1)
-   * none.min() // None
-   * opt([]).min() // None
+   * opt([5, 1, 3]).minIn() // Some(1)
+   * none.minIn() // None
+   * opt([]).minIn() // None
    * ```
    */
-  abstract min<R extends (T extends readonly (infer A)[] ? A : never)>(): OptSafe<R>;
+  abstract minIn<R extends (T extends readonly (infer A)[] ? A : never)>(): OptSafe<R>;
 
   /**
    * Get maximum from an array.
    *
    * @example
    * ```ts
-   * opt([3, 7]).max() // Some(7)
-   * none.max() // None
-   * opt([]).max() // None
+   * opt([3, 7]).maxIn() // Some(7)
+   * none.maxIn() // None
+   * opt([]).maxIn() // None
    * ```
    */
-  abstract max<R extends (T extends readonly (infer A)[] ? A : never)>(): OptSafe<R>;
+  abstract maxIn<R extends (T extends readonly (infer A)[] ? A : never)>(): OptSafe<R>;
 
   /**
    * Get a last item of an array or a last character of a string.
    *
    * @example
    * ```ts
-   * opt([1, 2, 3]).last() // Some(3)
-   * opt([]).last() // None
-   * opt(null).last() // None
-   * opt('Palico').last() // Some('o')
+   * opt([1, 2, 3]).lastIn() // Some(3)
+   * opt([]).lastIn() // None
+   * opt(null).lastIn() // None
+   * opt('Palico').lastIn() // Some('o')
    * ```
    *
    * @see {@link last}
    */
-  last<R extends (T extends readonly (infer A)[] ? A : (T extends string ? string : never))>(): OptSafe<R> { return this.at(-1); }
+  lastIn<R extends (T extends readonly (infer A)[] ? A : (T extends string ? string : never))>(): OptSafe<R> { return this.at(-1); }
 
   /**
    * A convenience function to test this (`Opt<string>`) against a given regular expression.
@@ -1291,11 +1291,11 @@ class None<T> extends Opt<T> {
     return none;
   }
 
-  max<R extends (T extends readonly (infer A)[] ? A : never)>(): OptSafe<R> {
+  maxIn<R extends (T extends readonly (infer A)[] ? A : never)>(): OptSafe<R> {
     return none;
   }
 
-  min<R extends (T extends readonly (infer A)[] ? A : never)>(): OptSafe<R> {
+  minIn<R extends (T extends readonly (infer A)[] ? A : never)>(): OptSafe<R> {
     return none;
   }
 }
@@ -1436,14 +1436,14 @@ class Some<T> extends Opt<T> {
     }
   }
 
-  min<R extends (T extends readonly (infer A)[] ? A : never)>(): OptSafe<R> {
+  minIn<R extends (T extends readonly (infer A)[] ? A : never)>(): OptSafe<R> {
     const val = this._value;
     if (!isArray(val)) { throw new Error('Expected array.'); }
     if (val.length === 0) return none;
     return some(val.reduce((acc: R, x: any) => x < acc ? x : acc, val[0] as R)) as OptSafe<R>;
   }
 
-  max<R extends (T extends readonly (infer A)[] ? A : never)>(): OptSafe<R> {
+  maxIn<R extends (T extends readonly (infer A)[] ? A : never)>(): OptSafe<R> {
     const val = this._value;
     if (!isArray(val)) { throw new Error('Expected array.'); }
     if (val.length === 0) return none;
@@ -2323,20 +2323,33 @@ export const at: (index: number) => AtFn = (index: number) => (x: any): any =>
 type HeadFn = <T, R = T extends readonly (infer A)[] ? OptSafe<A> : Opt<string>>(x: EmptyValue | T) => R;
 
 /**
- * Same as {@link Opt.head}, but also supports unwrapped arrays.
- * @see {@link Opt.head}
+ * Returns the first element of an array or fist character of a string.
+ * @param xs
+ */
+export const head: HeadFn = (xs: any): any => opt(xs).headIn();
+
+type HeadInFn = <T, R = T extends readonly (infer A)[] ? OptSafe<A> : (T extends string ? Opt<string> : never)>(x: EmptyValue | Opt<T>) => R;
+
+/**
+ * Same as {@link Opt.headIn}.
+ * @see {@link Opt.headIn}
  * @param x
  */
-export const head: HeadFn = (x: any): any => (isOpt(x) ? x : opt(x)).head();
+export const headIn: HeadInFn = (x: any): any => x.headIn();
 
 type LastFn = <T, R = T extends readonly (infer A)[] ? OptSafe<A> : Opt<string>>(x: EmptyValue | T) => R;
 
+/** Returns the last element of an array or last character of a string. */
+export const last: LastFn = (xs: any): any => opt(xs).lastIn();
+
+type LastInFn = <T, R = T extends readonly (infer A)[] ? OptSafe<A> : (T extends string ? Opt<string> : never)>(x: EmptyValue | Opt<T>) => R;
+
 /**
- * Same as {@link Opt.last}, but also supports unwrapped arrays.
- * @see {@link Opt.last}
+ * Same as {@link Opt.lastIn}.
+ * @see {@link Opt.lastIn}
  * @param x
  */
-export const last: LastFn = (x: any): any => (isOpt(x) ? x : opt(x)).last();
+export const lastIn: LastInFn = (x: any): any => x.lastIn();
 
 interface ZipToOptArrayFn {
   <A, B>(xs: readonly [A, B]): Opt<[WithoutOptValues<A>, WithoutOptValues<B>]>;
@@ -2506,11 +2519,17 @@ export const assertType: AssertTypeFunc = (x, guard, msg = 'invalid value') => {
   isOrCrash(guard, msg)(x);
 };
 
-/** @see {@link Opt.min} */
-export const min = <R>(x: Opt<readonly R[]> | readonly R[]): OptSafe<R> => isReadonlyArray(x) ? opt(x).min() : x.min();
+/** Returns the minimum value in an array. */
+export const min = <R>(x: readonly R[]): OptSafe<R> => opt(x).minIn();
 
-/** @see {@link Opt.max} */
-export const max = <R>(x: Opt<readonly R[]> | readonly R[]): OptSafe<R> => isReadonlyArray(x) ? opt(x).max() : x.max();
+/** @see {@link Opt.minIn} */
+export const minIn = <R>(x: Opt<readonly R[]>): OptSafe<R> => x.minIn();
+
+/** Returns the maximum value in an array. */
+export const max = <R>(x: readonly R[]): OptSafe<R> => opt(x).maxIn();
+
+/** @see {@link Opt.maxIn} */
+export const maxIn = <R>(x: Opt<readonly R[]>): OptSafe<R> => x.maxIn();
 
 // generate a function of two curried optional arguments
 // common - two some values lead to call of op, two nones returns none
