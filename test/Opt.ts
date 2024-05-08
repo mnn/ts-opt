@@ -297,6 +297,28 @@ describe('opt', () => {
     expect(opt(null as unknown as number).map(inc).orUndef()).to.eq(undefined);
   });
 
+  describe('mapIn', () => {
+    it('maps a function over an array in Some', () => {
+      const result: Opt<number[]> = opt([1, 2, 3]).mapIn(x => x * 2);
+      expect(result.orNull()).to.eql([2, 4, 6]);
+    });
+
+    it('returns None when called on None', () => {
+      const result: Opt<number[]> = opt(null).mapIn((x: number) => x * 2);
+      expect(result.orNull()).to.be.null;
+    });
+
+    it('throws when called on non array', () => {
+      expect(() => opt(123 as any).mapIn(x => x)).to.throw(Error, 'mapIn called on non array: 123');
+    });
+
+    it('should fail type checking when called with incorrect argument types', () => {
+      // @ts-expect-error Testing for type safety: mapIn expects a function that operates on array elements.
+      const result: Opt<number[]> = opt([1, 2, 3]).mapIn((x: string) => +x);
+      expect(result.orNull()).to.eql([1, 2, 3]);
+    });
+  });
+
   it('mapFlow', () => {
     expect(opt(1).mapFlow(id).orNull()).to.be.eq(1);
     expect(opt(null).mapFlow(id).orNull()).to.be.null;

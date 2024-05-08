@@ -210,6 +210,15 @@ export abstract class Opt<T> {
   abstract map<U>(f: (_: T) => U): Opt<U>;
 
   /**
+   * Applies a map function to an array inside.
+   * @example
+   * ```ts
+   * opt([1, 2, 3]).mapIn(x => x + 1) // Some([2, 3, 4])
+   * ```
+   */
+  abstract mapIn<U, R>(this: Opt<U[]>, f: (x: U) => R): Opt<R[]>;
+
+  /**
    * Similar to {@link Opt.map}, but supports more functions which are called in succession, each on a result of a previous one.
    *
    * @example
@@ -1203,6 +1212,8 @@ class None<T> extends Opt<T> {
 
   map<U>(): Opt<U> { return none as unknown as Opt<U>; }
 
+  mapIn<R, U>(this: None<U[]>, _f: (x: U) => R): Opt<R[]> { return none as unknown as Opt<R[]>; }
+
   orCrash(msg: string): T { throw new Error(msg); }
 
   someOrCrash(msg: string): Some<T> { throw new Error(msg); }
@@ -1323,6 +1334,11 @@ class Some<T> extends Opt<T> {
 
   map<U>(f: (_: T) => U): Opt<U> {
     return some(f(this._value));
+  }
+
+  mapIn<R, U>(this: Some<U[]>, f: (x: U) => R): Opt<R[]> {
+    if (!isArray(this._value)) { throw new Error('mapIn called on non array: ' + this._value); }
+    return some(this._value.map(f));
   }
 
   orCrash(_msg: string): T { return this._value; }
