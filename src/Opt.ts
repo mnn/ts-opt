@@ -340,6 +340,20 @@ export abstract class Opt<T> {
   chainToOptFlow: ActToOptInClassFn<T> = (...args: any[]) => (this.act as any)(...args);
 
   /**
+   * Applies a reducer function to an array within an {@link Opt} instance,
+   * combining its elements into a single value using the array's `reduce` method.
+   *
+   * @example
+   * ```ts
+   * opt([1, 2, 3]).foldIn((acc, x) => acc + x, 0) // Some(6)
+   * none.foldIn((acc, x) => acc + x, 0) // None
+   * ```
+   */
+  foldIn<U, R>(this: Opt<U[]>, f: (acc: R, x: U) => R, initial: R): Opt<R> {
+    return this.map(xs => xs.reduce(f, initial));
+  }
+
+  /**
    * Joins (flattens) nested Opt instance, turning an `Opt<Opt<T>>` into an `Opt<T>`.
    * This is equivalent to calling `flatMap` with the identity function: `.join()` ~ `.flatMap(id)`.
    *
@@ -447,6 +461,7 @@ export abstract class Opt<T> {
   /**
    * Applies appropriate function and returns result from the function.
    *
+   * @example
    * ```ts
    * some(1).caseOf(x => x + 1, () => 0) // 2
    * none.caseOf(x => x + 1, () => 0) // 0
@@ -461,8 +476,24 @@ export abstract class Opt<T> {
   abstract caseOf<R>(someCase: (x: T) => R, noneCase: () => R): R;
 
   /**
+   * Reduces the `Opt` instance to a single value by applying a function to the value inside {@link Some}
+   * or returning a default value for {@link None}.
+   *
+   * @example
+   * ```ts
+   * opt(1).fold(x => x + 1, 0) // 2
+   * none.fold(x => x + 1, 0) // 0
+   * ```
+   *
+   * @param someCase Function to apply to the value inside `Some`.
+   * @param noneCase Default value to return for `None`.
+   */
+  abstract fold<R>(someCase: (x: T) => R, noneCase: R): R;
+
+  /**
    * Calls appropriate callback and returns without change current instance of {@link Opt}.
    *
+   * @example
    * ```ts
    * // prints 1, returns some(1)
    * some(1).onBoth(x => console.log(x), () => console.log('none'))
@@ -776,6 +807,15 @@ export abstract class Opt<T> {
    * @param predicate
    */
   abstract filter(predicate: (_: T) => boolean): Opt<T>;
+
+  /**
+   * Filters each element of an array inside the {@link Opt}, returning an {@link Opt} of the array with elements that pass the test implemented by the provided function.
+   * @example
+   * ```ts
+   * opt([1, 2, 3]).filterIn(x => x > 1) // Some([2, 3])
+   * ```
+   */
+  abstract filterIn<U>(this: Opt<U[]>, f: (x: U) => boolean): Opt<U[]>;
 
   /**
    * Filter by regular expression.
@@ -1232,6 +1272,10 @@ class None<T> extends Opt<T> {
     return onNone();
   }
 
+  fold<R>(_someCase: (x: T) => R, noneCase: R): R {
+    return noneCase;
+  }
+
   onBoth(_onSome: (x: T) => void, onNone: () => void): Opt<T> {
     onNone();
     return this;
@@ -1275,6 +1319,10 @@ class None<T> extends Opt<T> {
   zip5<X, Y, Z, ZZ>(_x: Opt<X>, _y: Opt<Y>, _z: Opt<Z>, _zz: Opt<ZZ>): Opt<[T, X, Y, Z, ZZ]> { return none; }
 
   filter(_predicate: (_: T) => boolean): Opt<T> { return none; }
+
+  filterIn<U>(this: None<U[]>, _f: (x: U) => boolean): Opt<U[]> {
+    return none;
+  }
 
   narrow<U>(_guard: (value: any) => value is U): Opt<U> { return this as unknown as Opt<U>; }
 
@@ -1357,6 +1405,10 @@ class Some<T> extends Opt<T> {
 
   caseOf<R>(onSome: (x: T) => R, _onNone: () => R): R { return onSome(this._value); }
 
+  fold<R>(someCase: (x: T) => R, _noneCase: R): R {
+    return someCase(this._value);
+  }
+
   onBoth(onSome: (x: T) => void, _onNone: () => void): Opt<T> {
     onSome(this._value);
     return this;
@@ -1417,6 +1469,11 @@ class Some<T> extends Opt<T> {
   }
 
   filter(predicate: (_: T) => boolean): Opt<T> { return predicate(this._value) ? this : none; }
+
+  filterIn<U>(this: Some<U[]>, f: (x: U) => boolean): Opt<U[]> {
+    if (!isArray(this._value)) { throw new Error('filterIn called on non array: ' + this._value); }
+    return some(this._value.filter(f));
+  }
 
   narrow<U>(guard: (value: any) => value is U): Opt<U> {
     return guard(this._value) ? this as unknown as Opt<U> : none;

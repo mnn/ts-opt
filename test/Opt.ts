@@ -51,6 +51,7 @@ import {
   fromArray,
   fromObject,
   genNakedPropOrCrash,
+  head,
   headIn,
   id,
   inc,
@@ -65,18 +66,21 @@ import {
   isReadonlyArray,
   isString,
   joinOpt,
+  last,
   lastIn,
   map,
   mapFlow,
   mapOpt,
-  maxIn,
+  max,
   max2All,
   max2Any,
   max2Num,
-  minIn,
+  maxIn,
+  min,
   min2All,
   min2Any,
   min2Num,
+  minIn,
   narrow,
   narrowOrCrash,
   none,
@@ -136,11 +140,7 @@ import {
   zip3,
   zip4,
   zip5,
-  zipToOptArray,
-  head,
-  last,
-  min,
-  max
+  zipToOptArray
 } from '../src/Opt';
 import jestSnapshotSerializer from '../src/jest-snapshot-serializer';
 
@@ -411,6 +411,11 @@ describe('opt', () => {
     expect(randomNumOpt().caseOf(() => 'x', () => 'y')).to.be.oneOf(['x', 'y']);
   });
 
+  it('fold', () => {
+    expect(some(1).fold(x => x + 1, 0)).to.be.eq(2);
+    expect(none.fold(x => x + 1, 0)).to.be.eq(0);
+  });
+
   describe('onBoth', () => {
     it('calls correct callback', () => {
       const noneCb = chai.spy();
@@ -613,6 +618,11 @@ describe('opt', () => {
     expect(some(2).chainToOpt(x => x === 1 ? null : x + 1).orUndef()).to.be.eq(3);
   });
 
+  it('foldIn', () => {
+    expect(opt([1, 2, 3]).foldIn((acc, x) => acc + x, 0).orNull()).to.be.eq(6);
+    expect(none.foldIn((acc, x) => acc + x, 0).orNull()).to.be.null;
+  });
+
   it('actToOpt', () => {
     expect(some(1).actToOpt(id).orNull()).to.be.eq(1);
     expect(none.chainToOptFlow(id, id).orNull()).to.be.null;
@@ -679,6 +689,12 @@ describe('opt', () => {
     expect(some(1).filter(gt0).orNull()).to.be.eq(1);
     expect(some(1).filter(lt0).orNull()).to.be.null;
     expect(none.filter(lt0).orNull()).to.be.null;
+  });
+
+  it('filterIn', () => {
+    expect(opt([-1, 0, 1]).filterIn(gt0).orNull()).to.be.eql([1]);
+    expect(none.filterIn(gt0).orNull()).to.be.null;
+    expect(() => opt(0 as any).filterIn(gt0)).to.throw();
   });
 
   it('filterByRe', () => {
