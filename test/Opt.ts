@@ -720,6 +720,13 @@ describe('opt', () => {
     ).to.be.null;
   });
 
+  it('findIn', () => {
+    expect(opt([1, 2, 3, 4]).findIn(x => x > 2).orNull()).to.be.eq(3);
+    expect(opt([1, 2, 3, 4]).findIn(x => x > 5).orNull()).to.be.null;
+    expect(none.findIn(x => x > 2).orNull()).to.be.null;
+    expect(() => opt('' as any as number[]).findIn(x => x > 2)).to.throw();
+  });
+
   it('noneIf', () => {
     expect(some(1).noneIf(lt0).orNull()).to.be.eq(1);
     expect(some(1).noneIf(gt0).orNull()).to.be.null;

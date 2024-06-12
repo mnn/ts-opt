@@ -315,6 +315,7 @@ export abstract class Opt<T> {
    * Similar to {@link act}, but functions return empty values instead of {@link Opt}.
    * It is useful for typical JavaScript functions (e.g. lodash), properly handles `undefined`/`null`/`NaN` at any point of the chain.
    *
+   * @example
    * ```ts
    * import {find} from 'lodash/fp';
    *
@@ -834,6 +835,30 @@ export abstract class Opt<T> {
       throw new Error(`Expected string, got ${JSON.stringify(this.value)}.`);
     }
     return (this as unknown as Opt<string>).filter(testRe(regex)) as R;
+  }
+
+  /**
+   * Searches for an element within an array inside the Opt instance that matches the given predicate.
+   *
+   * This method will return a new Opt containing the first element that satisfies the predicate function.
+   * If the Opt instance is None or the value inside is not an array, it will return None.
+   *
+   * @template U - The type of elements in the array.
+   * @param {Opt<U[]>} this - The Opt instance containing an array.
+   * @param {(x: U) => boolean} f - A predicate function to test each element.
+   * @returns {Opt<U>} A new Opt containing the found element or None if no element matches the predicate or if the Opt is None.
+   *
+   * @example
+   * ```typescript
+   * opt([1, 2, 3, 4]).findIn(x => x > 2) // Some(3)
+   * opt([1, 2, 3, 4]).findIn(x => x > 5) // None
+   * none.findIn(x => x > 2) // None
+   * ```
+   */
+  findIn<U>(this: Opt<U[]>, f: (x: U) => boolean): Opt<U> {
+    if (!this.isSome()) return none;
+    if (!isArray(this.value)) throw new Error(`Expected array, got ${JSON.stringify(this.value)}.`);
+    return opt(this.value.find(f));
   }
 
   /**
