@@ -796,6 +796,18 @@ export abstract class Opt<T> {
   abstract zip5<X, Y, Z, ZZ>(x: Opt<X>, y: Opt<Y>, z: Opt<Z>, zz: Opt<ZZ>): Opt<[T, X, Y, Z, ZZ]>;
 
   /**
+   * Zips each element of an array inside the {@link Opt} with the corresponding element from another array.
+   * If the arrays are of different lengths, the resulting array will have the length of the shorter one.
+   * @example
+   * ```ts
+   * opt([1, 2]).zipIn([3, 4]) // Some([[1, 3], [2, 4]])
+   * opt([1, 2]).zipIn(null) // None
+   * none.zipIn([1, 2]) // None
+   * ```
+   */
+  abstract zipIn<U, V>(this: Opt<readonly U[]>, other: V[] | EmptyValue): Opt<readonly [U, V][]>;
+
+  /**
    * Returns {@link Some} with same value if predicate holds, {@link None} otherwise.
    *
    * @example
@@ -1349,6 +1361,10 @@ class None<T> extends Opt<T> {
     return none;
   }
 
+  zipIn<U, V>(this: Opt<readonly U[]>, _other: V[] | EmptyValue): Opt<readonly [U, V][]> {
+    return none;
+  }
+
   narrow<U>(_guard: (value: any) => value is U): Opt<U> { return this as unknown as Opt<U>; }
 
   narrowOrCrash<U>(guard: (value: any) => value is U, _crashMessage?: string): Opt<U> {
@@ -1498,6 +1514,10 @@ class Some<T> extends Opt<T> {
   filterIn<U>(this: Some<U[]>, f: (x: U) => boolean): Opt<U[]> {
     if (!isArray(this._value)) { throw new Error('filterIn called on non array: ' + this._value); }
     return some(this._value.filter(f));
+  }
+
+  zipIn<U, V>(this: Opt<readonly U[]>, other: V[] | EmptyValue): Opt<readonly [U, V][]> {
+    return this.zip(opt(other)).map(([xs, ys]) => zipArray(xs, ys));
   }
 
   narrow<U>(guard: (value: any) => value is U): Opt<U> {

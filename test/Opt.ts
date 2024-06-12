@@ -727,6 +727,13 @@ describe('opt', () => {
     expect(() => opt('' as any as number[]).findIn(x => x > 2)).to.throw();
   });
 
+  it('zipIn', () => {
+    expect(opt([1, 2]).zipIn([3, 4]).orNull()).to.be.eql([[1, 3], [2, 4]]);
+    expect(opt([1]).zipIn([3, 4]).orNull()).to.be.eql([[1, 3]]);
+    expect(opt([1, 2]).zipIn(null).orNull()).to.be.null;
+    expect((none as Opt<number[]>).zipIn([1, 2]).orNull()).to.be.null;
+  })
+
   it('noneIf', () => {
     expect(some(1).noneIf(lt0).orNull()).to.be.eq(1);
     expect(some(1).noneIf(gt0).orNull()).to.be.null;
