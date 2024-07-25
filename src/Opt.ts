@@ -122,6 +122,20 @@ export abstract class Opt<T> {
   get length(): 0 | 1 { return this.isEmpty ? 0 : 1; }
 
   /**
+   * Returns the length of a string or array wrapped in an Opt.
+   *
+   * @example
+   * ```ts
+   * opt('hello').lengthIn() // Some(5)
+   * opt([1, 2, 3]).lengthIn() // Some(3)
+   * opt('').lengthIn() // Some(0)
+   * opt([]).lengthIn() // Some(0)
+   * none.lengthIn() // None
+   * ```
+   */
+  abstract lengthIn<R extends (T extends string | readonly unknown[] ? Opt<number> : never)>(this: Opt<string | readonly unknown[]>): R;
+
+  /**
    * Create Opt instance from an array of one or zero items.
    *
    * ```ts
@@ -1285,6 +1299,10 @@ class None<T> extends Opt<T> {
 
   toArray(): [] | [T] { return []; }
 
+  lengthIn<R extends (T extends string | readonly unknown[] ? Opt<number> : never)>(): R {
+    return none as unknown as R;
+  }
+
   flatMap<U>(_f: (_: T) => Opt<U>): Opt<U> { return none as unknown as Opt<U>; }
 
   map<U>(): Opt<U> { return none as unknown as Opt<U>; }
@@ -1414,6 +1432,15 @@ class Some<T> extends Opt<T> {
   get isEmpty(): boolean { return false; }
 
   get value(): T { return this._value; }
+
+  lengthIn<R extends (T extends string | readonly unknown[] ? Opt<number> : never)>(): R {
+    const val = this._value;
+    if (isString(val) || isReadonlyArray(val)) {
+      return some(val.length) as unknown as R;
+    } else {
+      throw new Error(`\`Opt#lengthIn\` can only be used on strings and arrays`);
+    }
+  }
 
   toArray(): [] | [T] { return [this._value]; }
 

@@ -253,6 +253,34 @@ describe('opt', () => {
     expect(opt(0).length).to.eq(1);
   });
 
+  describe('lengthIn', () => {
+    it('returns length of string wrapped in Some', () => {
+      expect(opt('hello').lengthIn().orNull()).to.equal(5);
+      expect(opt('').lengthIn().orNull()).to.equal(0);
+    });
+  
+    it('returns length of array wrapped in Some', () => {
+      expect(opt([1, 2, 3]).lengthIn().orNull()).to.equal(3);
+      expect(opt([]).lengthIn().orNull()).to.equal(0);
+    });
+  
+    it('returns None when called on None', () => {
+      expect(none.lengthIn().orNull()).to.be.null;
+    });
+  
+    it('throws when called on non-string and non-array', () => {
+      expect(() => opt(123 as any).lengthIn()).to.throw(Error, '`Opt#lengthIn` can only be used on strings and arrays');
+    });
+  
+    it('should fail type checking when called with incorrect types', () => {
+      expect(() => {
+        // @ts-expect-error Testing for type safety: lengthIn should only work on Opt<string> or Opt<T[]>
+        const result: Opt<number> = opt(123).lengthIn();
+        suppressUnused(result);
+      }).to.throw(Error, '`Opt#lengthIn` can only be used on strings and arrays');
+    });
+  });
+
   it('orUndef', () => {
     expect(opt(null).orUndef()).to.eq(undefined);
     expect(opt(0).orUndef()).to.eq(0);
