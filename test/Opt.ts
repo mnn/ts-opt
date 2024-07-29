@@ -51,6 +51,8 @@ import {
   fromArray,
   fromObject,
   genNakedPropOrCrash,
+  has,
+  hasIn,
   head,
   headIn,
   id,
@@ -519,6 +521,24 @@ describe('opt', () => {
     expect(none.contains(0)).to.be.false;
     expect(some(1).contains(0)).to.be.false;
     expect(some(0).contains(0)).to.be.true;
+  });
+
+  it('containsIn', () => {
+    expect(none.containsIn(0)).to.be.false;
+    expect(opt([1]).containsIn(0)).to.be.false;
+    expect(opt([0]).containsIn(0)).to.be.true;
+  });
+
+  it('has', () => {
+    expect(none.has(0)).to.be.false;
+    expect(some(1).has(0)).to.be.false;
+    expect(some(0).has(0)).to.be.true;
+  });
+
+  it('hasIn', () => {
+    expect(none.hasIn(0)).to.be.false;
+    expect(opt([1]).hasIn(0)).to.be.false;
+    expect(opt([0]).hasIn(0)).to.be.true;
   });
 
   it('exists', () => {
@@ -1927,6 +1947,26 @@ describe('contains', () => {
   it('negative', () => {
     expect(contains(2)(opt(1))).to.be.false;
     expect(contains(2)(none)).to.be.false;
+  });
+});
+
+describe('has', () => {
+  it('positive', () => {
+    expect(has(1)(opt(1))).to.be.true;
+  });
+  it('negative', () => {
+    expect(has(2)(opt(1))).to.be.false;
+    expect(has(2)(none)).to.be.false;
+  });
+});
+
+describe('hasIn', () => {
+  it('positive', () => {
+    expect(hasIn(1)(opt([1]))).to.be.true;
+  });
+  it('negative', () => {
+    expect(hasIn(1)(none)).to.be.false;
+    expect(hasIn(1)(opt([2]))).to.be.false;
   });
 });
 

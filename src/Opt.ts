@@ -575,11 +575,37 @@ export abstract class Opt<T> {
    * none.contains(undefined) // false
    * ```
    *
+   * Similar to JavaScript `Array#includes` method.
+   *
    * @see {@link contains}
    *
    * @param x
    */
   abstract contains(x: T): boolean;
+
+  /** @alias {@link Opt.contains} */
+  has(x: T): boolean {
+    return this.contains(x);
+  }
+
+  /**
+   * Checks if an array inside the Opt contains the given element.
+   *
+   * @example
+   * ```ts
+   * opt([1, 2, 3]).hasIn(2) // true
+   * opt([1, 2, 3]).hasIn(4) // false
+   * none.hasIn(1) // false
+   * ```
+   *
+   * @param x Element to search for.
+   */
+  abstract hasIn<U>(this: Opt<readonly U[]>, x: U): boolean;
+
+  /** @alias {@link Opt.hasIn} */
+  containsIn<U>(this: Opt<readonly U[]>, x: U): boolean {
+    return this.hasIn(x);
+  }
 
   /**
    * Applies `p` to inner value and passes result. Always `false` for {@link None}.
@@ -1345,6 +1371,8 @@ class None<T> extends Opt<T> {
 
   contains(_x: T): boolean { return false; }
 
+  hasIn<U>(_: U): boolean { return false; }
+
   exists(_p: (x: T) => boolean): boolean { return false; }
 
   forAll(_p: (x: T) => boolean): boolean { return true; }
@@ -1483,6 +1511,10 @@ class Some<T> extends Opt<T> {
   }
 
   contains(x: T): boolean { return this._value === x; }
+
+  hasIn<U>(this: Opt<readonly U[]>, x: U): boolean {
+    return (this as Some<readonly U[]>)._value.includes(x);
+  }
 
   exists(p: (x: T) => boolean): boolean { return p(this._value); }
 
@@ -2013,6 +2045,12 @@ export const pipe: PipeFn = <I>(x: I, ...fs: any[]) => fs.reduce((acc, y) => y(a
 
 /** @see {@link Opt.contains} */
 export const contains = <T>(y: T) => (x: Opt<T>): boolean => x.contains(y);
+
+/** @see {@link Opt.has} */
+export const has = <T>(x: T) => (opt: Opt<T>): boolean => opt.has(x);
+
+/** @see {@link Opt.hasIn} */
+export const hasIn = <U>(x: U) => (opt: Opt<readonly U[]>): boolean => opt.hasIn(x);
 
 /** @see {@link Opt.exists} */
 export const exists = <T>(y: (_: T) => boolean) => (x: Opt<T>): boolean => x.exists(y);

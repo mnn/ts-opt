@@ -25,8 +25,8 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOptFlow = exports.actToOpt = exports.chainToOpt = exports.chainFlow = exports.act = exports.chain = exports.flatMap = exports.mapFlow = exports.map = exports.toObject = exports.fromObject = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optArrayOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.deserializeUnsafe = exports.deserializeOrCrash = exports.deserialize = exports.serialize = exports.ReduxDevtoolsCompatibilityHelper = exports.isOptSerialized = exports.Opt = exports.isUnknown = exports.isNumber = exports.isObject = exports.isFunction = exports.isReadonlyArray = exports.isArray = exports.toString = exports.isString = void 0;
-exports.headIn = exports.head = exports.at = exports.id = exports.isFull = exports.nonEmpty = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.genNakedPropOrCrash = exports.propOrCrash = exports.propNaked = exports.prop = exports.equals = exports.print = exports.narrowOrCrash = exports.narrow = exports.find = exports.count = exports.noneWhen = exports.noneIfEmpty = exports.noneIf = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.flatBimap = exports.bimap = exports.altOpt = exports.alt = exports.orElseAny = exports.orElseLazy = exports.orElse = exports.forAll = exports.exists = exports.contains = exports.pipe = exports.onBoth = exports.caseOf = exports.orNaN = void 0;
-exports.noop = exports.eqAny = exports.eq = exports.crash = exports.appendStr = exports.prependStr = exports.dec = exports.inc = exports.bool = exports.xor = exports.or = exports.and = exports.not = exports.clamp = exports.max2Any = exports.max2All = exports.max2Num = exports.min2Any = exports.min2All = exports.min2Num = exports.maxIn = exports.max = exports.minIn = exports.min = exports.assertType = exports.isOrCrash = exports.onFunc = exports.apply = exports.parseFloat = exports.parseInt = exports.parseJson = exports.tryRun = exports.testReOrFalse = exports.testRe = exports.zipToOptArray = exports.lastIn = exports.last = void 0;
+exports.at = exports.id = exports.isFull = exports.nonEmpty = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.genNakedPropOrCrash = exports.propOrCrash = exports.propNaked = exports.prop = exports.equals = exports.print = exports.narrowOrCrash = exports.narrow = exports.find = exports.count = exports.noneWhen = exports.noneIfEmpty = exports.noneIf = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.flatBimap = exports.bimap = exports.altOpt = exports.alt = exports.orElseAny = exports.orElseLazy = exports.orElse = exports.forAll = exports.exists = exports.hasIn = exports.has = exports.contains = exports.pipe = exports.onBoth = exports.caseOf = exports.orNaN = void 0;
+exports.noop = exports.eqAny = exports.eq = exports.crash = exports.appendStr = exports.prependStr = exports.dec = exports.inc = exports.bool = exports.xor = exports.or = exports.and = exports.not = exports.clamp = exports.max2Any = exports.max2All = exports.max2Num = exports.min2Any = exports.min2All = exports.min2Num = exports.maxIn = exports.max = exports.minIn = exports.min = exports.assertType = exports.isOrCrash = exports.onFunc = exports.apply = exports.parseFloat = exports.parseInt = exports.parseJson = exports.tryRun = exports.testReOrFalse = exports.testRe = exports.zipToOptArray = exports.lastIn = exports.last = exports.headIn = exports.head = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 var errorSymbol = Symbol('Error');
@@ -361,6 +361,14 @@ var Opt = /** @class */ (function () {
      */
     Opt.prototype.join = function () {
         return this.flatMap(exports.id);
+    };
+    /** @alias {@link Opt.contains} */
+    Opt.prototype.has = function (x) {
+        return this.contains(x);
+    };
+    /** @alias {@link Opt.hasIn} */
+    Opt.prototype.containsIn = function (x) {
+        return this.hasIn(x);
     };
     /**
      * Filter by regular expression.
@@ -701,6 +709,7 @@ var None = /** @class */ (function (_super) {
     };
     None.prototype.onSome = function (_f) { return this; };
     None.prototype.contains = function (_x) { return false; };
+    None.prototype.hasIn = function (_) { return false; };
     None.prototype.exists = function (_p) { return false; };
     None.prototype.forAll = function (_p) { return true; };
     None.prototype.orElse = function (def) { return def; };
@@ -812,6 +821,9 @@ var Some = /** @class */ (function (_super) {
         return this;
     };
     Some.prototype.contains = function (x) { return this._value === x; };
+    Some.prototype.hasIn = function (x) {
+        return this._value.includes(x);
+    };
     Some.prototype.exists = function (p) { return p(this._value); };
     Some.prototype.forAll = function (p) { return p(this._value); };
     Some.prototype.onNone = function (_f) { return this; };
@@ -1338,6 +1350,12 @@ exports.pipe = pipe;
 /** @see {@link Opt.contains} */
 var contains = function (y) { return function (x) { return x.contains(y); }; };
 exports.contains = contains;
+/** @see {@link Opt.has} */
+var has = function (x) { return function (opt) { return opt.has(x); }; };
+exports.has = has;
+/** @see {@link Opt.hasIn} */
+var hasIn = function (x) { return function (opt) { return opt.hasIn(x); }; };
+exports.hasIn = hasIn;
 /** @see {@link Opt.exists} */
 var exists = function (y) { return function (x) { return x.exists(y); }; };
 exports.exists = exists;

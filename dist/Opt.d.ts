@@ -484,11 +484,30 @@ export declare abstract class Opt<T> {
      * none.contains(undefined) // false
      * ```
      *
+     * Similar to JavaScript `Array#includes` method.
+     *
      * @see {@link contains}
      *
      * @param x
      */
     abstract contains(x: T): boolean;
+    /** @alias {@link Opt.contains} */
+    has(x: T): boolean;
+    /**
+     * Checks if an array inside the Opt contains the given element.
+     *
+     * @example
+     * ```ts
+     * opt([1, 2, 3]).hasIn(2) // true
+     * opt([1, 2, 3]).hasIn(4) // false
+     * none.hasIn(1) // false
+     * ```
+     *
+     * @param x Element to search for.
+     */
+    abstract hasIn<U>(this: Opt<readonly U[]>, x: U): boolean;
+    /** @alias {@link Opt.hasIn} */
+    containsIn<U>(this: Opt<readonly U[]>, x: U): boolean;
     /**
      * Applies `p` to inner value and passes result. Always `false` for {@link None}.
      *
@@ -1126,6 +1145,7 @@ declare class None<T> extends Opt<T> {
     onNone(f: () => void): Opt<T>;
     onSome(_f: (x: T) => void): Opt<T>;
     contains(_x: T): boolean;
+    hasIn<U>(_: U): boolean;
     exists(_p: (x: T) => boolean): boolean;
     forAll(_p: (x: T) => boolean): boolean;
     orElse(def: T): T;
@@ -1179,6 +1199,7 @@ declare class Some<T> extends Opt<T> {
     fold<R>(someCase: (x: T) => R, _noneCase: R): R;
     onBoth(onSome: (x: T) => void, _onNone: () => void): Opt<T>;
     contains(x: T): boolean;
+    hasIn<U>(this: Opt<readonly U[]>, x: U): boolean;
     exists(p: (x: T) => boolean): boolean;
     forAll(p: (x: T) => boolean): boolean;
     onNone(_f: () => void): Opt<T>;
@@ -1518,6 +1539,10 @@ export declare const onBoth: <T>(onSome: (x: T) => void) => (onNone: () => void)
 export declare const pipe: PipeFn;
 /** @see {@link Opt.contains} */
 export declare const contains: <T>(y: T) => (x: Opt<T>) => boolean;
+/** @see {@link Opt.has} */
+export declare const has: <T>(x: T) => (opt: Opt<T>) => boolean;
+/** @see {@link Opt.hasIn} */
+export declare const hasIn: <U>(x: U) => (opt: Opt<readonly U[]>) => boolean;
 /** @see {@link Opt.exists} */
 export declare const exists: <T>(y: (_: T) => boolean) => (x: Opt<T>) => boolean;
 /** @see {@link Opt.forAll} */
