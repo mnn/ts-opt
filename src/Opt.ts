@@ -1576,7 +1576,7 @@ class Some<T> extends Opt<T> {
   }
 
   zipIn<U, V>(this: Opt<readonly U[]>, other: V[] | EmptyValue): Opt<readonly [U, V][]> {
-    return this.zip(opt(other)).map(([xs, ys]) => zipArray(xs, ys));
+    return this.zip(opt(other)).map(([xs, ys]) => zipArray(xs)(ys));
   }
 
   narrow<U>(guard: (value: any) => value is U): Opt<U> {
@@ -2079,41 +2079,20 @@ export const bimap = <T, U>(someF: (_: T) => U) => (noneF: () => U) => (x: Opt<T
 /** @see {@link Opt.flatBimap} */
 export const flatBimap = <T, U>(someF: (_: T) => Opt<U>) => (noneF: () => Opt<U>) => (x: Opt<T>): Opt<U> => x.flatBimap(someF, noneF);
 
-interface ZipFn {
-  <T>(other: Opt<T>): <U>(x: Opt<U>) => Opt<[T, U]>;
+export const zipArray = <T>(a: readonly T[]) => <U>(b: readonly U[]): [T, U][] =>
+  [...Array(Math.min(b.length, a.length))].map((_, i) => [a[i], b[i]]);
 
-  <T>(other: readonly T[]): <U>(x: readonly U[]) => [T, U][];
-}
-
-const zipArray = <T, U>(a: readonly T[], b: readonly U[]): [T, U][] => [...Array(Math.min(b.length, a.length))].map((_, i) => [a[i], b[i]]);
-
-/**
- * Same as {@link Opt.zip}, but also supports arrays.
- *
- * @example
- * ```ts
- * const formatAddress =
- *   (streetName?: string, streetNumber?: string): string =>
- *     zip(opt(streetName))(opt(streetNumber)).map(join(' ')).orElse('');
- * formatAddress('Strawberry', '12') // 'Strawberry 12'
- * formatAddress('Strawberry', undefined) // ''
- * formatAddress(undefined, '12') // ''
- * formatAddress(undefined, undefined) // ''
- * ```
- *
- * @see {@link Opt.zip}
- */
-export const zip: ZipFn = (x: any) => (other: any): any => isOpt(x) ? x.zip(other) : zipArray(x, other);
+export const zipOpt = <T>(x: Opt<T>) => <U>(other: Opt<U>): Opt<[T, U]> => x.zip(other);
 
 /** @see {@link Opt.zip3} */
-export const zip3 = <T>(x: Opt<T>) => <A>(a: Opt<A>) => <B>(b: Opt<B>): Opt<[T, A, B]> => x.zip3(a, b);
+export const zip3Opt = <T>(x: Opt<T>) => <A>(a: Opt<A>) => <B>(b: Opt<B>): Opt<[T, A, B]> => x.zip3(a, b);
 
 /** @see {@link Opt.zip4} */
-export const zip4 =
+export const zip4Opt =
   <T>(x: Opt<T>) => <A>(a: Opt<A>) => <B>(b: Opt<B>) => <C>(c: Opt<C>): Opt<[T, A, B, C]> => x.zip4(a, b, c);
 
 /** @see {@link Opt.zip5} */
-export const zip5 =
+export const zip5Opt =
   <T>(x: Opt<T>) => <A>(a: Opt<A>) => <B>(b: Opt<B>) => <C>(c: Opt<C>) => <D>(d: Opt<D>): Opt<[T, A, B, C, D]> =>
     x.zip5(a, b, c, d);
 
@@ -2432,17 +2411,17 @@ type WithoutPossiblyEmptyEmptyValues<T> = Exclude<T, '' | [] | typeof none | Emp
  * Similar to `isEmpty` from lodash, but also supports {@link Opt}s.
  * Returns `true` for {@link None}, `[]`, `null`, `undefined`, empty map, empty set, empty object, `''` and `NaN`.
  * Otherwise returns `false`.
- *
- * @example
- * ```ts
+   *
+   * @example
+   * ```ts
  * isEmpty(opt(1)) // false
  * isEmpty(opt(null)) // true
  * isEmpty([]) // true
  * isEmpty([1]) // false
  * isEmpty(null) // true
  * isEmpty('') // true
- * ```
- *
+   * ```
+   *
  * @param x
  */
 export const isEmpty = (x: PossiblyEmpty): boolean => {
@@ -2545,10 +2524,10 @@ interface ZipToOptArrayFn {
 }
 
 const lenToZipFn = {
-  2: uncurryTuple(zip),
-  3: uncurryTuple3(zip3),
-  4: uncurryTuple4(zip4),
-  5: uncurryTuple5(zip5),
+  2: uncurryTuple(zipOpt),
+  3: uncurryTuple3(zip3Opt),
+  4: uncurryTuple4(zip4Opt),
+  5: uncurryTuple5(zip5Opt),
 };
 /**
  * Takes a tuple, wraps each element in {@link Opt} and applies appropriate {@link Opt.zip} function.

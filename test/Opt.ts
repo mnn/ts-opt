@@ -138,11 +138,12 @@ import {
   uncurryTuple4,
   uncurryTuple5,
   xor,
-  zip,
-  zip3,
-  zip4,
-  zip5,
-  zipToOptArray
+  zipOpt,
+  zip3Opt,
+  zip4Opt,
+  zip5Opt,
+  zipToOptArray,
+  zipArray
 } from '../src/Opt';
 import jestSnapshotSerializer from '../src/jest-snapshot-serializer';
 
@@ -693,14 +694,14 @@ describe('opt', () => {
     expect(some(1).zip(none).orNull()).to.be.null;
     expect(none.zip(some(true)).orNull()).to.be.null;
     expect(none.zip(some(true)).orNull()).to.be.null;
-    const formatAddress =
-      (streetName?: string, streetNumber?: string): string =>
+      const formatAddress =
+        (streetName?: string, streetNumber?: string): string =>
         opt(streetName).zip(opt(streetNumber)).map(join(' ')).orElse('');
-    expect(formatAddress('Strawberry', '12')).to.be.eq('Strawberry 12');
-    expect(formatAddress('Strawberry', undefined)).to.be.eq('');
-    expect(formatAddress(undefined, '12')).to.be.eq('');
-    expect(formatAddress(undefined, undefined)).to.be.eq('');
-  });
+      expect(formatAddress('Strawberry', '12')).to.be.eq('Strawberry 12');
+      expect(formatAddress('Strawberry', undefined)).to.be.eq('');
+      expect(formatAddress(undefined, '12')).to.be.eq('');
+      expect(formatAddress(undefined, undefined)).to.be.eq('');
+    });
 
   it('zip3', () => {
     expect(some(1).zip3(some(true), some('a')).orNull()).to.be.eql([1, true, 'a']);
@@ -2061,83 +2062,63 @@ describe('flatBimap', () => {
   });
 });
 
-describe('zip', () => {
+describe('zipArray', () => {
+  it('zips', () => {
+    expect(zipArray([1, 2])([true, false])).to.be.eql([[1, true], [2, false]]);
+  });
+  it('different lengths', () => {
+    expect(zipArray([1, 2, 3])([true, false])).to.be.eql([[1, true], [2, false]]);
+    expect(zipArray([1])([true, false, null])).to.be.eql([[1, true]]);
+    expect(zipArray([])([true, false])).to.be.eql([]);
+    expect(zipArray([1, 2, 3])([])).to.be.eql([]);
+  });
+});
+
+describe('zipOpt', () => {
   describe('checks types', () => {
     it('opt', () => {
-      const a: Opt<[number, boolean]> = zip(opt(1))(opt(true));
+      const a: Opt<[number, boolean]> = zipOpt(opt(1))(opt(true));
       // @ts-expect-error wrong result type
-      const aFail: Opt<[boolean, number]> = zip(opt(1))(opt(true));
-      suppressUnused(a, aFail);
-    });
-    it('array', () => {
-      const a: [number, boolean][] = zip([1, 2])([true, false]);
-      // @ts-expect-error wrong result type
-      const aFail: [boolean, number][] = zip(opt(1))(opt(true));
+      const aFail: Opt<[boolean, number]> = zipOpt(opt(1))(opt(true));
       suppressUnused(a, aFail);
     });
     it('mixing', () => {
       // @ts-expect-error wrong result type
-      const aFail: [number, boolean][] = zip(opt(1))(opt(true));
+      const aFail: [number, boolean][] = zipOpt(opt(1))(opt(true));
       suppressUnused(aFail);
     });
   });
 
   it('opt', () => {
-    expect(zip(opt(1))(opt(2)).orNull()).to.be.eql([1, 2]);
-    expect(zip(opt(1))(none).orNull()).to.be.eql(null);
-    expect(zip(none)(opt(2)).orNull()).to.be.eql(null);
-    expect(zip(none)(none).orNull()).to.be.eql(null);
-  });
-
-  describe('array', () => {
-    it('empty', () => {
-      expect(zip([])([])).to.be.eql([]);
-    });
-    it('same length', () => {
-      expect(zip([1])([2])).to.be.eql([[1, 2]]);
-    });
-    it('different length', () => {
-      expect(zip([1, 2])([3])).to.be.eql([[1, 3]]);
-      expect(zip([1])([3, 4])).to.be.eql([[1, 3]]);
-    });
-    it('read-only', () => {
-      expect(zip([1] as readonly number[])([2] as readonly number[])).to.be.eql([[1, 2]]);
-    });
-
-    it('example', () => {
-      const formatAddress =
-        (streetName?: string, streetNumber?: string): string =>
-          zip(opt(streetName))(opt(streetNumber)).map(join(' ')).orElse('');
-      expect(formatAddress('Strawberry', '12')).to.be.eq('Strawberry 12');
-      expect(formatAddress('Strawberry', undefined)).to.be.eq('');
-      expect(formatAddress(undefined, '12')).to.be.eq('');
-      expect(formatAddress(undefined, undefined)).to.be.eq('');
-    });
+    expect(zipOpt(opt(1))(opt(2)).orNull()).to.be.eql([1, 2]);
+    expect(zipOpt(opt(1))(none).orNull()).to.be.eql(null);
+    expect(zipOpt(none)(opt(2)).orNull()).to.be.eql(null);
+    expect(zipOpt(none)(none).orNull()).to.be.eql(null);
   });
 
   it('works with flow', () => {
-    const a: Opt<[string, number]> = flow2((x: Opt<number>) => x, zip(opt('x')))(opt(2));
+    const a: Opt<[string, number]> = flow2((x: Opt<number>) => x, zipOpt(opt('x')))(opt(2));
     expect(a.orNull()).to.be.eql(['x', 2]);
-    const b: Opt<[string, number]> = flow2(zip(opt('x')), id)(opt(2));
+    const b: Opt<[string, number]> = flow2(zipOpt(opt('x')), id)(opt(2));
     expect(b.orNull()).to.be.eql(['x', 2]);
   });
 });
 
-describe('zip3', () => {
+describe('zip3Opt', () => {
   it('zips', () => {
-    expect(zip3(opt(1))(opt(2))(opt(3)).orNull()).to.be.eql([1, 2, 3]);
+    expect(zip3Opt(opt(1))(opt(2))(opt(3)).orNull()).to.be.eql([1, 2, 3]);
   });
 });
 
-describe('zip4', () => {
+describe('zip4Opt', () => {
   it('zips', () => {
-    expect(zip4(opt(1))(opt(2))(opt(3))(opt(4)).orNull()).to.be.eql([1, 2, 3, 4]);
+    expect(zip4Opt(opt(1))(opt(2))(opt(3))(opt(4)).orNull()).to.be.eql([1, 2, 3, 4]);
   });
 });
 
-describe('zip5', () => {
+describe('zip5Opt', () => {
   it('zips', () => {
-    expect(zip5(opt(1))(opt(2))(opt(3))(opt(4))(opt(5)).orNull()).to.be.eql([1, 2, 3, 4, 5]);
+    expect(zip5Opt(opt(1))(opt(2))(opt(3))(opt(4))(opt(5)).orNull()).to.be.eql([1, 2, 3, 4, 5]);
   });
 });
 

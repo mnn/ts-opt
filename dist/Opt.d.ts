@@ -1561,33 +1561,14 @@ export declare const altOpt: <T>(def: T) => (x: Opt<T>) => OptSafe<T>;
 export declare const bimap: <T, U>(someF: (_: T) => U) => (noneF: () => U) => (x: Opt<T>) => Opt<U>;
 /** @see {@link Opt.flatBimap} */
 export declare const flatBimap: <T, U>(someF: (_: T) => Opt<U>) => (noneF: () => Opt<U>) => (x: Opt<T>) => Opt<U>;
-interface ZipFn {
-    <T>(other: Opt<T>): <U>(x: Opt<U>) => Opt<[T, U]>;
-    <T>(other: readonly T[]): <U>(x: readonly U[]) => [T, U][];
-}
-/**
- * Same as {@link Opt.zip}, but also supports arrays.
- *
- * @example
- * ```ts
- * const formatAddress =
- *   (streetName?: string, streetNumber?: string): string =>
- *     zip(opt(streetName))(opt(streetNumber)).map(join(' ')).orElse('');
- * formatAddress('Strawberry', '12') // 'Strawberry 12'
- * formatAddress('Strawberry', undefined) // ''
- * formatAddress(undefined, '12') // ''
- * formatAddress(undefined, undefined) // ''
- * ```
- *
- * @see {@link Opt.zip}
- */
-export declare const zip: ZipFn;
+export declare const zipArray: <T>(a: readonly T[]) => <U>(b: readonly U[]) => [T, U][];
+export declare const zipOpt: <T>(x: Opt<T>) => <U>(other: Opt<U>) => Opt<[T, U]>;
 /** @see {@link Opt.zip3} */
-export declare const zip3: <T>(x: Opt<T>) => <A>(a: Opt<A>) => <B>(b: Opt<B>) => Opt<[T, A, B]>;
+export declare const zip3Opt: <T>(x: Opt<T>) => <A>(a: Opt<A>) => <B>(b: Opt<B>) => Opt<[T, A, B]>;
 /** @see {@link Opt.zip4} */
-export declare const zip4: <T>(x: Opt<T>) => <A>(a: Opt<A>) => <B>(b: Opt<B>) => <C>(c: Opt<C>) => Opt<[T, A, B, C]>;
+export declare const zip4Opt: <T>(x: Opt<T>) => <A>(a: Opt<A>) => <B>(b: Opt<B>) => <C>(c: Opt<C>) => Opt<[T, A, B, C]>;
 /** @see {@link Opt.zip5} */
-export declare const zip5: <T>(x: Opt<T>) => <A>(a: Opt<A>) => <B>(b: Opt<B>) => <C>(c: Opt<C>) => <D>(d: Opt<D>) => Opt<[T, A, B, C, D]>;
+export declare const zip5Opt: <T>(x: Opt<T>) => <A>(a: Opt<A>) => <B>(b: Opt<B>) => <C>(c: Opt<C>) => <D>(d: Opt<D>) => Opt<[T, A, B, C, D]>;
 type FilterFn = <T>(p: (_: T) => boolean) => <U extends Opt<T> | readonly T[]>(x: U) => U extends Opt<T> ? Opt<T> : T[];
 /**
  * Same as {@link Opt.filter}, but also supports arrays.
@@ -1835,17 +1816,17 @@ type WithoutPossiblyEmptyEmptyValues<T> = Exclude<T, '' | [] | typeof none | Emp
  * Similar to `isEmpty` from lodash, but also supports {@link Opt}s.
  * Returns `true` for {@link None}, `[]`, `null`, `undefined`, empty map, empty set, empty object, `''` and `NaN`.
  * Otherwise returns `false`.
- *
- * @example
- * ```ts
+   *
+   * @example
+   * ```ts
  * isEmpty(opt(1)) // false
  * isEmpty(opt(null)) // true
  * isEmpty([]) // true
  * isEmpty([1]) // false
  * isEmpty(null) // true
  * isEmpty('') // true
- * ```
- *
+   * ```
+   *
  * @param x
  */
 export declare const isEmpty: (x: PossiblyEmpty) => boolean;

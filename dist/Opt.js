@@ -25,8 +25,8 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOptFlow = exports.actToOpt = exports.chainToOpt = exports.chainFlow = exports.act = exports.chain = exports.flatMap = exports.mapFlow = exports.map = exports.toObject = exports.fromObject = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optArrayOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.deserializeUnsafe = exports.deserializeOrCrash = exports.deserialize = exports.serialize = exports.ReduxDevtoolsCompatibilityHelper = exports.isOptSerialized = exports.Opt = exports.isUnknown = exports.isNumber = exports.isObject = exports.isFunction = exports.isReadonlyArray = exports.isArray = exports.toString = exports.isString = void 0;
-exports.at = exports.id = exports.isFull = exports.nonEmpty = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.genNakedPropOrCrash = exports.propOrCrash = exports.propNaked = exports.prop = exports.equals = exports.print = exports.narrowOrCrash = exports.narrow = exports.find = exports.count = exports.noneWhen = exports.noneIfEmpty = exports.noneIf = exports.filter = exports.zip5 = exports.zip4 = exports.zip3 = exports.zip = exports.flatBimap = exports.bimap = exports.altOpt = exports.alt = exports.orElseAny = exports.orElseLazy = exports.orElse = exports.forAll = exports.exists = exports.hasIn = exports.has = exports.contains = exports.pipe = exports.onBoth = exports.caseOf = exports.orNaN = void 0;
-exports.noop = exports.eqAny = exports.eq = exports.crash = exports.appendStr = exports.prependStr = exports.dec = exports.inc = exports.bool = exports.xor = exports.or = exports.and = exports.not = exports.clamp = exports.max2Any = exports.max2All = exports.max2Num = exports.min2Any = exports.min2All = exports.min2Num = exports.maxIn = exports.max = exports.minIn = exports.min = exports.assertType = exports.isOrCrash = exports.onFunc = exports.apply = exports.parseFloat = exports.parseInt = exports.parseJson = exports.tryRun = exports.testReOrFalse = exports.testRe = exports.zipToOptArray = exports.lastIn = exports.last = exports.headIn = exports.head = void 0;
+exports.id = exports.isFull = exports.nonEmpty = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.genNakedPropOrCrash = exports.propOrCrash = exports.propNaked = exports.prop = exports.equals = exports.print = exports.narrowOrCrash = exports.narrow = exports.find = exports.count = exports.noneWhen = exports.noneIfEmpty = exports.noneIf = exports.filter = exports.zip5Opt = exports.zip4Opt = exports.zip3Opt = exports.zipOpt = exports.zipArray = exports.flatBimap = exports.bimap = exports.altOpt = exports.alt = exports.orElseAny = exports.orElseLazy = exports.orElse = exports.forAll = exports.exists = exports.hasIn = exports.has = exports.contains = exports.pipe = exports.onBoth = exports.caseOf = exports.orNaN = void 0;
+exports.noop = exports.eqAny = exports.eq = exports.crash = exports.appendStr = exports.prependStr = exports.dec = exports.inc = exports.bool = exports.xor = exports.or = exports.and = exports.not = exports.clamp = exports.max2Any = exports.max2All = exports.max2Num = exports.min2Any = exports.min2All = exports.min2Num = exports.maxIn = exports.max = exports.minIn = exports.min = exports.assertType = exports.isOrCrash = exports.onFunc = exports.apply = exports.parseFloat = exports.parseInt = exports.parseJson = exports.tryRun = exports.testReOrFalse = exports.testRe = exports.zipToOptArray = exports.lastIn = exports.last = exports.headIn = exports.head = exports.at = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 var errorSymbol = Symbol('Error');
@@ -878,7 +878,7 @@ var Some = /** @class */ (function (_super) {
     Some.prototype.zipIn = function (other) {
         return this.zip((0, exports.opt)(other)).map(function (_a) {
             var xs = _a[0], ys = _a[1];
-            return zipArray(xs, ys);
+            return (0, exports.zipArray)(xs)(ys);
         });
     };
     Some.prototype.narrow = function (guard) {
@@ -1383,36 +1383,23 @@ exports.bimap = bimap;
 /** @see {@link Opt.flatBimap} */
 var flatBimap = function (someF) { return function (noneF) { return function (x) { return x.flatBimap(someF, noneF); }; }; };
 exports.flatBimap = flatBimap;
-var zipArray = function (a, b) { return __spreadArray([], Array(Math.min(b.length, a.length)), true).map(function (_, i) { return [a[i], b[i]]; }); };
-/**
- * Same as {@link Opt.zip}, but also supports arrays.
- *
- * @example
- * ```ts
- * const formatAddress =
- *   (streetName?: string, streetNumber?: string): string =>
- *     zip(opt(streetName))(opt(streetNumber)).map(join(' ')).orElse('');
- * formatAddress('Strawberry', '12') // 'Strawberry 12'
- * formatAddress('Strawberry', undefined) // ''
- * formatAddress(undefined, '12') // ''
- * formatAddress(undefined, undefined) // ''
- * ```
- *
- * @see {@link Opt.zip}
- */
-var zip = function (x) { return function (other) { return (0, exports.isOpt)(x) ? x.zip(other) : zipArray(x, other); }; };
-exports.zip = zip;
+var zipArray = function (a) { return function (b) {
+    return __spreadArray([], Array(Math.min(b.length, a.length)), true).map(function (_, i) { return [a[i], b[i]]; });
+}; };
+exports.zipArray = zipArray;
+var zipOpt = function (x) { return function (other) { return x.zip(other); }; };
+exports.zipOpt = zipOpt;
 /** @see {@link Opt.zip3} */
-var zip3 = function (x) { return function (a) { return function (b) { return x.zip3(a, b); }; }; };
-exports.zip3 = zip3;
+var zip3Opt = function (x) { return function (a) { return function (b) { return x.zip3(a, b); }; }; };
+exports.zip3Opt = zip3Opt;
 /** @see {@link Opt.zip4} */
-var zip4 = function (x) { return function (a) { return function (b) { return function (c) { return x.zip4(a, b, c); }; }; }; };
-exports.zip4 = zip4;
+var zip4Opt = function (x) { return function (a) { return function (b) { return function (c) { return x.zip4(a, b, c); }; }; }; };
+exports.zip4Opt = zip4Opt;
 /** @see {@link Opt.zip5} */
-var zip5 = function (x) { return function (a) { return function (b) { return function (c) { return function (d) {
+var zip5Opt = function (x) { return function (a) { return function (b) { return function (c) { return function (d) {
     return x.zip5(a, b, c, d);
 }; }; }; }; };
-exports.zip5 = zip5;
+exports.zip5Opt = zip5Opt;
 /**
  * Same as {@link Opt.filter}, but also supports arrays.
  * @see {@link Opt.filter}
@@ -1727,17 +1714,17 @@ exports.uncurryTuple5 = uncurryTuple5;
  * Similar to `isEmpty` from lodash, but also supports {@link Opt}s.
  * Returns `true` for {@link None}, `[]`, `null`, `undefined`, empty map, empty set, empty object, `''` and `NaN`.
  * Otherwise returns `false`.
- *
- * @example
- * ```ts
+   *
+   * @example
+   * ```ts
  * isEmpty(opt(1)) // false
  * isEmpty(opt(null)) // true
  * isEmpty([]) // true
  * isEmpty([1]) // false
  * isEmpty(null) // true
  * isEmpty('') // true
- * ```
- *
+   * ```
+   *
  * @param x
  */
 var isEmpty = function (x) {
@@ -1835,10 +1822,10 @@ exports.last = last;
 var lastIn = function (x) { return x.lastIn(); };
 exports.lastIn = lastIn;
 var lenToZipFn = {
-    2: (0, exports.uncurryTuple)(exports.zip),
-    3: (0, exports.uncurryTuple3)(exports.zip3),
-    4: (0, exports.uncurryTuple4)(exports.zip4),
-    5: (0, exports.uncurryTuple5)(exports.zip5),
+    2: (0, exports.uncurryTuple)(exports.zipOpt),
+    3: (0, exports.uncurryTuple3)(exports.zip3Opt),
+    4: (0, exports.uncurryTuple4)(exports.zip4Opt),
+    5: (0, exports.uncurryTuple5)(exports.zip5Opt),
 };
 /**
  * Takes a tuple, wraps each element in {@link Opt} and applies appropriate {@link Opt.zip} function.
