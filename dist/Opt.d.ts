@@ -72,10 +72,14 @@ export declare abstract class Opt<T> {
     isNone(): this is None<T>;
     /**
      * `1` for {@link Some}, `0` for {@link None}.
+     *
+     * Important: This is not the wrapped value's length.
+     * E.g., `opt([1,2,3]).length === 1`.
+     * Use {@link Opt.lengthIn} for array/string length of the wrapped value.
      */
     get length(): 0 | 1;
     /**
-     * Returns the length of a string or array wrapped in an Opt.
+     * Returns the length of a string or array wrapped in an `Opt`.
      *
      * @example
      * ```ts
@@ -88,7 +92,7 @@ export declare abstract class Opt<T> {
      */
     abstract lengthIn<R extends (T extends string | readonly unknown[] ? Opt<number> : never)>(this: Opt<string | readonly unknown[]>): R;
     /**
-     * Create Opt instance from an array of one or zero items.
+     * Create `Opt` instance from an array of one or zero items.
      *
      * ```ts
      * Opt.fromArray([]) // None
@@ -124,7 +128,7 @@ export declare abstract class Opt<T> {
      */
     static fromObject: FromObjectFn;
     /**
-     * Convets {@link Opt} to an object.
+     * Converts {@link Opt} to an object.
      *
      * @example
      * ```ts
@@ -196,7 +200,15 @@ export declare abstract class Opt<T> {
      */
     abstract flatMap<U>(f: (_: T) => Opt<U>): Opt<U>;
     /**
-     * @alias {@link flatMap}
+     * Applies a `flatMap` function to an array inside.
+     * @example
+     * ```ts
+     * opt([1, 2]).flatMapIn(x => [x, x * 2]) // Some([1, 2, 2, 4])
+     * ```
+     */
+    abstract flatMapIn<U, R>(this: Opt<U[]>, f: (x: U) => R[]): Opt<R[]>;
+    /**
+     * @alias {@link Opt.flatMap}
      * @see {@link chain}
      * @param f
      */
@@ -991,7 +1003,7 @@ export declare abstract class Opt<T> {
      */
     abstract at<R extends (T extends readonly (infer A)[] ? A : (T extends string ? string : never))>(index: number): OptSafe<R>;
     /**
-     * Get a first item of an array or a first character of a string.
+     * Get a first item of an array or a first character of a string wrapped in {@link Opt}.
      *
      * @example
      * ```ts
@@ -1083,7 +1095,7 @@ export declare abstract class Opt<T> {
      * opt(sub).apply(10).apply(3) // Some(7)
      * ```
      *
-     * @note {@link apply} is only available for functions, otherwise an exception will be thrown when called on {@link Some}.
+     * @note {@link Opt.apply} is only available for functions, otherwise an exception will be thrown when called on {@link Some}.
      *
      * @see {@link Opt.onFunc} for imperative version
      *
@@ -1130,6 +1142,7 @@ declare class None<T> extends Opt<T> {
     toArray(): [] | [T];
     lengthIn<R extends (T extends string | readonly unknown[] ? Opt<number> : never)>(): R;
     flatMap<U>(_f: (_: T) => Opt<U>): Opt<U>;
+    flatMapIn<U, R>(this: None<U[]>, _f: (x: U) => R[]): Opt<R[]>;
     map<U>(): Opt<U>;
     mapIn<R, U>(this: None<U[]>, _f: (x: U) => R): Opt<R[]>;
     orCrash(msg: string): T;
@@ -1186,6 +1199,7 @@ declare class Some<T> extends Opt<T> {
     lengthIn<R extends (T extends string | readonly unknown[] ? Opt<number> : never)>(): R;
     toArray(): [] | [T];
     flatMap<U>(f: (_: T) => Opt<U>): Opt<U>;
+    flatMapIn<U, R>(this: Some<U[]>, f: (x: U) => R[]): Opt<R[]>;
     map<U>(f: (_: T) => U): Opt<U>;
     mapIn<R, U>(this: Some<U[]>, f: (x: U) => R): Opt<R[]>;
     orCrash(_msg: string): T;
@@ -1501,6 +1515,8 @@ interface FlatMapFn {
  * @see {@link Opt.flatMap}
  */
 export declare const flatMap: FlatMapFn;
+/** @see {@link Opt.flatMapIn} */
+export declare const flatMapIn: <T, U>(f: (a: T) => U[]) => (x: Opt<T[]>) => Opt<U[]>;
 /** @see {@link Opt.flatMap} */
 export declare const chain: FlatMapFn;
 /** @see {@link Opt.act} */

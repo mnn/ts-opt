@@ -143,7 +143,8 @@ import {
   zip4Opt,
   zip5Opt,
   zipToOptArray,
-  zipArray
+  zipArray,
+  flatMapIn
 } from '../src/Opt';
 import jestSnapshotSerializer from '../src/jest-snapshot-serializer';
 
@@ -365,6 +366,28 @@ describe('opt', () => {
     expect(opt(1).flatMap(() => none).orNull()).to.eq(null);
     expect(opt(null).flatMap(() => none).orUndef()).to.eq(undefined);
     expect(opt(null).chain(() => none).orUndef()).to.eq(undefined);
+  });
+
+  describe('flatMapIn', () => {
+    it('flatMaps a function over an array in Some', () => {
+      const result: Opt<number[]> = opt([1, 2]).flatMapIn(x => [x, x * 2]);
+      expect(result.orNull()).to.eql([1, 2, 2, 4]);
+    });
+  
+    it('returns None when called on None', () => {
+      const result: Opt<number[]> = opt(null).flatMapIn((x: number) => [x, x * 2]);
+      expect(result.orNull()).to.be.null;  
+    });
+  
+    it('throws when called on non array', () => {
+      expect(() => opt(123 as any).flatMapIn(x => [x])).to.throw(Error, 'flatMapIn called on non array: 123');
+    });
+  
+    it('should fail type checking when called with incorrect argument types', () => {
+      // @ts-expect-error Testing for type safety: flatMapIn expects a function that returns an array  
+      const result: Opt<number[]> = opt([1, 2]).flatMapIn((x: number) => x + 1);
+      expect(result.orNull()).to.eql([2, 3]);
+    });
   });
 
   it('act', () => {
@@ -1796,6 +1819,12 @@ describe('flatMap', () => {
 
   it('works with readonly arrays', () => {
     expect(flatMap((x: number) => [x + 1])([6] as readonly number[])).to.be.eql([7]);
+  });
+});
+
+describe('flatMapIn', () => {
+  it('flatMaps over array inside Opt', () => {
+    expect(flatMapIn((x: number) => [x, x * 10])(opt([1, 2])).orNull()).to.eql([1, 10, 2, 20]);
   });
 });
 
