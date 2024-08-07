@@ -144,7 +144,18 @@ import {
   zip5Opt,
   zipToOptArray,
   zipArray,
-  flatMapIn
+  flatMapIn,
+  chainIn,
+  existsIn,
+  forAllIn,
+  countIn,
+  findIn,
+  mapIn,
+  fold,
+  foldIn,
+  filterIn,
+  zipIn,
+  lengthIn
 } from '../src/Opt';
 import jestSnapshotSerializer from '../src/jest-snapshot-serializer';
 
@@ -388,6 +399,10 @@ describe('opt', () => {
       const result: Opt<number[]> = opt([1, 2]).flatMapIn((x: number) => x + 1);
       expect(result.orNull()).to.eql([2, 3]);
     });
+
+    it('chainIn', () => {
+      expect(opt([1, 2]).chainIn(x => [x, x * 2]).orNull()).to.eql([1, 2, 2, 4]);
+    });
   });
 
   it('act', () => {
@@ -577,6 +592,21 @@ describe('opt', () => {
     cb.should.have.been.called.with.exactly(0);
   });
 
+  describe('existsIn', () => {
+    it('checks existence of element satisfying predicate in Some', () => {
+      expect(opt([1, 2, 3, 4]).existsIn(x => x % 2 === 0).orNull()).to.be.true;
+      expect(opt([1, 3, 5]).existsIn(x => x %2 === 0).orNull()).to.be.false;
+    });
+  
+    it('returns false when called on None', () => {
+      expect(opt(null).existsIn((x: number) => x > 0).orNull()).to.be.null;
+    });
+  
+    it('throws when called on non array', () => {
+      expect(() => opt(123 as any).existsIn((x: any) => x > 0)).to.throw(Error, 'existsIn called on non array: 123');
+    });
+  });
+
   it('forAll', () => {
     expect(none.forAll(() => true)).to.be.true;
     expect(none.forAll(() => false)).to.be.true;
@@ -587,6 +617,21 @@ describe('opt', () => {
     cb.should.have.not.been.called();
     some(0).forAll(cb);
     cb.should.have.been.called.with.exactly(0);
+  });
+
+  describe('forAllIn', () => {
+    it('checks if all elements satisfy predicate in Some', () => {
+      expect(opt([2, 4, 6, 8]).forAllIn(x => x % 2 === 0).orNull()).to.be.true;
+      expect(opt([2, 3, 4, 6]).forAllIn(x => x % 2 === 0).orNull()).to.be.false;
+    });
+  
+    it('returns true when called on None', () => {
+      expect(opt(null).forAllIn((x: number) => x > 0).orNull()).to.be.null;
+    });
+  
+    it('throws when called on non array', () => {
+      expect(() => opt(123 as any).forAllIn((x: any) => x > 0)).to.throw(Error, 'forAllIn called on non array: 123');
+    });
   });
 
   it('orElse', () => {
@@ -849,6 +894,22 @@ describe('opt', () => {
     expect(opt(1).count(gt0)).to.be.eq(1);
     expect(opt(-1).count(gt0)).to.be.eq(0);
     expect(opt(NaN).count(gt0)).to.be.eq(0);
+  });
+
+  describe('countIn', () => {
+    it('counts the number of elements in an array wrapped in Opt that satisfy the given predicate', () => {
+      const result: Opt<number> = opt([1, 2, 3, 4]).countIn(x => x % 2 === 0);
+      expect(result.orNull()).to.equal(2);
+    });
+  
+    it('returns None when called on None', () => {
+      const result: Opt<number> = opt(null).countIn((x: number) => x > 0);
+      expect(result.orNull()).to.be.null;
+    });
+  
+    it('throws when called on non array opt', () => {
+      expect(() => opt(123 as any).countIn((x: any) => x > 0)).to.throw(Error, 'countIn called on non array: 123');
+    });
   });
 
   it('narrow', () => {
@@ -1683,6 +1744,13 @@ describe('joinOpt', () => {
   });
 });
 
+describe('lengthIn', () => {
+  it('returns length of array inside opt', () => {
+    expect(lengthIn(opt([1, 2, 3])).orNull()).to.be.eq(3);
+    expect(lengthIn(none).orNull()).to.be.null;
+  });
+});
+
 describe('fromArray', () => {
   it('creates opt from array', () => {
     expect(fromArray([7]).orNull()).to.be.eq(7);
@@ -1772,6 +1840,12 @@ describe('map', () => {
   });
 });
 
+describe('mapIn', () => {
+  it('maps over array inside Opt', () => {
+    expect(mapIn((x: number) => x + 1)(opt([1, 2, 3])).orNull()).to.be.eql([2, 3, 4]);
+  });
+});
+
 describe('mapFlow', () => {
   expect(mapFlow(id)(opt(1)).orNull()).to.be.eq(1);
   expect(mapFlow(id)(opt(null)).orNull()).to.be.null;
@@ -1825,6 +1899,13 @@ describe('flatMap', () => {
 describe('flatMapIn', () => {
   it('flatMaps over array inside Opt', () => {
     expect(flatMapIn((x: number) => [x, x * 10])(opt([1, 2])).orNull()).to.eql([1, 10, 2, 20]);
+  });
+});
+
+describe('chainIn', () => {
+  it('chains a function over an array in Some', () => {
+    const result = chainIn((x: number) => [x, x * 2])(opt([1, 2]));
+    expect(result.orNull()).to.eql([1, 2, 2, 4]);
   });
 });
 
@@ -1929,6 +2010,27 @@ describe('caseOf', () => {
   });
 });
 
+describe('fold', () => {
+  it('returns the initial value when none', () => {
+      expect(fold((x: number) => x)(0)(none)).to.be.eq(0);
+  });
+
+  it('applies the function when some', () => {
+      expect(fold((x: number) => x * 2)(0)(some(5))).to.be.eq(10);
+  });
+});
+
+describe('foldIn', () => {
+  it('returns none when none', () => {
+      expect(foldIn((acc: number, x: number) => acc + x)(0)(none).orNull()).to.be.null;
+  });
+
+  it('folds over array inside opt when some', () => {
+      expect(foldIn((acc: number, x: number) => acc + x)(0)(some([1, 2, 3])).orNull()).to.be.eq(6);
+  });
+});
+
+
 describe('onBoth', () => {
   let onSome: (_: number) => void;
   let onNone: () => void;
@@ -2010,6 +2112,16 @@ describe('exists', () => {
   });
 });
 
+describe('existsIn', () => {
+  it('returns true if any element in wrapped array satisfies predicate', () => {
+    expect(existsIn((x: number) => x > 2)(opt([1, 2, 3, 4])).orNull()).to.be.true;
+  });
+
+  it('returns false if no element in wrapped array satisfies predicate', () => {
+    expect(existsIn((x: number) => x > 5)(opt([1, 2, 3, 4])).orNull()).to.be.false;
+  });
+});
+
 describe('forAll', () => {
   it('positive', () => {
     expect(forAll(eqAny(1))(opt(1))).to.be.true;
@@ -2017,6 +2129,12 @@ describe('forAll', () => {
   });
   it('negative', () => {
     expect(forAll(eqAny(2))(opt(1))).to.be.false;
+  });
+});
+
+describe('forAllIn', () => {
+  it('returns true if all elements in wrapped array satisfy predicate', () => {
+    expect(forAllIn((x: number) => x > 0)(opt([1, 2, 3, 4])).orNull()).to.be.true;
   });
 });
 
@@ -2151,6 +2269,12 @@ describe('zip5Opt', () => {
   });
 });
 
+describe('zipIn', () => {
+  it('zips array inside opt with another array', () => {
+    expect(zipIn(opt([1, 2, 3]))([4, 5, 6]).orNull()).to.be.eql([[1, 4], [2, 5], [3, 6]]);
+  });
+});
+
 describe('filter', () => {
   it('checks types', () => {
     const a: Opt<number> = filter(gt0)(opt(1));
@@ -2176,6 +2300,18 @@ describe('filter', () => {
     it('read-only array', () => {
       expect(filter(gt0)([-1, 0, 1] as readonly number[])).to.be.eql([1]);
     });
+  });
+});
+
+describe('filterIn', () => {
+  it('filters array inside opt', () => {
+    expect(filterIn((x: number) => x > 1)(opt([1, 2, 3])).orNull()).to.be.eql([2, 3]);
+  });
+});
+
+describe('findIn', () => {
+  it('finds first element satisfying predicate in array inside opt', () => {
+    expect(findIn((x: number) => x > 2)(opt([1, 2, 3, 4])).orNull()).to.be.eq(3);
   });
 });
 
@@ -2257,6 +2393,13 @@ describe('count', () => {
     expect(
       count(greaterThanZero)([-3, 0, 5, 10]), // 2
     ).to.be.eq(2);
+  });
+});
+
+describe('countIn', () => {
+  it('counts elements satisfying predicate in array inside opt', () => {
+    const result = countIn((x: number) => x % 2 === 0)(opt([1, 2, 3, 4]));
+    expect(result.orNull()).to.equal(2);
   });
 });
 

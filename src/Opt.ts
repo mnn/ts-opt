@@ -266,6 +266,13 @@ export abstract class Opt<T> {
   abstract flatMap<U>(f: (_: T) => Opt<U>): Opt<U>;
 
   /**
+   * @alias {@link Opt.flatMap}
+   * @see {@link chain}
+   * @param f
+   */
+  chain<U>(f: (_: T) => Opt<U>): Opt<U> { return this.flatMap(f); }
+
+  /**
    * Applies a `flatMap` function to an array inside.
    * @example
    * ```ts
@@ -275,11 +282,9 @@ export abstract class Opt<T> {
   abstract flatMapIn<U, R>(this: Opt<U[]>, f: (x: U) => R[]): Opt<R[]>;
 
   /**
-   * @alias {@link Opt.flatMap}
-   * @see {@link chain}
-   * @param f
+   * @alias {@link Opt.flatMapIn}
    */
-  chain<U>(f: (_: T) => Opt<U>): Opt<U> { return this.flatMap(f); }
+  chainIn<U, R>(this: Opt<U[]>, f: (x: U) => R[]): Opt<R[]> { return this.flatMapIn(f); }
 
   /**
    * Similar to {@link Opt.chain} (in other languages called `bind` or `>>=`), but supports more functions passed at once (resembles `do` notation in Haskell).
@@ -366,20 +371,6 @@ export abstract class Opt<T> {
    * @param args
    */
   chainToOptFlow: ActToOptInClassFn<T> = (...args: any[]) => (this.act as any)(...args);
-
-  /**
-   * Applies a reducer function to an array within an {@link Opt} instance,
-   * combining its elements into a single value using the array's `reduce` method.
-   *
-   * @example
-   * ```ts
-   * opt([1, 2, 3]).foldIn((acc, x) => acc + x, 0) // Some(6)
-   * none.foldIn((acc, x) => acc + x, 0) // None
-   * ```
-   */
-  foldIn<U, R>(this: Opt<U[]>, f: (acc: R, x: U) => R, initial: R): Opt<R> {
-    return this.map(xs => xs.reduce(f, initial));
-  }
 
   /**
    * Joins (flattens) nested Opt instance, turning an `Opt<Opt<T>>` into an `Opt<T>`.
@@ -519,6 +510,20 @@ export abstract class Opt<T> {
   abstract fold<R>(someCase: (x: T) => R, noneCase: R): R;
 
   /**
+   * Applies a reducer function to an array within an {@link Opt} instance,
+   * combining its elements into a single value using the array's `reduce` method.
+   *
+   * @example
+   * ```ts
+   * opt([1, 2, 3]).foldIn((acc, x) => acc + x, 0) // Some(6)
+   * none.foldIn((acc, x) => acc + x, 0) // None
+   * ```
+   */
+  foldIn<U, R>(this: Opt<U[]>, f: (acc: R, x: U) => R, initial: R): Opt<R> {
+    return this.map(xs => xs.reduce(f, initial));
+  }
+
+  /**
    * Calls appropriate callback and returns without change current instance of {@link Opt}.
    *
    * @example
@@ -636,6 +641,20 @@ export abstract class Opt<T> {
   abstract exists(p: (x: T) => boolean): boolean;
 
   /**
+   * Checks if any element in the array inside the Opt satisfies the predicate.
+   * Similar to `Array.some` from JavaScript.
+   *
+   * @example
+   * ```ts
+   * opt([1]).existsIn(x => x > 0) // Some(true)
+   * opt([-1]).existsIn(x => x > 0) // Some(false)
+   * opt([]).existsIn(x => x > 0) // Some(false)
+   * none.existsIn(x => x > 0) // None
+   * ```
+   */
+  abstract existsIn<U>(this: Opt<U[]>, p: (x: U) => boolean): Opt<boolean>;
+
+  /**
    * Applies `p` to inner value and passes result. Always `true` for {@link None}.
    *
    * @example
@@ -648,6 +667,20 @@ export abstract class Opt<T> {
    * @param p Predicate.
    */
   abstract forAll(p: (x: T) => boolean): boolean;
+
+  /**
+   * Checks if all elements in the array inside the Opt satisfy the predicate.
+   * Similar to `Array.every` from JavaScript.
+   *
+   * @example
+   * ```ts
+   * opt([1]).forAllIn(x => x > 0) // Some(true)
+   * opt([-1]).forAllIn(x => x > 0) // Some(false)
+   * opt([]).forAllIn(x => x > 0) // Some(true)
+   * none.forAllIn(x => x > 0) // None
+   * ```
+   */
+  abstract forAllIn<U>(this: Opt<U[]>, p: (x: U) => boolean): Opt<boolean>;
 
   /**
    * Get inner value of {@link Some}, or use passed `def` value for {@link None}.
@@ -989,6 +1022,21 @@ export abstract class Opt<T> {
   count(predicate: (_: T) => boolean): 0 | 1 {
     return this.filter(predicate).length;
   }
+
+  /**
+   * Counts the number of elements in the array inside the Opt that satisfy the predicate.
+   *
+   * @example
+   * ```ts
+   * opt([1, 2, 3]).countIn(x => x > 1) // Some(2)
+   * opt([]).countIn(x => x > 1) // Some(0)
+   * none.countIn(x => x > 1) // None
+   * ```
+   *
+   * @param f The predicate function to test each element.
+   * @returns An Opt containing the count of elements that satisfy the predicate, or None if the Opt is None.
+   */
+  abstract countIn<U>(this: Opt<U[]>, f: (x: U) => boolean): Opt<number>;
 
   /**
    * Narrows type inside {@link Opt} using given type guard.
@@ -1390,7 +1438,11 @@ class None<T> extends Opt<T> {
 
   exists(_p: (x: T) => boolean): boolean { return false; }
 
+  existsIn<U>(_p: (x: U) => boolean): Opt<boolean> { return none; }
+
   forAll(_p: (x: T) => boolean): boolean { return true; }
+
+  forAllIn<U>(_p: (x: U) => boolean): Opt<boolean> { return none; }
 
   orElse(def: T): T { return def; }
 
@@ -1425,6 +1477,8 @@ class None<T> extends Opt<T> {
   zipIn<U, V>(this: Opt<readonly U[]>, _other: V[] | EmptyValue): Opt<readonly [U, V][]> {
     return none;
   }
+
+  countIn<U>(this: None<U[]>, _f: (x: U) => boolean): Opt<number> { return none; }
 
   narrow<U>(_guard: (value: any) => value is U): Opt<U> { return this as unknown as Opt<U>; }
 
@@ -1538,8 +1592,18 @@ class Some<T> extends Opt<T> {
 
   exists(p: (x: T) => boolean): boolean { return p(this._value); }
 
+  existsIn<U>(this: Some<U[]>, p: (x: U) => boolean): Opt<boolean> {
+    if (!isArray(this._value)) { throw new Error('existsIn called on non array: ' + this._value); }
+    return some(this._value.some(p));
+  }
+
   forAll(p: (x: T) => boolean): boolean { return p(this._value); }
 
+  forAllIn<U>(this: Some<U[]>, p: (x: U) => boolean): Opt<boolean> {
+    if (!isArray(this._value)) { throw new Error('forAllIn called on non array: ' + this._value); }
+    return some(this._value.every(p));
+  }
+  
   onNone(_f: () => void): Opt<T> { return this; }
 
   onSome(f: (x: T) => void): Opt<T> {
@@ -1597,6 +1661,11 @@ class Some<T> extends Opt<T> {
 
   zipIn<U, V>(this: Opt<readonly U[]>, other: V[] | EmptyValue): Opt<readonly [U, V][]> {
     return this.zip(opt(other)).map(([xs, ys]) => zipArray(xs)(ys));
+  }
+
+  countIn<U>(this: Some<U[]>, f: (x: U) => boolean): Opt<number> {
+    if (!isArray(this._value)) throw new Error(`countIn called on non array: ${JSON.stringify(this._value)}.`);
+    return some(this._value.filter(f).length);
   }
 
   narrow<U>(guard: (value: any) => value is U): Opt<U> {
@@ -1964,24 +2033,19 @@ export const mapOpt = <A, B>(f: (_: A) => Opt<B>) => (xs: readonly A[]): B[] => 
  */
 export const joinOpt = <T>(x: Opt<Opt<T>>): Opt<T> => x.caseOf<Opt<T>>(y => y, () => none);
 
-/**
- * @see {@link Opt.fromArray}
- */
+/** @see {@link Opt.lengthIn} */
+export const lengthIn = <T>(x: Opt<T[]>): Opt<number> => x.lengthIn();
+
+/** @see {@link Opt.fromArray} */
 export const fromArray = Opt.fromArray;
 
-/**
- * @see {@link Opt.toArray}
- */
+/** @see {@link Opt.toArray} */
 export const toArray = <T>(x: Opt<T>): [] | [T] => x.toArray();
 
-/**
- * @see {@link Opt.fromObject}
- */
+/** @see {@link Opt.fromObject} */
 export const fromObject = Opt.fromObject;
 
-/**
- * @see {@link Opt.toObject}
- */
+/** @see {@link Opt.toObject} */
 export const toObject =
   <K extends string = 'value'>(k?: K) =>
     <T>(x: Opt<T>): Record<K, T | null> =>
@@ -1994,6 +2058,9 @@ type MapFn = <T, U>(f: (_: T) => U) => <I extends (Opt<T> | readonly T[]), O ext
  * @see {@link Opt.map}
  */
 export const map: MapFn = (f: any) => (x: any) => x.map(f);
+
+/** @see {@link Opt.mapIn} */
+export const mapIn = <T, U>(f: (x: T) => U) => (x: Opt<T[]>): Opt<U[]> => x.mapIn(f);
 
 /** @see {@link Opt.mapFlow} */
 export const mapFlow: MapFlowFn = (...fs: any[]) => <T>(x: Opt<T>) => fs.reduce((acc, x) => acc.map(x), x);
@@ -2016,6 +2083,9 @@ export const flatMapIn = <T, U>(f: (a: T) => U[]) => (x: Opt<T[]>): Opt<U[]> => 
 
 /** @see {@link Opt.flatMap} */
 export const chain = flatMap;
+
+/** @see {@link Opt.chainIn} */
+export const chainIn = <T, U>(f: (a: T) => U[]) => (x: Opt<T[]>): Opt<U[]> => x.chainIn(f);
 
 /** @see {@link Opt.act} */
 export const act: ActFn = <I>(...fs: any[]) => (x: Opt<I>) => fs.reduce((acc, x) => acc.chain(x), x);
@@ -2056,6 +2126,12 @@ export const orNaN = <T>(x: Opt<T>): T | number => x.orNaN();
 /** @see {@link Opt.caseOf} */
 export const caseOf = <T, R>(onSome: (x: T) => R) => (onNone: () => R) => (x: Opt<T>): R => x.caseOf(onSome, onNone);
 
+/** @see {@link Opt.fold} */
+export const fold = <T, R>(someCase: (x: T) => R) => (noneCase: R) => (x: Opt<T>): R => x.fold(someCase, noneCase);
+
+/** @see {@link Opt.foldIn} */
+export const foldIn = <T, R>(f: (acc: R, x: T) => R) => (initial: R) => (x: Opt<T[]>): Opt<R> => x.foldIn(f, initial);
+
 /** @see {@link Opt.onBoth} */
 export const onBoth = <T>(onSome: (x: T) => void) => (onNone: () => void) => (x: Opt<T>): Opt<T> => x.onBoth(onSome, onNone);
 
@@ -2078,8 +2154,14 @@ export const hasIn = <U>(x: U) => (opt: Opt<readonly U[]>): boolean => opt.hasIn
 /** @see {@link Opt.exists} */
 export const exists = <T>(y: (_: T) => boolean) => (x: Opt<T>): boolean => x.exists(y);
 
+/** @see {@link Opt.existsIn} */
+export const existsIn = <T>(p: (x: T) => boolean) => (x: Opt<T[]>): Opt<boolean> => x.existsIn(p);
+
 /** @see {@link Opt.forAll} */
 export const forAll = <T>(p: (_: T) => boolean) => (x: Opt<T>): boolean => x.forAll(p);
+
+/** @see {@link Opt.forAllIn} */
+export const forAllIn = <T>(p: (x: T) => boolean) => (x: Opt<T[]>): Opt<boolean> => x.forAllIn(p);
 
 /** @see {@link Opt.orElse} */
 export const orElse = <T>(e: T) => (x: Opt<T>): T => x.orElse(e);
@@ -2119,6 +2201,10 @@ export const zip5Opt =
   <T>(x: Opt<T>) => <A>(a: Opt<A>) => <B>(b: Opt<B>) => <C>(c: Opt<C>) => <D>(d: Opt<D>): Opt<[T, A, B, C, D]> =>
     x.zip5(a, b, c, d);
 
+/** @see {@link Opt.zipIn} */
+export const zipIn = <U, V>(x: Opt<readonly U[]>): ((other: V[] | EmptyValue) => Opt<readonly [U, V][]>) =>
+  (other: V[] | EmptyValue) => x.zipIn(other);
+
 type FilterFn = <T>(p: (_: T) => boolean) => <U extends Opt<T> | readonly T[]>(x: U) => U extends Opt<T> ? Opt<T> : T[];
 
 /**
@@ -2126,6 +2212,12 @@ type FilterFn = <T>(p: (_: T) => boolean) => <U extends Opt<T> | readonly T[]>(x
  * @see {@link Opt.filter}
  */
 export const filter: FilterFn = (p: any) => (x: any) => x.filter(p);
+
+/** @see {@link Opt.filterIn} */
+export const filterIn = <T>(p: (x: T) => boolean) => (opt: Opt<T[]>): Opt<T[]> => opt.filterIn(p);
+
+/** @see {@link Opt.findIn} */
+export const findIn = <U>(f: (x: U) => boolean) => (opt: Opt<U[]>): Opt<U> => opt.findIn(f);
 
 /** @see {@link Opt.noneIf} */
 export const noneIf = <T>(predicate: (_: T) => boolean) => (x: Opt<T>): Opt<T> => x.noneIf(predicate);
@@ -2156,6 +2248,9 @@ export const count: CountFn = (p: any) => (x: any): any => {
   if (isArray(x)) { return x.filter(p).length; }
   throw new Error(`Invalid input to count, only Opt and Array are supported: ${JSON.stringify(x)}`);
 };
+
+/** @see {@link Opt.countIn} */
+export const countIn = <T>(p: (x: T) => boolean) => (x: Opt<T[]>): Opt<number> => x.countIn(p);
 
 /**
  * Find a first item which holds true for a given predicate and return it wrapped in {@link Some}.

@@ -24,9 +24,10 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOptFlow = exports.actToOpt = exports.chainToOpt = exports.chainFlow = exports.act = exports.chain = exports.flatMapIn = exports.flatMap = exports.mapFlow = exports.map = exports.toObject = exports.fromObject = exports.toArray = exports.fromArray = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optArrayOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.deserializeUnsafe = exports.deserializeOrCrash = exports.deserialize = exports.serialize = exports.ReduxDevtoolsCompatibilityHelper = exports.isOptSerialized = exports.Opt = exports.isUnknown = exports.isNumber = exports.isObject = exports.isFunction = exports.isReadonlyArray = exports.isArray = exports.toString = exports.isString = void 0;
-exports.isFull = exports.nonEmpty = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.genNakedPropOrCrash = exports.propOrCrash = exports.propNaked = exports.prop = exports.equals = exports.print = exports.narrowOrCrash = exports.narrow = exports.find = exports.count = exports.noneWhen = exports.noneIfEmpty = exports.noneIf = exports.filter = exports.zip5Opt = exports.zip4Opt = exports.zip3Opt = exports.zipOpt = exports.zipArray = exports.flatBimap = exports.bimap = exports.altOpt = exports.alt = exports.orElseAny = exports.orElseLazy = exports.orElse = exports.forAll = exports.exists = exports.hasIn = exports.has = exports.contains = exports.pipe = exports.onBoth = exports.caseOf = exports.orNaN = exports.orTrue = void 0;
-exports.noop = exports.eqAny = exports.eq = exports.crash = exports.appendStr = exports.prependStr = exports.dec = exports.inc = exports.bool = exports.xor = exports.or = exports.and = exports.not = exports.clamp = exports.max2Any = exports.max2All = exports.max2Num = exports.min2Any = exports.min2All = exports.min2Num = exports.maxIn = exports.max = exports.minIn = exports.min = exports.assertType = exports.isOrCrash = exports.onFunc = exports.apply = exports.parseFloat = exports.parseInt = exports.parseJson = exports.tryRun = exports.testReOrFalse = exports.testRe = exports.zipToOptArray = exports.lastIn = exports.last = exports.headIn = exports.head = exports.at = exports.id = void 0;
+exports.orCrash = exports.someOrCrash = exports.chainToOptFlow = exports.actToOpt = exports.chainToOpt = exports.chainFlow = exports.act = exports.chainIn = exports.chain = exports.flatMapIn = exports.flatMap = exports.mapFlow = exports.mapIn = exports.map = exports.toObject = exports.fromObject = exports.toArray = exports.fromArray = exports.lengthIn = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optArrayOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.deserializeUnsafe = exports.deserializeOrCrash = exports.deserialize = exports.serialize = exports.ReduxDevtoolsCompatibilityHelper = exports.isOptSerialized = exports.Opt = exports.isUnknown = exports.isNumber = exports.isObject = exports.isFunction = exports.isReadonlyArray = exports.isArray = exports.toString = exports.isString = void 0;
+exports.compose = exports.flow = exports.swap = exports.genNakedPropOrCrash = exports.propOrCrash = exports.propNaked = exports.prop = exports.equals = exports.print = exports.narrowOrCrash = exports.narrow = exports.find = exports.countIn = exports.count = exports.noneWhen = exports.noneIfEmpty = exports.noneIf = exports.findIn = exports.filterIn = exports.filter = exports.zipIn = exports.zip5Opt = exports.zip4Opt = exports.zip3Opt = exports.zipOpt = exports.zipArray = exports.flatBimap = exports.bimap = exports.altOpt = exports.alt = exports.orElseAny = exports.orElseLazy = exports.orElse = exports.forAllIn = exports.forAll = exports.existsIn = exports.exists = exports.hasIn = exports.has = exports.contains = exports.pipe = exports.onBoth = exports.foldIn = exports.fold = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = void 0;
+exports.eq = exports.crash = exports.appendStr = exports.prependStr = exports.dec = exports.inc = exports.bool = exports.xor = exports.or = exports.and = exports.not = exports.clamp = exports.max2Any = exports.max2All = exports.max2Num = exports.min2Any = exports.min2All = exports.min2Num = exports.maxIn = exports.max = exports.minIn = exports.min = exports.assertType = exports.isOrCrash = exports.onFunc = exports.apply = exports.parseFloat = exports.parseInt = exports.parseJson = exports.tryRun = exports.testReOrFalse = exports.testRe = exports.zipToOptArray = exports.lastIn = exports.last = exports.headIn = exports.head = exports.at = exports.id = exports.isFull = exports.nonEmpty = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = void 0;
+exports.noop = exports.eqAny = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 var errorSymbol = Symbol('Error');
@@ -327,6 +328,10 @@ var Opt = /** @class */ (function () {
      */
     Opt.prototype.chain = function (f) { return this.flatMap(f); };
     /**
+     * @alias {@link Opt.flatMapIn}
+     */
+    Opt.prototype.chainIn = function (f) { return this.flatMapIn(f); };
+    /**
      * Combination of {@link Opt.flatMap} and {@link opt} functions.
      *
      * @example
@@ -341,19 +346,6 @@ var Opt = /** @class */ (function () {
      */
     Opt.prototype.chainToOpt = function (f) { return this.flatMap(function (x) { return (0, exports.opt)(f(x)); }); };
     /**
-     * Applies a reducer function to an array within an {@link Opt} instance,
-     * combining its elements into a single value using the array's `reduce` method.
-     *
-     * @example
-     * ```ts
-     * opt([1, 2, 3]).foldIn((acc, x) => acc + x, 0) // Some(6)
-     * none.foldIn((acc, x) => acc + x, 0) // None
-     * ```
-     */
-    Opt.prototype.foldIn = function (f, initial) {
-        return this.map(function (xs) { return xs.reduce(f, initial); });
-    };
-    /**
      * Joins (flattens) nested Opt instance, turning an `Opt<Opt<T>>` into an `Opt<T>`.
      * This is equivalent to calling `flatMap` with the identity function: `.join()` ~ `.flatMap(id)`.
      *
@@ -365,6 +357,19 @@ var Opt = /** @class */ (function () {
      */
     Opt.prototype.join = function () {
         return this.flatMap(exports.id);
+    };
+    /**
+     * Applies a reducer function to an array within an {@link Opt} instance,
+     * combining its elements into a single value using the array's `reduce` method.
+     *
+     * @example
+     * ```ts
+     * opt([1, 2, 3]).foldIn((acc, x) => acc + x, 0) // Some(6)
+     * none.foldIn((acc, x) => acc + x, 0) // None
+     * ```
+     */
+    Opt.prototype.foldIn = function (f, initial) {
+        return this.map(function (xs) { return xs.reduce(f, initial); });
     };
     /** @alias {@link Opt.contains} */
     Opt.prototype.has = function (x) {
@@ -716,7 +721,9 @@ var None = /** @class */ (function (_super) {
     None.prototype.contains = function (_x) { return false; };
     None.prototype.hasIn = function (_) { return false; };
     None.prototype.exists = function (_p) { return false; };
+    None.prototype.existsIn = function (_p) { return exports.none; };
     None.prototype.forAll = function (_p) { return true; };
+    None.prototype.forAllIn = function (_p) { return exports.none; };
     None.prototype.orElse = function (def) { return def; };
     None.prototype.orElseLazy = function (def) { return def(); };
     None.prototype.alt = function (def) { return def; };
@@ -736,6 +743,7 @@ var None = /** @class */ (function (_super) {
     None.prototype.zipIn = function (_other) {
         return exports.none;
     };
+    None.prototype.countIn = function (_f) { return exports.none; };
     None.prototype.narrow = function (_guard) { return this; };
     None.prototype.narrowOrCrash = function (guard, _crashMessage) {
         // don't crash on previous none
@@ -836,7 +844,19 @@ var Some = /** @class */ (function (_super) {
         return this._value.includes(x);
     };
     Some.prototype.exists = function (p) { return p(this._value); };
+    Some.prototype.existsIn = function (p) {
+        if (!(0, exports.isArray)(this._value)) {
+            throw new Error('existsIn called on non array: ' + this._value);
+        }
+        return (0, exports.some)(this._value.some(p));
+    };
     Some.prototype.forAll = function (p) { return p(this._value); };
+    Some.prototype.forAllIn = function (p) {
+        if (!(0, exports.isArray)(this._value)) {
+            throw new Error('forAllIn called on non array: ' + this._value);
+        }
+        return (0, exports.some)(this._value.every(p));
+    };
     Some.prototype.onNone = function (_f) { return this; };
     Some.prototype.onSome = function (f) {
         f(this._value);
@@ -891,6 +911,11 @@ var Some = /** @class */ (function (_super) {
             var xs = _a[0], ys = _a[1];
             return (0, exports.zipArray)(xs)(ys);
         });
+    };
+    Some.prototype.countIn = function (f) {
+        if (!(0, exports.isArray)(this._value))
+            throw new Error("countIn called on non array: ".concat(JSON.stringify(this._value), "."));
+        return (0, exports.some)(this._value.filter(f).length);
     };
     Some.prototype.narrow = function (guard) {
         return guard(this._value) ? this : exports.none;
@@ -1248,22 +1273,17 @@ exports.mapOpt = mapOpt;
  */
 var joinOpt = function (x) { return x.caseOf(function (y) { return y; }, function () { return exports.none; }); };
 exports.joinOpt = joinOpt;
-/**
- * @see {@link Opt.fromArray}
- */
+/** @see {@link Opt.lengthIn} */
+var lengthIn = function (x) { return x.lengthIn(); };
+exports.lengthIn = lengthIn;
+/** @see {@link Opt.fromArray} */
 exports.fromArray = Opt.fromArray;
-/**
- * @see {@link Opt.toArray}
- */
+/** @see {@link Opt.toArray} */
 var toArray = function (x) { return x.toArray(); };
 exports.toArray = toArray;
-/**
- * @see {@link Opt.fromObject}
- */
+/** @see {@link Opt.fromObject} */
 exports.fromObject = Opt.fromObject;
-/**
- * @see {@link Opt.toObject}
- */
+/** @see {@link Opt.toObject} */
 var toObject = function (k) {
     return function (x) {
         return x.toObject(k);
@@ -1276,6 +1296,9 @@ exports.toObject = toObject;
  */
 var map = function (f) { return function (x) { return x.map(f); }; };
 exports.map = map;
+/** @see {@link Opt.mapIn} */
+var mapIn = function (f) { return function (x) { return x.mapIn(f); }; };
+exports.mapIn = mapIn;
 /** @see {@link Opt.mapFlow} */
 var mapFlow = function () {
     var fs = [];
@@ -1296,6 +1319,9 @@ var flatMapIn = function (f) { return function (x) { return x.flatMapIn(f); }; }
 exports.flatMapIn = flatMapIn;
 /** @see {@link Opt.flatMap} */
 exports.chain = exports.flatMap;
+/** @see {@link Opt.chainIn} */
+var chainIn = function (f) { return function (x) { return x.chainIn(f); }; };
+exports.chainIn = chainIn;
 /** @see {@link Opt.act} */
 var act = function () {
     var fs = [];
@@ -1345,6 +1371,12 @@ exports.orNaN = orNaN;
 /** @see {@link Opt.caseOf} */
 var caseOf = function (onSome) { return function (onNone) { return function (x) { return x.caseOf(onSome, onNone); }; }; };
 exports.caseOf = caseOf;
+/** @see {@link Opt.fold} */
+var fold = function (someCase) { return function (noneCase) { return function (x) { return x.fold(someCase, noneCase); }; }; };
+exports.fold = fold;
+/** @see {@link Opt.foldIn} */
+var foldIn = function (f) { return function (initial) { return function (x) { return x.foldIn(f, initial); }; }; };
+exports.foldIn = foldIn;
 /** @see {@link Opt.onBoth} */
 var onBoth = function (onSome) { return function (onNone) { return function (x) { return x.onBoth(onSome, onNone); }; }; };
 exports.onBoth = onBoth;
@@ -1373,9 +1405,15 @@ exports.hasIn = hasIn;
 /** @see {@link Opt.exists} */
 var exists = function (y) { return function (x) { return x.exists(y); }; };
 exports.exists = exists;
+/** @see {@link Opt.existsIn} */
+var existsIn = function (p) { return function (x) { return x.existsIn(p); }; };
+exports.existsIn = existsIn;
 /** @see {@link Opt.forAll} */
 var forAll = function (p) { return function (x) { return x.forAll(p); }; };
 exports.forAll = forAll;
+/** @see {@link Opt.forAllIn} */
+var forAllIn = function (p) { return function (x) { return x.forAllIn(p); }; };
+exports.forAllIn = forAllIn;
 /** @see {@link Opt.orElse} */
 var orElse = function (e) { return function (x) { return x.orElse(e); }; };
 exports.orElse = orElse;
@@ -1414,12 +1452,23 @@ var zip5Opt = function (x) { return function (a) { return function (b) { return 
     return x.zip5(a, b, c, d);
 }; }; }; }; };
 exports.zip5Opt = zip5Opt;
+/** @see {@link Opt.zipIn} */
+var zipIn = function (x) {
+    return function (other) { return x.zipIn(other); };
+};
+exports.zipIn = zipIn;
 /**
  * Same as {@link Opt.filter}, but also supports arrays.
  * @see {@link Opt.filter}
  */
 var filter = function (p) { return function (x) { return x.filter(p); }; };
 exports.filter = filter;
+/** @see {@link Opt.filterIn} */
+var filterIn = function (p) { return function (opt) { return opt.filterIn(p); }; };
+exports.filterIn = filterIn;
+/** @see {@link Opt.findIn} */
+var findIn = function (f) { return function (opt) { return opt.findIn(f); }; };
+exports.findIn = findIn;
 /** @see {@link Opt.noneIf} */
 var noneIf = function (predicate) { return function (x) { return x.noneIf(predicate); }; };
 exports.noneIf = noneIf;
@@ -1453,6 +1502,9 @@ var count = function (p) { return function (x) {
     throw new Error("Invalid input to count, only Opt and Array are supported: ".concat(JSON.stringify(x)));
 }; };
 exports.count = count;
+/** @see {@link Opt.countIn} */
+var countIn = function (p) { return function (x) { return x.countIn(p); }; };
+exports.countIn = countIn;
 /**
  * Find a first item which holds true for a given predicate and return it wrapped in {@link Some}.
  * Return {@link None} when no match is found.
