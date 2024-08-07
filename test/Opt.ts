@@ -51,7 +51,10 @@ import {
   fromArray,
   fromObject,
   genNakedPropOrCrash,
+  has,
+  hasIn,
   head,
+  headIn,
   id,
   inc,
   isArray,
@@ -66,6 +69,7 @@ import {
   isString,
   joinOpt,
   last,
+  lastIn,
   map,
   mapFlow,
   mapOpt,
@@ -73,10 +77,12 @@ import {
   max2All,
   max2Any,
   max2Num,
+  maxIn,
   min,
   min2All,
   min2Any,
   min2Num,
+  minIn,
   narrow,
   narrowOrCrash,
   none,
@@ -132,11 +138,24 @@ import {
   uncurryTuple4,
   uncurryTuple5,
   xor,
-  zip,
-  zip3,
-  zip4,
-  zip5,
-  zipToOptArray
+  zipOpt,
+  zip3Opt,
+  zip4Opt,
+  zip5Opt,
+  zipToOptArray,
+  zipArray,
+  flatMapIn,
+  chainIn,
+  existsIn,
+  forAllIn,
+  countIn,
+  findIn,
+  mapIn,
+  fold,
+  foldIn,
+  filterIn,
+  zipIn,
+  lengthIn
 } from '../src/Opt';
 import jestSnapshotSerializer from '../src/jest-snapshot-serializer';
 
@@ -249,6 +268,34 @@ describe('opt', () => {
     expect(opt(0).length).to.eq(1);
   });
 
+  describe('lengthIn', () => {
+    it('returns length of string wrapped in Some', () => {
+      expect(opt('hello').lengthIn().orNull()).to.equal(5);
+      expect(opt('').lengthIn().orNull()).to.equal(0);
+    });
+  
+    it('returns length of array wrapped in Some', () => {
+      expect(opt([1, 2, 3]).lengthIn().orNull()).to.equal(3);
+      expect(opt([]).lengthIn().orNull()).to.equal(0);
+    });
+  
+    it('returns None when called on None', () => {
+      expect(none.lengthIn().orNull()).to.be.null;
+    });
+  
+    it('throws when called on non-string and non-array', () => {
+      expect(() => opt(123 as any).lengthIn()).to.throw(Error, '`Opt#lengthIn` can only be used on strings and arrays');
+    });
+  
+    it('should fail type checking when called with incorrect types', () => {
+      expect(() => {
+        // @ts-expect-error Testing for type safety: lengthIn should only work on Opt<string> or Opt<T[]>
+        const result: Opt<number> = opt(123).lengthIn();
+        suppressUnused(result);
+      }).to.throw(Error, '`Opt#lengthIn` can only be used on strings and arrays');
+    });
+  });
+
   it('orUndef', () => {
     expect(opt(null).orUndef()).to.eq(undefined);
     expect(opt(0).orUndef()).to.eq(0);
@@ -293,6 +340,28 @@ describe('opt', () => {
     expect(opt(null as unknown as number).map(inc).orUndef()).to.eq(undefined);
   });
 
+  describe('mapIn', () => {
+    it('maps a function over an array in Some', () => {
+      const result: Opt<number[]> = opt([1, 2, 3]).mapIn(x => x * 2);
+      expect(result.orNull()).to.eql([2, 4, 6]);
+    });
+
+    it('returns None when called on None', () => {
+      const result: Opt<number[]> = opt(null).mapIn((x: number) => x * 2);
+      expect(result.orNull()).to.be.null;
+    });
+
+    it('throws when called on non array', () => {
+      expect(() => opt(123 as any).mapIn(x => x)).to.throw(Error, 'mapIn called on non array: 123');
+    });
+
+    it('should fail type checking when called with incorrect argument types', () => {
+      // @ts-expect-error Testing for type safety: mapIn expects a function that operates on array elements.
+      const result: Opt<number[]> = opt([1, 2, 3]).mapIn((x: string) => +x);
+      expect(result.orNull()).to.eql([1, 2, 3]);
+    });
+  });
+
   it('mapFlow', () => {
     expect(opt(1).mapFlow(id).orNull()).to.be.eq(1);
     expect(opt(null).mapFlow(id).orNull()).to.be.null;
@@ -308,6 +377,32 @@ describe('opt', () => {
     expect(opt(1).flatMap(() => none).orNull()).to.eq(null);
     expect(opt(null).flatMap(() => none).orUndef()).to.eq(undefined);
     expect(opt(null).chain(() => none).orUndef()).to.eq(undefined);
+  });
+
+  describe('flatMapIn', () => {
+    it('flatMaps a function over an array in Some', () => {
+      const result: Opt<number[]> = opt([1, 2]).flatMapIn(x => [x, x * 2]);
+      expect(result.orNull()).to.eql([1, 2, 2, 4]);
+    });
+  
+    it('returns None when called on None', () => {
+      const result: Opt<number[]> = opt(null).flatMapIn((x: number) => [x, x * 2]);
+      expect(result.orNull()).to.be.null;  
+    });
+  
+    it('throws when called on non array', () => {
+      expect(() => opt(123 as any).flatMapIn(x => [x])).to.throw(Error, 'flatMapIn called on non array: 123');
+    });
+  
+    it('should fail type checking when called with incorrect argument types', () => {
+      // @ts-expect-error Testing for type safety: flatMapIn expects a function that returns an array  
+      const result: Opt<number[]> = opt([1, 2]).flatMapIn((x: number) => x + 1);
+      expect(result.orNull()).to.eql([2, 3]);
+    });
+
+    it('chainIn', () => {
+      expect(opt([1, 2]).chainIn(x => [x, x * 2]).orNull()).to.eql([1, 2, 2, 4]);
+    });
   });
 
   it('act', () => {
@@ -383,6 +478,11 @@ describe('opt', () => {
     expect(some(1).caseOf(x => 'x' + x, () => 'y')).to.eql('x1');
     expect(none.caseOf(x => 'x' + x, () => 'y')).to.eql('y');
     expect(randomNumOpt().caseOf(() => 'x', () => 'y')).to.be.oneOf(['x', 'y']);
+  });
+
+  it('fold', () => {
+    expect(some(1).fold(x => x + 1, 0)).to.be.eq(2);
+    expect(none.fold(x => x + 1, 0)).to.be.eq(0);
   });
 
   describe('onBoth', () => {
@@ -462,6 +562,24 @@ describe('opt', () => {
     expect(some(0).contains(0)).to.be.true;
   });
 
+  it('containsIn', () => {
+    expect(none.containsIn(0)).to.be.false;
+    expect(opt([1]).containsIn(0)).to.be.false;
+    expect(opt([0]).containsIn(0)).to.be.true;
+  });
+
+  it('has', () => {
+    expect(none.has(0)).to.be.false;
+    expect(some(1).has(0)).to.be.false;
+    expect(some(0).has(0)).to.be.true;
+  });
+
+  it('hasIn', () => {
+    expect(none.hasIn(0)).to.be.false;
+    expect(opt([1]).hasIn(0)).to.be.false;
+    expect(opt([0]).hasIn(0)).to.be.true;
+  });
+
   it('exists', () => {
     expect(none.exists(() => true)).to.be.false;
     expect(none.exists(() => false)).to.be.false;
@@ -474,6 +592,21 @@ describe('opt', () => {
     cb.should.have.been.called.with.exactly(0);
   });
 
+  describe('existsIn', () => {
+    it('checks existence of element satisfying predicate in Some', () => {
+      expect(opt([1, 2, 3, 4]).existsIn(x => x % 2 === 0).orNull()).to.be.true;
+      expect(opt([1, 3, 5]).existsIn(x => x %2 === 0).orNull()).to.be.false;
+    });
+  
+    it('returns false when called on None', () => {
+      expect(opt(null).existsIn((x: number) => x > 0).orNull()).to.be.null;
+    });
+  
+    it('throws when called on non array', () => {
+      expect(() => opt(123 as any).existsIn((x: any) => x > 0)).to.throw(Error, 'existsIn called on non array: 123');
+    });
+  });
+
   it('forAll', () => {
     expect(none.forAll(() => true)).to.be.true;
     expect(none.forAll(() => false)).to.be.true;
@@ -484,6 +617,21 @@ describe('opt', () => {
     cb.should.have.not.been.called();
     some(0).forAll(cb);
     cb.should.have.been.called.with.exactly(0);
+  });
+
+  describe('forAllIn', () => {
+    it('checks if all elements satisfy predicate in Some', () => {
+      expect(opt([2, 4, 6, 8]).forAllIn(x => x % 2 === 0).orNull()).to.be.true;
+      expect(opt([2, 3, 4, 6]).forAllIn(x => x % 2 === 0).orNull()).to.be.false;
+    });
+  
+    it('returns true when called on None', () => {
+      expect(opt(null).forAllIn((x: number) => x > 0).orNull()).to.be.null;
+    });
+  
+    it('throws when called on non array', () => {
+      expect(() => opt(123 as any).forAllIn((x: any) => x > 0)).to.throw(Error, 'forAllIn called on non array: 123');
+    });
   });
 
   it('orElse', () => {
@@ -587,6 +735,11 @@ describe('opt', () => {
     expect(some(2).chainToOpt(x => x === 1 ? null : x + 1).orUndef()).to.be.eq(3);
   });
 
+  it('foldIn', () => {
+    expect(opt([1, 2, 3]).foldIn((acc, x) => acc + x, 0).orNull()).to.be.eq(6);
+    expect(none.foldIn((acc, x) => acc + x, 0).orNull()).to.be.null;
+  });
+
   it('actToOpt', () => {
     expect(some(1).actToOpt(id).orNull()).to.be.eq(1);
     expect(none.chainToOptFlow(id, id).orNull()).to.be.null;
@@ -609,14 +762,14 @@ describe('opt', () => {
     expect(some(1).zip(none).orNull()).to.be.null;
     expect(none.zip(some(true)).orNull()).to.be.null;
     expect(none.zip(some(true)).orNull()).to.be.null;
-    const formatAddress =
-      (streetName?: string, streetNumber?: string): string =>
+      const formatAddress =
+        (streetName?: string, streetNumber?: string): string =>
         opt(streetName).zip(opt(streetNumber)).map(join(' ')).orElse('');
-    expect(formatAddress('Strawberry', '12')).to.be.eq('Strawberry 12');
-    expect(formatAddress('Strawberry', undefined)).to.be.eq('');
-    expect(formatAddress(undefined, '12')).to.be.eq('');
-    expect(formatAddress(undefined, undefined)).to.be.eq('');
-  });
+      expect(formatAddress('Strawberry', '12')).to.be.eq('Strawberry 12');
+      expect(formatAddress('Strawberry', undefined)).to.be.eq('');
+      expect(formatAddress(undefined, '12')).to.be.eq('');
+      expect(formatAddress(undefined, undefined)).to.be.eq('');
+    });
 
   it('zip3', () => {
     expect(some(1).zip3(some(true), some('a')).orNull()).to.be.eql([1, true, 'a']);
@@ -655,6 +808,12 @@ describe('opt', () => {
     expect(none.filter(lt0).orNull()).to.be.null;
   });
 
+  it('filterIn', () => {
+    expect(opt([-1, 0, 1]).filterIn(gt0).orNull()).to.be.eql([1]);
+    expect(none.filterIn(gt0).orNull()).to.be.null;
+    expect(() => opt(0 as any).filterIn(gt0)).to.throw();
+  });
+
   it('filterByRe', () => {
     const re1 = /b/;
     expect(opt('').filterByRe(re1).orNull()).to.be.null;
@@ -677,6 +836,20 @@ describe('opt', () => {
                   .orNull(),
     ).to.be.null;
   });
+
+  it('findIn', () => {
+    expect(opt([1, 2, 3, 4]).findIn(x => x > 2).orNull()).to.be.eq(3);
+    expect(opt([1, 2, 3, 4]).findIn(x => x > 5).orNull()).to.be.null;
+    expect(none.findIn(x => x > 2).orNull()).to.be.null;
+    expect(() => opt('' as any as number[]).findIn(x => x > 2)).to.throw();
+  });
+
+  it('zipIn', () => {
+    expect(opt([1, 2]).zipIn([3, 4]).orNull()).to.be.eql([[1, 3], [2, 4]]);
+    expect(opt([1]).zipIn([3, 4]).orNull()).to.be.eql([[1, 3]]);
+    expect(opt([1, 2]).zipIn(null).orNull()).to.be.null;
+    expect((none as Opt<number[]>).zipIn([1, 2]).orNull()).to.be.null;
+  })
 
   it('noneIf', () => {
     expect(some(1).noneIf(lt0).orNull()).to.be.eq(1);
@@ -721,6 +894,22 @@ describe('opt', () => {
     expect(opt(1).count(gt0)).to.be.eq(1);
     expect(opt(-1).count(gt0)).to.be.eq(0);
     expect(opt(NaN).count(gt0)).to.be.eq(0);
+  });
+
+  describe('countIn', () => {
+    it('counts the number of elements in an array wrapped in Opt that satisfy the given predicate', () => {
+      const result: Opt<number> = opt([1, 2, 3, 4]).countIn(x => x % 2 === 0);
+      expect(result.orNull()).to.equal(2);
+    });
+  
+    it('returns None when called on None', () => {
+      const result: Opt<number> = opt(null).countIn((x: number) => x > 0);
+      expect(result.orNull()).to.be.null;
+    });
+  
+    it('throws when called on non array opt', () => {
+      expect(() => opt(123 as any).countIn((x: any) => x > 0)).to.throw(Error, 'countIn called on non array: 123');
+    });
   });
 
   it('narrow', () => {
@@ -896,20 +1085,20 @@ describe('opt', () => {
     expect(opt([4] as readonly number[]).at(0).orFalse()).to.be.eq(4);
   });
 
-  it('head', () => {
-    expect(opt([1, 2, 3]).head().orFalse()).to.be.eq(1);
-    expect(opt([]).head().orFalse()).to.be.false;
-    expect(opt(null).head().orFalse()).to.be.false;
-    expect(opt('Palico').head().orFalse()).to.be.eq('P');
-    expect(opt([1, 2, 3] as readonly number[]).head().orFalse()).to.be.eq(1);
+  it('headIn', () => {
+    expect(opt([1, 2, 3]).headIn().orFalse()).to.be.eq(1);
+    expect(opt([]).headIn().orFalse()).to.be.false;
+    expect(opt(null).headIn().orFalse()).to.be.false;
+    expect(opt('Palico').headIn().orFalse()).to.be.eq('P');
+    expect(opt([1, 2, 3] as readonly number[]).headIn().orFalse()).to.be.eq(1);
   });
 
-  it('last', () => {
-    expect(opt([1, 2, 3]).last().orFalse()).to.be.eq(3);
-    expect(opt([]).last().orFalse()).to.be.false;
-    expect(opt(null).last().orFalse()).to.be.false;
-    expect(opt('Palico').last().orFalse()).to.be.eq('o');
-    expect(opt([1, 2, 3] as readonly number[]).last().orFalse()).to.be.eq(3);
+  it('lastIn', () => {
+    expect(opt([1, 2, 3]).lastIn().orFalse()).to.be.eq(3);
+    expect(opt([]).lastIn().orFalse()).to.be.false;
+    expect(opt(null).lastIn().orFalse()).to.be.false;
+    expect(opt('Palico').lastIn().orFalse()).to.be.eq('o');
+    expect(opt([1, 2, 3] as readonly number[]).lastIn().orFalse()).to.be.eq(3);
   });
 
   describe('testReOrFalse', () => {
@@ -993,30 +1182,30 @@ describe('opt', () => {
           .orNull()).to.be.null;
   });
 
-  it('min', () => {
-    const res1: Opt<number> = opt([] as number[]).min();
+  it('minIn', () => {
+    const res1: Opt<number> = opt([] as number[]).minIn();
     expect(res1.orNull()).to.be.null;
-    expect(opt([]).min().orNull()).to.be.null;
-    expect(none.min().orNull()).to.be.null;
-    expect(opt([1]).min().orNull()).to.be.eq(1);
-    expect(opt([1, 3]).min().orNull()).to.be.eq(1);
-    expect(opt([3, 1]).min().orNull()).to.be.eq(1);
-    expect(opt([5, 1, 3]).min().orNull()).to.be.eq(1);
-    expect(opt([1, 1, 1]).min().orNull()).to.be.eq(1);
-    expect(() => opt(0).min()).to.throw();
+    expect(opt([]).minIn().orNull()).to.be.null;
+    expect(none.minIn().orNull()).to.be.null;
+    expect(opt([1]).minIn().orNull()).to.be.eq(1);
+    expect(opt([1, 3]).minIn().orNull()).to.be.eq(1);
+    expect(opt([3, 1]).minIn().orNull()).to.be.eq(1);
+    expect(opt([5, 1, 3]).minIn().orNull()).to.be.eq(1);
+    expect(opt([1, 1, 1]).minIn().orNull()).to.be.eq(1);
+    expect(() => opt(0).minIn()).to.throw();
   });
 
-  it('max', () => {
-    const res1: Opt<number> = opt([] as number[]).max();
+  it('maxIn', () => {
+    const res1: Opt<number> = opt([] as number[]).maxIn();
     expect(res1.orNull()).to.be.null;
-    expect(opt([]).max().orNull()).to.be.null;
-    expect(none.max().orNull()).to.be.null;
-    expect(opt([7]).max().orNull()).to.be.eq(7);
-    expect(opt([7, 3]).max().orNull()).to.be.eq(7);
-    expect(opt([3, 7]).max().orNull()).to.be.eq(7);
-    expect(opt([5, 7, 3]).max().orNull()).to.be.eq(7);
-    expect(opt([7, 7, 7]).max().orNull()).to.be.eq(7);
-    expect(() => opt(0).max()).to.throw();
+    expect(opt([]).maxIn().orNull()).to.be.null;
+    expect(none.maxIn().orNull()).to.be.null;
+    expect(opt([7]).maxIn().orNull()).to.be.eq(7);
+    expect(opt([7, 3]).maxIn().orNull()).to.be.eq(7);
+    expect(opt([3, 7]).maxIn().orNull()).to.be.eq(7);
+    expect(opt([5, 7, 3]).maxIn().orNull()).to.be.eq(7);
+    expect(opt([7, 7, 7]).maxIn().orNull()).to.be.eq(7);
+    expect(() => opt(0).maxIn()).to.throw();
   });
 });
 
@@ -1555,6 +1744,13 @@ describe('joinOpt', () => {
   });
 });
 
+describe('lengthIn', () => {
+  it('returns length of array inside opt', () => {
+    expect(lengthIn(opt([1, 2, 3])).orNull()).to.be.eq(3);
+    expect(lengthIn(none).orNull()).to.be.null;
+  });
+});
+
 describe('fromArray', () => {
   it('creates opt from array', () => {
     expect(fromArray([7]).orNull()).to.be.eq(7);
@@ -1644,6 +1840,12 @@ describe('map', () => {
   });
 });
 
+describe('mapIn', () => {
+  it('maps over array inside Opt', () => {
+    expect(mapIn((x: number) => x + 1)(opt([1, 2, 3])).orNull()).to.be.eql([2, 3, 4]);
+  });
+});
+
 describe('mapFlow', () => {
   expect(mapFlow(id)(opt(1)).orNull()).to.be.eq(1);
   expect(mapFlow(id)(opt(null)).orNull()).to.be.null;
@@ -1691,6 +1893,19 @@ describe('flatMap', () => {
 
   it('works with readonly arrays', () => {
     expect(flatMap((x: number) => [x + 1])([6] as readonly number[])).to.be.eql([7]);
+  });
+});
+
+describe('flatMapIn', () => {
+  it('flatMaps over array inside Opt', () => {
+    expect(flatMapIn((x: number) => [x, x * 10])(opt([1, 2])).orNull()).to.eql([1, 10, 2, 20]);
+  });
+});
+
+describe('chainIn', () => {
+  it('chains a function over an array in Some', () => {
+    const result = chainIn((x: number) => [x, x * 2])(opt([1, 2]));
+    expect(result.orNull()).to.eql([1, 2, 2, 4]);
   });
 });
 
@@ -1795,6 +2010,27 @@ describe('caseOf', () => {
   });
 });
 
+describe('fold', () => {
+  it('returns the initial value when none', () => {
+      expect(fold((x: number) => x)(0)(none)).to.be.eq(0);
+  });
+
+  it('applies the function when some', () => {
+      expect(fold((x: number) => x * 2)(0)(some(5))).to.be.eq(10);
+  });
+});
+
+describe('foldIn', () => {
+  it('returns none when none', () => {
+      expect(foldIn((acc: number, x: number) => acc + x)(0)(none).orNull()).to.be.null;
+  });
+
+  it('folds over array inside opt when some', () => {
+      expect(foldIn((acc: number, x: number) => acc + x)(0)(some([1, 2, 3])).orNull()).to.be.eq(6);
+  });
+});
+
+
 describe('onBoth', () => {
   let onSome: (_: number) => void;
   let onNone: () => void;
@@ -1846,6 +2082,26 @@ describe('contains', () => {
   });
 });
 
+describe('has', () => {
+  it('positive', () => {
+    expect(has(1)(opt(1))).to.be.true;
+  });
+  it('negative', () => {
+    expect(has(2)(opt(1))).to.be.false;
+    expect(has(2)(none)).to.be.false;
+  });
+});
+
+describe('hasIn', () => {
+  it('positive', () => {
+    expect(hasIn(1)(opt([1]))).to.be.true;
+  });
+  it('negative', () => {
+    expect(hasIn(1)(none)).to.be.false;
+    expect(hasIn(1)(opt([2]))).to.be.false;
+  });
+});
+
 describe('exists', () => {
   it('positive', () => {
     expect(exists(eqAny(1))(opt(1))).to.be.true;
@@ -1856,6 +2112,16 @@ describe('exists', () => {
   });
 });
 
+describe('existsIn', () => {
+  it('returns true if any element in wrapped array satisfies predicate', () => {
+    expect(existsIn((x: number) => x > 2)(opt([1, 2, 3, 4])).orNull()).to.be.true;
+  });
+
+  it('returns false if no element in wrapped array satisfies predicate', () => {
+    expect(existsIn((x: number) => x > 5)(opt([1, 2, 3, 4])).orNull()).to.be.false;
+  });
+});
+
 describe('forAll', () => {
   it('positive', () => {
     expect(forAll(eqAny(1))(opt(1))).to.be.true;
@@ -1863,6 +2129,12 @@ describe('forAll', () => {
   });
   it('negative', () => {
     expect(forAll(eqAny(2))(opt(1))).to.be.false;
+  });
+});
+
+describe('forAllIn', () => {
+  it('returns true if all elements in wrapped array satisfy predicate', () => {
+    expect(forAllIn((x: number) => x > 0)(opt([1, 2, 3, 4])).orNull()).to.be.true;
   });
 });
 
@@ -1937,83 +2209,69 @@ describe('flatBimap', () => {
   });
 });
 
-describe('zip', () => {
+describe('zipArray', () => {
+  it('zips', () => {
+    expect(zipArray([1, 2])([true, false])).to.be.eql([[1, true], [2, false]]);
+  });
+  it('different lengths', () => {
+    expect(zipArray([1, 2, 3])([true, false])).to.be.eql([[1, true], [2, false]]);
+    expect(zipArray([1])([true, false, null])).to.be.eql([[1, true]]);
+    expect(zipArray([])([true, false])).to.be.eql([]);
+    expect(zipArray([1, 2, 3])([])).to.be.eql([]);
+  });
+});
+
+describe('zipOpt', () => {
   describe('checks types', () => {
     it('opt', () => {
-      const a: Opt<[number, boolean]> = zip(opt(1))(opt(true));
+      const a: Opt<[number, boolean]> = zipOpt(opt(1))(opt(true));
       // @ts-expect-error wrong result type
-      const aFail: Opt<[boolean, number]> = zip(opt(1))(opt(true));
-      suppressUnused(a, aFail);
-    });
-    it('array', () => {
-      const a: [number, boolean][] = zip([1, 2])([true, false]);
-      // @ts-expect-error wrong result type
-      const aFail: [boolean, number][] = zip(opt(1))(opt(true));
+      const aFail: Opt<[boolean, number]> = zipOpt(opt(1))(opt(true));
       suppressUnused(a, aFail);
     });
     it('mixing', () => {
       // @ts-expect-error wrong result type
-      const aFail: [number, boolean][] = zip(opt(1))(opt(true));
+      const aFail: [number, boolean][] = zipOpt(opt(1))(opt(true));
       suppressUnused(aFail);
     });
   });
 
   it('opt', () => {
-    expect(zip(opt(1))(opt(2)).orNull()).to.be.eql([1, 2]);
-    expect(zip(opt(1))(none).orNull()).to.be.eql(null);
-    expect(zip(none)(opt(2)).orNull()).to.be.eql(null);
-    expect(zip(none)(none).orNull()).to.be.eql(null);
-  });
-
-  describe('array', () => {
-    it('empty', () => {
-      expect(zip([])([])).to.be.eql([]);
-    });
-    it('same length', () => {
-      expect(zip([1])([2])).to.be.eql([[1, 2]]);
-    });
-    it('different length', () => {
-      expect(zip([1, 2])([3])).to.be.eql([[1, 3]]);
-      expect(zip([1])([3, 4])).to.be.eql([[1, 3]]);
-    });
-    it('read-only', () => {
-      expect(zip([1] as readonly number[])([2] as readonly number[])).to.be.eql([[1, 2]]);
-    });
-
-    it('example', () => {
-      const formatAddress =
-        (streetName?: string, streetNumber?: string): string =>
-          zip(opt(streetName))(opt(streetNumber)).map(join(' ')).orElse('');
-      expect(formatAddress('Strawberry', '12')).to.be.eq('Strawberry 12');
-      expect(formatAddress('Strawberry', undefined)).to.be.eq('');
-      expect(formatAddress(undefined, '12')).to.be.eq('');
-      expect(formatAddress(undefined, undefined)).to.be.eq('');
-    });
+    expect(zipOpt(opt(1))(opt(2)).orNull()).to.be.eql([1, 2]);
+    expect(zipOpt(opt(1))(none).orNull()).to.be.eql(null);
+    expect(zipOpt(none)(opt(2)).orNull()).to.be.eql(null);
+    expect(zipOpt(none)(none).orNull()).to.be.eql(null);
   });
 
   it('works with flow', () => {
-    const a: Opt<[string, number]> = flow2((x: Opt<number>) => x, zip(opt('x')))(opt(2));
+    const a: Opt<[string, number]> = flow2((x: Opt<number>) => x, zipOpt(opt('x')))(opt(2));
     expect(a.orNull()).to.be.eql(['x', 2]);
-    const b: Opt<[string, number]> = flow2(zip(opt('x')), id)(opt(2));
+    const b: Opt<[string, number]> = flow2(zipOpt(opt('x')), id)(opt(2));
     expect(b.orNull()).to.be.eql(['x', 2]);
   });
 });
 
-describe('zip3', () => {
+describe('zip3Opt', () => {
   it('zips', () => {
-    expect(zip3(opt(1))(opt(2))(opt(3)).orNull()).to.be.eql([1, 2, 3]);
+    expect(zip3Opt(opt(1))(opt(2))(opt(3)).orNull()).to.be.eql([1, 2, 3]);
   });
 });
 
-describe('zip4', () => {
+describe('zip4Opt', () => {
   it('zips', () => {
-    expect(zip4(opt(1))(opt(2))(opt(3))(opt(4)).orNull()).to.be.eql([1, 2, 3, 4]);
+    expect(zip4Opt(opt(1))(opt(2))(opt(3))(opt(4)).orNull()).to.be.eql([1, 2, 3, 4]);
   });
 });
 
-describe('zip5', () => {
+describe('zip5Opt', () => {
   it('zips', () => {
-    expect(zip5(opt(1))(opt(2))(opt(3))(opt(4))(opt(5)).orNull()).to.be.eql([1, 2, 3, 4, 5]);
+    expect(zip5Opt(opt(1))(opt(2))(opt(3))(opt(4))(opt(5)).orNull()).to.be.eql([1, 2, 3, 4, 5]);
+  });
+});
+
+describe('zipIn', () => {
+  it('zips array inside opt with another array', () => {
+    expect(zipIn(opt([1, 2, 3]))([4, 5, 6]).orNull()).to.be.eql([[1, 4], [2, 5], [3, 6]]);
   });
 });
 
@@ -2042,6 +2300,18 @@ describe('filter', () => {
     it('read-only array', () => {
       expect(filter(gt0)([-1, 0, 1] as readonly number[])).to.be.eql([1]);
     });
+  });
+});
+
+describe('filterIn', () => {
+  it('filters array inside opt', () => {
+    expect(filterIn((x: number) => x > 1)(opt([1, 2, 3])).orNull()).to.be.eql([2, 3]);
+  });
+});
+
+describe('findIn', () => {
+  it('finds first element satisfying predicate in array inside opt', () => {
+    expect(findIn((x: number) => x > 2)(opt([1, 2, 3, 4])).orNull()).to.be.eq(3);
   });
 });
 
@@ -2123,6 +2393,13 @@ describe('count', () => {
     expect(
       count(greaterThanZero)([-3, 0, 5, 10]), // 2
     ).to.be.eq(2);
+  });
+});
+
+describe('countIn', () => {
+  it('counts elements satisfying predicate in array inside opt', () => {
+    const result = countIn((x: number) => x % 2 === 0)(opt([1, 2, 3, 4]));
+    expect(result.orNull()).to.equal(2);
   });
 });
 
@@ -2532,9 +2809,7 @@ describe('head', () => {
   it('returns first element of array', () => {
     expect(head([1, 2, 3]).orFalse()).to.be.eq(1);
     expect(head([]).orFalse()).to.be.false;
-    expect(head(opt([1, 2, 3])).orFalse()).to.be.eq(1);
-    expect(head(opt([])).orFalse()).to.be.false;
-    expect(head(opt(null as null | number[])).orFalse()).to.be.false;
+    expect(head(null).orFalse()).to.be.false;
   });
 
   it('works with read-only arrays', () => {
@@ -2577,13 +2852,50 @@ describe('head', () => {
   });
 });
 
+describe('headIn', () => {
+  it('returns first element of array', () => {
+    expect(headIn(opt([1, 2, 3])).orFalse()).to.be.eq(1);
+    expect(headIn(opt([])).orFalse()).to.be.false;
+    expect(headIn(opt(null as null | number[])).orFalse()).to.be.false;
+  });
+
+  it('works with read-only arrays', () => {
+    expect(headIn(opt([1, 2, 3] as readonly number[])).orFalse()).to.be.eq(1);
+  });
+
+  it('returns first character of string', () => {
+    const res1: Opt<string> = headIn(opt('Palico'));
+    expect(res1.orNull()).to.be.eq('P');
+    const res2: Opt<string> = headIn(opt(''));
+    expect(res2.orNull()).to.be.null;
+    const res3: Opt<string> = headIn(opt(null as string | null));
+    expect(res3.orNull()).to.be.null;
+  });
+
+  it('works well with pipe/flow', () => {
+    const res1: Opt<number> = pipe([1, 2, 3], opt, headIn, id);
+    expect(res1.orNull()).to.be.eq(1);
+    const res2: Opt<string> = pipe('Yami', opt, headIn, id);
+    expect(res2.orNull()).to.be.eq('Y');
+    const f: (_: number[] | null) => Opt<number> = flow(opt, headIn, id);
+    const res3: Opt<number> = f([1]);
+    expect(res3.orNull()).to.be.eq(1);
+    expect(f([]).orNull()).to.be.null;
+    const g: (_: string | null) => Opt<string> = flow(opt, headIn, id);
+    expect(g('Noelle').orNull()).to.be.eq('N');
+    expect(g('').orNull()).to.be.null;
+    expect(g(null).orFalse()).to.be.false;
+    const h = flow(opt, headIn, id);
+    expect(h([0]).orNull()).to.be.eq(0);
+    expect(h('Yuno').orNull()).to.be.eq('Y');
+  });
+});
+
 describe('last', () => {
   it('returns last element of array', () => {
     expect(last([1, 2, 3]).orFalse()).to.be.eq(3);
     expect(last([]).orFalse()).to.be.false;
-    expect(last(opt([1, 2, 3])).orFalse()).to.be.eq(3);
-    expect(last(opt([])).orFalse()).to.be.false;
-    expect(last(opt(null as null | number[])).orFalse()).to.be.false;
+    expect(last(undefined).orFalse()).to.be.false;
   });
 
   it('works with read-only arrays', () => {
@@ -2608,6 +2920,32 @@ describe('last', () => {
     expect(pipe([], last, orNull)).to.be.null;
     expect(pipe('2015', last, orNull)).to.be.eq('5');
     expect(pipe('', last, orNull)).to.be.null;
+  });
+});
+
+describe('lastIn', () => {
+  it('returns last element of array', () => {
+    expect(lastIn(opt([1, 2, 3])).orFalse()).to.be.eq(3);
+    expect(lastIn(opt([])).orFalse()).to.be.false;
+    expect(lastIn(opt(null as null | number[])).orFalse()).to.be.false;
+  });
+
+  it('works with read-only arrays', () => {
+    expect(lastIn(opt([1, 2, 3] as readonly number[])).orFalse()).to.be.eq(3);
+  });
+
+  it('returns last element of string', () => {
+    const res1: Opt<string> = lastIn(opt('Palico'));
+    expect(res1.orFalse()).to.be.eq('o');
+    expect(lastIn(opt('')).orFalse()).to.be.false;
+  });
+
+  it('works well with pipe/flow', () => {
+    const res1: number | null = pipe([20, 15], opt, lastIn, orNull);
+    expect(res1).to.be.eq(15);
+    expect(pipe([], opt, lastIn, orNull)).to.be.null;
+    expect(pipe('2015', opt, lastIn, orNull)).to.be.eq('5');
+    expect(pipe('', opt, lastIn, orNull)).to.be.null;
   });
 });
 
@@ -2908,43 +3246,49 @@ describe('assertType', () => {
 });
 
 describe('min', () => {
-  it('returns minimum of wrapped array', () => {
-    const res: Opt<number> = min(opt([1, 4]));
-    expect(res.orNull()).to.be.eq(1);
-  });
-  it('returns minimum of wrapped read-only array', () => {
-    const xs: readonly number[] = [1, 4];
-    const res: Opt<number> = min(opt(xs));
-    expect(res.orNull()).to.be.eq(1);
-  });
-  it('works with naked arrays', () => {
+  it('returns minimum of array', () => {
     const res: Opt<number> = min([1, 4]);
     expect(res.orNull()).to.be.eq(1);
   });
-  it('works with naked read-only arrays', () => {
+  it('returns minimum of read-only array', () => {
     const xs: readonly number[] = [1, 4];
     const res: Opt<number> = min(xs);
     expect(res.orNull()).to.be.eq(1);
   });
 });
 
+describe('minIn', () => {
+  it('returns minimum of wrapped array', () => {
+    const res: Opt<number> = minIn(opt([1, 4]));
+    expect(res.orNull()).to.be.eq(1);
+  });
+  it('returns minimum of wrapped read-only array', () => {
+    const xs: readonly number[] = [1, 4];
+    const res: Opt<number> = minIn(opt(xs));
+    expect(res.orNull()).to.be.eq(1);
+  });
+});
+
 describe('max', () => {
+  it('returns maximum of array', () => {
+    const res: Opt<number> = max([1, 4]);
+    expect(res.orNull()).to.be.eq(4);
+  });
+  it('returns maximum of read-only array', () => {
+    const xs: readonly number[] = [1, 4];
+    const res: Opt<number> = max(xs);
+    expect(res.orNull()).to.be.eq(4);
+  });
+});
+
+describe('maxIn', () => {
   it('returns maximum of wrapped array', () => {
-    const res: Opt<number> = max(opt([1, 4]));
+    const res: Opt<number> = maxIn(opt([1, 4]));
     expect(res.orNull()).to.be.eq(4);
   });
   it('returns maximum of wrapped read-only array', () => {
     const xs: readonly number[] = [1, 4];
-    const res: Opt<number> = max(opt(xs));
-    expect(res.orNull()).to.be.eq(4);
-  });
-  it('works with naked arrays', () => {
-    const res: Opt<number> = max([1, 4]);
-    expect(res.orNull()).to.be.eq(4);
-  });
-  it('works with naked read-only arrays', () => {
-    const xs: readonly number[] = [1, 4];
-    const res: Opt<number> = max(xs);
+    const res: Opt<number> = maxIn(opt(xs));
     expect(res.orNull()).to.be.eq(4);
   });
 });

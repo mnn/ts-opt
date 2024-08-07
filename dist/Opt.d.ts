@@ -72,10 +72,27 @@ export declare abstract class Opt<T> {
     isNone(): this is None<T>;
     /**
      * `1` for {@link Some}, `0` for {@link None}.
+     *
+     * Important: This is not the wrapped value's length.
+     * E.g., `opt([1,2,3]).length === 1`.
+     * Use {@link Opt.lengthIn} for array/string length of the wrapped value.
      */
     get length(): 0 | 1;
     /**
-     * Create Opt instance from an array of one or zero items.
+     * Returns the length of a string or array wrapped in an `Opt`.
+     *
+     * @example
+     * ```ts
+     * opt('hello').lengthIn() // Some(5)
+     * opt([1, 2, 3]).lengthIn() // Some(3)
+     * opt('').lengthIn() // Some(0)
+     * opt([]).lengthIn() // Some(0)
+     * none.lengthIn() // None
+     * ```
+     */
+    abstract lengthIn<R extends (T extends string | readonly unknown[] ? Opt<number> : never)>(this: Opt<string | readonly unknown[]>): R;
+    /**
+     * Create `Opt` instance from an array of one or zero items.
      *
      * ```ts
      * Opt.fromArray([]) // None
@@ -111,7 +128,7 @@ export declare abstract class Opt<T> {
      */
     static fromObject: FromObjectFn;
     /**
-     * Convets {@link Opt} to an object.
+     * Converts {@link Opt} to an object.
      *
      * @example
      * ```ts
@@ -148,6 +165,14 @@ export declare abstract class Opt<T> {
      */
     abstract map<U>(f: (_: T) => U): Opt<U>;
     /**
+     * Applies a map function to an array inside.
+     * @example
+     * ```ts
+     * opt([1, 2, 3]).mapIn(x => x + 1) // Some([2, 3, 4])
+     * ```
+     */
+    abstract mapIn<U, R>(this: Opt<U[]>, f: (x: U) => R): Opt<R[]>;
+    /**
      * Similar to {@link Opt.map}, but supports more functions which are called in succession, each on a result of a previous one.
      *
      * @example
@@ -175,11 +200,23 @@ export declare abstract class Opt<T> {
      */
     abstract flatMap<U>(f: (_: T) => Opt<U>): Opt<U>;
     /**
-     * @alias {@link flatMap}
+     * @alias {@link Opt.flatMap}
      * @see {@link chain}
      * @param f
      */
     chain<U>(f: (_: T) => Opt<U>): Opt<U>;
+    /**
+     * Applies a `flatMap` function to an array inside.
+     * @example
+     * ```ts
+     * opt([1, 2]).flatMapIn(x => [x, x * 2]) // Some([1, 2, 2, 4])
+     * ```
+     */
+    abstract flatMapIn<U, R>(this: Opt<U[]>, f: (x: U) => R[]): Opt<R[]>;
+    /**
+     * @alias {@link Opt.flatMapIn}
+     */
+    chainIn<U, R>(this: Opt<U[]>, f: (x: U) => R[]): Opt<R[]>;
     /**
      * Similar to {@link Opt.chain} (in other languages called `bind` or `>>=`), but supports more functions passed at once (resembles `do` notation in Haskell).
      * It is used to model a sequence of operations where each operation can fail (can return {@link None}).
@@ -238,6 +275,7 @@ export declare abstract class Opt<T> {
      * Similar to {@link act}, but functions return empty values instead of {@link Opt}.
      * It is useful for typical JavaScript functions (e.g. lodash), properly handles `undefined`/`null`/`NaN` at any point of the chain.
      *
+     * @example
      * ```ts
      * import {find} from 'lodash/fp';
      *
@@ -358,6 +396,7 @@ export declare abstract class Opt<T> {
     /**
      * Applies appropriate function and returns result from the function.
      *
+     * @example
      * ```ts
      * some(1).caseOf(x => x + 1, () => 0) // 2
      * none.caseOf(x => x + 1, () => 0) // 0
@@ -371,8 +410,34 @@ export declare abstract class Opt<T> {
      */
     abstract caseOf<R>(someCase: (x: T) => R, noneCase: () => R): R;
     /**
+     * Reduces the `Opt` instance to a single value by applying a function to the value inside {@link Some}
+     * or returning a default value for {@link None}.
+     *
+     * @example
+     * ```ts
+     * opt(1).fold(x => x + 1, 0) // 2
+     * none.fold(x => x + 1, 0) // 0
+     * ```
+     *
+     * @param someCase Function to apply to the value inside `Some`.
+     * @param noneCase Default value to return for `None`.
+     */
+    abstract fold<R>(someCase: (x: T) => R, noneCase: R): R;
+    /**
+     * Applies a reducer function to an array within an {@link Opt} instance,
+     * combining its elements into a single value using the array's `reduce` method.
+     *
+     * @example
+     * ```ts
+     * opt([1, 2, 3]).foldIn((acc, x) => acc + x, 0) // Some(6)
+     * none.foldIn((acc, x) => acc + x, 0) // None
+     * ```
+     */
+    foldIn<U, R>(this: Opt<U[]>, f: (acc: R, x: U) => R, initial: R): Opt<R>;
+    /**
      * Calls appropriate callback and returns without change current instance of {@link Opt}.
      *
+     * @example
      * ```ts
      * // prints 1, returns some(1)
      * some(1).onBoth(x => console.log(x), () => console.log('none'))
@@ -435,11 +500,30 @@ export declare abstract class Opt<T> {
      * none.contains(undefined) // false
      * ```
      *
+     * Similar to JavaScript `Array#includes` method.
+     *
      * @see {@link contains}
      *
      * @param x
      */
     abstract contains(x: T): boolean;
+    /** @alias {@link Opt.contains} */
+    has(x: T): boolean;
+    /**
+     * Checks if an array inside the Opt contains the given element.
+     *
+     * @example
+     * ```ts
+     * opt([1, 2, 3]).hasIn(2) // true
+     * opt([1, 2, 3]).hasIn(4) // false
+     * none.hasIn(1) // false
+     * ```
+     *
+     * @param x Element to search for.
+     */
+    abstract hasIn<U>(this: Opt<readonly U[]>, x: U): boolean;
+    /** @alias {@link Opt.hasIn} */
+    containsIn<U>(this: Opt<readonly U[]>, x: U): boolean;
     /**
      * Applies `p` to inner value and passes result. Always `false` for {@link None}.
      *
@@ -455,6 +539,19 @@ export declare abstract class Opt<T> {
      */
     abstract exists(p: (x: T) => boolean): boolean;
     /**
+     * Checks if any element in the array inside the Opt satisfies the predicate.
+     * Similar to `Array.some` from JavaScript.
+     *
+     * @example
+     * ```ts
+     * opt([1]).existsIn(x => x > 0) // Some(true)
+     * opt([-1]).existsIn(x => x > 0) // Some(false)
+     * opt([]).existsIn(x => x > 0) // Some(false)
+     * none.existsIn(x => x > 0) // None
+     * ```
+     */
+    abstract existsIn<U>(this: Opt<U[]>, p: (x: U) => boolean): Opt<boolean>;
+    /**
      * Applies `p` to inner value and passes result. Always `true` for {@link None}.
      *
      * @example
@@ -467,6 +564,19 @@ export declare abstract class Opt<T> {
      * @param p Predicate.
      */
     abstract forAll(p: (x: T) => boolean): boolean;
+    /**
+     * Checks if all elements in the array inside the Opt satisfy the predicate.
+     * Similar to `Array.every` from JavaScript.
+     *
+     * @example
+     * ```ts
+     * opt([1]).forAllIn(x => x > 0) // Some(true)
+     * opt([-1]).forAllIn(x => x > 0) // Some(false)
+     * opt([]).forAllIn(x => x > 0) // Some(true)
+     * none.forAllIn(x => x > 0) // None
+     * ```
+     */
+    abstract forAllIn<U>(this: Opt<U[]>, p: (x: U) => boolean): Opt<boolean>;
     /**
      * Get inner value of {@link Some}, or use passed `def` value for {@link None}.
      *
@@ -655,6 +765,17 @@ export declare abstract class Opt<T> {
      */
     abstract zip5<X, Y, Z, ZZ>(x: Opt<X>, y: Opt<Y>, z: Opt<Z>, zz: Opt<ZZ>): Opt<[T, X, Y, Z, ZZ]>;
     /**
+     * Zips each element of an array inside the {@link Opt} with the corresponding element from another array.
+     * If the arrays are of different lengths, the resulting array will have the length of the shorter one.
+     * @example
+     * ```ts
+     * opt([1, 2]).zipIn([3, 4]) // Some([[1, 3], [2, 4]])
+     * opt([1, 2]).zipIn(null) // None
+     * none.zipIn([1, 2]) // None
+     * ```
+     */
+    abstract zipIn<U, V>(this: Opt<readonly U[]>, other: V[] | EmptyValue): Opt<readonly [U, V][]>;
+    /**
      * Returns {@link Some} with same value if predicate holds, {@link None} otherwise.
      *
      * @example
@@ -668,6 +789,14 @@ export declare abstract class Opt<T> {
      */
     abstract filter(predicate: (_: T) => boolean): Opt<T>;
     /**
+     * Filters each element of an array inside the {@link Opt}, returning an {@link Opt} of the array with elements that pass the test implemented by the provided function.
+     * @example
+     * ```ts
+     * opt([1, 2, 3]).filterIn(x => x > 1) // Some([2, 3])
+     * ```
+     */
+    abstract filterIn<U>(this: Opt<U[]>, f: (x: U) => boolean): Opt<U[]>;
+    /**
      * Filter by regular expression.
      * It is a shortcut function for {@link Opt.filter} + {@link testRe}.
      *
@@ -680,6 +809,25 @@ export declare abstract class Opt<T> {
      * @param regex
      */
     filterByRe<R extends (T extends string ? Opt<string> : never)>(regex: RegExp): R;
+    /**
+     * Searches for an element within an array inside the Opt instance that matches the given predicate.
+     *
+     * This method will return a new Opt containing the first element that satisfies the predicate function.
+     * If the Opt instance is None or the value inside is not an array, it will return None.
+     *
+     * @template U - The type of elements in the array.
+     * @param {Opt<U[]>} this - The Opt instance containing an array.
+     * @param {(x: U) => boolean} f - A predicate function to test each element.
+     * @returns {Opt<U>} A new Opt containing the found element or None if no element matches the predicate or if the Opt is None.
+     *
+     * @example
+     * ```typescript
+     * opt([1, 2, 3, 4]).findIn(x => x > 2) // Some(3)
+     * opt([1, 2, 3, 4]).findIn(x => x > 5) // None
+     * none.findIn(x => x > 2) // None
+     * ```
+     */
+    findIn<U>(this: Opt<U[]>, f: (x: U) => boolean): Opt<U>;
     /**
      * Returns {@link None} if predicate holds, otherwise passes same instance of {@link Opt}.
      *
@@ -732,6 +880,20 @@ export declare abstract class Opt<T> {
      * @param predicate
      */
     count(predicate: (_: T) => boolean): 0 | 1;
+    /**
+     * Counts the number of elements in the array inside the Opt that satisfy the predicate.
+     *
+     * @example
+     * ```ts
+     * opt([1, 2, 3]).countIn(x => x > 1) // Some(2)
+     * opt([]).countIn(x => x > 1) // Some(0)
+     * none.countIn(x => x > 1) // None
+     * ```
+     *
+     * @param f The predicate function to test each element.
+     * @returns An Opt containing the count of elements that satisfy the predicate, or None if the Opt is None.
+     */
+    abstract countIn<U>(this: Opt<U[]>, f: (x: U) => boolean): Opt<number>;
     /**
      * Narrows type inside {@link Opt} using given type guard.
      *
@@ -885,55 +1047,55 @@ export declare abstract class Opt<T> {
      */
     abstract at<R extends (T extends readonly (infer A)[] ? A : (T extends string ? string : never))>(index: number): OptSafe<R>;
     /**
-     * Get a first item of an array or a first character of a string.
+     * Get a first item of an array or a first character of a string wrapped in {@link Opt}.
      *
      * @example
      * ```ts
-     * opt([1, 2, 3]).head() // Some(1)
-     * opt([]).head() // None
-     * opt(null).head() // None
-     * opt('Palico').head() // Some('P')
+     * opt([1, 2, 3]).headIn() // Some(1)
+     * opt([]).headIn() // None
+     * opt(null).headIn() // None
+     * opt('Palico').headIn() // Some('P')
      * ```
      *
      * @see {@link head}
      */
-    head<R extends (T extends readonly (infer A)[] ? A : (T extends string ? string : never))>(): OptSafe<R>;
+    headIn<R extends (T extends readonly (infer A)[] ? A : (T extends string ? string : never))>(): OptSafe<R>;
     /**
      * Get minimum from an array.
      *
      * @example
      * ```ts
-     * opt([5, 1, 3]).min() // Some(1)
-     * none.min() // None
-     * opt([]).min() // None
+     * opt([5, 1, 3]).minIn() // Some(1)
+     * none.minIn() // None
+     * opt([]).minIn() // None
      * ```
      */
-    abstract min<R extends (T extends readonly (infer A)[] ? A : never)>(): OptSafe<R>;
+    abstract minIn<R extends (T extends readonly (infer A)[] ? A : never)>(): OptSafe<R>;
     /**
      * Get maximum from an array.
      *
      * @example
      * ```ts
-     * opt([3, 7]).max() // Some(7)
-     * none.max() // None
-     * opt([]).max() // None
+     * opt([3, 7]).maxIn() // Some(7)
+     * none.maxIn() // None
+     * opt([]).maxIn() // None
      * ```
      */
-    abstract max<R extends (T extends readonly (infer A)[] ? A : never)>(): OptSafe<R>;
+    abstract maxIn<R extends (T extends readonly (infer A)[] ? A : never)>(): OptSafe<R>;
     /**
      * Get a last item of an array or a last character of a string.
      *
      * @example
      * ```ts
-     * opt([1, 2, 3]).last() // Some(3)
-     * opt([]).last() // None
-     * opt(null).last() // None
-     * opt('Palico').last() // Some('o')
+     * opt([1, 2, 3]).lastIn() // Some(3)
+     * opt([]).lastIn() // None
+     * opt(null).lastIn() // None
+     * opt('Palico').lastIn() // Some('o')
      * ```
      *
      * @see {@link last}
      */
-    last<R extends (T extends readonly (infer A)[] ? A : (T extends string ? string : never))>(): OptSafe<R>;
+    lastIn<R extends (T extends readonly (infer A)[] ? A : (T extends string ? string : never))>(): OptSafe<R>;
     /**
      * A convenience function to test this (`Opt<string>`) against a given regular expression.
      *
@@ -977,7 +1139,7 @@ export declare abstract class Opt<T> {
      * opt(sub).apply(10).apply(3) // Some(7)
      * ```
      *
-     * @note {@link apply} is only available for functions, otherwise an exception will be thrown when called on {@link Some}.
+     * @note {@link Opt.apply} is only available for functions, otherwise an exception will be thrown when called on {@link Some}.
      *
      * @see {@link Opt.onFunc} for imperative version
      *
@@ -1022,8 +1184,11 @@ declare class None<T> extends Opt<T> {
     readonly '@@type': symbol;
     get isEmpty(): boolean;
     toArray(): [] | [T];
+    lengthIn<R extends (T extends string | readonly unknown[] ? Opt<number> : never)>(): R;
     flatMap<U>(_f: (_: T) => Opt<U>): Opt<U>;
+    flatMapIn<U, R>(this: None<U[]>, _f: (x: U) => R[]): Opt<R[]>;
     map<U>(): Opt<U>;
+    mapIn<R, U>(this: None<U[]>, _f: (x: U) => R): Opt<R[]>;
     orCrash(msg: string): T;
     someOrCrash(msg: string): Some<T>;
     orNull(): T | null;
@@ -1032,12 +1197,16 @@ declare class None<T> extends Opt<T> {
     orTrue(): true | T;
     orNaN(): number | T;
     caseOf<R>(_onSome: (x: T) => R, onNone: () => R): R;
+    fold<R>(_someCase: (x: T) => R, noneCase: R): R;
     onBoth(_onSome: (x: T) => void, onNone: () => void): Opt<T>;
     onNone(f: () => void): Opt<T>;
     onSome(_f: (x: T) => void): Opt<T>;
     contains(_x: T): boolean;
+    hasIn<U>(_: U): boolean;
     exists(_p: (x: T) => boolean): boolean;
+    existsIn<U>(_p: (x: U) => boolean): Opt<boolean>;
     forAll(_p: (x: T) => boolean): boolean;
+    forAllIn<U>(_p: (x: U) => boolean): Opt<boolean>;
     orElse(def: T): T;
     orElseLazy(def: () => T): T;
     alt(def: Opt<T>): Opt<T>;
@@ -1051,6 +1220,9 @@ declare class None<T> extends Opt<T> {
     zip4<X, Y, Z>(_x: Opt<X>, _y: Opt<Y>, _z: Opt<Z>): Opt<[T, X, Y, Z]>;
     zip5<X, Y, Z, ZZ>(_x: Opt<X>, _y: Opt<Y>, _z: Opt<Z>, _zz: Opt<ZZ>): Opt<[T, X, Y, Z, ZZ]>;
     filter(_predicate: (_: T) => boolean): Opt<T>;
+    filterIn<U>(this: None<U[]>, _f: (x: U) => boolean): Opt<U[]>;
+    zipIn<U, V>(this: Opt<readonly U[]>, _other: V[] | EmptyValue): Opt<readonly [U, V][]>;
+    countIn<U>(this: None<U[]>, _f: (x: U) => boolean): Opt<number>;
     narrow<U>(_guard: (value: any) => value is U): Opt<U>;
     narrowOrCrash<U>(guard: (value: any) => value is U, _crashMessage?: string): Opt<U>;
     print(tag?: string): Opt<T>;
@@ -1058,8 +1230,8 @@ declare class None<T> extends Opt<T> {
     prop<K extends (T extends object ? keyof T : never)>(_key: K): OptSafe<T[K]>;
     swap<U>(_newVal: U): Opt<U>;
     at<R extends (T extends readonly (infer A)[] ? A : (T extends string ? string : never))>(_index: number): OptSafe<R>;
-    max<R extends (T extends readonly (infer A)[] ? A : never)>(): OptSafe<R>;
-    min<R extends (T extends readonly (infer A)[] ? A : never)>(): OptSafe<R>;
+    maxIn<R extends (T extends readonly (infer A)[] ? A : never)>(): OptSafe<R>;
+    minIn<R extends (T extends readonly (infer A)[] ? A : never)>(): OptSafe<R>;
 }
 /**
  * {@link Opt} with a value inside.
@@ -1071,9 +1243,12 @@ declare class Some<T> extends Opt<T> {
     readonly '@@type': symbol;
     get isEmpty(): boolean;
     get value(): T;
+    lengthIn<R extends (T extends string | readonly unknown[] ? Opt<number> : never)>(): R;
     toArray(): [] | [T];
     flatMap<U>(f: (_: T) => Opt<U>): Opt<U>;
+    flatMapIn<U, R>(this: Some<U[]>, f: (x: U) => R[]): Opt<R[]>;
     map<U>(f: (_: T) => U): Opt<U>;
+    mapIn<R, U>(this: Some<U[]>, f: (x: U) => R): Opt<R[]>;
     orCrash(_msg: string): T;
     someOrCrash(_msg: string): Some<T>;
     orNull(): T | null;
@@ -1082,10 +1257,14 @@ declare class Some<T> extends Opt<T> {
     orTrue(): true | T;
     orNaN(): number | T;
     caseOf<R>(onSome: (x: T) => R, _onNone: () => R): R;
+    fold<R>(someCase: (x: T) => R, _noneCase: R): R;
     onBoth(onSome: (x: T) => void, _onNone: () => void): Opt<T>;
     contains(x: T): boolean;
+    hasIn<U>(this: Opt<readonly U[]>, x: U): boolean;
     exists(p: (x: T) => boolean): boolean;
+    existsIn<U>(this: Some<U[]>, p: (x: U) => boolean): Opt<boolean>;
     forAll(p: (x: T) => boolean): boolean;
+    forAllIn<U>(this: Some<U[]>, p: (x: U) => boolean): Opt<boolean>;
     onNone(_f: () => void): Opt<T>;
     onSome(f: (x: T) => void): Opt<T>;
     orElse(_def: T): T;
@@ -1101,6 +1280,9 @@ declare class Some<T> extends Opt<T> {
     zip4<X, Y, Z>(x: Opt<X>, y: Opt<Y>, z: Opt<Z>): Opt<[T, X, Y, Z]>;
     zip5<X, Y, Z, ZZ>(x: Opt<X>, y: Opt<Y>, z: Opt<Z>, zz: Opt<ZZ>): Opt<[T, X, Y, Z, ZZ]>;
     filter(predicate: (_: T) => boolean): Opt<T>;
+    filterIn<U>(this: Some<U[]>, f: (x: U) => boolean): Opt<U[]>;
+    zipIn<U, V>(this: Opt<readonly U[]>, other: V[] | EmptyValue): Opt<readonly [U, V][]>;
+    countIn<U>(this: Some<U[]>, f: (x: U) => boolean): Opt<number>;
     narrow<U>(guard: (value: any) => value is U): Opt<U>;
     narrowOrCrash<U>(guard: (value: any) => value is U, crashMessage?: string): Opt<U>;
     print(tag?: string): Opt<T>;
@@ -1108,8 +1290,8 @@ declare class Some<T> extends Opt<T> {
     prop<K extends (T extends object ? keyof T : never)>(key: K): OptSafe<T[K]>;
     swap<U>(newVal: U): Opt<U>;
     at<R extends (T extends readonly (infer A)[] ? A : (T extends string ? string : never))>(index: number): OptSafe<R>;
-    min<R extends (T extends readonly (infer A)[] ? A : never)>(): OptSafe<R>;
-    max<R extends (T extends readonly (infer A)[] ? A : never)>(): OptSafe<R>;
+    minIn<R extends (T extends readonly (infer A)[] ? A : never)>(): OptSafe<R>;
+    maxIn<R extends (T extends readonly (infer A)[] ? A : never)>(): OptSafe<R>;
 }
 declare const someSerializedType = "Opt/Some";
 declare const noneSerializedType = "Opt/None";
@@ -1350,21 +1532,15 @@ export declare const mapOpt: <A, B>(f: (_: A) => Opt<B>) => (xs: readonly A[]) =
  * @see {@link Opt.join}
  */
 export declare const joinOpt: <T>(x: Opt<Opt<T>>) => Opt<T>;
-/**
- * @see {@link Opt.fromArray}
- */
+/** @see {@link Opt.lengthIn} */
+export declare const lengthIn: <T>(x: Opt<T[]>) => Opt<number>;
+/** @see {@link Opt.fromArray} */
 export declare const fromArray: typeof Opt.fromArray;
-/**
- * @see {@link Opt.toArray}
- */
+/** @see {@link Opt.toArray} */
 export declare const toArray: <T>(x: Opt<T>) => [] | [T];
-/**
- * @see {@link Opt.fromObject}
- */
+/** @see {@link Opt.fromObject} */
 export declare const fromObject: FromObjectFn;
-/**
- * @see {@link Opt.toObject}
- */
+/** @see {@link Opt.toObject} */
 export declare const toObject: <K extends string = "value">(k?: K | undefined) => <T>(x: Opt<T>) => Record<K, T | null>;
 type MapFn = <T, U>(f: (_: T) => U) => <I extends (Opt<T> | readonly T[]), O extends (I extends Opt<T> ? Opt<U> : U[])>(x: I) => O;
 /**
@@ -1372,6 +1548,8 @@ type MapFn = <T, U>(f: (_: T) => U) => <I extends (Opt<T> | readonly T[]), O ext
  * @see {@link Opt.map}
  */
 export declare const map: MapFn;
+/** @see {@link Opt.mapIn} */
+export declare const mapIn: <T, U>(f: (x: T) => U) => (x: Opt<T[]>) => Opt<U[]>;
 /** @see {@link Opt.mapFlow} */
 export declare const mapFlow: MapFlowFn;
 interface FlatMapFn {
@@ -1383,8 +1561,12 @@ interface FlatMapFn {
  * @see {@link Opt.flatMap}
  */
 export declare const flatMap: FlatMapFn;
+/** @see {@link Opt.flatMapIn} */
+export declare const flatMapIn: <T, U>(f: (a: T) => U[]) => (x: Opt<T[]>) => Opt<U[]>;
 /** @see {@link Opt.flatMap} */
 export declare const chain: FlatMapFn;
+/** @see {@link Opt.chainIn} */
+export declare const chainIn: <T, U>(f: (a: T) => U[]) => (x: Opt<T[]>) => Opt<U[]>;
 /** @see {@link Opt.act} */
 export declare const act: ActFn;
 /** @see {@link Opt.chainFlow} */
@@ -1411,6 +1593,10 @@ export declare const orTrue: <T>(x: Opt<T>) => true | T;
 export declare const orNaN: <T>(x: Opt<T>) => number | T;
 /** @see {@link Opt.caseOf} */
 export declare const caseOf: <T, R>(onSome: (x: T) => R) => (onNone: () => R) => (x: Opt<T>) => R;
+/** @see {@link Opt.fold} */
+export declare const fold: <T, R>(someCase: (x: T) => R) => (noneCase: R) => (x: Opt<T>) => R;
+/** @see {@link Opt.foldIn} */
+export declare const foldIn: <T, R>(f: (acc: R, x: T) => R) => (initial: R) => (x: Opt<T[]>) => Opt<R>;
 /** @see {@link Opt.onBoth} */
 export declare const onBoth: <T>(onSome: (x: T) => void) => (onNone: () => void) => (x: Opt<T>) => Opt<T>;
 /**
@@ -1421,10 +1607,18 @@ export declare const onBoth: <T>(onSome: (x: T) => void) => (onNone: () => void)
 export declare const pipe: PipeFn;
 /** @see {@link Opt.contains} */
 export declare const contains: <T>(y: T) => (x: Opt<T>) => boolean;
+/** @see {@link Opt.has} */
+export declare const has: <T>(x: T) => (opt: Opt<T>) => boolean;
+/** @see {@link Opt.hasIn} */
+export declare const hasIn: <U>(x: U) => (opt: Opt<readonly U[]>) => boolean;
 /** @see {@link Opt.exists} */
 export declare const exists: <T>(y: (_: T) => boolean) => (x: Opt<T>) => boolean;
+/** @see {@link Opt.existsIn} */
+export declare const existsIn: <T>(p: (x: T) => boolean) => (x: Opt<T[]>) => Opt<boolean>;
 /** @see {@link Opt.forAll} */
 export declare const forAll: <T>(p: (_: T) => boolean) => (x: Opt<T>) => boolean;
+/** @see {@link Opt.forAllIn} */
+export declare const forAllIn: <T>(p: (x: T) => boolean) => (x: Opt<T[]>) => Opt<boolean>;
 /** @see {@link Opt.orElse} */
 export declare const orElse: <T>(e: T) => (x: Opt<T>) => T;
 /** @see {@link Opt.orElseLazy} */
@@ -1439,39 +1633,26 @@ export declare const altOpt: <T>(def: T) => (x: Opt<T>) => OptSafe<T>;
 export declare const bimap: <T, U>(someF: (_: T) => U) => (noneF: () => U) => (x: Opt<T>) => Opt<U>;
 /** @see {@link Opt.flatBimap} */
 export declare const flatBimap: <T, U>(someF: (_: T) => Opt<U>) => (noneF: () => Opt<U>) => (x: Opt<T>) => Opt<U>;
-interface ZipFn {
-    <T>(other: Opt<T>): <U>(x: Opt<U>) => Opt<[T, U]>;
-    <T>(other: readonly T[]): <U>(x: readonly U[]) => [T, U][];
-}
-/**
- * Same as {@link Opt.zip}, but also supports arrays.
- *
- * @example
- * ```ts
- * const formatAddress =
- *   (streetName?: string, streetNumber?: string): string =>
- *     zip(opt(streetName))(opt(streetNumber)).map(join(' ')).orElse('');
- * formatAddress('Strawberry', '12') // 'Strawberry 12'
- * formatAddress('Strawberry', undefined) // ''
- * formatAddress(undefined, '12') // ''
- * formatAddress(undefined, undefined) // ''
- * ```
- *
- * @see {@link Opt.zip}
- */
-export declare const zip: ZipFn;
+export declare const zipArray: <T>(a: readonly T[]) => <U>(b: readonly U[]) => [T, U][];
+export declare const zipOpt: <T>(x: Opt<T>) => <U>(other: Opt<U>) => Opt<[T, U]>;
 /** @see {@link Opt.zip3} */
-export declare const zip3: <T>(x: Opt<T>) => <A>(a: Opt<A>) => <B>(b: Opt<B>) => Opt<[T, A, B]>;
+export declare const zip3Opt: <T>(x: Opt<T>) => <A>(a: Opt<A>) => <B>(b: Opt<B>) => Opt<[T, A, B]>;
 /** @see {@link Opt.zip4} */
-export declare const zip4: <T>(x: Opt<T>) => <A>(a: Opt<A>) => <B>(b: Opt<B>) => <C>(c: Opt<C>) => Opt<[T, A, B, C]>;
+export declare const zip4Opt: <T>(x: Opt<T>) => <A>(a: Opt<A>) => <B>(b: Opt<B>) => <C>(c: Opt<C>) => Opt<[T, A, B, C]>;
 /** @see {@link Opt.zip5} */
-export declare const zip5: <T>(x: Opt<T>) => <A>(a: Opt<A>) => <B>(b: Opt<B>) => <C>(c: Opt<C>) => <D>(d: Opt<D>) => Opt<[T, A, B, C, D]>;
+export declare const zip5Opt: <T>(x: Opt<T>) => <A>(a: Opt<A>) => <B>(b: Opt<B>) => <C>(c: Opt<C>) => <D>(d: Opt<D>) => Opt<[T, A, B, C, D]>;
+/** @see {@link Opt.zipIn} */
+export declare const zipIn: <U, V>(x: Opt<readonly U[]>) => (other: EmptyValue | V[]) => Opt<readonly [U, V][]>;
 type FilterFn = <T>(p: (_: T) => boolean) => <U extends Opt<T> | readonly T[]>(x: U) => U extends Opt<T> ? Opt<T> : T[];
 /**
  * Same as {@link Opt.filter}, but also supports arrays.
  * @see {@link Opt.filter}
  */
 export declare const filter: FilterFn;
+/** @see {@link Opt.filterIn} */
+export declare const filterIn: <T>(p: (x: T) => boolean) => (opt: Opt<T[]>) => Opt<T[]>;
+/** @see {@link Opt.findIn} */
+export declare const findIn: <U>(f: (x: U) => boolean) => (opt: Opt<U[]>) => Opt<U>;
 /** @see {@link Opt.noneIf} */
 export declare const noneIf: <T>(predicate: (_: T) => boolean) => (x: Opt<T>) => Opt<T>;
 /** @see {@link Opt.noneIfEmpty} */
@@ -1492,6 +1673,8 @@ type CountFn = <T>(p: (_: T) => boolean) => <U extends Opt<T> | readonly T[]>(x:
  * @see {@link Opt.count}
  */
 export declare const count: CountFn;
+/** @see {@link Opt.countIn} */
+export declare const countIn: <T>(p: (x: T) => boolean) => (x: Opt<T[]>) => Opt<number>;
 /**
  * Find a first item which holds true for a given predicate and return it wrapped in {@link Some}.
  * Return {@link None} when no match is found.
@@ -1713,17 +1896,17 @@ type WithoutPossiblyEmptyEmptyValues<T> = Exclude<T, '' | [] | typeof none | Emp
  * Similar to `isEmpty` from lodash, but also supports {@link Opt}s.
  * Returns `true` for {@link None}, `[]`, `null`, `undefined`, empty map, empty set, empty object, `''` and `NaN`.
  * Otherwise returns `false`.
- *
- * @example
- * ```ts
+   *
+   * @example
+   * ```ts
  * isEmpty(opt(1)) // false
  * isEmpty(opt(null)) // true
  * isEmpty([]) // true
  * isEmpty([1]) // false
  * isEmpty(null) // true
  * isEmpty('') // true
- * ```
- *
+   * ```
+   *
  * @param x
  */
 export declare const isEmpty: (x: PossiblyEmpty) => boolean;
@@ -1770,18 +1953,27 @@ type AtFn = <T, R = T extends readonly (infer A)[] ? OptSafe<A> : Opt<string>>(x
 export declare const at: (index: number) => AtFn;
 type HeadFn = <T, R = T extends readonly (infer A)[] ? OptSafe<A> : Opt<string>>(x: EmptyValue | T) => R;
 /**
- * Same as {@link Opt.head}, but also supports unwrapped arrays.
- * @see {@link Opt.head}
- * @param x
+ * Returns the first element of an array or fist character of a string.
+ * @param xs
  */
 export declare const head: HeadFn;
-type LastFn = <T, R = T extends readonly (infer A)[] ? OptSafe<A> : Opt<string>>(x: EmptyValue | T) => R;
+type HeadInFn = <T, R = T extends readonly (infer A)[] ? OptSafe<A> : (T extends string ? Opt<string> : never)>(x: EmptyValue | Opt<T>) => R;
 /**
- * Same as {@link Opt.last}, but also supports unwrapped arrays.
- * @see {@link Opt.last}
+ * Same as {@link Opt.headIn}.
+ * @see {@link Opt.headIn}
  * @param x
  */
+export declare const headIn: HeadInFn;
+type LastFn = <T, R = T extends readonly (infer A)[] ? OptSafe<A> : Opt<string>>(x: EmptyValue | T) => R;
+/** Returns the last element of an array or last character of a string. */
 export declare const last: LastFn;
+type LastInFn = <T, R = T extends readonly (infer A)[] ? OptSafe<A> : (T extends string ? Opt<string> : never)>(x: EmptyValue | Opt<T>) => R;
+/**
+ * Same as {@link Opt.lastIn}.
+ * @see {@link Opt.lastIn}
+ * @param x
+ */
+export declare const lastIn: LastInFn;
 interface ZipToOptArrayFn {
     <A, B>(xs: readonly [A, B]): Opt<[WithoutOptValues<A>, WithoutOptValues<B>]>;
     <A, B, C>(xs: readonly [A, B, C]): Opt<[WithoutOptValues<A>, WithoutOptValues<B>, WithoutOptValues<C>]>;
@@ -1911,10 +2103,14 @@ type AssertTypeFunc = <T>(x: unknown, guard: (x: unknown) => x is T, msg?: strin
  * @param msg
  */
 export declare const assertType: AssertTypeFunc;
-/** @see {@link Opt.min} */
-export declare const min: <R>(x: readonly R[] | Opt<readonly R[]>) => OptSafe<R>;
-/** @see {@link Opt.max} */
-export declare const max: <R>(x: readonly R[] | Opt<readonly R[]>) => OptSafe<R>;
+/** Returns the minimum value in an array. */
+export declare const min: <R>(x: readonly R[]) => OptSafe<R>;
+/** @see {@link Opt.minIn} */
+export declare const minIn: <R>(x: Opt<readonly R[]>) => OptSafe<R>;
+/** Returns the maximum value in an array. */
+export declare const max: <R>(x: readonly R[]) => OptSafe<R>;
+/** @see {@link Opt.maxIn} */
+export declare const maxIn: <R>(x: Opt<readonly R[]>) => OptSafe<R>;
 /**
  * Get a lesser number from two given numbers.
  *
