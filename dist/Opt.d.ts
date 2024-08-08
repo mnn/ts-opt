@@ -1415,7 +1415,7 @@ export declare const some: <T>(x: T) => Readonly<Some<T>>;
  * ```
  * @param x
  */
-export declare const opt: <T>(x: T | null | undefined) => OptSafe<T>;
+export declare const opt: <T>(x: T | undefined | null) => OptSafe<T>;
 /**
  * For falsy values returns {@link None}, otherwise acts same as {@link opt}.
  * ```ts
@@ -1426,27 +1426,27 @@ export declare const opt: <T>(x: T | null | undefined) => OptSafe<T>;
  * ```
  * @param x
  */
-export declare const optFalsy: <T>(x: false | "" | 0 | T | null | undefined) => OptSafe<T>;
+export declare const optFalsy: <T>(x: T | undefined | null | "" | false | 0) => OptSafe<T>;
 /**
  * For empty array (`[]`) returns {@link None}, otherwise acts same as {@link opt}.
  * @param x
  */
-export declare const optEmptyArray: <T, A extends readonly T[] | T[]>(x: A | null | undefined) => OptSafe<A>;
+export declare const optEmptyArray: <T, A extends readonly T[] | T[]>(x: A | undefined | null) => OptSafe<A>;
 /**
  * For empty object (`{}`) returns {@link None}, otherwise acts same as {@link opt}.
  * @param x
  */
-export declare const optEmptyObject: <T extends object>(x: T | null | undefined) => OptSafe<T>;
+export declare const optEmptyObject: <T extends object>(x: T | undefined | null) => OptSafe<T>;
 /**
  * For empty string (`''`) returns {@link None}, otherwise acts same as {@link opt}.
  * @param x
  */
-export declare const optEmptyString: <T>(x: "" | T | null | undefined) => OptSafe<T>;
+export declare const optEmptyString: <T>(x: T | undefined | null | "") => OptSafe<T>;
 /**
  * For a number `0` returns {@link None}, otherwise acts same as {@link opt}.
  * @param x
  */
-export declare const optZero: <T>(x: 0 | T | null | undefined) => OptSafe<T>;
+export declare const optZero: <T>(x: T | undefined | null | 0) => OptSafe<T>;
 /**
  * For numbers lesser than `0` returns {@link None}, otherwise acts same as {@link opt}.
  * Useful for strange functions which return `-1` or other negative numbers on failure.
@@ -1472,7 +1472,7 @@ export declare const optNegative: (x: number | undefined | null) => OptSafe<numb
  *
  * @param xs
  */
-export declare const optArrayOpt: <T>(xs: EmptyValue | (EmptyValue | T)[]) => OptSafe<T[]>;
+export declare const optArrayOpt: <T>(xs: (T | EmptyValue)[] | EmptyValue) => OptSafe<T[]>;
 /**
  * Is given value an instance of {@link Opt}?
  * @param x
@@ -1541,7 +1541,7 @@ export declare const toArray: <T>(x: Opt<T>) => [] | [T];
 /** @see {@link Opt.fromObject} */
 export declare const fromObject: FromObjectFn;
 /** @see {@link Opt.toObject} */
-export declare const toObject: <K extends string = "value">(k?: K | undefined) => <T>(x: Opt<T>) => Record<K, T | null>;
+export declare const toObject: <K extends string = "value">(k?: K) => <T>(x: Opt<T>) => Record<K, T | null>;
 type MapFn = <T, U>(f: (_: T) => U) => <I extends (Opt<T> | readonly T[]), O extends (I extends Opt<T> ? Opt<U> : U[])>(x: I) => O;
 /**
  * Same as {@link Opt.map}, but also supports arrays.
@@ -1572,7 +1572,7 @@ export declare const act: ActFn;
 /** @see {@link Opt.chainFlow} */
 export declare const chainFlow: ActFn;
 /** @see {@link Opt.chainToOpt} */
-export declare const chainToOpt: <T, U>(f: (_: T) => U | null | undefined) => (x: Opt<T>) => OptSafe<U>;
+export declare const chainToOpt: <T, U>(f: (_: T) => U | undefined | null) => (x: Opt<T>) => OptSafe<U>;
 /** @see {@link Opt.actToOpt} */
 export declare const actToOpt: ActToOptFn;
 /** @see {@link Opt.chainToOptFlow} */
@@ -1586,11 +1586,11 @@ export declare const orUndef: <T>(x: Opt<T>) => T | undefined;
 /** @see {@link Opt.orNull} */
 export declare const orNull: <T>(x: Opt<T>) => T | null;
 /** @see {@link Opt.orFalse} */
-export declare const orFalse: <T>(x: Opt<T>) => false | T;
+export declare const orFalse: <T>(x: Opt<T>) => T | false;
 /** @see {@link Opt.orTrue} */
-export declare const orTrue: <T>(x: Opt<T>) => true | T;
+export declare const orTrue: <T>(x: Opt<T>) => T | true;
 /** @see {@link Opt.orNaN} */
-export declare const orNaN: <T>(x: Opt<T>) => number | T;
+export declare const orNaN: <T>(x: Opt<T>) => T | number;
 /** @see {@link Opt.caseOf} */
 export declare const caseOf: <T, R>(onSome: (x: T) => R) => (onNone: () => R) => (x: Opt<T>) => R;
 /** @see {@link Opt.fold} */
@@ -1624,7 +1624,7 @@ export declare const orElse: <T>(e: T) => (x: Opt<T>) => T;
 /** @see {@link Opt.orElseLazy} */
 export declare const orElseLazy: <T>(e: () => T) => (x: Opt<T>) => T;
 /** @see {@link Opt.orElseAny} */
-export declare const orElseAny: <U>(e: U) => <T>(x: Opt<T>) => U | T;
+export declare const orElseAny: <U>(e: U) => <T>(x: Opt<T>) => T | U;
 /** @see {@link Opt.alt} */
 export declare const alt: <T>(def: Opt<T>) => (x: Opt<T>) => Opt<T>;
 /** @see {@link Opt.altOpt} */
@@ -1642,7 +1642,7 @@ export declare const zip4Opt: <T>(x: Opt<T>) => <A>(a: Opt<A>) => <B>(b: Opt<B>)
 /** @see {@link Opt.zip5} */
 export declare const zip5Opt: <T>(x: Opt<T>) => <A>(a: Opt<A>) => <B>(b: Opt<B>) => <C>(c: Opt<C>) => <D>(d: Opt<D>) => Opt<[T, A, B, C, D]>;
 /** @see {@link Opt.zipIn} */
-export declare const zipIn: <U, V>(x: Opt<readonly U[]>) => (other: EmptyValue | V[]) => Opt<readonly [U, V][]>;
+export declare const zipIn: <U, V>(x: Opt<readonly U[]>) => ((other: V[] | EmptyValue) => Opt<readonly [U, V][]>);
 type FilterFn = <T>(p: (_: T) => boolean) => <U extends Opt<T> | readonly T[]>(x: U) => U extends Opt<T> ? Opt<T> : T[];
 /**
  * Same as {@link Opt.filter}, but also supports arrays.
@@ -1656,7 +1656,7 @@ export declare const findIn: <U>(f: (x: U) => boolean) => (opt: Opt<U[]>) => Opt
 /** @see {@link Opt.noneIf} */
 export declare const noneIf: <T>(predicate: (_: T) => boolean) => (x: Opt<T>) => Opt<T>;
 /** @see {@link Opt.noneIfEmpty} */
-export declare const noneIfEmpty: <T extends PossiblyEmpty>(x: Opt<T>) => Opt<Exclude<T, "" | [] | EmptyValue | None<any>>>;
+export declare const noneIfEmpty: <T extends PossiblyEmpty>(x: Opt<T>) => Opt<WithoutPossiblyEmptyEmptyValues<T>>;
 /** @see {@link Opt.noneWhen} */
 export declare const noneWhen: <T>(returnNone: boolean) => (x: Opt<T>) => Opt<T>;
 type CountFn = <T>(p: (_: T) => boolean) => <U extends Opt<T> | readonly T[]>(x: U) => U extends Opt<T> ? 0 | 1 : number;
@@ -1700,7 +1700,7 @@ export declare const print: (tag?: string) => <T>(x: T) => T;
 /** @see {@link Opt.equals} */
 export declare const equals: <T>(other: Opt<T>, comparator?: EqualityFunction) => (x: Opt<T>) => boolean;
 /** @see {@link Opt.prop} */
-export declare const prop: <T extends object, K extends T extends object ? keyof T : never = T extends object ? keyof T : never>(key: K) => (x: Opt<T>) => OptSafe<T[K]>;
+export declare const prop: <T extends object, K extends (T extends object ? keyof T : never) = T extends object ? keyof T : never>(key: K) => (x: Opt<T>) => OptSafe<T[K]>;
 /**
  * Similar to {@link Opt.prop}, but it is designed for naked objects (not wrapped in opt).
  *
@@ -1714,7 +1714,7 @@ export declare const prop: <T extends object, K extends T extends object ? keyof
  * propNaked<ObjC>('c')({c: null}) // None
  * ```
  */
-export declare const propNaked: <T extends object | EmptyValue, K extends T extends object ? keyof T : never = T extends object ? keyof T : never>(key: K) => (x: EmptyValue | T) => OptSafe<T[K]>;
+export declare const propNaked: <T extends object | EmptyValue, K extends (T extends object ? keyof T : never) = T extends object ? keyof T : never>(key: K) => (x: T | EmptyValue) => OptSafe<T[K]>;
 /**
  * Similar to {@link Opt.propOrCrash}, but also supports naked objects.
  *
@@ -1727,7 +1727,7 @@ export declare const propNaked: <T extends object | EmptyValue, K extends T exte
  * propOrCrash<Animal>('name')(a) // 'Spot'
  * ```
  */
-export declare const propOrCrash: <T extends object, P extends T | Opt<T> = T | Opt<T>, K extends P extends Opt<T> ? T extends object ? keyof T : never : P extends object ? keyof P : never = P extends Opt<T> ? T extends object ? keyof T : never : P extends object ? keyof P : never>(key: K) => (x: P) => WithoutOptValues<T[K]>;
+export declare const propOrCrash: <T extends object, P extends Opt<T> | T = T | Opt<T>, K extends (P extends Opt<T> ? (T extends object ? keyof T : never) : (P extends object ? keyof P : never)) = P extends Opt<T> ? T extends object ? keyof T : never : P extends object ? keyof P : never>(key: K) => (x: P) => WithoutOptValues<T[K]>;
 /**
  * Utility function for generating property getter for one specific object.
  * Functionally similar to {@link propOrCrash}, but it has swapped arguments and only supports naked objects.
@@ -1768,7 +1768,7 @@ export declare const propOrCrash: <T extends object, P extends T | Opt<T> = T | 
  *
  * @param obj
  */
-export declare const genNakedPropOrCrash: <T extends object>(obj: T) => <K extends keyof T>(k: K) => WithoutOptValues<T> extends infer T_1 ? T_1 extends WithoutOptValues<T> ? T_1 extends object ? WithoutOptValues<T_1[any]> : never : never : never;
+export declare const genNakedPropOrCrash: <T extends object>(obj: T) => <K extends keyof T>(k: K) => T extends object ? WithoutOptValues<T[any]> : never;
 /** @see {@link Opt.swap} */
 export declare const swap: <U>(newValue: U) => <T>(x: Opt<T>) => Opt<U>;
 /**

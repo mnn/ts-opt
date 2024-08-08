@@ -2756,13 +2756,13 @@ export const apply = < //
   T extends AnyFunc,
   R extends ReturnType<T>,
   A extends Parameters<T> //
-  >(...args: A) => (x: Opt<T>): Opt<R> => x.apply(...args);
+  >(...args: A) => (x: Opt<T>): Opt<R> => x.apply(...args as any);
 
 /** @see {@link Opt.onFunc} */
 export const onFunc = < //
   T extends AnyFunc,
   A extends Parameters<T> //
-  >(...args: A) => (x: Opt<T>): Opt<T> => x.onFunc(...args);
+  >(...args: A) => (x: Opt<T>): Opt<T> => x.onFunc(...args as any);
 
 /**
  * Verify the given value passes the guard. If not, throw an exception.
