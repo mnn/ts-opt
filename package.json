@@ -27,7 +27,7 @@
   "license": "MIT",
   "scripts": {
     "clean": "rimraf dist",
-    "lint": "eslint --ext .ts,.tsx src test --report-unused-disable-directives",
+    "lint": "eslint src test --report-unused-disable-directives",
     "test": "nyc -r html -e .ts -x \"test/*.ts\" mocha -r ts-node/register test/**/*.ts && nyc report --check-coverage --branches 100 --functions 100 --lines 100 --statements 100",
     "test:no-coverage": "mocha -r ts-node/register test/**/*.ts",
     "test:watch": "chokidar --initial 'src/**/*.ts' 'test/**/*.ts' -c 'clear ; npm --silent run test:no-coverage -- --reporter dot'",

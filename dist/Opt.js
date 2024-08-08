@@ -47,7 +47,7 @@ var isArray = function (x) { return Array.isArray(x); };
 exports.isArray = isArray;
 var isReadonlyArray = function (x) { return Array.isArray(x); };
 exports.isReadonlyArray = isReadonlyArray;
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 var isFunction = function (x) { return typeof x === 'function'; };
 exports.isFunction = isFunction;
 var isObject = function (value) { return value !== null && typeof value === 'object'; };
@@ -1948,7 +1948,7 @@ var tryRun = function (f) {
     try {
         return (0, exports.opt)(f());
     }
-    catch (e) {
+    catch (_a) {
         return exports.none;
     }
 };

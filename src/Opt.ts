@@ -64,7 +64,7 @@ export const isString = (x: any): x is string => typeof x === 'string';
 export const toString = (x: { toString(): string }): string => x.toString();
 export const isArray = (x: any): x is unknown[] => Array.isArray(x);
 export const isReadonlyArray = (x: any): x is readonly unknown[] => Array.isArray(x);
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 export const isFunction = (x: any): x is Function => typeof x === 'function';
 export const isObject = (value: any): value is object => value !== null && typeof value === 'object';
 export const isNumber = (x: any): x is number => typeof x === 'number';
@@ -2700,7 +2700,7 @@ export const testReOrFalse = (re: RegExp) => (x: Opt<string>): boolean => x.test
 export const tryRun = <T>(f: () => T): Opt<T> => {
   try {
     return opt(f());
-  } catch (e) {
+  } catch {
     return none;
   }
 };
