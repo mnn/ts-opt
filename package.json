@@ -45,11 +45,9 @@
     "prepublishOnly": "npm run check-build-all",
     "gen-flowy": "cd utils/genFlowyThings && stack build && stack exec genFlowyThings-exe > ../../src/FlowLike.ts"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run check-build-all",
-      "pre-push": "npm run check-build-all"
-    }
+  "simple-git-hooks": {
+    "pre-commit": "npm run check-build-all",
+    "pre-push": "npm run check-build-all"
   },
   "repository": {
     "type": "git",
@@ -73,13 +71,13 @@
     "eslint": "9.8.0",
     "gzip-size": "7.0.0",
     "http-server": "14.1.1",
-    "husky": "8.0.3",
     "mocha": "10.7.0",
     "npm-run-all": "4.1.5",
     "nyc": "17.0.0",
     "react": "18.3.1",
     "rimraf": "6.0.1",
     "shelljs": "0.8.5",
+    "simple-git-hooks": "2.11.1",
     "ts-node": "10.9.1",
     "typedoc": "0.25.3",
     "typedoc-plugin-missing-exports": "3.0.0",
