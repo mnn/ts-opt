@@ -364,6 +364,20 @@ describe('opt', () => {
     });
   });
 
+  describe('mapPropNakedIn', () => {
+    it('maps over a property of objects in an array inside Opt', () => {
+      type Data = {data?: number};
+      const input: null | (Data | null)[] = [{data: 1}, {}, {data: 2}, null];
+      const data: Opt<Data[]> = optArrayOpt(input);
+      const result: Opt<number[]> = data.mapPropNakedIn('data');
+      expect(result.orNull()).to.eql([1, 2]);
+    });
+
+    it('example', () => {
+      expect(opt([{data: 1}, {}, {data: 2}, null]).mapPropNakedIn('data').orNull()).to.eql([1, 2]);
+    });
+  });
+
   describe('mapStr', () => {
     it('should fail type checking when called with incorrect types', () => {
       expect(() => {

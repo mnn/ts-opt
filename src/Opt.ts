@@ -237,6 +237,20 @@ export abstract class Opt<T> {
   abstract mapIn<U, R>(this: Opt<U[]>, f: (x: U) => R): Opt<R[]>;
 
   /**
+   * Maps over a property of objects in an array inside the Opt, discarding nulls and undefined values.
+   * @example
+   * ```ts
+   * opt([{data: 1}, {}, {data: 2}, null]).mapPropNakedIn('data') // Some([1, 2])
+   * ```
+   */
+  mapPropNakedIn<K extends string, V>(this: Opt<({ [key in K]?: V } | null | undefined)[]>, key: K): Opt<V[]> {
+    return this.mapFlow(
+      map(propNaked<any>(key)),
+      catOpts
+    ) as unknown as Opt<V[]>;
+  }
+    
+  /**
    * Similar to {@link Opt.map}, but supports more functions which are called in succession, each on a result of a previous one.
    *
    * @example

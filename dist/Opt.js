@@ -322,6 +322,16 @@ var Opt = /** @class */ (function () {
         return (0, exports.deserialize)(x, guard);
     };
     /**
+     * Maps over a property of objects in an array inside the Opt, discarding nulls and undefined values.
+     * @example
+     * ```ts
+     * opt([{data: 1}, {}, {data: 2}, null]).mapPropNakedIn('data') // Some([1, 2])
+     * ```
+     */
+    Opt.prototype.mapPropNakedIn = function (key) {
+        return this.mapFlow((0, exports.map)((0, exports.propNaked)(key)), exports.catOpts);
+    };
+    /**
      * @alias {@link Opt.flatMap}
      * @see {@link chain}
      * @param f
