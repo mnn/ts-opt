@@ -418,6 +418,10 @@ Not using specialized methods and other common bad uses
 | `.map(pred).orFalse()`                                   | `.exists(pred)`            |
 | `.map(pred).orTrue()`                                    | `.forAll(pred)`            |
 | `found.prop('id').nonEmpty ? found.prop('id') : opt(id)` | `found.prop('id').alt(id)` |
+| `.map(...).chainToOpt(x => x)`                           | `.chainToOpt(...)`         |
+| `opt(x).zip(opt(y))`                                     | `zipToOptArray([x, y])`    |
+
+
 
 Integrations
 ===

@@ -252,6 +252,18 @@ export abstract class Opt<T> {
   mapFlow: MapFlowInClassFn<T> = (...fs: any[]) => fs.reduce((acc, x) => acc.map(x), this);
 
   /**
+   * Maps over characters in a string wrapped in an Opt.
+   * @example
+   * ```ts
+   * opt('hello').mapStr(c => c.toUpperCase()) // Some('HELLO')
+   * opt('').mapStr(c => c.toUpperCase()) // Some('')
+   * none.mapStr(c => c.toUpperCase()) // None
+   * ```
+   * @see {@link mapStr}
+   */
+  abstract mapStr(this: Opt<string>, f: (c: string) => string): Opt<string>;
+
+  /**
    * Similar to {@link Opt.map}, but function is expected to return {@link Opt} which will be returned.
    * Useful for including steps which may fail or return no value.
    *
@@ -1398,6 +1410,10 @@ class None<T> extends Opt<T> {
 
   mapIn<R, U>(this: None<U[]>, _f: (x: U) => R): Opt<R[]> { return none as unknown as Opt<R[]>; }
 
+  mapStr(this: None<string>, _f: (c: string) => string): None<string> {
+    return this;
+  }
+
   orCrash(msg: string): T { throw new Error(msg); }
 
   someOrCrash(msg: string): Some<T> { throw new Error(msg); }
@@ -1557,6 +1573,13 @@ class Some<T> extends Opt<T> {
   mapIn<R, U>(this: Some<U[]>, f: (x: U) => R): Opt<R[]> {
     if (!isArray(this._value)) { throw new Error('mapIn called on non array: ' + this._value); }
     return some(this._value.map(f));
+  }
+
+  mapStr(this: Some<string>, f: (c: string) => string): Some<string> {
+    if (typeof this._value !== 'string') {
+      throw new Error('`Opt#mapStr` can only be used on strings');
+    }
+    return new Some(mapStr(f)(this._value));
   }
 
   orCrash(_msg: string): T { return this._value; }
@@ -1951,6 +1974,19 @@ export const optZero = <T>(x: T | undefined | null | 0): OptSafe<T> => x === 0 ?
 export const optNegative = (x: number | undefined | null): OptSafe<number> => typeof x === 'number' && x < 0 ? none : opt(x);
 
 /**
+ * For numbers equal to `Infinity` or `-Infinity` returns {@link None}, otherwise acts same as {@link opt}.
+ * ```ts
+ * optInfinity(undefined) // None
+ * optInfinity(1) // Some(1)
+ * optInfinity(0) // Some(0)
+ * optInfinity(Infinity) // None
+ * optInfinity(-Infinity) // None
+ * ```
+ * @param x
+ */
+export const optInfinity = (x: number | undefined | null): OptSafe<number> => x === Infinity || x === -Infinity ? none : opt(x);
+
+/**
  * Converts optional array of optional values to opt-wrapped array with empty values discarded.
  *
  * @example
@@ -2064,6 +2100,24 @@ export const mapIn = <T, U>(f: (x: T) => U) => (x: Opt<T[]>): Opt<U[]> => x.mapI
 
 /** @see {@link Opt.mapFlow} */
 export const mapFlow: MapFlowFn = (...fs: any[]) => <T>(x: Opt<T>) => fs.reduce((acc, x) => acc.map(x), x);
+
+/**
+ * Maps over each character in a string using the provided function.
+ * 
+ * @example
+ * ```ts
+ * const toUpperCase = (c: string) => c.toUpperCase();
+ * mapStr(toUpperCase)('hello') // 'HELLO'
+ * mapStr(c => c === 'o' ? '0' : c)('hello world') // 'hell0 w0rld'
+  * mapStr(c => c === 'r' ? 'ru' : c)('kirara') // 'kiruarua'
+ * mapStr(c => c === 'a' ? '' : c)('sango') // 'sngo'
+ * ```
+ * 
+ * @param f Function to apply to each character
+ * @returns A function that takes a string and returns the mapped string
+ */
+export const mapStr = <T extends string>(f: (c: string) => string) => (s: T): string =>
+  s.split('').map(f).join('');
 
 // type FlatMapFn = <T, U, O extends (Opt<U> | U[])>(f: (_: T) => O) => <I extends (O extends Opt<U> ? Opt<T> : T[])>(x: I) => O;
 interface FlatMapFn {

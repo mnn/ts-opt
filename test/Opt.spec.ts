@@ -21,12 +21,14 @@ import {
   caseOf,
   catOpts,
   chainFlow,
+  chainIn,
   chainToOpt,
   chainToOptFlow,
   clamp,
   compose,
   contains,
   count,
+  countIn,
   crash,
   curryTuple,
   curryTuple3,
@@ -42,12 +44,19 @@ import {
   eqAny,
   equals,
   exists,
+  existsIn,
   filter,
+  filterIn,
   find,
+  findIn,
   flatBimap,
   flatMap,
+  flatMapIn,
   flow,
+  fold,
+  foldIn,
   forAll,
+  forAllIn,
   fromArray,
   fromObject,
   genNakedPropOrCrash,
@@ -70,9 +79,12 @@ import {
   joinOpt,
   last,
   lastIn,
+  lengthIn,
   map,
   mapFlow,
+  mapIn,
   mapOpt,
+  mapStr,
   max,
   max2All,
   max2Any,
@@ -101,6 +113,7 @@ import {
   optEmptyObject,
   optEmptyString,
   optFalsy,
+  optInfinity,
   optNegative,
   optZero,
   or,
@@ -138,24 +151,13 @@ import {
   uncurryTuple4,
   uncurryTuple5,
   xor,
-  zipOpt,
   zip3Opt,
   zip4Opt,
   zip5Opt,
-  zipToOptArray,
   zipArray,
-  flatMapIn,
-  chainIn,
-  existsIn,
-  forAllIn,
-  countIn,
-  findIn,
-  mapIn,
-  fold,
-  foldIn,
-  filterIn,
   zipIn,
-  lengthIn
+  zipOpt,
+  zipToOptArray,
 } from '../src/Opt';
 import jestSnapshotSerializer from '../src/jest-snapshot-serializer';
 
@@ -359,6 +361,25 @@ describe('opt', () => {
       // @ts-expect-error Testing for type safety: mapIn expects a function that operates on array elements.
       const result: Opt<number[]> = opt([1, 2, 3]).mapIn((x: string) => +x);
       expect(result.orNull()).to.eql([1, 2, 3]);
+    });
+  });
+
+  describe('mapStr', () => {
+    it('should fail type checking when called with incorrect types', () => {
+      expect(() => {
+        // @ts-expect-error Testing for type safety: mapStr should only work on Opt<string>
+        const result = opt(123).mapStr(c => c);
+        suppressUnused(result);
+      }).to.throw(Error, '`Opt#mapStr` can only be used on strings');
+    });
+  
+    it('should pass type checking when called with correct types', () => {
+      const result: Opt<string> = opt('hello').mapStr(c => c.toUpperCase());
+      expect(result.orNull()).to.equal('HELLO');
+    });
+  
+    it('should work with none', () => {
+      expect(none.mapStr(c => c.toUpperCase()).orNull()).to.be.null;
     });
   });
 
@@ -1371,6 +1392,21 @@ describe('optNegative', () => {
   });
 });
 
+describe('optInfinity', () => {
+  it('construction', () => {
+    expect(optInfinity(undefined).isEmpty).to.be.true;
+    expect(optInfinity(NaN).isEmpty).to.be.true;
+    expect(optInfinity(null).isEmpty).to.be.true;
+    expect(optInfinity(Infinity).isEmpty).to.be.true;
+    expect(optInfinity(-Infinity).isEmpty).to.be.true;
+    expect(optInfinity(0).isSome()).to.be.true;
+    expect(optInfinity(1).isSome()).to.be.true;
+    expect(optInfinity(-1).isSome()).to.be.true;
+    expect(optInfinity(0.0001).isSome()).to.be.true;
+    expect(optInfinity(10000).isSome()).to.be.true;
+  });
+});
+
 describe('optArrayOpt', () => {
   it('construction', () => {
     expect(optArrayOpt(undefined).isEmpty).to.be.true;
@@ -1851,6 +1887,36 @@ describe('mapFlow', () => {
   expect(mapFlow(id)(opt(null)).orNull()).to.be.null;
   expect(mapFlow(inc, id, id, id, id)(opt(1)).orNull()).to.be.eq(2);
   expect(mapFlow(inc, id, id, id)(opt<number>(null)).orNull()).to.be.null;
+});
+
+describe('mapStr', () => {
+  it('should map over characters in a string', () => {
+    const toUpperCase = (c: string) => c.toUpperCase();
+    expect(mapStr(toUpperCase)('hello')).to.equal('HELLO');
+    expect(mapStr(c => c === 'o' ? '0' : c)('hello world')).to.equal('hell0 w0rld');
+  });
+
+  it('should work with empty strings', () => {
+    expect(mapStr(c => c.toUpperCase())('')).to.equal('');
+  });
+
+  it('should work with single character strings', () => {
+    expect(mapStr(c => c.toUpperCase())('a')).to.equal('A');
+  });
+
+  it('should work with Opt', () => {
+    const toUpperCase = (c: string) => c.toUpperCase();
+    expect(opt('hello').map(mapStr(toUpperCase)).orNull()).to.equal('HELLO');
+    expect(opt<string>(null).map(mapStr(toUpperCase)).orNull()).to.be.null;
+  });
+
+  it('should replace characters with multiple characters', () => {
+    expect(mapStr(c => c === 'r' ? 'ru' : c)('kirara')).to.equal('kiruarua');
+  });
+
+  it('should remove characters', () => {
+    expect(mapStr(c => c === 'a' ? '' : c)('sango')).to.equal('sngo');
+  });
 });
 
 describe('flatMap', () => {

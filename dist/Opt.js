@@ -24,10 +24,10 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.orCrash = exports.someOrCrash = exports.chainToOptFlow = exports.actToOpt = exports.chainToOpt = exports.chainFlow = exports.act = exports.chainIn = exports.chain = exports.flatMapIn = exports.flatMap = exports.mapFlow = exports.mapIn = exports.map = exports.toObject = exports.fromObject = exports.toArray = exports.fromArray = exports.lengthIn = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optArrayOpt = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.deserializeUnsafe = exports.deserializeOrCrash = exports.deserialize = exports.serialize = exports.ReduxDevtoolsCompatibilityHelper = exports.isOptSerialized = exports.Opt = exports.isUnknown = exports.isNumber = exports.isObject = exports.isFunction = exports.isReadonlyArray = exports.isArray = exports.toString = exports.isString = void 0;
-exports.compose = exports.flow = exports.swap = exports.genNakedPropOrCrash = exports.propOrCrash = exports.propNaked = exports.prop = exports.equals = exports.print = exports.narrowOrCrash = exports.narrow = exports.find = exports.countIn = exports.count = exports.noneWhen = exports.noneIfEmpty = exports.noneIf = exports.findIn = exports.filterIn = exports.filter = exports.zipIn = exports.zip5Opt = exports.zip4Opt = exports.zip3Opt = exports.zipOpt = exports.zipArray = exports.flatBimap = exports.bimap = exports.altOpt = exports.alt = exports.orElseAny = exports.orElseLazy = exports.orElse = exports.forAllIn = exports.forAll = exports.existsIn = exports.exists = exports.hasIn = exports.has = exports.contains = exports.pipe = exports.onBoth = exports.foldIn = exports.fold = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = void 0;
-exports.eq = exports.crash = exports.appendStr = exports.prependStr = exports.dec = exports.inc = exports.bool = exports.xor = exports.or = exports.and = exports.not = exports.clamp = exports.max2Any = exports.max2All = exports.max2Num = exports.min2Any = exports.min2All = exports.min2Num = exports.maxIn = exports.max = exports.minIn = exports.min = exports.assertType = exports.isOrCrash = exports.onFunc = exports.apply = exports.parseFloat = exports.parseInt = exports.parseJson = exports.tryRun = exports.testReOrFalse = exports.testRe = exports.zipToOptArray = exports.lastIn = exports.last = exports.headIn = exports.head = exports.at = exports.id = exports.isFull = exports.nonEmpty = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = void 0;
-exports.noop = exports.eqAny = void 0;
+exports.chainToOptFlow = exports.actToOpt = exports.chainToOpt = exports.chainFlow = exports.act = exports.chainIn = exports.chain = exports.flatMapIn = exports.flatMap = exports.mapStr = exports.mapFlow = exports.mapIn = exports.map = exports.toObject = exports.fromObject = exports.toArray = exports.fromArray = exports.lengthIn = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optArrayOpt = exports.optInfinity = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.deserializeUnsafe = exports.deserializeOrCrash = exports.deserialize = exports.serialize = exports.ReduxDevtoolsCompatibilityHelper = exports.isOptSerialized = exports.Opt = exports.isUnknown = exports.isNumber = exports.isObject = exports.isFunction = exports.isReadonlyArray = exports.isArray = exports.toString = exports.isString = void 0;
+exports.swap = exports.genNakedPropOrCrash = exports.propOrCrash = exports.propNaked = exports.prop = exports.equals = exports.print = exports.narrowOrCrash = exports.narrow = exports.find = exports.countIn = exports.count = exports.noneWhen = exports.noneIfEmpty = exports.noneIf = exports.findIn = exports.filterIn = exports.filter = exports.zipIn = exports.zip5Opt = exports.zip4Opt = exports.zip3Opt = exports.zipOpt = exports.zipArray = exports.flatBimap = exports.bimap = exports.altOpt = exports.alt = exports.orElseAny = exports.orElseLazy = exports.orElse = exports.forAllIn = exports.forAll = exports.existsIn = exports.exists = exports.hasIn = exports.has = exports.contains = exports.pipe = exports.onBoth = exports.foldIn = exports.fold = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = void 0;
+exports.appendStr = exports.prependStr = exports.dec = exports.inc = exports.bool = exports.xor = exports.or = exports.and = exports.not = exports.clamp = exports.max2Any = exports.max2All = exports.max2Num = exports.min2Any = exports.min2All = exports.min2Num = exports.maxIn = exports.max = exports.minIn = exports.min = exports.assertType = exports.isOrCrash = exports.onFunc = exports.apply = exports.parseFloat = exports.parseInt = exports.parseJson = exports.tryRun = exports.testReOrFalse = exports.testRe = exports.zipToOptArray = exports.lastIn = exports.last = exports.headIn = exports.head = exports.at = exports.id = exports.isFull = exports.nonEmpty = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = void 0;
+exports.noop = exports.eqAny = exports.eq = exports.crash = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 var errorSymbol = Symbol('Error');
@@ -696,6 +696,9 @@ var None = /** @class */ (function (_super) {
     None.prototype.flatMapIn = function (_f) { return exports.none; };
     None.prototype.map = function () { return exports.none; };
     None.prototype.mapIn = function (_f) { return exports.none; };
+    None.prototype.mapStr = function (_f) {
+        return this;
+    };
     None.prototype.orCrash = function (msg) { throw new Error(msg); };
     None.prototype.someOrCrash = function (msg) { throw new Error(msg); };
     None.prototype.orNull = function () { return null; };
@@ -823,6 +826,12 @@ var Some = /** @class */ (function (_super) {
             throw new Error('mapIn called on non array: ' + this._value);
         }
         return (0, exports.some)(this._value.map(f));
+    };
+    Some.prototype.mapStr = function (f) {
+        if (typeof this._value !== 'string') {
+            throw new Error('`Opt#mapStr` can only be used on strings');
+        }
+        return new Some((0, exports.mapStr)(f)(this._value));
     };
     Some.prototype.orCrash = function (_msg) { return this._value; };
     Some.prototype.someOrCrash = function (_msg) { return this; };
@@ -1188,6 +1197,19 @@ exports.optZero = optZero;
 var optNegative = function (x) { return typeof x === 'number' && x < 0 ? exports.none : (0, exports.opt)(x); };
 exports.optNegative = optNegative;
 /**
+ * For numbers equal to `Infinity` or `-Infinity` returns {@link None}, otherwise acts same as {@link opt}.
+ * ```ts
+ * optInfinity(undefined) // None
+ * optInfinity(1) // Some(1)
+ * optInfinity(0) // Some(0)
+ * optInfinity(Infinity) // None
+ * optInfinity(-Infinity) // None
+ * ```
+ * @param x
+ */
+var optInfinity = function (x) { return x === Infinity || x === -Infinity ? exports.none : (0, exports.opt)(x); };
+exports.optInfinity = optInfinity;
+/**
  * Converts optional array of optional values to opt-wrapped array with empty values discarded.
  *
  * @example
@@ -1308,6 +1330,25 @@ var mapFlow = function () {
     return function (x) { return fs.reduce(function (acc, x) { return acc.map(x); }, x); };
 };
 exports.mapFlow = mapFlow;
+/**
+ * Maps over each character in a string using the provided function.
+ *
+ * @example
+ * ```ts
+ * const toUpperCase = (c: string) => c.toUpperCase();
+ * mapStr(toUpperCase)('hello') // 'HELLO'
+ * mapStr(c => c === 'o' ? '0' : c)('hello world') // 'hell0 w0rld'
+  * mapStr(c => c === 'r' ? 'ru' : c)('kirara') // 'kiruarua'
+ * mapStr(c => c === 'a' ? '' : c)('sango') // 'sngo'
+ * ```
+ *
+ * @param f Function to apply to each character
+ * @returns A function that takes a string and returns the mapped string
+ */
+var mapStr = function (f) { return function (s) {
+    return s.split('').map(f).join('');
+}; };
+exports.mapStr = mapStr;
 /**
  * Same as {@link Opt.flatMap}, but also supports arrays.
  * @see {@link Opt.flatMap}
