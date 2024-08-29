@@ -25,9 +25,9 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.chainToOptFlow = exports.actToOpt = exports.chainToOpt = exports.chainFlow = exports.act = exports.chainIn = exports.chain = exports.flatMapIn = exports.flatMap = exports.mapStr = exports.mapFlow = exports.mapIn = exports.map = exports.toObject = exports.fromObject = exports.toArray = exports.fromArray = exports.lengthIn = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optArrayOpt = exports.optInfinity = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.deserializeUnsafe = exports.deserializeOrCrash = exports.deserialize = exports.serialize = exports.ReduxDevtoolsCompatibilityHelper = exports.isOptSerialized = exports.Opt = exports.isUnknown = exports.isNumber = exports.isObject = exports.isFunction = exports.isReadonlyArray = exports.isArray = exports.toString = exports.isString = void 0;
-exports.swap = exports.genNakedPropOrCrash = exports.propOrCrash = exports.propNaked = exports.prop = exports.equals = exports.print = exports.narrowOrCrash = exports.narrow = exports.find = exports.countIn = exports.count = exports.noneWhen = exports.noneIfEmpty = exports.noneIf = exports.findIn = exports.filterIn = exports.filter = exports.zipIn = exports.zip5Opt = exports.zip4Opt = exports.zip3Opt = exports.zipOpt = exports.zipArray = exports.flatBimap = exports.bimap = exports.altOpt = exports.alt = exports.orElseAny = exports.orElseLazy = exports.orElse = exports.forAllIn = exports.forAll = exports.existsIn = exports.exists = exports.hasIn = exports.has = exports.contains = exports.pipe = exports.onBoth = exports.foldIn = exports.fold = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = void 0;
-exports.appendStr = exports.prependStr = exports.dec = exports.inc = exports.bool = exports.xor = exports.or = exports.and = exports.not = exports.clamp = exports.max2Any = exports.max2All = exports.max2Num = exports.min2Any = exports.min2All = exports.min2Num = exports.maxIn = exports.max = exports.minIn = exports.min = exports.assertType = exports.isOrCrash = exports.onFunc = exports.apply = exports.parseFloat = exports.parseInt = exports.parseJson = exports.tryRun = exports.testReOrFalse = exports.testRe = exports.zipToOptArray = exports.lastIn = exports.last = exports.headIn = exports.head = exports.at = exports.id = exports.isFull = exports.nonEmpty = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = void 0;
-exports.noop = exports.eqAny = exports.eq = exports.crash = void 0;
+exports.propNaked = exports.prop = exports.equals = exports.print = exports.narrowOrCrash = exports.narrow = exports.find = exports.countIn = exports.count = exports.noneWhen = exports.noneIfEmpty = exports.noneIf = exports.findIn = exports.filterIn = exports.filter = exports.zipIn = exports.zip5Opt = exports.zip4Opt = exports.zip3Opt = exports.zipOpt = exports.zipArray = exports.flatBimap = exports.bimap = exports.altOpt = exports.alt = exports.orElseAny = exports.orElseLazy = exports.orElse = exports.forAllIn = exports.forAll = exports.existsIn = exports.exists = exports.hasIn = exports.elemOfStrIn = exports.elemOfStr = exports.elemOf = exports.has = exports.contains = exports.pipe = exports.onBoth = exports.foldIn = exports.fold = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = void 0;
+exports.inc = exports.bool = exports.xor = exports.or = exports.and = exports.not = exports.clamp = exports.max2Any = exports.max2All = exports.max2Num = exports.min2Any = exports.min2All = exports.min2Num = exports.maxIn = exports.max = exports.minIn = exports.min = exports.assertType = exports.isOrCrash = exports.onFunc = exports.apply = exports.parseFloat = exports.parseInt = exports.parseJson = exports.tryRun = exports.testReOrFalse = exports.testRe = exports.zipToOptArray = exports.lastIn = exports.last = exports.headIn = exports.head = exports.at = exports.id = exports.isFull = exports.nonEmpty = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.genNakedPropOrCrash = exports.propOrCrash = void 0;
+exports.noop = exports.eqAny = exports.eq = exports.crash = exports.appendStr = exports.prependStr = exports.dec = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 var errorSymbol = Symbol('Error');
@@ -388,6 +388,47 @@ var Opt = /** @class */ (function () {
     /** @alias {@link Opt.hasIn} */
     Opt.prototype.containsIn = function (x) {
         return this.hasIn(x);
+    };
+    /**
+     * Checks if the value inside the Opt is an element of the given array.
+     * Flipped version of {@link Opt.hasIn}.
+     *
+     * @example
+     * ```ts
+     * opt(1).elemOfIn([1, 2, 3]) // true
+     * opt(4).elemOfIn([1, 2, 3]) // false
+     * none.elemOfIn([1, 2, 3]) // false
+     * opt('cow').elemOfIn(['dog', 'cow', 'pig']) // true
+     * opt('cat').elemOfIn(['dog', 'cow', 'pig']) // false
+     * none.elemOfIn(['dog', 'cow', 'pig']) // false
+     * ```
+     *
+     * @see {@link elemOf}
+     *
+     * @param haystack The array to check against
+     * @returns true if the value is in the array, false otherwise
+     */
+    Opt.prototype.elemOfIn = function (haystack) {
+        return this.exists((0, exports.elemOf)(haystack));
+    };
+    /**
+     * Checks if the string value inside this Opt is a substring of the given string.
+     *
+     * @example
+     * ```ts
+     * opt('ab').elemOfStrIn('abc') // true
+     * opt('a').elemOfStrIn('def') // false
+     * none.elemOfStrIn('abc') // false
+     * ```
+     *
+     * @see {@link Opt.elemOfIn}
+     * @see {@link elemOfStrIn}
+     *
+     * @param haystack The string to search in
+     * @returns true if the value is a substring of the haystack, false otherwise
+     */
+    Opt.prototype.elemOfStrIn = function (haystack) {
+        return this.exists((0, exports.elemOfStr)(haystack));
     };
     /**
      * Filter by regular expression.
@@ -1450,6 +1491,62 @@ exports.contains = contains;
 /** @see {@link Opt.has} */
 var has = function (x) { return function (opt) { return opt.has(x); }; };
 exports.has = has;
+/**
+ * Checks if an element is in an array.
+ *
+ * @example
+ * ```ts
+ * elemOf(['a', 'b'])('a') // true
+ * elemOf([1, 2, 3])(4) // false
+ * opt(1).exists(elemOf([1, 2])) // true
+ * ```
+ *
+ * @see {@link Opt.elemOfIn}
+ * @see {@link elemOfStr}
+ *
+ * @param arr The array to check
+ * @returns A function that takes an element and returns true if it's in the array
+ */
+var elemOf = function (haystack) { return function (needle) { return haystack.includes(needle); }; };
+exports.elemOf = elemOf;
+/**
+ * Checks if a substring is in a string.
+ *
+ * @example
+ * ```ts
+ * elemOfStr('abc')('a') // true
+ * elemOfStr('abc')('ab') // true
+ * elemOfStr('abc')('d') // false
+ * opt('ab').exists(elemOfStr('abc')) // true
+ * ```
+ *
+ * @see {@link Opt.elemOfStrIn}
+ * @see {@link elemOfStrIn}
+ *
+ * @param haystack The string to search in
+ * @returns A function that takes a needle (substring) and returns true if it's in the haystack
+ */
+var elemOfStr = function (haystack) { return function (needle) { return haystack.includes(needle); }; };
+exports.elemOfStr = elemOfStr;
+/**
+ * Checks if the string value inside this Opt is a substring of the given string.
+ *
+ * @example
+ * ```ts
+ * elemOfStrIn('abc')(opt('a')) // Some(true)
+ * elemOfStrIn('abc')(opt('d')) // Some(false)
+ * elemOfStrIn('abc')(none) // None
+ * ```
+ *
+ * @see {@link Opt.elemOfStrIn}
+ *
+ * @param haystack The string to search in
+ * @returns A function that takes an Opt<string> and returns an Opt<boolean>
+ */
+var elemOfStrIn = function (haystack) { return function (needle) {
+    return needle.map(function (n) { return haystack.includes(n); });
+}; };
+exports.elemOfStrIn = elemOfStrIn;
 /** @see {@link Opt.hasIn} */
 var hasIn = function (x) { return function (opt) { return opt.hasIn(x); }; };
 exports.hasIn = hasIn;

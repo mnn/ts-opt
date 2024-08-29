@@ -40,6 +40,9 @@ import {
   deserialize,
   deserializeOrCrash,
   deserializeUnsafe,
+  elemOf,
+  elemOfStr,
+  elemOfStrIn,
   eq,
   eqAny,
   equals,
@@ -601,6 +604,40 @@ describe('opt', () => {
     expect(none.containsIn(0)).to.be.false;
     expect(opt([1]).containsIn(0)).to.be.false;
     expect(opt([0]).containsIn(0)).to.be.true;
+  });
+
+  describe('elemOfIn', () => {
+    it('returns true when value is in array', () => {
+      expect(opt(2).elemOfIn([1, 2, 3])).to.be.true;
+      expect(opt('b').elemOfIn(['a', 'b', 'c'])).to.be.true;
+    });
+
+    it('returns false when value is not in array', () => {
+      expect(opt(4).elemOfIn([1, 2, 3])).to.be.false;
+      expect(opt('d').elemOfIn(['a', 'b', 'c'])).to.be.false;
+    });
+
+    it('returns false for none', () => {
+      expect(none.elemOfIn([1, 2, 3])).to.be.false;
+    });
+  });
+
+  describe('elemOfStrIn', () => {
+    it('returns true when substring in Opt is in string', () => {
+      expect(opt('a').elemOfStrIn('abc')).to.be.true;
+      expect(opt('ab').elemOfStrIn('abc')).to.be.true;
+      expect(opt('abc').elemOfStrIn('abc')).to.be.true;
+    });
+  
+    it('returns false when substring in Opt is not in string', () => {
+      expect(opt('d').elemOfStrIn('abc')).to.be.false;
+      expect(opt('ac').elemOfStrIn('abc')).to.be.false;
+      expect(opt('abcd').elemOfStrIn('abc')).to.be.false;
+    });
+  
+    it('returns false for none', () => {
+      expect(none.elemOfStrIn('abc')).to.be.false;
+    });
   });
 
   it('has', () => {
@@ -2179,6 +2216,82 @@ describe('hasIn', () => {
   it('negative', () => {
     expect(hasIn(1)(none)).to.be.false;
     expect(hasIn(1)(opt([2]))).to.be.false;
+  });
+});
+
+describe('elemOf', () => {
+  it('returns true when element is in array', () => {
+    expect(elemOf([1, 2, 3])(2)).to.be.true;
+    expect(elemOf(['a', 'b', 'c'])('b')).to.be.true;
+  });
+
+  it('returns false when element is not in array', () => {
+    expect(elemOf([1, 2, 3])(4)).to.be.false;
+    expect(elemOf(['a', 'b', 'c'])('d')).to.be.false;
+  });
+
+  it('works with opt.exists', () => {
+    expect(opt(1).exists(elemOf([1, 2, 3]))).to.be.true;
+    expect(opt(4).exists(elemOf([1, 2, 3]))).to.be.false;
+  });
+});
+
+describe('elemOfStr', () => {
+  it('returns true when substring is in string', () => {
+    expect(elemOfStr('abc')('a')).to.be.true;
+    expect(elemOfStr('abc')('ab')).to.be.true;
+    expect(elemOfStr('abc')('abc')).to.be.true;
+  });
+
+  it('returns false when substring is not in string', () => {
+    expect(elemOfStr('abc')('x')).to.be.false;
+    expect(elemOfStr('abc')('ac')).to.be.false;
+    expect(elemOfStr('abc')('abcd')).to.be.false;
+  });
+
+  it('works with opt.exists', () => {
+    expect(opt('a').exists(elemOfStr('abc'))).to.be.true;
+    expect(opt('ab').exists(elemOfStr('abc'))).to.be.true;
+    expect(opt('x').exists(elemOfStr('abc'))).to.be.false;
+  });
+
+  it('works with pipe', () => {
+    expect(pipe('b', elemOfStr('abc'))).to.be.true;
+    expect(pipe('x', elemOfStr('abc'))).to.be.false;
+  });
+});
+
+describe('elemOfStrIn', () => {
+  it('returns Some(true) when substring is in the string', () => {
+    expect(elemOfStrIn('abc')(opt('a')).orNull()).to.be.true;
+    expect(elemOfStrIn('abc')(opt('ab')).orNull()).to.be.true;
+    expect(elemOfStrIn('abc')(opt('abc')).orNull()).to.be.true;
+  });
+
+  it('returns Some(false) when substring is not in the string', () => {
+    expect(elemOfStrIn('abc')(opt('d')).orNull()).to.be.false;
+    expect(elemOfStrIn('abc')(opt('ac')).orNull()).to.be.false;
+    expect(elemOfStrIn('abc')(opt('abcd')).orNull()).to.be.false;
+  });
+
+  it('returns None when given None', () => {
+    expect(elemOfStrIn('abc')(none).orNull()).to.be.null;
+  });
+
+  it('works with empty strings', () => {
+    expect(elemOfStrIn('')(opt('')).orNull()).to.be.true;
+    expect(elemOfStrIn('abc')(opt('')).orNull()).to.be.true;
+    expect(elemOfStrIn('')(opt('a')).orNull()).to.be.false;
+  });
+
+  it('can be used with pipe', () => {
+    const result = pipe(
+      'a',
+      opt,
+      elemOfStrIn('abc'),
+      orNull
+    );
+    expect(result).to.be.true;
   });
 });
 

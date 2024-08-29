@@ -622,6 +622,7 @@ export abstract class Opt<T> {
    * Similar to JavaScript `Array#includes` method.
    *
    * @see {@link contains}
+   * @see {@link Opt.elemOfIn}
    *
    * @param x
    */
@@ -641,6 +642,8 @@ export abstract class Opt<T> {
    * opt([1, 2, 3]).hasIn(4) // false
    * none.hasIn(1) // false
    * ```
+   * 
+   * @see {@link has}
    *
    * @param x Element to search for.
    */
@@ -649,6 +652,49 @@ export abstract class Opt<T> {
   /** @alias {@link Opt.hasIn} */
   containsIn<U>(this: Opt<readonly U[]>, x: U): boolean {
     return this.hasIn(x);
+  }
+
+  /**
+   * Checks if the value inside the Opt is an element of the given array.
+   * Flipped version of {@link Opt.hasIn}.
+   * 
+   * @example
+   * ```ts
+   * opt(1).elemOfIn([1, 2, 3]) // true
+   * opt(4).elemOfIn([1, 2, 3]) // false
+   * none.elemOfIn([1, 2, 3]) // false
+   * opt('cow').elemOfIn(['dog', 'cow', 'pig']) // true
+   * opt('cat').elemOfIn(['dog', 'cow', 'pig']) // false
+   * none.elemOfIn(['dog', 'cow', 'pig']) // false
+   * ```
+   * 
+   * @see {@link elemOf}
+   * 
+   * @param haystack The array to check against
+   * @returns true if the value is in the array, false otherwise
+   */
+  elemOfIn(haystack: readonly T[]): boolean {
+    return this.exists(elemOf(haystack));
+  }
+
+  /**
+   * Checks if the string value inside this Opt is a substring of the given string.
+   * 
+   * @example
+   * ```ts
+   * opt('ab').elemOfStrIn('abc') // true
+   * opt('a').elemOfStrIn('def') // false
+   * none.elemOfStrIn('abc') // false
+   * ```
+   * 
+   * @see {@link Opt.elemOfIn}
+   * @see {@link elemOfStrIn}
+   *
+   * @param haystack The string to search in
+   * @returns true if the value is a substring of the haystack, false otherwise
+   */
+  elemOfStrIn(this: Opt<string>, haystack: string): boolean {
+    return this.exists(elemOfStr(haystack));
   }
 
   /**
@@ -2215,6 +2261,61 @@ export const contains = <T>(y: T) => (x: Opt<T>): boolean => x.contains(y);
 
 /** @see {@link Opt.has} */
 export const has = <T>(x: T) => (opt: Opt<T>): boolean => opt.has(x);
+
+/**
+ * Checks if an element is in an array.
+ * 
+ * @example
+ * ```ts
+ * elemOf(['a', 'b'])('a') // true
+ * elemOf([1, 2, 3])(4) // false
+ * opt(1).exists(elemOf([1, 2])) // true
+ * ```
+ * 
+ * @see {@link Opt.elemOfIn}
+ * @see {@link elemOfStr}
+ * 
+ * @param arr The array to check
+ * @returns A function that takes an element and returns true if it's in the array
+ */
+export const elemOf = <T>(haystack: readonly T[]) => (needle: T): boolean => haystack.includes(needle);
+
+/**
+ * Checks if a substring is in a string.
+ * 
+ * @example
+ * ```ts
+ * elemOfStr('abc')('a') // true
+ * elemOfStr('abc')('ab') // true
+ * elemOfStr('abc')('d') // false
+ * opt('ab').exists(elemOfStr('abc')) // true
+ * ```
+ * 
+ * @see {@link Opt.elemOfStrIn}
+ * @see {@link elemOfStrIn}
+ * 
+ * @param haystack The string to search in
+ * @returns A function that takes a needle (substring) and returns true if it's in the haystack
+ */
+export const elemOfStr = (haystack: string) => (needle: string): boolean => haystack.includes(needle);
+
+/**
+ * Checks if the string value inside this Opt is a substring of the given string.
+ * 
+ * @example
+ * ```ts
+ * elemOfStrIn('abc')(opt('a')) // Some(true)
+ * elemOfStrIn('abc')(opt('d')) // Some(false)
+ * elemOfStrIn('abc')(none) // None
+ * ```
+ *
+ * @see {@link Opt.elemOfStrIn}
+ * 
+ * @param haystack The string to search in
+ * @returns A function that takes an Opt<string> and returns an Opt<boolean>
+ */
+export const elemOfStrIn = (haystack: string) => (needle: Opt<string>): Opt<boolean> => 
+  needle.map(n => haystack.includes(n));
 
 /** @see {@link Opt.hasIn} */
 export const hasIn = <U>(x: U) => (opt: Opt<readonly U[]>): boolean => opt.hasIn(x);
