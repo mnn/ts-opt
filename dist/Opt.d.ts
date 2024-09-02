@@ -5,6 +5,7 @@ type SuperUnionOf<T, U> = Exclude<U, T> extends never ? NotObject<T> : never;
 type WithoutOptValues<T> = NonNullable<T>;
 type EmptyValue = null | undefined;
 type AnyFunc = (...args: any) => any;
+export type OptSafe<T> = Opt<WithoutOptValues<T>>;
 declare class OperationNotAvailable<TypeGot, TypeExpected> {
     readonly '@@type': symbol;
     _notUsed1?: TypeGot;
