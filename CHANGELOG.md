@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [6.0.0] - 2024-09-02
 ### Added
 - `elemOf`, `elemOfStr` and `elemOfStrIn`
 - `mapPropNakedIn` function
@@ -12,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Various `*In` methods and functions: `flatMapIn`, `containsIn`, `has`, `hasIn`, `lengthIn`, `zipIn`, `findIn`, `filterIn`, `fold`, `foldIn`, `mapIn`
 
 ### Changed
-- Updated `head`, `last`, `min`, and `max` functions
+- **Breaking**: Updated several functions and methods, like `head`, `last`, `min`, and `max`, to clearly differentiate between operations on arrays and opts.
 - Swapped husky with simple-git-hooks
 - Updated eslint config
 - Updated most dependencies
