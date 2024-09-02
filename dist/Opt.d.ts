@@ -541,6 +541,8 @@ export declare abstract class Opt<T> {
      * none.hasIn(1) // false
      * ```
      *
+     * @see {@link has}
+     *
      * @param x Element to search for.
      */
     abstract hasIn<U>(this: Opt<readonly U[]>, x: U): boolean;

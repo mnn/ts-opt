@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - `elemOf`, `elemOfStr` and `elemOfStrIn`
+- `mapPropNakedIn` function
+- `optInfinity`, `mapStr` functions
+- Various `*In` methods and functions: `flatMapIn`, `containsIn`, `has`, `hasIn`, `lengthIn`, `zipIn`, `findIn`, `filterIn`, `fold`, `foldIn`, `mapIn`
+
+### Changed
+- Updated `head`, `last`, `min`, and `max` functions
+- Swapped husky with simple-git-hooks
+- Updated eslint config
+- Updated most dependencies
+- Moved to pnpm package manager
+- Updated GitLab pipelines to use current Node.js version and pnpm
+- Documentation updates and improvements
 
 ## [5.1.0] - 2023-11-08
 ### Added
