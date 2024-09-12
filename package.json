@@ -1,6 +1,6 @@
 {
   "name": "ts-opt",
-  "version": "6.0.1",
+  "version": "6.0.2",
   "description": "Typed Option/Optional/Maybe for TypeScript and JavaScript, created to simplify code involving optional values (null, undefined, NaN).",
   "packageManager": "pnpm@8.5.1",
   "engines": {
