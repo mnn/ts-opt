@@ -754,15 +754,15 @@ describe('opt', () => {
              .orNull(),
     ).to.be.eq(1);
     type Handler = (_: number) => void;
-    const userHandler: Handler | null = a => console.log('user handling', a);
-    const systemHandler: Handler | null = a => console.log('system handling', a);
-    const backupHandler: Handler | null = a => console.log('backup handling', a);
+    const userHandler: Opt<Handler> = opt(a => console.log('user handling', a));
+    const systemHandler: Opt<Handler> = opt(a => console.log('system handling', a));
+    const backupHandler: Opt<Handler> = opt(a => console.log('backup handling', a));
     const panicHandler: Handler = a => console.log('PANIC handling', a);
     const handler =
-      opt(userHandler)
-      .alt(opt(systemHandler))
-      .alt(opt(backupHandler))
-      .orElse(panicHandler);
+      userHandler
+        .alt(systemHandler)
+        .alt(backupHandler)
+        .orElse(panicHandler);
     handler(250 + 64); // prints "user handling 314"
     expect(console.log).to.have.been.called.exactly(1);
     expect(console.log).to.have.been.called.with('user handling', 314);
@@ -1515,6 +1515,7 @@ describe('isEmpty', () => {
   it('opt', () => {
     expect(isEmpty(opt(1))).to.be.false;
     expect(isEmpty(opt(null))).to.be.true;
+    expect(isEmpty(opt([]))).to.be.false;
   });
   it('array', () => {
     expect(isEmpty([])).to.be.true;
@@ -2814,6 +2815,18 @@ describe('genNakedPropOrCrash', () => {
       // @ts-expect-error invalid field
       getCowProp('nope');
     }).to.throw('missing nope');
+  });
+
+  it('type inference', () => {
+    const cow: Animal = {id: 36, name: 'Iris'};
+    Object.freeze(cow);
+    const getCowProp = genNakedPropOrCrash(cow);
+    const name: string = getCowProp('name');
+    // @ts-expect-error name is not number
+    const shouldFailOnString: number = getCowProp('name');
+    // @ts-expect-error id is not string
+    const shouldFailOnNumber: string = getCowProp('id');
+    suppressUnused(name, shouldFailOnString, shouldFailOnNumber);
   });
 });
 

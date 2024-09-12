@@ -811,14 +811,14 @@ export abstract class Opt<T> {
    * @example It can be used to pick first from given possibly missing alternatives.
    * ```ts
    * type Handler = (_: number) => void;
-   * const userHandler: Handler | null = a => console.log('user handling', a);
-   * const systemHandler: Handler | null = a => console.log('system handling', a);
-   * const backupHandler: Handler | null = a => console.log('backup handling', a);
+   * const userHandler: Opt<Handler> = opt(a => console.log('user handling', a));
+   * const systemHandler: Opt<Handler> = opt(a => console.log('system handling', a));
+   * const backupHandler: Opt<Handler> = opt(a => console.log('backup handling', a));
    * const panicHandler: Handler = a => console.log('PANIC handling', a);
    * const handler =
-   *   opt(userHandler)
-   *     .alt(opt(systemHandler))
-   *     .alt(opt(backupHandler))
+   *   userHandler
+   *     .alt(systemHandler)
+   *     .alt(backupHandler)
    *     .orElse(panicHandler);
    * handler(250 + 64); // prints "user handling 314"
    * ```
@@ -836,6 +836,21 @@ export abstract class Opt<T> {
    * opt(inputNull).altOpt(null) // None
    * opt(inputNull).altOpt(1) // Some(1)
    * opt(2).altOpt(1) // Some(2)
+   * ```
+   * 
+   * @example
+   * ```ts
+   * type Handler = (_: number) => void;
+   * const userHandler: Handler | null = a => console.log('user handling', a);
+   * const systemHandler: Handler | null = a => console.log('system handling', a);
+   * const backupHandler: Handler | null = a => console.log('backup handling', a);
+   * const panicHandler: Handler = a => console.log('PANIC handling', a);
+   * const handler =
+   *   opt(userHandler)
+   *     .altOpt(systemHandler)
+   *     .altOpt(backupHandler)
+   *     .orElse(panicHandler);
+   * handler(250 + 64); // prints "user handling 314"
    * ```
    *
    * @param def
@@ -1210,6 +1225,17 @@ export abstract class Opt<T> {
   /**
    * Get a field from a wrapped object. Crash if the field is missing or empty, or opt instance is {@link None}.
    * Shortcut of {@link Opt.prop} + {@link Opt.orCrash}.
+   *
+   * @example
+   * ```ts
+   * interface A {x?: number;}
+   * 
+   * const aFull: A = {x: 4};
+   * opt(aFull).propOrCrash('x'); // 4
+   * 
+   * const aEmpty: A = {};
+   * opt(aEmpty).propOrCrash('x'); // crash
+   * ```
    *
    * @param key
    */
@@ -1994,12 +2020,26 @@ export const optFalsy = <T>(x: T | undefined | null | '' | false | 0): OptSafe<T
 
 /**
  * For empty array (`[]`) returns {@link None}, otherwise acts same as {@link opt}.
+ * 
+ * @example
+ * ```ts
+ * optEmptyArray(undefined) // None
+ * optEmptyArray([]) // None
+ * optEmptyArray([1]) // Some([1])
+ * ```
  * @param x
  */
 export const optEmptyArray = <T, A extends readonly T[] | T[]>(x: A | undefined | null): OptSafe<A> => opt(x).filter(y => y.length > 0);
 
 /**
  * For empty object (`{}`) returns {@link None}, otherwise acts same as {@link opt}.
+ * 
+ * @example
+ * ```ts
+ * optEmptyObject(undefined) // None
+ * optEmptyObject({}) // None
+ * optEmptyObject({a: 0}) // Some({a: 0})
+ * ```
  * @param x
  */
 export const optEmptyObject = <T extends object>(x: T | undefined | null): OptSafe<T> =>
@@ -2007,12 +2047,26 @@ export const optEmptyObject = <T extends object>(x: T | undefined | null): OptSa
 
 /**
  * For empty string (`''`) returns {@link None}, otherwise acts same as {@link opt}.
+ * 
+ * @example
+ * ```ts
+ * optEmptyString(undefined) // None
+ * optEmptyString('') // None
+ * optEmptyString('a') // Some('a')
+ * ```
  * @param x
  */
 export const optEmptyString = <T>(x: T | undefined | null | ''): OptSafe<T> => x === '' ? none : opt(x);
 
 /**
  * For a number `0` returns {@link None}, otherwise acts same as {@link opt}.
+ * 
+ * @example
+ * ```ts
+ * optZero(undefined) // None
+ * optZero(1) // Some(1)
+ * optZero(0) // None
+ * ```
  * @param x
  */
 export const optZero = <T>(x: T | undefined | null | 0): OptSafe<T> => x === 0 ? none : opt(x);
@@ -2536,11 +2590,11 @@ export const propOrCrash = < //
  * g('fieldB')
  * ```
  *
- * Performance characterics are expected to be similar.
+ * Performance characteristics are expected to be similar.
  *
  * @param obj
  */
-export const genNakedPropOrCrash = <T extends object>(obj: T) => {
+export const genNakedPropOrCrash = <T extends object>(obj: T): <K extends keyof T>(k: K) => WithoutOptValues<T[K]> => {
   const o = opt(obj);
   return <K extends keyof T>(k: K) => o.propOrCrash(k as any);
 };
@@ -2709,13 +2763,13 @@ type WithoutPossiblyEmptyEmptyValues<T> = Exclude<T, '' | [] | typeof none | Emp
  * @param x
  */
 export const isEmpty = (x: PossiblyEmpty): boolean => {
-  if (isOpt(x)) { return x.isEmpty; }
-  if (Array.isArray(x)) { return x.length === 0; }
-  if (x === null || x === undefined) { return true; }
-  if (x instanceof Map || x instanceof Set) { return x.size === 0; }
-  if (typeof x === 'object') { return Object.getOwnPropertyNames(x).length === 0; }
-  if (typeof x === 'string') { return x === ''; }
-  if (typeof x === 'number') { return Number.isNaN(x); }
+  if (isOpt(x)) return x.isEmpty;
+  if (isArray(x)) return x.length === 0;
+  if (x === null || x === undefined) return true;
+  if (x instanceof Map || x instanceof Set) return x.size === 0;
+  if (isObject(x)) return Object.getOwnPropertyNames(x).length === 0;
+  if (isString(x)) return x === '';
+  if (isNumber(x)) return Number.isNaN(x);
   throw new Error(`Unexpected input type: ${typeof x}`);
 };
 

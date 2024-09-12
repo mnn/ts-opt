@@ -555,6 +555,17 @@ var Opt = /** @class */ (function () {
      * Get a field from a wrapped object. Crash if the field is missing or empty, or opt instance is {@link None}.
      * Shortcut of {@link Opt.prop} + {@link Opt.orCrash}.
      *
+     * @example
+     * ```ts
+     * interface A {x?: number;}
+     *
+     * const aFull: A = {x: 4};
+     * opt(aFull).propOrCrash('x'); // 4
+     *
+     * const aEmpty: A = {};
+     * opt(aEmpty).propOrCrash('x'); // crash
+     * ```
+     *
      * @param key
      */
     Opt.prototype.propOrCrash = function (key) {
@@ -1210,12 +1221,26 @@ var optFalsy = function (x) { return x ? (0, exports.some)(x) : exports.none; };
 exports.optFalsy = optFalsy;
 /**
  * For empty array (`[]`) returns {@link None}, otherwise acts same as {@link opt}.
+ *
+ * @example
+ * ```ts
+ * optEmptyArray(undefined) // None
+ * optEmptyArray([]) // None
+ * optEmptyArray([1]) // Some([1])
+ * ```
  * @param x
  */
 var optEmptyArray = function (x) { return (0, exports.opt)(x).filter(function (y) { return y.length > 0; }); };
 exports.optEmptyArray = optEmptyArray;
 /**
  * For empty object (`{}`) returns {@link None}, otherwise acts same as {@link opt}.
+ *
+ * @example
+ * ```ts
+ * optEmptyObject(undefined) // None
+ * optEmptyObject({}) // None
+ * optEmptyObject({a: 0}) // Some({a: 0})
+ * ```
  * @param x
  */
 var optEmptyObject = function (x) {
@@ -1224,12 +1249,26 @@ var optEmptyObject = function (x) {
 exports.optEmptyObject = optEmptyObject;
 /**
  * For empty string (`''`) returns {@link None}, otherwise acts same as {@link opt}.
+ *
+ * @example
+ * ```ts
+ * optEmptyString(undefined) // None
+ * optEmptyString('') // None
+ * optEmptyString('a') // Some('a')
+ * ```
  * @param x
  */
 var optEmptyString = function (x) { return x === '' ? exports.none : (0, exports.opt)(x); };
 exports.optEmptyString = optEmptyString;
 /**
  * For a number `0` returns {@link None}, otherwise acts same as {@link opt}.
+ *
+ * @example
+ * ```ts
+ * optZero(undefined) // None
+ * optZero(1) // Some(1)
+ * optZero(0) // None
+ * ```
  * @param x
  */
 var optZero = function (x) { return x === 0 ? exports.none : (0, exports.opt)(x); };
@@ -1767,7 +1806,7 @@ exports.propOrCrash = propOrCrash;
  * g('fieldB')
  * ```
  *
- * Performance characterics are expected to be similar.
+ * Performance characteristics are expected to be similar.
  *
  * @param obj
  */
@@ -1942,27 +1981,20 @@ exports.uncurryTuple5 = uncurryTuple5;
  * @param x
  */
 var isEmpty = function (x) {
-    if ((0, exports.isOpt)(x)) {
+    if ((0, exports.isOpt)(x))
         return x.isEmpty;
-    }
-    if (Array.isArray(x)) {
+    if ((0, exports.isArray)(x))
         return x.length === 0;
-    }
-    if (x === null || x === undefined) {
+    if (x === null || x === undefined)
         return true;
-    }
-    if (x instanceof Map || x instanceof Set) {
+    if (x instanceof Map || x instanceof Set)
         return x.size === 0;
-    }
-    if (typeof x === 'object') {
+    if ((0, exports.isObject)(x))
         return Object.getOwnPropertyNames(x).length === 0;
-    }
-    if (typeof x === 'string') {
+    if ((0, exports.isString)(x))
         return x === '';
-    }
-    if (typeof x === 'number') {
+    if ((0, exports.isNumber)(x))
         return Number.isNaN(x);
-    }
     throw new Error("Unexpected input type: ".concat(typeof x));
 };
 exports.isEmpty = isEmpty;

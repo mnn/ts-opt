@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- `genNakedPropOrCrash` now correctly infers the type of the property
+
+### Changed
+- Improved examples of several methods and functions
 
 ## [6.0.1] - 2024-09-02
 ### Fixed
