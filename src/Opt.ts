@@ -1246,6 +1246,75 @@ export abstract class Opt<T> {
     return this.prop(key).orCrash(`missing ${String(key)}`) as R;
   }
 
+    /**
+   * Get a field from a wrapped object. Return null if the field is missing or empty, or opt instance is {@link None}.
+   *
+   * @example
+   * ```ts
+   * interface A {x?: number;}
+   * 
+   * const aFull: A = {x: 4};
+   * opt(aFull).propOrNull('x'); // 4
+   * 
+   * const aEmpty: A = {};
+   * opt(aEmpty).propOrNull('x'); // null
+   * ```
+   *
+   * @param key
+   */
+    propOrNull< //
+    K extends (T extends object ? keyof T : never), //
+    R extends (T extends object ? WithoutOptValues<T[K]> | null : never) //
+    >(key: K): R {
+    return this.prop(key).orNull() as R;
+  }
+
+  /**
+   * Get a field from a wrapped object. Return undefined if the field is missing or empty, or opt instance is {@link None}.
+   *
+   * @example
+   * ```ts
+   * interface A {x?: number;}
+   * 
+   * const aFull: A = {x: 4};
+   * opt(aFull).propOrUndef('x'); // 4
+   * 
+   * const aEmpty: A = {};
+   * opt(aEmpty).propOrUndef('x'); // undefined
+   * ```
+   *
+   * @param key
+   */
+  propOrUndef< //
+    K extends (T extends object ? keyof T : never), //
+    R extends (T extends object ? WithoutOptValues<T[K]> | undefined : never) //
+    >(key: K): R {
+    return this.prop(key).orUndef() as R;
+  }
+
+  /**
+   * Get a field from a wrapped object. Return 0 if the field is missing or empty, or opt instance is {@link None}.
+   *
+   * @example
+   * ```ts
+   * interface A {x?: number;}
+   * 
+   * const aFull: A = {x: 4};
+   * opt(aFull).propOrZero('x'); // 4
+   * 
+   * const aEmpty: A = {};
+   * opt(aEmpty).propOrZero('x'); // 0
+   * ```
+   *
+   * @param key
+   */
+  propOrZero< //
+    K extends (T extends object ? keyof T : never), //
+    R extends (T extends object ? WithoutOptValues<T[K]> | 0 : never) //
+    >(key: K): R {
+    return this.prop(key).orElseAny(0) as R;
+  }
+
   /**
    * Constructs a function which returns a value for {@link Some} or an empty value for {@link None} (default is `null`).
    * Optionally takes an empty value as a parameter.
@@ -2598,6 +2667,109 @@ export const genNakedPropOrCrash = <T extends object>(obj: T): <K extends keyof 
   const o = opt(obj);
   return <K extends keyof T>(k: K) => o.propOrCrash(k as any);
 };
+
+// TODO: add support for Opt for propOrNull, propOrUndef, propOrZero?
+
+/**
+ * Similar to {@link Opt.propOrNull}, but it is designed for naked objects (not wrapped in opt).
+ *
+ * @example
+ * ```ts
+ * interface A {x?: number;}
+ * 
+ * const aFull: A = {x: 4};
+ * propOrNull<A>('x')(aFull); // 4
+ * 
+ * const aEmpty: A = {};
+ * propOrNull<A>('x')(aEmpty); // null
+ * ```
+ */
+export const propOrNull = < //
+  T extends object | EmptyValue, //
+  K extends (T extends object ? keyof T : never) = T extends object ? keyof T : never //
+>(key: K) => (x: T | EmptyValue): T[K] | null => opt(x).propOrNull(key);
+
+/**
+ * Similar to {@link Opt.propOrUndef}, but it is designed for naked objects (not wrapped in opt).
+ *
+ * @example
+ * ```ts
+ * interface A {x?: number;}
+ * 
+ * const aFull: A = {x: 4};
+ * propOrUndef<A>('x')(aFull); // 4
+ * 
+ * const aEmpty: A = {};
+ * propOrUndef<A>('x')(aEmpty); // undefined
+ * ```
+ */
+export const propOrUndef = < //
+  T extends object | EmptyValue, //
+  K extends (T extends object ? keyof T : never) = T extends object ? keyof T : never //
+>(key: K) => (x: T | EmptyValue): T[K] | undefined => opt(x).propOrUndef(key);
+
+/**
+ * Similar to {@link Opt.propOrZero}, but it is designed for naked objects (not wrapped in opt).
+ *
+ * @example
+ * ```ts
+ * interface A {x?: number;}
+ * 
+ * const aFull: A = {x: 4};
+ * propOrZero<A>('x')(aFull); // 4
+ * 
+ * const aEmpty: A = {};
+ * propOrZero<A>('x')(aEmpty); // 0
+ * ```
+ */
+export const propOrZero = < //
+  T extends object | EmptyValue, //
+  K extends (T extends object ? keyof T : never) = T extends object ? keyof T : never //
+>(key: K) => (x: T | EmptyValue): WithoutOptValues<T[K]> | 0 => opt(x).propOrZero(key);
+
+/**
+ * Utility function for generating property getters for one specific object.
+ * Functionally similar to {@link propOrNull}, {@link propOrUndef}, and {@link propOrZero}, but it has swapped arguments and only supports naked objects.
+ *
+ * @example
+ * ```ts
+ * interface Animal {
+ *   id: number;
+ *   name?: string;
+ *   collarChipNumber?: string;
+ *   age?: number;
+ * }
+ *
+ * const spot: Animal = {id: 36, name: 'Spot', age: 5};
+ * const get = genNakedPropGetters(spot);
+ * 
+ * const result = {
+ *   id: get.orCrash('id'),
+ *   name: get.orNull('name'),
+ *   collarChipNumber: get.orUndef('collarChipNumber'),
+ *   age: get.orZero('age')
+ * };
+ * // result: {id: 36, name: 'Spot', collarChipNumber: undefined, age: 5}
+ * ```
+ *
+ * @param obj
+ */
+export const genNakedPropGetters = <T extends object, K extends (T extends object ? keyof T : never) = T extends object ? keyof T : never>(obj: T): NakedPropGetters<T, K> => {
+  const o = opt(obj);
+  return {
+    orCrash: (k: K) => o.propOrCrash(k) as any,
+    orNull: (k: K) => o.propOrNull(k) as any,
+    orUndef: (k: K) => o.propOrUndef(k) as any,
+    orZero: (k: K) => o.propOrZero(k) as any,
+  };
+};
+
+interface NakedPropGetters<T extends object, K extends (T extends object ? keyof T : never) = T extends object ? keyof T : never> {
+  orCrash: <KK extends K, R extends T[KK]>(k: KK) => WithoutOptValues<R>;
+  orNull: <KK extends K, R extends T[KK]>(k: KK) => WithoutOptValues<R> | null;
+  orUndef: <KK extends K, R extends T[KK]>(k: KK) => WithoutOptValues<R> | undefined;
+  orZero: <KK extends K, R extends T[KK]>(k: KK) => WithoutOptValues<R> | 0;
+}
 
 /** @see {@link Opt.swap} */
 export const swap = <U>(newValue: U) => <T>(x: Opt<T>): Opt<U> => x.swap(newValue);

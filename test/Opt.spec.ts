@@ -62,6 +62,7 @@ import {
   forAllIn,
   fromArray,
   fromObject,
+  genNakedPropGetters,
   genNakedPropOrCrash,
   has,
   hasIn,
@@ -138,6 +139,9 @@ import {
   prop,
   propNaked,
   propOrCrash,
+  propOrNull,
+  propOrUndef,
+  propOrZero,
   ReduxDevtoolsCompatibilityHelper,
   serialize,
   some,
@@ -1107,6 +1111,60 @@ describe('opt', () => {
       const x = opt(aFull).propOrCrash('foo');
       suppressUnused(x);
     }).to.throw();
+  });
+
+  describe('propOrNull', () => {
+    interface Obj {x?: number;}
+
+    it('returns value when present', () => {
+      const obj: Obj = {x: 5};
+      expect(opt(obj).propOrNull('x')).to.equal(5);
+    });
+
+    it('returns null when property is missing', () => {
+      const obj: Obj = {};
+      expect(opt(obj).propOrNull('x')).to.be.null;
+    });
+
+    it('returns null for none', () => {
+      expect(none.propOrNull('x')).to.be.null;
+    });
+  });
+
+  describe('propOrUndef', () => {
+    interface Obj {x?: number;}
+
+    it('returns value when present', () => {
+      const obj: Obj = {x: 5};
+      expect(opt(obj).propOrUndef('x')).to.equal(5);
+    });
+
+    it('returns undefined when property is missing', () => {
+      const obj: Obj = {};
+      expect(opt(obj).propOrUndef('x')).to.be.undefined;
+    });
+
+    it('returns undefined for none', () => {
+      expect(none.propOrUndef('x')).to.be.undefined;
+    });
+  });
+
+  describe('propOrZero', () => {
+    interface Obj {x?: number;}
+
+    it('returns value when present', () => {
+      const obj: Obj = {x: 5};
+      expect(opt(obj).propOrZero('x')).to.equal(5);
+    });
+
+    it('returns 0 when property is missing', () => {
+      const obj: Obj = {};
+      expect(opt(obj).propOrZero('x')).to.equal(0);
+    });
+
+    it('returns 0 for none', () => {
+      expect(none.propOrZero('x')).to.equal(0);
+    });
   });
 
   it('const', () => {
@@ -2827,6 +2885,143 @@ describe('genNakedPropOrCrash', () => {
     // @ts-expect-error id is not string
     const shouldFailOnNumber: string = getCowProp('id');
     suppressUnused(name, shouldFailOnString, shouldFailOnNumber);
+  });
+});
+
+describe('propOrNull', () => {
+  interface Obj {x?: number;}
+
+  it('returns value when present', () => {
+    const obj: Obj = {x: 5};
+    expect(propOrNull<Obj>('x')(obj)).to.equal(5);
+  });
+
+  it('returns null when property is missing', () => {
+    const obj: Obj = {};
+    expect(propOrNull<Obj>('x')(obj)).to.be.null;
+  });
+
+  it('returns null for null input', () => {
+    expect(propOrNull<Obj>('x')(null)).to.be.null;
+  });
+});
+
+describe('propOrUndef', () => {
+  interface Obj {x?: number;}
+
+  it('returns value when present', () => {
+    const obj: Obj = {x: 5};
+    expect(propOrUndef<Obj>('x')(obj)).to.equal(5);
+  });
+
+  it('returns undefined when property is missing', () => {
+    const obj: Obj = {};
+    expect(propOrUndef<Obj>('x')(obj)).to.be.undefined;
+  });
+
+  it('returns undefined for null input', () => {
+    expect(propOrUndef<Obj>('x')(null)).to.be.undefined;
+  });
+});
+
+describe('propOrZero', () => {
+  interface Obj {x?: number;}
+
+  it('returns value when present', () => {
+    const obj: Obj = {x: 5};
+    expect(propOrZero<Obj>('x')(obj)).to.equal(5);
+  });
+
+  it('returns 0 when property is missing', () => {
+    const obj: Obj = {};
+    expect(propOrZero<Obj>('x')(obj)).to.equal(0);
+  });
+
+  it('returns 0 for null input', () => {
+    expect(propOrZero<Obj>('x')(null)).to.equal(0);
+  });
+});
+
+describe('genNakedPropGetters', () => {
+  interface TestObj {
+    id: number;
+    name?: string;
+    age?: number;
+  }
+
+  const obj: TestObj = { id: 1, name: 'Test', age: 30 };
+  const emptyObj: TestObj = { id: 1 };
+
+  it('generates correct getters', () => {
+    const get = genNakedPropGetters(obj);
+
+    expect(get.orCrash('id')).to.equal(1);
+    expect(get.orNull('name')).to.equal('Test');
+    expect(get.orUndef('age')).to.equal(30);
+    expect(get.orZero('age')).to.equal(30);
+  });
+
+  it('handles missing properties correctly', () => {
+    const get = genNakedPropGetters(emptyObj);
+
+    expect(get.orCrash('id')).to.equal(1);
+    expect(get.orNull('name')).to.be.null;
+    expect(get.orUndef('age')).to.be.undefined;
+    expect(get.orZero('age')).to.equal(0);
+  });
+
+  it('crashes when using orCrash on missing property', () => {
+    const get = genNakedPropGetters(emptyObj);
+    expect(() => get.orCrash('name')).to.throw('missing name');
+  });
+
+  it('type inference', () => {
+    interface Animal {
+      id?: number;
+      name?: string;
+    }
+
+    const cow: Animal = {id: 36, name: 'Iris'};
+    Object.freeze(cow);
+    const getters = genNakedPropGetters(cow);
+    const nameOrCrashViaGetters: string = getters.orCrash('name');
+    const nameOrNullViaGetters: string | null = getters.orNull('name');
+    const nameOrUndefViaGetters: string | undefined = getters.orUndef('name');
+    const nameOrZeroViaGetters: string | 0 = getters.orZero('name');
+    const idOrZeroViaGetters: number | 0 = getters.orZero('id');
+    suppressUnused(nameOrCrashViaGetters, nameOrNullViaGetters, nameOrUndefViaGetters, nameOrZeroViaGetters, idOrZeroViaGetters);
+
+    const {orCrash, orNull, orUndef, orZero} = genNakedPropGetters(cow);
+    const nameOrCrash: string = orCrash('name');
+    const nameOrNull: string | null = orNull('name');
+    const nameOrUndef: string | undefined = orUndef('name');
+    const nameOrZero: string | 0 = orZero('name');
+    const idOrZero: number | 0 = orZero('id');
+    suppressUnused(nameOrCrash, nameOrNull, nameOrUndef, nameOrZero, idOrZero);
+
+    // @ts-expect-error name is not number
+    const shouldFailOnStringWithOrCrash: number = orCrash('name');
+    // @ts-expect-error name is not number
+    const shouldFailOnStringWithOrNull: number | null = orNull('name');
+    // @ts-expect-error name is not number
+    const shouldFailOnStringWithOrUndef: number | undefined = orUndef('name');
+    // @ts-expect-error name is not number
+    const shouldFailOnStringWithOrZero: number | 0 = orZero('name');
+    suppressUnused(shouldFailOnStringWithOrCrash, shouldFailOnStringWithOrNull, shouldFailOnStringWithOrUndef, shouldFailOnStringWithOrZero);
+
+    // @ts-expect-error id is not string
+    const shouldFailOnNumberWithOrCrash: string = orCrash('id');
+    // @ts-expect-error id is not string
+    const shouldFailOnNumberWithOrNull: string | null = orNull('id');
+    // @ts-expect-error id is not string
+    const shouldFailOnNumberWithOrUndef: string | undefined = orUndef('id');
+    // @ts-expect-error id is not string
+    const shouldFailOnNumberWithOrZero: string | 0 = orZero('id');
+    suppressUnused(shouldFailOnNumberWithOrCrash, shouldFailOnNumberWithOrNull, shouldFailOnNumberWithOrUndef, shouldFailOnNumberWithOrZero);
+
+    // @ts-expect-error null is not undefined
+    const shouldFailOnStringOrUndefinedWithOrNull: string | undefined = orNull('name');
+    suppressUnused(shouldFailOnStringOrUndefinedWithOrNull);
   });
 });
 
