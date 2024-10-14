@@ -410,18 +410,21 @@ export abstract class Opt<T> {
   }
 
   /**
-   * Returns value when {@link Some}, throws error with `msg` otherwise.
+   * Returns value when {@link Some}, throws error otherwise.
    *
    * @example
    * ```ts
    * opt(null).orCrash('unexpected empty value') // crashes with Error('unexpected empty value')
    * opt(1).orCrash('unexpected empty value') // 1
+   * opt(null).orCrash(() => new CustomException()) // crashes with CustomException
    * ```
    *
    * @see {@link orCrash}
-   * @param msg Error message.
+   * @param message Error message.
+   * @param errorFactory A function that returns an error.
    */
-  abstract orCrash(msg: string): T | never;
+  abstract orCrash(message: string): T | never;
+  abstract orCrash(errorFactory: () => unknown): T | never;
 
   /**
    * Crash when called on {@link None}, pass {@link Opt} instance on {@link Some}.
@@ -1497,7 +1500,13 @@ class None<T> extends Opt<T> {
     return this;
   }
 
-  orCrash(msg: string): T { throw new Error(msg); }
+  orCrash(messageOrFactory: string | (() => unknown)): T {
+    if (typeof messageOrFactory === 'string') {
+      throw new Error(messageOrFactory);
+    } else {
+      throw messageOrFactory();
+    }
+  }
 
   someOrCrash(msg: string): Some<T> { throw new Error(msg); }
 
@@ -1665,7 +1674,11 @@ class Some<T> extends Opt<T> {
     return new Some(mapStr(f)(this._value));
   }
 
-  orCrash(_msg: string): T { return this._value; }
+  orCrash(message: string): T;
+  orCrash(errorFactory: () => unknown): T;
+  orCrash(_messageOrFactory: string | (() => unknown)): T {
+    return this._value;
+  }
 
   someOrCrash(_msg: string): Some<T> { return this; }
 

@@ -330,6 +330,12 @@ describe('opt', () => {
     expect(() => opt(null).orCrash('')).to.throw();
     expect(opt(0).orCrash('')).to.eq(0);
     expect(opt([]).orCrash('')).to.eql([]);
+
+    expect(opt(0).orCrash(() => new Error(''))).to.eq(0);
+    expect(opt([]).orCrash(() => new Error(''))).to.eql([]);
+    expect(() => opt(null).orCrash(() => new Error('')))
+      .to.throw(Error)
+      .with.property('message', '');
   });
 
   it('someOrCrash', () => {
