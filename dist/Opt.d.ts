@@ -2023,6 +2023,8 @@ export declare const propOrCrash: <T extends object, P extends Opt<T> | T = T | 
  * @param obj
  */
 export declare const genNakedPropOrCrash: <T extends object>(obj: T) => <K extends keyof T>(k: K) => WithoutOptValues<T[K]>;
+/** @see {@link Opt.propOrNull} */
+export declare const propOrNull: <T extends object>() => <K extends keyof T>(key: K) => (x: Opt<T>) => WithoutOptValues<T[K]> | null;
 /**
  * Similar to {@link Opt.propOrNull}, but it is designed for naked objects (not wrapped in opt).
  *
@@ -2031,13 +2033,15 @@ export declare const genNakedPropOrCrash: <T extends object>(obj: T) => <K exten
  * interface A {x?: number;}
  *
  * const aFull: A = {x: 4};
- * propOrNull<A>('x')(aFull); // 4
+ * propOrNull<A>()('x')(aFull); // 4
  *
  * const aEmpty: A = {};
- * propOrNull<A>('x')(aEmpty); // null
+ * propOrNull<A>()('x')(aEmpty); // null
  * ```
  */
-export declare const propOrNull: <T extends object | EmptyValue, K extends (T extends object ? keyof T : never) = T extends object ? keyof T : never>(key: K) => (x: T | EmptyValue) => T[K] | null;
+export declare const propOrNullNaked: <T extends object | EmptyValue>() => <K extends keyof T>(key: K) => (x: T | EmptyValue) => WithoutOptValues<T[K]> | null;
+/** @see {@link Opt.propOrUndef} */
+export declare const propOrUndef: <T extends object>() => <K extends keyof T>(key: K) => (x: Opt<T>) => WithoutOptValues<T[K]> | undefined;
 /**
  * Similar to {@link Opt.propOrUndef}, but it is designed for naked objects (not wrapped in opt).
  *
@@ -2046,13 +2050,15 @@ export declare const propOrNull: <T extends object | EmptyValue, K extends (T ex
  * interface A {x?: number;}
  *
  * const aFull: A = {x: 4};
- * propOrUndef<A>('x')(aFull); // 4
+ * propOrUndef<A>()('x')(aFull); // 4
  *
  * const aEmpty: A = {};
- * propOrUndef<A>('x')(aEmpty); // undefined
+ * propOrUndef<A>()('x')(aEmpty); // undefined
  * ```
  */
-export declare const propOrUndef: <T extends object | EmptyValue, K extends (T extends object ? keyof T : never) = T extends object ? keyof T : never>(key: K) => (x: T | EmptyValue) => T[K] | undefined;
+export declare const propOrUndefNaked: <T extends object | EmptyValue>() => <K extends keyof T>(key: K) => (x: T | EmptyValue) => WithoutOptValues<T[K]> | undefined;
+/** @see {@link Opt.propOrZero} */
+export declare const propOrZero: <T extends object>() => <K extends keyof T>(key: K) => (x: Opt<T>) => WithoutOptValues<T[K]> | 0;
 /**
  * Similar to {@link Opt.propOrZero}, but it is designed for naked objects (not wrapped in opt).
  *
@@ -2061,16 +2067,16 @@ export declare const propOrUndef: <T extends object | EmptyValue, K extends (T e
  * interface A {x?: number;}
  *
  * const aFull: A = {x: 4};
- * propOrZero<A>('x')(aFull); // 4
+ * propOrZero<A>()('x')(aFull); // 4
  *
  * const aEmpty: A = {};
- * propOrZero<A>('x')(aEmpty); // 0
+ * propOrZero<A>()('x')(aEmpty); // 0
  * ```
  */
-export declare const propOrZero: <T extends object | EmptyValue, K extends (T extends object ? keyof T : never) = T extends object ? keyof T : never>(key: K) => (x: T | EmptyValue) => WithoutOptValues<T[K]> | 0;
+export declare const propOrZeroNaked: <T extends object | EmptyValue>() => <K extends keyof T>(key: K) => (x: T | EmptyValue) => WithoutOptValues<T[K]> | 0;
 /**
  * Utility function for generating property getters for one specific object.
- * Functionally similar to {@link propOrNull}, {@link propOrUndef}, and {@link propOrZero}, but it has swapped arguments and only supports naked objects.
+ * Functionally similar to {@link propOrNullNaked}, {@link propOrUndefNaked}, and {@link propOrZeroNaked}, but it has swapped arguments and only supports naked objects.
  *
  * @example
  * ```ts

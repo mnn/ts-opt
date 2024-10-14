@@ -140,8 +140,11 @@ import {
   propNaked,
   propOrCrash,
   propOrNull,
+  propOrNullNaked,
   propOrUndef,
+  propOrUndefNaked,
   propOrZero,
+  propOrZeroNaked,
   ReduxDevtoolsCompatibilityHelper,
   serialize,
   some,
@@ -2817,6 +2820,12 @@ describe('propOrCrash', () => {
     });
   });
 
+  it('works with pipe', () => {
+    const getX = propOrCrash<A>('x');
+    expect(pipe(opt(aFull), getX)).to.be.eq(4);
+    expect(() => pipe(none, getX)).to.throw('missing x');
+  });
+
   describe('naked object', () => {
     it('pos', () => {
       const xFromA: number = propOrCrash<A>('x')(aFull);
@@ -2888,57 +2897,186 @@ describe('genNakedPropOrCrash', () => {
   });
 });
 
-describe('propOrNull', () => {
+describe('propOrNullNaked', () => {
   interface Obj {x?: number;}
 
   it('returns value when present', () => {
     const obj: Obj = {x: 5};
-    expect(propOrNull<Obj>('x')(obj)).to.equal(5);
+    expect(propOrNullNaked<Obj>()('x')(obj)).to.equal(5);
   });
 
   it('returns null when property is missing', () => {
     const obj: Obj = {};
-    expect(propOrNull<Obj>('x')(obj)).to.be.null;
+    expect(propOrNullNaked<Obj>()('x')(obj)).to.be.null;
   });
 
   it('returns null for null input', () => {
-    expect(propOrNull<Obj>('x')(null)).to.be.null;
+    expect(propOrNullNaked<Obj>()('x')(null)).to.be.null;
+  });
+
+  it('correctly infers types', () => {
+    interface VirtualItem {
+      name: string;
+      durability?: number;
+    }
+
+    const elucidator: VirtualItem = { name: 'Elucidator', durability: 1000 };
+    const darkRepulser: VirtualItem = { name: 'Dark Repulser' };
+
+    const getDurability = propOrNullNaked<VirtualItem>()('durability');
+
+    const elucidatorDurability: number | null = getDurability(elucidator);
+    expect(elucidatorDurability).to.equal(1000);
+
+    const darkRepulserDurability: number | null = getDurability(darkRepulser);
+    expect(darkRepulserDurability).to.be.null;
+
+    // @ts-expect-error 'weight' is not a property of VirtualItem
+    propOrNullNaked<VirtualItem>()('weight');
+
+    // @ts-expect-error result should be string | null, not number | null
+    const itemName: number | null = propOrNullNaked<VirtualItem>()('name')(elucidator);
+    suppressUnused(itemName);
+  });
+});
+
+describe('propOrNull', () => {
+  interface Obj {x?: number;}
+  it('supports opt', () => {
+    expect(propOrNull<Obj>()('x')(opt({x: 1}))).to.be.eq(1);
+    expect(propOrNull<Obj>()('x')(opt(null))).to.be.null;
+  });
+
+  it('type inference', () => {
+    const getX: (x: Opt<Obj>) => number | null = propOrNull<Obj>()('x');
+    const x: number | null = getX(opt({x: 1}));
+    // @ts-expect-error x is number | null
+    const shouldFailOnString: string = getX(opt({x: 1}));
+    suppressUnused(x, shouldFailOnString);
+  });
+
+  it('works with pipe', () => {
+    const getX = propOrNull<Obj>()('x');
+    expect(pipe(opt({x: 1}), getX)).to.be.eq(1);
+    expect(pipe(none, getX)).to.be.null;
+  });
+});
+
+describe('propOrUndefNaked', () => {
+  interface Obj {x?: number;}
+
+  it('returns value when present', () => {
+    const obj: Obj = {x: 5};
+    expect(propOrUndefNaked<Obj>()('x')(obj)).to.equal(5);
+  });
+
+  it('returns undefined when property is missing', () => {
+    const obj: Obj = {};
+    expect(propOrUndefNaked<Obj>()('x')(obj)).to.be.undefined;
+  });
+
+  it('returns undefined for null input', () => {
+    expect(propOrUndefNaked<Obj>()('x')(null)).to.be.undefined;
+  });
+
+  it('correctly infers types', () => {
+    interface Player {
+      username: string;
+      level?: number;
+    }
+
+    const beater: Player = { username: 'Beater', level: 96 };
+    const flashy: Player = { username: 'Flashy' };
+
+    const getLevel = propOrUndefNaked<Player>()('level');
+
+    const beaterLevel: number | undefined = getLevel(beater);
+    expect(beaterLevel).to.equal(96);
+
+    const flashyLevel: number | undefined = getLevel(flashy);
+    expect(flashyLevel).to.be.undefined;
+
+    // @ts-expect-error 'guild' is not a property of Player
+    propOrUndefNaked<Player>()('guild');
+
+    // @ts-expect-error result should be string | undefined, not number | undefined
+    const playerName: number | undefined = propOrUndefNaked<Player>()('username')(beater);
+    suppressUnused(playerName);
   });
 });
 
 describe('propOrUndef', () => {
   interface Obj {x?: number;}
+  it('supports opt', () => {
+    expect(propOrUndef<Obj>()('x')(opt({x: 1}))).to.be.eq(1);
+    expect(propOrUndef<Obj>()('x')(opt(null))).to.be.undefined;
+  });
+
+  it('type inference', () => {
+    const getX: (x: Opt<Obj>) => number | undefined = propOrUndef<Obj>()('x');
+    const x: number | undefined = getX(opt({x: 1}));
+    // @ts-expect-error x is number | undefined
+    const shouldFailOnString: string = getX(opt({x: 1}));
+    suppressUnused(x, shouldFailOnString);
+  });
+});
+
+describe('propOrZeroNaked', () => {
+  interface Obj {x?: number;}
 
   it('returns value when present', () => {
     const obj: Obj = {x: 5};
-    expect(propOrUndef<Obj>('x')(obj)).to.equal(5);
+    expect(propOrZeroNaked<Obj>()('x')(obj)).to.equal(5);
   });
 
-  it('returns undefined when property is missing', () => {
+  it('returns 0 when property is missing', () => {
     const obj: Obj = {};
-    expect(propOrUndef<Obj>('x')(obj)).to.be.undefined;
+    expect(propOrZeroNaked<Obj>()('x')(obj)).to.equal(0);
   });
 
-  it('returns undefined for null input', () => {
-    expect(propOrUndef<Obj>('x')(null)).to.be.undefined;
+  it('returns 0 for null input', () => {
+    expect(propOrZeroNaked<Obj>()('x')(null)).to.equal(0);
+  });
+
+  it('correctly infers types', () => {
+    interface Skill {
+      name: string;
+      cooldown?: number;
+    }
+
+    const vorpalStrike: Skill = { name: 'Vorpal Strike', cooldown: 5 };
+    const horizontalSquare: Skill = { name: 'Horizontal Square' };
+
+    const getCooldown = propOrZeroNaked<Skill>()('cooldown');
+
+    const vorpalStrikeCooldown: number = getCooldown(vorpalStrike);
+    expect(vorpalStrikeCooldown).to.equal(5);
+
+    const horizontalSquareCooldown: number = getCooldown(horizontalSquare);
+    expect(horizontalSquareCooldown).to.equal(0);
+
+    // @ts-expect-error 'damage' is not a property of Skill
+    propOrZeroNaked<Skill>()('damage');
+
+    // @ts-expect-error result should be number, not string
+    const skillName: string = propOrZeroNaked<Skill>('name')(vorpalStrike);
+    suppressUnused(skillName);
   });
 });
 
 describe('propOrZero', () => {
   interface Obj {x?: number;}
-
-  it('returns value when present', () => {
-    const obj: Obj = {x: 5};
-    expect(propOrZero<Obj>('x')(obj)).to.equal(5);
+  it('supports opt', () => {
+    expect(propOrZero<Obj>()('x')(opt({x: 1}))).to.be.eq(1);
+    expect(propOrZero<Obj>()('x')(none)).to.be.eq(0);
   });
 
-  it('returns 0 when property is missing', () => {
-    const obj: Obj = {};
-    expect(propOrZero<Obj>('x')(obj)).to.equal(0);
-  });
-
-  it('returns 0 for null input', () => {
-    expect(propOrZero<Obj>('x')(null)).to.equal(0);
+  it('type inference', () => {
+    const getX: (x: Opt<Obj>) => number = propOrZero<Obj>()('x');
+    const x: number = getX(opt({x: 1}));
+    // @ts-expect-error x is number
+    const shouldFailOnString: string = getX(opt({x: 1}));
+    suppressUnused(x, shouldFailOnString);
   });
 });
 

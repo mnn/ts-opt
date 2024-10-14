@@ -26,8 +26,8 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.chainToOptFlow = exports.actToOpt = exports.chainToOpt = exports.chainFlow = exports.act = exports.chainIn = exports.chain = exports.flatMapIn = exports.flatMap = exports.mapStr = exports.mapFlow = exports.mapIn = exports.map = exports.toObject = exports.fromObject = exports.toArray = exports.fromArray = exports.lengthIn = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optArrayOpt = exports.optInfinity = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.deserializeUnsafe = exports.deserializeOrCrash = exports.deserialize = exports.serialize = exports.ReduxDevtoolsCompatibilityHelper = exports.isOptSerialized = exports.Opt = exports.isUnknown = exports.isNumber = exports.isObject = exports.isFunction = exports.isReadonlyArray = exports.isArray = exports.toString = exports.isString = void 0;
 exports.propNaked = exports.prop = exports.equals = exports.print = exports.narrowOrCrash = exports.narrow = exports.find = exports.countIn = exports.count = exports.noneWhen = exports.noneIfEmpty = exports.noneIf = exports.findIn = exports.filterIn = exports.filter = exports.zipIn = exports.zip5Opt = exports.zip4Opt = exports.zip3Opt = exports.zipOpt = exports.zipArray = exports.flatBimap = exports.bimap = exports.altOpt = exports.alt = exports.orElseAny = exports.orElseLazy = exports.orElse = exports.forAllIn = exports.forAll = exports.existsIn = exports.exists = exports.hasIn = exports.elemOfStrIn = exports.elemOfStr = exports.elemOf = exports.has = exports.contains = exports.pipe = exports.onBoth = exports.foldIn = exports.fold = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = void 0;
-exports.and = exports.not = exports.clamp = exports.max2Any = exports.max2All = exports.max2Num = exports.min2Any = exports.min2All = exports.min2Num = exports.maxIn = exports.max = exports.minIn = exports.min = exports.assertType = exports.isOrCrash = exports.onFunc = exports.apply = exports.parseFloat = exports.parseInt = exports.parseJson = exports.tryRun = exports.testReOrFalse = exports.testRe = exports.zipToOptArray = exports.lastIn = exports.last = exports.headIn = exports.head = exports.at = exports.id = exports.isFull = exports.nonEmpty = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.genNakedPropGetters = exports.propOrZero = exports.propOrUndef = exports.propOrNull = exports.genNakedPropOrCrash = exports.propOrCrash = void 0;
-exports.noop = exports.eqAny = exports.eq = exports.crash = exports.appendStr = exports.prependStr = exports.dec = exports.inc = exports.bool = exports.xor = exports.or = void 0;
+exports.max2Any = exports.max2All = exports.max2Num = exports.min2Any = exports.min2All = exports.min2Num = exports.maxIn = exports.max = exports.minIn = exports.min = exports.assertType = exports.isOrCrash = exports.onFunc = exports.apply = exports.parseFloat = exports.parseInt = exports.parseJson = exports.tryRun = exports.testReOrFalse = exports.testRe = exports.zipToOptArray = exports.lastIn = exports.last = exports.headIn = exports.head = exports.at = exports.id = exports.isFull = exports.nonEmpty = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.genNakedPropGetters = exports.propOrZeroNaked = exports.propOrZero = exports.propOrUndefNaked = exports.propOrUndef = exports.propOrNullNaked = exports.propOrNull = exports.genNakedPropOrCrash = exports.propOrCrash = void 0;
+exports.noop = exports.eqAny = exports.eq = exports.crash = exports.appendStr = exports.prependStr = exports.dec = exports.inc = exports.bool = exports.xor = exports.or = exports.and = exports.not = exports.clamp = void 0;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 var errorSymbol = Symbol('Error');
@@ -235,6 +235,7 @@ var Opt = /** @class */ (function () {
             }
             return fs.reduce(function (acc, x) { return x(acc); }, _this);
         };
+        // TODO: genPropGetters
         /**
          * Constructs a function which returns a value for {@link Some} or an empty value for {@link None} (default is `null`).
          * Optionally takes an empty value as a parameter.
@@ -1872,7 +1873,15 @@ var genNakedPropOrCrash = function (obj) {
     return function (k) { return o.propOrCrash(k); };
 };
 exports.genNakedPropOrCrash = genNakedPropOrCrash;
-// TODO: add support for Opt for propOrNull, propOrUndef, propOrZero?
+/** @see {@link Opt.propOrNull} */
+var propOrNull = function () {
+    return function (key) {
+        return function (x) {
+            return x.propOrNull(key);
+        };
+    };
+};
+exports.propOrNull = propOrNull;
 /**
  * Similar to {@link Opt.propOrNull}, but it is designed for naked objects (not wrapped in opt).
  *
@@ -1881,14 +1890,29 @@ exports.genNakedPropOrCrash = genNakedPropOrCrash;
  * interface A {x?: number;}
  *
  * const aFull: A = {x: 4};
- * propOrNull<A>('x')(aFull); // 4
+ * propOrNull<A>()('x')(aFull); // 4
  *
  * const aEmpty: A = {};
- * propOrNull<A>('x')(aEmpty); // null
+ * propOrNull<A>()('x')(aEmpty); // null
  * ```
  */
-var propOrNull = function (key) { return function (x) { return (0, exports.opt)(x).propOrNull(key); }; };
-exports.propOrNull = propOrNull;
+var propOrNullNaked = function () {
+    return function (key) {
+        return function (x) {
+            return (0, exports.opt)(x).propOrNull(key);
+        };
+    };
+};
+exports.propOrNullNaked = propOrNullNaked;
+/** @see {@link Opt.propOrUndef} */
+var propOrUndef = function () {
+    return function (key) {
+        return function (x) {
+            return x.propOrUndef(key);
+        };
+    };
+};
+exports.propOrUndef = propOrUndef;
 /**
  * Similar to {@link Opt.propOrUndef}, but it is designed for naked objects (not wrapped in opt).
  *
@@ -1897,14 +1921,29 @@ exports.propOrNull = propOrNull;
  * interface A {x?: number;}
  *
  * const aFull: A = {x: 4};
- * propOrUndef<A>('x')(aFull); // 4
+ * propOrUndef<A>()('x')(aFull); // 4
  *
  * const aEmpty: A = {};
- * propOrUndef<A>('x')(aEmpty); // undefined
+ * propOrUndef<A>()('x')(aEmpty); // undefined
  * ```
  */
-var propOrUndef = function (key) { return function (x) { return (0, exports.opt)(x).propOrUndef(key); }; };
-exports.propOrUndef = propOrUndef;
+var propOrUndefNaked = function () {
+    return function (key) {
+        return function (x) {
+            return (0, exports.opt)(x).propOrUndef(key);
+        };
+    };
+};
+exports.propOrUndefNaked = propOrUndefNaked;
+/** @see {@link Opt.propOrZero} */
+var propOrZero = function () {
+    return function (key) {
+        return function (x) {
+            return x.propOrZero(key);
+        };
+    };
+};
+exports.propOrZero = propOrZero;
 /**
  * Similar to {@link Opt.propOrZero}, but it is designed for naked objects (not wrapped in opt).
  *
@@ -1913,17 +1952,23 @@ exports.propOrUndef = propOrUndef;
  * interface A {x?: number;}
  *
  * const aFull: A = {x: 4};
- * propOrZero<A>('x')(aFull); // 4
+ * propOrZero<A>()('x')(aFull); // 4
  *
  * const aEmpty: A = {};
- * propOrZero<A>('x')(aEmpty); // 0
+ * propOrZero<A>()('x')(aEmpty); // 0
  * ```
  */
-var propOrZero = function (key) { return function (x) { return (0, exports.opt)(x).propOrZero(key); }; };
-exports.propOrZero = propOrZero;
+var propOrZeroNaked = function () {
+    return function (key) {
+        return function (x) {
+            return (0, exports.opt)(x).propOrZero(key);
+        };
+    };
+};
+exports.propOrZeroNaked = propOrZeroNaked;
 /**
  * Utility function for generating property getters for one specific object.
- * Functionally similar to {@link propOrNull}, {@link propOrUndef}, and {@link propOrZero}, but it has swapped arguments and only supports naked objects.
+ * Functionally similar to {@link propOrNullNaked}, {@link propOrUndefNaked}, and {@link propOrZeroNaked}, but it has swapped arguments and only supports naked objects.
  *
  * @example
  * ```ts

@@ -1315,6 +1315,8 @@ export abstract class Opt<T> {
     return this.prop(key).orElseAny(0) as R;
   }
 
+  // TODO: genPropGetters
+
   /**
    * Constructs a function which returns a value for {@link Some} or an empty value for {@link None} (default is `null`).
    * Optionally takes an empty value as a parameter.
@@ -2668,7 +2670,11 @@ export const genNakedPropOrCrash = <T extends object>(obj: T): <K extends keyof 
   return <K extends keyof T>(k: K) => o.propOrCrash(k as any);
 };
 
-// TODO: add support for Opt for propOrNull, propOrUndef, propOrZero?
+/** @see {@link Opt.propOrNull} */
+export const propOrNull = <T extends object>() => 
+  <K extends keyof T>(key: K) => 
+    (x: Opt<T>): WithoutOptValues<T[K]> | null => 
+      x.propOrNull(key as any) as any;
 
 /**
  * Similar to {@link Opt.propOrNull}, but it is designed for naked objects (not wrapped in opt).
@@ -2678,16 +2684,22 @@ export const genNakedPropOrCrash = <T extends object>(obj: T): <K extends keyof 
  * interface A {x?: number;}
  * 
  * const aFull: A = {x: 4};
- * propOrNull<A>('x')(aFull); // 4
+ * propOrNull<A>()('x')(aFull); // 4
  * 
  * const aEmpty: A = {};
- * propOrNull<A>('x')(aEmpty); // null
+ * propOrNull<A>()('x')(aEmpty); // null
  * ```
  */
-export const propOrNull = < //
-  T extends object | EmptyValue, //
-  K extends (T extends object ? keyof T : never) = T extends object ? keyof T : never //
->(key: K) => (x: T | EmptyValue): T[K] | null => opt(x).propOrNull(key);
+export const propOrNullNaked = <T extends object | EmptyValue>() => 
+  <K extends keyof T>(key: K) => 
+    (x: T | EmptyValue): WithoutOptValues<T[K]> | null => 
+      opt(x as any).propOrNull(key);
+
+/** @see {@link Opt.propOrUndef} */
+export const propOrUndef = <T extends object>() => 
+  <K extends keyof T>(key: K) => 
+    (x: Opt<T>): WithoutOptValues<T[K]> | undefined => 
+      x.propOrUndef(key as any) as any;
 
 /**
  * Similar to {@link Opt.propOrUndef}, but it is designed for naked objects (not wrapped in opt).
@@ -2697,16 +2709,22 @@ export const propOrNull = < //
  * interface A {x?: number;}
  * 
  * const aFull: A = {x: 4};
- * propOrUndef<A>('x')(aFull); // 4
+ * propOrUndef<A>()('x')(aFull); // 4
  * 
  * const aEmpty: A = {};
- * propOrUndef<A>('x')(aEmpty); // undefined
+ * propOrUndef<A>()('x')(aEmpty); // undefined
  * ```
  */
-export const propOrUndef = < //
-  T extends object | EmptyValue, //
-  K extends (T extends object ? keyof T : never) = T extends object ? keyof T : never //
->(key: K) => (x: T | EmptyValue): T[K] | undefined => opt(x).propOrUndef(key);
+export const propOrUndefNaked = <T extends object | EmptyValue>() => 
+  <K extends keyof T>(key: K) => 
+    (x: T | EmptyValue): WithoutOptValues<T[K]> | undefined => 
+      opt(x as any).propOrUndef(key);
+
+/** @see {@link Opt.propOrZero} */
+export const propOrZero = <T extends object>() => 
+  <K extends keyof T>(key: K) => 
+    (x: Opt<T>): WithoutOptValues<T[K]> | 0 => 
+      x.propOrZero(key as any) as any;
 
 /**
  * Similar to {@link Opt.propOrZero}, but it is designed for naked objects (not wrapped in opt).
@@ -2716,20 +2734,20 @@ export const propOrUndef = < //
  * interface A {x?: number;}
  * 
  * const aFull: A = {x: 4};
- * propOrZero<A>('x')(aFull); // 4
+ * propOrZero<A>()('x')(aFull); // 4
  * 
  * const aEmpty: A = {};
- * propOrZero<A>('x')(aEmpty); // 0
+ * propOrZero<A>()('x')(aEmpty); // 0
  * ```
  */
-export const propOrZero = < //
-  T extends object | EmptyValue, //
-  K extends (T extends object ? keyof T : never) = T extends object ? keyof T : never //
->(key: K) => (x: T | EmptyValue): WithoutOptValues<T[K]> | 0 => opt(x).propOrZero(key);
+export const propOrZeroNaked = <T extends object | EmptyValue>() => 
+  <K extends keyof T>(key: K) => 
+    (x: T | EmptyValue): WithoutOptValues<T[K]> | 0 => 
+      opt(x as any).propOrZero(key);
 
 /**
  * Utility function for generating property getters for one specific object.
- * Functionally similar to {@link propOrNull}, {@link propOrUndef}, and {@link propOrZero}, but it has swapped arguments and only supports naked objects.
+ * Functionally similar to {@link propOrNullNaked}, {@link propOrUndefNaked}, and {@link propOrZeroNaked}, but it has swapped arguments and only supports naked objects.
  *
  * @example
  * ```ts
