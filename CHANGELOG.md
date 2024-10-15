@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `propOrNull`, `propOrNullNaked`, `propOrUndef`, `propOrUndefNaked`, `propOrZero` and `propOrZeroNaked`
+- `genNakedPropGetters` and `genPropGetters`
+
+### Changed
+- `orCrash` method now also accepts an error factory function
+
 ## [6.0.2] - 2024-09-12
 ### Fixed
 - `genNakedPropOrCrash` now correctly infers the type of the property

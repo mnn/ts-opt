@@ -332,18 +332,21 @@ export declare abstract class Opt<T> {
      */
     join<U>(this: Opt<Opt<U>>): Opt<U>;
     /**
-     * Returns value when {@link Some}, throws error with `msg` otherwise.
+     * Returns value when {@link Some}, throws error otherwise.
      *
      * @example
      * ```ts
      * opt(null).orCrash('unexpected empty value') // crashes with Error('unexpected empty value')
      * opt(1).orCrash('unexpected empty value') // 1
+     * opt(null).orCrash(() => new CustomException()) // crashes with CustomException
      * ```
      *
      * @see {@link orCrash}
-     * @param msg Error message.
+     * @param message Error message.
+     * @param errorFactory A function that returns an error.
      */
-    abstract orCrash(msg: string): T | never;
+    abstract orCrash(message: string): T | never;
+    abstract orCrash(errorFactory: () => unknown): T | never;
     /**
      * Crash when called on {@link None}, pass {@link Opt} instance on {@link Some}.
      *
@@ -1352,7 +1355,7 @@ declare class None<T> extends Opt<T> {
     map<U>(): Opt<U>;
     mapIn<R, U>(this: None<U[]>, _f: (x: U) => R): Opt<R[]>;
     mapStr(this: None<string>, _f: (c: string) => string): None<string>;
-    orCrash(msg: string): T;
+    orCrash(messageOrFactory: string | (() => unknown)): T;
     someOrCrash(msg: string): Some<T>;
     orNull(): T | null;
     orUndef(): T | undefined;
@@ -1413,7 +1416,8 @@ declare class Some<T> extends Opt<T> {
     map<U>(f: (_: T) => U): Opt<U>;
     mapIn<R, U>(this: Some<U[]>, f: (x: U) => R): Opt<R[]>;
     mapStr(this: Some<string>, f: (c: string) => string): Some<string>;
-    orCrash(_msg: string): T;
+    orCrash(message: string): T;
+    orCrash(errorFactory: () => unknown): T;
     someOrCrash(_msg: string): Some<T>;
     orNull(): T | null;
     orUndef(): T | undefined;

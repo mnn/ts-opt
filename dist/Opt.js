@@ -844,7 +844,14 @@ var None = /** @class */ (function (_super) {
     None.prototype.mapStr = function (_f) {
         return this;
     };
-    None.prototype.orCrash = function (msg) { throw new Error(msg); };
+    None.prototype.orCrash = function (messageOrFactory) {
+        if (typeof messageOrFactory === 'string') {
+            throw new Error(messageOrFactory);
+        }
+        else {
+            throw messageOrFactory();
+        }
+    };
     None.prototype.someOrCrash = function (msg) { throw new Error(msg); };
     None.prototype.orNull = function () { return null; };
     None.prototype.orUndef = function () { return undefined; };
@@ -978,7 +985,9 @@ var Some = /** @class */ (function (_super) {
         }
         return new Some((0, exports.mapStr)(f)(this._value));
     };
-    Some.prototype.orCrash = function (_msg) { return this._value; };
+    Some.prototype.orCrash = function (_messageOrFactory) {
+        return this._value;
+    };
     Some.prototype.someOrCrash = function (_msg) { return this; };
     Some.prototype.orNull = function () { return this._value; };
     Some.prototype.orUndef = function () { return this._value; };
