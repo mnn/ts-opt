@@ -1141,6 +1141,23 @@ export declare abstract class Opt<T> {
     K extends (T extends object ? keyof T : never), //
     R extends (T extends object ? WithoutOptValues<T[K]> | 0 : never)>(key: K): R;
     /**
+     * Generates property getters for an Opt<T> instance.
+     *
+     * @example
+     * ```ts
+     * interface Obj { x: number; y: string; z?: number; }
+     * const obj = opt<Obj>({ x: 1, y: 'hello' });
+     * const getters = obj.genPropGetters();
+     * getters.orCrash('x') // 1
+     * getters.orNull('y') // 'hello'
+     * getters.orUndef('z') // undefined
+     * getters.orZero('x') // 1
+     * ```
+     *
+     * @returns An object with property getter methods
+     */
+    genPropGetters<U extends object, K extends keyof U>(this: Opt<U>): NakedPropGetters<U, K>;
+    /**
      * Constructs a function which returns a value for {@link Some} or an empty value for {@link None} (default is `null`).
      * Optionally takes an empty value as a parameter.
      *
@@ -2102,11 +2119,12 @@ export declare const propOrZeroNaked: <T extends object | EmptyValue>() => <K ex
  * @param obj
  */
 export declare const genNakedPropGetters: <T extends object, K extends (T extends object ? keyof T : never) = T extends object ? keyof T : never>(obj: T) => NakedPropGetters<T, K>;
-interface NakedPropGetters<T extends object, K extends (T extends object ? keyof T : never) = T extends object ? keyof T : never> {
+interface NakedPropGetters<T extends object, K extends keyof T = keyof T> {
     orCrash: <KK extends K, R extends T[KK]>(k: KK) => WithoutOptValues<R>;
     orNull: <KK extends K, R extends T[KK]>(k: KK) => WithoutOptValues<R> | null;
     orUndef: <KK extends K, R extends T[KK]>(k: KK) => WithoutOptValues<R> | undefined;
     orZero: <KK extends K, R extends T[KK]>(k: KK) => WithoutOptValues<R> | 0;
+    prop: <KK extends K, R extends T[KK]>(k: KK) => OptSafe<R>;
 }
 /** @see {@link Opt.swap} */
 export declare const swap: <U>(newValue: U) => <T>(x: Opt<T>) => Opt<U>;

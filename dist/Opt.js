@@ -235,7 +235,6 @@ var Opt = /** @class */ (function () {
             }
             return fs.reduce(function (acc, x) { return x(acc); }, _this);
         };
-        // TODO: genPropGetters
         /**
          * Constructs a function which returns a value for {@link Some} or an empty value for {@link None} (default is `null`).
          * Optionally takes an empty value as a parameter.
@@ -628,6 +627,32 @@ var Opt = /** @class */ (function () {
      */
     Opt.prototype.propOrZero = function (key) {
         return this.prop(key).orElseAny(0);
+    };
+    /**
+     * Generates property getters for an Opt<T> instance.
+     *
+     * @example
+     * ```ts
+     * interface Obj { x: number; y: string; z?: number; }
+     * const obj = opt<Obj>({ x: 1, y: 'hello' });
+     * const getters = obj.genPropGetters();
+     * getters.orCrash('x') // 1
+     * getters.orNull('y') // 'hello'
+     * getters.orUndef('z') // undefined
+     * getters.orZero('x') // 1
+     * ```
+     *
+     * @returns An object with property getter methods
+     */
+    Opt.prototype.genPropGetters = function () {
+        var _this = this;
+        return {
+            orCrash: function (k) { return _this.propOrCrash(k); },
+            orNull: function (k) { return _this.propOrNull(k); },
+            orUndef: function (k) { return _this.propOrUndef(k); },
+            orZero: function (k) { return _this.propOrZero(k); },
+            prop: function (k) { return _this.prop(k); },
+        };
     };
     /**
      * Get a first item of an array or a first character of a string wrapped in {@link Opt}.
@@ -2000,6 +2025,7 @@ var genNakedPropGetters = function (obj) {
         orNull: function (k) { return o.propOrNull(k); },
         orUndef: function (k) { return o.propOrUndef(k); },
         orZero: function (k) { return o.propOrZero(k); },
+        prop: function (k) { return o.prop(k); },
     };
 };
 exports.genNakedPropGetters = genNakedPropGetters;

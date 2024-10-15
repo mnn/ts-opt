@@ -1170,6 +1170,25 @@ describe('opt', () => {
     });
   });
 
+  it('genPropGetters', () => {
+    interface Obj { x: number; y: string; z?: number; }
+    const obj = opt<Obj>({ x: 1, y: 'hello' });
+    const getters = obj.genPropGetters();
+    expect(getters.orCrash('x')).to.be.eq(1);
+    expect(getters.orNull('y')).to.be.eq('hello');
+    expect(getters.orUndef('z')).to.be.undefined;
+    expect(() => getters.orCrash('z')).to.throw();
+    expect(getters.orZero('x')).to.be.eq(1);
+    expect(getters.prop('x').orCrash('missing x')).to.be.eq(1);
+    // @ts-expect-error invalid prop
+    expect(() => getters.orCrash('xxx')).to.throw();
+    const yOrNull: string | null = getters.orNull('y');
+    const zOrZero: number | 0 = getters.orZero('z');
+    // @ts-expect-error y is string not a number
+    const uOrUndef: number | undefined = getters.orUndef('y');
+    suppressUnused(yOrNull, zOrZero, uOrUndef);
+  });
+
   it('const', () => {
     expect(
       opt(1).const()(), // 1
@@ -3097,6 +3116,7 @@ describe('genNakedPropGetters', () => {
     expect(get.orNull('name')).to.equal('Test');
     expect(get.orUndef('age')).to.equal(30);
     expect(get.orZero('age')).to.equal(30);
+    expect(get.prop('id').orCrash('missing id')).to.be.eq(1);
   });
 
   it('handles missing properties correctly', () => {
@@ -3127,15 +3147,17 @@ describe('genNakedPropGetters', () => {
     const nameOrUndefViaGetters: string | undefined = getters.orUndef('name');
     const nameOrZeroViaGetters: string | 0 = getters.orZero('name');
     const idOrZeroViaGetters: number | 0 = getters.orZero('id');
-    suppressUnused(nameOrCrashViaGetters, nameOrNullViaGetters, nameOrUndefViaGetters, nameOrZeroViaGetters, idOrZeroViaGetters);
+    const idPropViaGetters: Opt<number> = getters.prop('id');
+    suppressUnused(nameOrCrashViaGetters, nameOrNullViaGetters, nameOrUndefViaGetters, nameOrZeroViaGetters, idOrZeroViaGetters, idPropViaGetters);
 
-    const {orCrash, orNull, orUndef, orZero} = genNakedPropGetters(cow);
+    const {orCrash, orNull, orUndef, orZero, prop: rawProp} = genNakedPropGetters(cow);
     const nameOrCrash: string = orCrash('name');
     const nameOrNull: string | null = orNull('name');
     const nameOrUndef: string | undefined = orUndef('name');
     const nameOrZero: string | 0 = orZero('name');
     const idOrZero: number | 0 = orZero('id');
-    suppressUnused(nameOrCrash, nameOrNull, nameOrUndef, nameOrZero, idOrZero);
+    const idProp: Opt<number> = rawProp('id');
+    suppressUnused(nameOrCrash, nameOrNull, nameOrUndef, nameOrZero, idOrZero, idProp);
 
     // @ts-expect-error name is not number
     const shouldFailOnStringWithOrCrash: number = orCrash('name');
@@ -3145,7 +3167,9 @@ describe('genNakedPropGetters', () => {
     const shouldFailOnStringWithOrUndef: number | undefined = orUndef('name');
     // @ts-expect-error name is not number
     const shouldFailOnStringWithOrZero: number | 0 = orZero('name');
-    suppressUnused(shouldFailOnStringWithOrCrash, shouldFailOnStringWithOrNull, shouldFailOnStringWithOrUndef, shouldFailOnStringWithOrZero);
+    // @ts-expect-error name is not number
+    const shouldFailOnStringWithProp: Opt<number> = rawProp('name');
+    suppressUnused(shouldFailOnStringWithOrCrash, shouldFailOnStringWithOrNull, shouldFailOnStringWithOrUndef, shouldFailOnStringWithOrZero, shouldFailOnStringWithProp);
 
     // @ts-expect-error id is not string
     const shouldFailOnNumberWithOrCrash: string = orCrash('id');
@@ -3155,7 +3179,9 @@ describe('genNakedPropGetters', () => {
     const shouldFailOnNumberWithOrUndef: string | undefined = orUndef('id');
     // @ts-expect-error id is not string
     const shouldFailOnNumberWithOrZero: string | 0 = orZero('id');
-    suppressUnused(shouldFailOnNumberWithOrCrash, shouldFailOnNumberWithOrNull, shouldFailOnNumberWithOrUndef, shouldFailOnNumberWithOrZero);
+    // @ts-expect-error id is not string
+    const shouldFailOnNumberWithProp: Opt<string> = rawProp('id');
+    suppressUnused(shouldFailOnNumberWithOrCrash, shouldFailOnNumberWithOrNull, shouldFailOnNumberWithOrUndef, shouldFailOnNumberWithOrZero, shouldFailOnNumberWithProp);
 
     // @ts-expect-error null is not undefined
     const shouldFailOnStringOrUndefinedWithOrNull: string | undefined = orNull('name');

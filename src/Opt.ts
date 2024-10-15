@@ -1315,7 +1315,31 @@ export abstract class Opt<T> {
     return this.prop(key).orElseAny(0) as R;
   }
 
-  // TODO: genPropGetters
+  /**
+   * Generates property getters for an Opt<T> instance.
+   * 
+   * @example
+   * ```ts
+   * interface Obj { x: number; y: string; z?: number; }
+   * const obj = opt<Obj>({ x: 1, y: 'hello' });
+   * const getters = obj.genPropGetters();
+   * getters.orCrash('x') // 1
+   * getters.orNull('y') // 'hello'
+   * getters.orUndef('z') // undefined
+   * getters.orZero('x') // 1
+   * ```
+   * 
+   * @returns An object with property getter methods
+   */
+  genPropGetters<U extends object, K extends keyof U>(this: Opt<U>): NakedPropGetters<U, K> {
+    return {
+      orCrash: (k: K) => this.propOrCrash(k as any) as any,
+      orNull: (k: K) => this.propOrNull(k as any) as any,
+      orUndef: (k: K) => this.propOrUndef(k as any) as any,
+      orZero: (k: K) => this.propOrZero(k as any) as any,
+      prop: (k: K) => this.prop(k as any) as any,
+    };
+  }
 
   /**
    * Constructs a function which returns a value for {@link Some} or an empty value for {@link None} (default is `null`).
@@ -2779,14 +2803,16 @@ export const genNakedPropGetters = <T extends object, K extends (T extends objec
     orNull: (k: K) => o.propOrNull(k) as any,
     orUndef: (k: K) => o.propOrUndef(k) as any,
     orZero: (k: K) => o.propOrZero(k) as any,
+    prop: (k: K) => o.prop(k) as any,
   };
 };
 
-interface NakedPropGetters<T extends object, K extends (T extends object ? keyof T : never) = T extends object ? keyof T : never> {
+interface NakedPropGetters<T extends object, K extends keyof T = keyof T> {
   orCrash: <KK extends K, R extends T[KK]>(k: KK) => WithoutOptValues<R>;
   orNull: <KK extends K, R extends T[KK]>(k: KK) => WithoutOptValues<R> | null;
   orUndef: <KK extends K, R extends T[KK]>(k: KK) => WithoutOptValues<R> | undefined;
   orZero: <KK extends K, R extends T[KK]>(k: KK) => WithoutOptValues<R> | 0;
+  prop: <KK extends K, R extends T[KK]>(k: KK) => OptSafe<R>;
 }
 
 /** @see {@link Opt.swap} */
