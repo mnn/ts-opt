@@ -431,6 +431,22 @@ var Opt = /** @class */ (function () {
         return this.exists((0, exports.elemOfStr)(haystack));
     };
     /**
+     * Checks if the array inside the `Opt` is empty or if the instance is {@link None}.
+     *
+     * @example
+     * ```ts
+     * opt([1, 2, 3]).isEmptyIn() // false
+     * opt([]).isEmptyIn() // true
+     * none.isEmptyIn() // true
+     * ```
+     */
+    Opt.prototype.isEmptyIn = function () {
+        if (this.isSome() && !(0, exports.isArray)(this.value)) {
+            throw new Error('isEmptyIn called on non array: ' + JSON.stringify(this.value));
+        }
+        return this.forAll(exports.isEmpty);
+    };
+    /**
      * Filter by regular expression.
      * It is a shortcut function for {@link Opt.filter} + {@link testRe}.
      *

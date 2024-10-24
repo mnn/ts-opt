@@ -653,6 +653,26 @@ describe('opt', () => {
     });
   });
 
+  describe('isEmptyIn', () => {
+    it('returns true for empty array in Some', () => {
+      expect(opt([]).isEmptyIn()).to.be.true;
+    });
+
+    it('returns false for non-empty array in Some', () => {
+      expect(opt([1, 2, 3]).isEmptyIn()).to.be.false;
+    });
+
+    it('returns true for None', () => {
+      expect(none.isEmptyIn()).to.be.true;
+    });
+
+    it('throws when called on non-array value in Some', () => {
+      const numOpt = opt(123);
+      // @ts-expect-error wrong type
+      expect(() => numOpt.isEmptyIn()).to.throw(Error, 'isEmptyIn called on non array: 123');
+    });
+  });
+
   it('has', () => {
     expect(none.has(0)).to.be.false;
     expect(some(1).has(0)).to.be.false;

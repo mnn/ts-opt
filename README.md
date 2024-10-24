@@ -420,6 +420,9 @@ Not using specialized methods and other common bad uses
 | `found.prop('id').nonEmpty ? found.prop('id') : opt(id)` | `found.prop('id').alt(id)` |
 | `.map(...).chainToOpt(x => x)`                           | `.chainToOpt(...)`         |
 | `opt(x).zip(opt(y))`                                     | `zipToOptArray([x, y])`    |
+| `isEmpty(data.orElse([]))`                               | `data.isEmptyIn()`         |
+| `data.forAll(isEmpty)`                                   | `data.isEmptyIn()`         |
+| `data.map(isEmpty).orTrue()`                             | `data.isEmptyIn()`         |
 
 
 

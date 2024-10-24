@@ -698,6 +698,23 @@ export abstract class Opt<T> {
   }
 
   /**
+   * Checks if the array inside the `Opt` is empty or if the instance is {@link None}.
+   *
+   * @example
+   * ```ts
+   * opt([1, 2, 3]).isEmptyIn() // false
+   * opt([]).isEmptyIn() // true
+   * none.isEmptyIn() // true
+   * ```
+   */
+  isEmptyIn(this: Opt<readonly unknown[]>): boolean {
+    if (this.isSome() && !isArray(this.value)) {
+      throw new Error('isEmptyIn called on non array: ' + JSON.stringify(this.value));
+    }
+    return this.forAll(isEmpty);
+  }
+
+  /**
    * Applies `p` to inner value and passes result. Always `false` for {@link None}.
    *
    * ```ts

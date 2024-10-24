@@ -590,6 +590,17 @@ export declare abstract class Opt<T> {
      */
     elemOfStrIn(this: Opt<string>, haystack: string): boolean;
     /**
+     * Checks if the array inside the `Opt` is empty or if the instance is {@link None}.
+     *
+     * @example
+     * ```ts
+     * opt([1, 2, 3]).isEmptyIn() // false
+     * opt([]).isEmptyIn() // true
+     * none.isEmptyIn() // true
+     * ```
+     */
+    isEmptyIn(this: Opt<readonly unknown[]>): boolean;
+    /**
      * Applies `p` to inner value and passes result. Always `false` for {@link None}.
      *
      * ```ts
