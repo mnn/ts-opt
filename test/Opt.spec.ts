@@ -89,6 +89,8 @@ import {
   mapIn,
   mapOpt,
   mapStr,
+  mapWithIndex,
+  mapWithIndexIn,
   max,
   max2All,
   max2Any,
@@ -377,6 +379,47 @@ describe('opt', () => {
       // @ts-expect-error Testing for type safety: mapIn expects a function that operates on array elements.
       const result: Opt<number[]> = opt([1, 2, 3]).mapIn((x: string) => +x);
       expect(result.orNull()).to.eql([1, 2, 3]);
+    });
+  });
+
+  describe('mapWithIndexIn', () => {
+    it('maps over an array inside Opt with index', () => {
+      expect(none.mapWithIndexIn((x: string, i: number) => x + i).orNull()).to.be.null;
+      expect(opt([]).mapWithIndexIn((x: string, i: number) => x + i).orNull()).to.be.eql([]);
+      expect(mapWithIndexIn((x: string, i: number) => x + i)(opt(['a', 'b'])).orNull()).to.be.eql(['a0', 'b1']);
+    });
+
+    it('should fail type checking when called with incorrect argument types', () => {
+      // @ts-expect-error Testing for type safety: mapWithIndexIn expects a function that operates on array elements.
+      const result: Opt<number[]> = opt([1, 2, 3]).mapWithIndexIn((x: string, i: number) => +x + i);
+      suppressUnused(result);
+    });
+
+    it('should throw when called on non array', () => {
+      expect(() => opt(123 as any).mapWithIndexIn((x: string, i: number) => x + i)).to.throw(Error, 'mapWithIndexIn called on non array: 123');
+    });
+
+    it('should work with readonly arrays', () => {
+      const a: readonly string[] = ['a', 'b'];
+      expect(mapWithIndexIn((x: string, i: number) => x + i)(opt(a)).orNull()).to.be.eql(['a0', 'b1']);
+    });
+
+    it('works with example in the issue', () => {
+      interface ContentWrapper {
+        content: string[];
+      }
+
+      const dataContainer: ContentWrapper = {
+        content: ['cow', 'horse', 'pig']
+      };
+
+      const itemTransformer = (item: string, index: number): string => `${index}: ${item.toUpperCase()}`;
+      const indexedTransformedData = opt(dataContainer)
+        .prop('content')
+        .mapWithIndexIn(itemTransformer)
+        .orElse([]);
+
+      expect(indexedTransformedData).to.be.eql(['0: COW', '1: HORSE', '2: PIG']);
     });
   });
 
@@ -2034,9 +2077,22 @@ describe('map', () => {
   });
 });
 
+describe('mapWithIndex', () => {
+  it('maps over array with index', () => {
+    expect(mapWithIndex((x: string, i: number) => x + i)([])).to.be.eql([]);
+    expect(mapWithIndex((x: string, i: number) => x + i)(['a', 'b'])).to.be.eql(['a0', 'b1']);
+  });
+});
+
 describe('mapIn', () => {
   it('maps over array inside Opt', () => {
     expect(mapIn((x: number) => x + 1)(opt([1, 2, 3])).orNull()).to.be.eql([2, 3, 4]);
+  });
+});
+
+describe('mapWithIndexIn', () => {
+  it('maps over array inside Opt with index', () => {
+    expect(mapWithIndexIn((x: string, i: number) => x + i)(opt(['a', 'b'])).orNull()).to.be.eql(['a0', 'b1']);
   });
 });
 

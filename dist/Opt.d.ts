@@ -174,6 +174,15 @@ export declare abstract class Opt<T> {
      */
     abstract mapIn<U, R>(this: Opt<U[]>, f: (x: U) => R): Opt<R[]>;
     /**
+     * Maps over an array inside the Opt with index.
+     * @example
+     * ```ts
+     * opt(['a', 'b']).mapWithIndexIn((x, i) => x + i) // Some(['a0', 'b1'])
+     * none.mapWithIndexIn((x, i) => x + i) // None
+     * ```
+     */
+    abstract mapWithIndexIn<U, R>(this: Opt<readonly U[]>, f: (x: U, i: number) => R): Opt<readonly R[]>;
+    /**
      * Maps over a property of objects in an array inside the Opt, discarding nulls and undefined values.
      * @example
      * ```ts
@@ -1365,6 +1374,7 @@ declare class None<T> extends Opt<T> {
     flatMapIn<U, R>(this: None<U[]>, _f: (x: U) => R[]): Opt<R[]>;
     map<U>(): Opt<U>;
     mapIn<R, U>(this: None<U[]>, _f: (x: U) => R): Opt<R[]>;
+    mapWithIndexIn<U, R>(this: None<readonly U[]>, _f: (x: U, i: number) => R): Opt<readonly R[]>;
     mapStr(this: None<string>, _f: (c: string) => string): None<string>;
     orCrash(messageOrFactory: string | (() => unknown)): T;
     someOrCrash(msg: string): Some<T>;
@@ -1426,6 +1436,7 @@ declare class Some<T> extends Opt<T> {
     flatMapIn<U, R>(this: Some<U[]>, f: (x: U) => R[]): Opt<R[]>;
     map<U>(f: (_: T) => U): Opt<U>;
     mapIn<R, U>(this: Some<U[]>, f: (x: U) => R): Opt<R[]>;
+    mapWithIndexIn<U, R>(this: Some<readonly U[]>, f: (x: U, i: number) => R): Opt<readonly R[]>;
     mapStr(this: Some<string>, f: (c: string) => string): Some<string>;
     orCrash(message: string): T;
     orCrash(errorFactory: () => unknown): T;
@@ -1769,6 +1780,16 @@ type MapFn = <T, U>(f: (_: T) => U) => <I extends (Opt<T> | readonly T[]), O ext
 export declare const map: MapFn;
 /** @see {@link Opt.mapIn} */
 export declare const mapIn: <T, U>(f: (x: T) => U) => (x: Opt<T[]>) => Opt<U[]>;
+/**
+ * Maps over an array with index.
+ * @example
+ * ```ts
+ * mapWithIndex((x, i) => x + i)(['a', 'b']) // ['a0', 'b1']
+ * ```
+ */
+export declare const mapWithIndex: <T, U>(f: (x: T, i: number) => U) => (x: readonly T[]) => U[];
+/** @see {@link Opt.mapWithIndexIn} */
+export declare const mapWithIndexIn: <T, U>(f: (x: T, i: number) => U) => (x: Opt<readonly T[]>) => Opt<readonly U[]>;
 /** @see {@link Opt.mapFlow} */
 export declare const mapFlow: MapFlowFn;
 /**

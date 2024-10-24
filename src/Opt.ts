@@ -234,6 +234,16 @@ export abstract class Opt<T> {
   abstract mapIn<U, R>(this: Opt<U[]>, f: (x: U) => R): Opt<R[]>;
 
   /**
+   * Maps over an array inside the Opt with index.
+   * @example
+   * ```ts
+   * opt(['a', 'b']).mapWithIndexIn((x, i) => x + i) // Some(['a0', 'b1'])
+   * none.mapWithIndexIn((x, i) => x + i) // None
+   * ```
+   */
+  abstract mapWithIndexIn<U, R>(this: Opt<readonly U[]>, f: (x: U, i: number) => R): Opt<readonly R[]>;
+
+  /**
    * Maps over a property of objects in an array inside the Opt, discarding nulls and undefined values.
    * @example
    * ```ts
@@ -1608,6 +1618,8 @@ class None<T> extends Opt<T> {
 
   mapIn<R, U>(this: None<U[]>, _f: (x: U) => R): Opt<R[]> { return none as unknown as Opt<R[]>; }
 
+  mapWithIndexIn<U, R>(this: None<readonly U[]>, _f: (x: U, i: number) => R): Opt<readonly R[]> { return none as unknown as Opt<readonly R[]>; }
+
   mapStr(this: None<string>, _f: (c: string) => string): None<string> {
     return this;
   }
@@ -1777,6 +1789,11 @@ class Some<T> extends Opt<T> {
   mapIn<R, U>(this: Some<U[]>, f: (x: U) => R): Opt<R[]> {
     if (!isArray(this._value)) { throw new Error('mapIn called on non array: ' + this._value); }
     return some(this._value.map(f));
+  }
+
+  mapWithIndexIn<U, R>(this: Some<readonly U[]>, f: (x: U, i: number) => R): Opt<readonly R[]> {
+    if (!isArray(this._value)) { throw new Error('mapWithIndexIn called on non array: ' + this._value); }
+    return some(mapWithIndex(f)(this._value));
   }
 
   mapStr(this: Some<string>, f: (c: string) => string): Some<string> {
@@ -2333,6 +2350,18 @@ export const map: MapFn = (f: any) => (x: any) => x.map(f);
 
 /** @see {@link Opt.mapIn} */
 export const mapIn = <T, U>(f: (x: T) => U) => (x: Opt<T[]>): Opt<U[]> => x.mapIn(f);
+
+/**
+ * Maps over an array with index.
+ * @example
+ * ```ts
+ * mapWithIndex((x, i) => x + i)(['a', 'b']) // ['a0', 'b1']
+ * ```
+ */
+export const mapWithIndex = <T, U>(f: (x: T, i: number) => U) => (x: readonly T[]): U[] => x.map((x, i) => f(x, i));
+
+/** @see {@link Opt.mapWithIndexIn} */
+export const mapWithIndexIn = <T, U>(f: (x: T, i: number) => U) => (x: Opt<readonly T[]>): Opt<readonly U[]> => x.mapWithIndexIn(f);
 
 /** @see {@link Opt.mapFlow} */
 export const mapFlow: MapFlowFn = (...fs: any[]) => <T>(x: Opt<T>) => fs.reduce((acc, x) => acc.map(x), x);

@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - `propOrNull`, `propOrNullNaked`, `propOrUndef`, `propOrUndefNaked`, `propOrZero` and `propOrZeroNaked`
 - `genNakedPropGetters` and `genPropGetters`
+- `isEmptyIn`
+- `mapWithIndex` and `mapWithIndexIn`
 
 ### Changed
 - `orCrash` method now also accepts an error factory function

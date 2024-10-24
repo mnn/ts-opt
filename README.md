@@ -411,19 +411,20 @@ Now the data flow is easy to understand and to read, since it only flows in one 
 Not using specialized methods and other common bad uses
 ---
 
-| Bad                                                      | Good                       |
-|----------------------------------------------------------|----------------------------|
-| `lineId ? opt(lineId) : none`                            | `opt(lineId)`              |
-| `tag.equals(opt('MALE'))`                                | `tag.contains('MALE')`     |
-| `.map(pred).orFalse()`                                   | `.exists(pred)`            |
-| `.map(pred).orTrue()`                                    | `.forAll(pred)`            |
-| `found.prop('id').nonEmpty ? found.prop('id') : opt(id)` | `found.prop('id').alt(id)` |
-| `.map(...).chainToOpt(x => x)`                           | `.chainToOpt(...)`         |
-| `opt(x).zip(opt(y))`                                     | `zipToOptArray([x, y])`    |
-| `isEmpty(data.orElse([]))`                               | `data.isEmptyIn()`         |
-| `data.forAll(isEmpty)`                                   | `data.isEmptyIn()`         |
-| `data.map(isEmpty).orTrue()`                             | `data.isEmptyIn()`         |
-
+| Bad                                                      | Good                       | Notes                                            |
+|----------------------------------------------------------|----------------------------|--------------------------------------------------|
+| `lineId ? opt(lineId) : none`                            | `opt(lineId)`              | `opt*` functions already handle emptiness checks |
+| `tag.equals(opt('MALE'))`                                | `tag.contains('MALE')`     |                                                  |
+| `.map(pred).orFalse()`                                   | `.exists(pred)`            |                                                  |
+| `.map(pred).orTrue()`                                    | `.forAll(pred)`            |                                                  |
+| `found.prop('id').nonEmpty ? found.prop('id') : opt(id)` | `found.prop('id').alt(id)` |                                                  |
+| `.map(...).chainToOpt(x => x)`                           | `.chainToOpt(...)`         |                                                  |
+| `opt(x).zip(opt(y))`                                     | `zipToOptArray([x, y])`    |                                                  |
+| `isEmpty(data.orElse([]))`                               | `data.isEmptyIn()`         |                                                  |
+| `data.forAll(isEmpty)`                                   | `data.isEmptyIn()`         |                                                  |
+| `data.map(isEmpty).orTrue()`                             | `data.isEmptyIn()`         |                                                  |
+| `.map(map(f))`                                           | `.mapIn(f)`                |                                                  |
+| `.map(xs => xs.map((x, i) => f(x, i)))`                  | `.mapWithIndexIn(f)`       |                                                  |
 
 
 Integrations
