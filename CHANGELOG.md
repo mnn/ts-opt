@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - `orCrash` method now also accepts an error factory function
+- Added support for custom errors in `propOrCrash`, `genNakedPropOrCrash`, `genPropGetters` and `genNakedPropGetters` (during construction and in getter)
 
 ## [6.0.2] - 2024-09-12
 ### Fixed

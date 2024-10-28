@@ -1170,19 +1170,51 @@ describe('opt', () => {
     suppressUnused(getValue2, getValue3);
   });
 
-  it('propOrCrash', () => {
-    interface A {x?: number;}
+  describe('propOrCrash', () => {
+    it('crashes on missing prop', () => {
+      interface A { x?: number; }
 
-    const aFull: A = {x: 4};
-    const aEmpty: A = {};
-    const xFromA: number = opt(aFull).propOrCrash('x');
-    expect(xFromA).to.be.eq(4);
-    expect(() => opt(aEmpty).propOrCrash('x')).to.throw('missing x');
-    expect(() => {
-      // @ts-expect-error invalid field
-      const x = opt(aFull).propOrCrash('foo');
-      suppressUnused(x);
-    }).to.throw();
+      const aFull: A = { x: 4 };
+      const aEmpty: A = {};
+      const xFromA: number = opt(aFull).propOrCrash('x');
+      expect(xFromA).to.be.eq(4);
+      expect(() => opt(aEmpty).propOrCrash('x')).to.throw('missing x');
+      expect(() => {
+        // @ts-expect-error invalid field
+        const x = opt(aFull).propOrCrash('foo');
+        suppressUnused(x);
+      }).to.throw();
+    });
+
+    describe('with custom error', () => {
+      interface Data { fieldA?: string; }
+      const o: Data = {};
+    
+      it('supports string message', () => {
+        expect(() => opt(o).propOrCrash('fieldA', 'Custom error: fieldA is missing'))
+          .to.throw('Custom error: fieldA is missing');
+      });
+
+      it('supports string error message factory', () => {
+        expect(() => opt(o).propOrCrash('fieldA', key => `Custom error: ${key} is missing`))
+          .to.throw('Custom error: fieldA is missing');
+      });
+    
+      it('supports Error object factory', () => {
+        expect(() => opt(o).propOrCrash('fieldA', key => new Error(`Custom error: ${key} is missing`)))
+          .to.throw('Custom error: fieldA is missing');
+      });
+    
+      it('works with function references', () => {
+        const makeErrorMsg = (key: string) => `Custom error: ${key} is missing`;
+        const makeErrorObj = (key: string) => new Error(`Custom error: ${key} is missing`);
+    
+        expect(() => opt(o).propOrCrash('fieldA', makeErrorMsg))
+          .to.throw('Custom error: fieldA is missing');
+        expect(() => opt(o).propOrCrash('fieldA', makeErrorObj))
+          .to.throw('Custom error: fieldA is missing');
+      });
+    });
   });
 
   describe('propOrNull', () => {
@@ -1256,6 +1288,12 @@ describe('opt', () => {
     // @ts-expect-error y is string not a number
     const uOrUndef: number | undefined = getters.orUndef('y');
     suppressUnused(yOrNull, zOrZero, uOrUndef);
+
+    const gettersWithCustomError = obj.genPropGetters(key => `Custom error: ${key} is missing`);
+    expect(() => gettersWithCustomError.orCrash('z')).to.throw('Custom error: z is missing');
+    expect(() => gettersWithCustomError.orCrash('z', 'nope, no z')).to.throw('nope, no z');
+    expect(() => gettersWithCustomError.orCrash('z', key => `nope, no ${key}`)).to.throw('nope, no z');
+    expect(() => gettersWithCustomError.orCrash('z', key => new Error(`nope, no ${key}`))).to.throw('nope, no z');
   });
 
   it('const', () => {
@@ -2921,6 +2959,18 @@ describe('propOrCrash', () => {
     });
   });
 
+  describe('with custom error', () => {
+    it('supports string message', () => {
+      expect(() => propOrCrash<A>('x', 'Custom error: x is missing')(aEmpty)).to.throw('Custom error: x is missing');
+    });
+    it('supports function', () => {
+      expect(() => propOrCrash<A>('x', key => `Custom error: ${key} is missing`)(aEmpty)).to.throw('Custom error: x is missing');
+    });
+    it('supports Error', () => {
+      expect(() => propOrCrash<A>('x', key => new Error(`Custom error: ${key} is missing`))(aEmpty)).to.throw('Custom error: x is missing');
+    });
+  });
+
   it('works with pipe', () => {
     const getX = propOrCrash<A>('x');
     expect(pipe(opt(aFull), getX)).to.be.eq(4);
@@ -2983,6 +3033,30 @@ describe('genNakedPropOrCrash', () => {
       // @ts-expect-error invalid field
       getCowProp('nope');
     }).to.throw('missing nope');
+  });
+
+  describe('with custom error in creation', () => {
+    it('supports string message', () => {
+      const cow: Animal = {id: 36};
+      const getCowProp = genNakedPropOrCrash(cow, key => `Custom error: ${key} is missing`);
+      expect(() => getCowProp('name')).to.throw('Custom error: name is missing');
+    });
+  });
+
+  describe('with custom error in usage', () => {
+    it('supports string message', () => {
+      const cow: Animal = {id: 36};
+      const getCowProp = genNakedPropOrCrash(cow);
+      expect(() => getCowProp('name', 'Custom error: name is missing')).to.throw('Custom error: name is missing');
+    });
+  });
+
+  describe('with custom error in both creation and usage - prefers error from usage', () => {
+    it('supports string message', () => {
+      const cow: Animal = {id: 36};
+      const getCowProp = genNakedPropOrCrash(cow, key => `Custom error creation: ${key} is missing`);
+      expect(() => getCowProp('name', 'Custom error usage: name is missing')).to.throw('Custom error usage: name is missing');
+    });
   });
 
   it('type inference', () => {
@@ -3213,6 +3287,14 @@ describe('genNakedPropGetters', () => {
   it('crashes when using orCrash on missing property', () => {
     const get = genNakedPropGetters(emptyObj);
     expect(() => get.orCrash('name')).to.throw('missing name');
+  });
+
+  it('orCrash uses custom error factory when provided', () => {
+    const get = genNakedPropGetters(emptyObj, key => `Custom error: ${key} is missing`);
+    expect(() => get.orCrash('name')).to.throw('Custom error: name is missing');
+    expect(() => get.orCrash('name', 'nope, no name')).to.throw('nope, no name');
+    expect(() => get.orCrash('name', key => `nope, no ${key}`)).to.throw('nope, no name');
+    expect(() => get.orCrash('name', key => new Error(`nope, no ${key}`))).to.throw(Error, 'nope, no name');
   });
 
   it('type inference', () => {

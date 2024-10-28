@@ -580,12 +580,24 @@ var Opt = /** @class */ (function () {
      *
      * const aEmpty: A = {};
      * opt(aEmpty).propOrCrash('x'); // crash
+     *
+     * // with custom error: "Custom error: x is missing"
+     * opt(aEmpty).propOrCrash('x', 'Custom error: x is missing'); // crash
+     * opt(aEmpty).propOrCrash('x', key => `Custom error: ${key} is missing`); // crash
+     * opt(aEmpty).propOrCrash('x', key => new Error(`Custom error: ${key} is missing`)); // crash
      * ```
      *
      * @param key
      */
-    Opt.prototype.propOrCrash = function (key) {
-        return this.prop(key).orCrash("missing ".concat(String(key)));
+    Opt.prototype.propOrCrash = function (key, errorFactory) {
+        var propOpt = this.prop(key);
+        if (propOpt.isSome())
+            return propOpt.value;
+        if ((0, exports.isString)(errorFactory))
+            throw new Error(errorFactory);
+        else if ((0, exports.isFunction)(errorFactory))
+            throw errorFactory(key);
+        throw new Error("missing ".concat(String(key)));
     };
     /**
    * Get a field from a wrapped object. Return null if the field is missing or empty, or opt instance is {@link None}.
@@ -656,14 +668,19 @@ var Opt = /** @class */ (function () {
      * getters.orNull('y') // 'hello'
      * getters.orUndef('z') // undefined
      * getters.orZero('x') // 1
+     *
+     * // with custom error
+     * const gettersWithCustomError = obj.genPropGetters(key => `Custom error: ${key} is missing`);
+     * gettersWithCustomError.orCrash('z') // crashes with 'Custom error: z is missing'
+     * gettersWithCustomError.orCrash('z', 'nope, no z') // crashes with 'nope, no z'
      * ```
      *
      * @returns An object with property getter methods
      */
-    Opt.prototype.genPropGetters = function () {
+    Opt.prototype.genPropGetters = function (errorFactoryGeneric) {
         var _this = this;
         return {
-            orCrash: function (k) { return _this.propOrCrash(k); },
+            orCrash: function (k, errorFactory) { return _this.propOrCrash(k, errorFactory !== null && errorFactory !== void 0 ? errorFactory : errorFactoryGeneric); },
             orNull: function (k) { return _this.propOrNull(k); },
             orUndef: function (k) { return _this.propOrUndef(k); },
             orZero: function (k) { return _this.propOrZero(k); },
@@ -1893,8 +1910,8 @@ exports.propNaked = propNaked;
  * propOrCrash<Animal>('name')(a) // 'Spot'
  * ```
  */
-var propOrCrash = function (key) { return function (x) {
-    return ((0, exports.isOpt)(x) ? x : (0, exports.opt)(x)).propOrCrash(key);
+var propOrCrash = function (key, errorFactory) { return function (x) {
+    return ((0, exports.isOpt)(x) ? x : (0, exports.opt)(x)).propOrCrash(key, errorFactory);
 }; };
 exports.propOrCrash = propOrCrash;
 /**
@@ -1916,6 +1933,13 @@ exports.propOrCrash = propOrCrash;
  * const cow: Animal = {id: 36};
  * const getCowProp = genNakedPropOrCrash(cow);
  * getCowProp('name') // crashes with 'missing name'
+ *
+ * // with custom error
+ * const duck: Animal = {id: 36};
+ * const getDuckProp = genNakedPropOrCrash(duck, key => `Custom error: ${key} is missing`);
+ * getDuckProp('name') // crashes with 'Custom error: name is missing'
+ * // or during usage
+ * getDuckProp('name', 'duck is missing a name') // crashes with 'duck is missing a name'
  * ```
  *
  * ---
@@ -1937,9 +1961,9 @@ exports.propOrCrash = propOrCrash;
  *
  * @param obj
  */
-var genNakedPropOrCrash = function (obj) {
+var genNakedPropOrCrash = function (obj, errorFactoryGeneric) {
     var o = (0, exports.opt)(obj);
-    return function (k) { return o.propOrCrash(k); };
+    return function (k, errorFactoryOnGetter) { return o.propOrCrash(k, errorFactoryOnGetter !== null && errorFactoryOnGetter !== void 0 ? errorFactoryOnGetter : errorFactoryGeneric); };
 };
 exports.genNakedPropOrCrash = genNakedPropOrCrash;
 /** @see {@link Opt.propOrNull} */
@@ -2058,14 +2082,20 @@ exports.propOrZeroNaked = propOrZeroNaked;
  *   age: get.orZero('age')
  * };
  * // result: {id: 36, name: 'Spot', collarChipNumber: undefined, age: 5}
+ *
+ * // with custom error
+ * const getWithCustomError = genNakedPropGetters(emptyObj, key => `Custom error: ${key} is missing`);
+ * getWithCustomError.orCrash('name') // crashes with 'Custom error: name is missing'
+ * // or custom error during usage
+ * getWithCustomError.orCrash('name', 'no name') // crashes with 'no name'
  * ```
  *
  * @param obj
  */
-var genNakedPropGetters = function (obj) {
+var genNakedPropGetters = function (obj, errorFactoryGeneric) {
     var o = (0, exports.opt)(obj);
     return {
-        orCrash: function (k) { return o.propOrCrash(k); },
+        orCrash: function (k, errorFactory) { return o.propOrCrash(k, errorFactory !== null && errorFactory !== void 0 ? errorFactory : errorFactoryGeneric); },
         orNull: function (k) { return o.propOrNull(k); },
         orUndef: function (k) { return o.propOrUndef(k); },
         orZero: function (k) { return o.propOrZero(k); },

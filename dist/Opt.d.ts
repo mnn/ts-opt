@@ -1099,13 +1099,18 @@ export declare abstract class Opt<T> {
      *
      * const aEmpty: A = {};
      * opt(aEmpty).propOrCrash('x'); // crash
+     *
+     * // with custom error: "Custom error: x is missing"
+     * opt(aEmpty).propOrCrash('x', 'Custom error: x is missing'); // crash
+     * opt(aEmpty).propOrCrash('x', key => `Custom error: ${key} is missing`); // crash
+     * opt(aEmpty).propOrCrash('x', key => new Error(`Custom error: ${key} is missing`)); // crash
      * ```
      *
      * @param key
      */
     propOrCrash<//
     K extends (T extends object ? keyof T : never), //
-    R extends (T extends object ? WithoutOptValues<T[K]> | never : never)>(key: K): R;
+    R extends (T extends object ? WithoutOptValues<T[K]> | never : never)>(key: K, errorFactory?: string | ((key: K) => string | Error)): R;
     /**
    * Get a field from a wrapped object. Return null if the field is missing or empty, or opt instance is {@link None}.
    *
@@ -1175,11 +1180,16 @@ export declare abstract class Opt<T> {
      * getters.orNull('y') // 'hello'
      * getters.orUndef('z') // undefined
      * getters.orZero('x') // 1
+     *
+     * // with custom error
+     * const gettersWithCustomError = obj.genPropGetters(key => `Custom error: ${key} is missing`);
+     * gettersWithCustomError.orCrash('z') // crashes with 'Custom error: z is missing'
+     * gettersWithCustomError.orCrash('z', 'nope, no z') // crashes with 'nope, no z'
      * ```
      *
      * @returns An object with property getter methods
      */
-    genPropGetters<U extends object, K extends keyof U>(this: Opt<U>): NakedPropGetters<U, K>;
+    genPropGetters<U extends object, K extends keyof U>(this: Opt<U>, errorFactoryGeneric?: string | ((key: keyof U) => string | Error)): NakedPropGetters<U, K>;
     /**
      * Constructs a function which returns a value for {@link Some} or an empty value for {@link None} (default is `null`).
      * Optionally takes an empty value as a parameter.
@@ -2034,7 +2044,7 @@ export declare const propNaked: <T extends object | EmptyValue, K extends (T ext
  * propOrCrash<Animal>('name')(a) // 'Spot'
  * ```
  */
-export declare const propOrCrash: <T extends object, P extends Opt<T> | T = T | Opt<T>, K extends (P extends Opt<T> ? (T extends object ? keyof T : never) : (P extends object ? keyof P : never)) = P extends Opt<T> ? T extends object ? keyof T : never : P extends object ? keyof P : never>(key: K) => (x: P) => WithoutOptValues<T[K]>;
+export declare const propOrCrash: <T extends object, P extends Opt<T> | T = T | Opt<T>, K extends (P extends Opt<T> ? (T extends object ? keyof T : never) : (P extends object ? keyof P : never)) = P extends Opt<T> ? T extends object ? keyof T : never : P extends object ? keyof P : never>(key: K, errorFactory?: string | ((key: K) => string | Error)) => (x: P) => WithoutOptValues<T[K]>;
 /**
  * Utility function for generating property getter for one specific object.
  * Functionally similar to {@link propOrCrash}, but it has swapped arguments and only supports naked objects.
@@ -2054,6 +2064,13 @@ export declare const propOrCrash: <T extends object, P extends Opt<T> | T = T | 
  * const cow: Animal = {id: 36};
  * const getCowProp = genNakedPropOrCrash(cow);
  * getCowProp('name') // crashes with 'missing name'
+ *
+ * // with custom error
+ * const duck: Animal = {id: 36};
+ * const getDuckProp = genNakedPropOrCrash(duck, key => `Custom error: ${key} is missing`);
+ * getDuckProp('name') // crashes with 'Custom error: name is missing'
+ * // or during usage
+ * getDuckProp('name', 'duck is missing a name') // crashes with 'duck is missing a name'
  * ```
  *
  * ---
@@ -2075,7 +2092,7 @@ export declare const propOrCrash: <T extends object, P extends Opt<T> | T = T | 
  *
  * @param obj
  */
-export declare const genNakedPropOrCrash: <T extends object>(obj: T) => <K extends keyof T>(k: K) => WithoutOptValues<T[K]>;
+export declare const genNakedPropOrCrash: <T extends object>(obj: T, errorFactoryGeneric?: string | ((key: keyof T) => string | Error)) => <K extends keyof T>(k: K, errorFactoryOnGetter?: string | ((key: K) => string | Error)) => WithoutOptValues<T[K]>;
 /** @see {@link Opt.propOrNull} */
 export declare const propOrNull: <T extends object>() => <K extends keyof T>(key: K) => (x: Opt<T>) => WithoutOptValues<T[K]> | null;
 /**
@@ -2150,13 +2167,19 @@ export declare const propOrZeroNaked: <T extends object | EmptyValue>() => <K ex
  *   age: get.orZero('age')
  * };
  * // result: {id: 36, name: 'Spot', collarChipNumber: undefined, age: 5}
+ *
+ * // with custom error
+ * const getWithCustomError = genNakedPropGetters(emptyObj, key => `Custom error: ${key} is missing`);
+ * getWithCustomError.orCrash('name') // crashes with 'Custom error: name is missing'
+ * // or custom error during usage
+ * getWithCustomError.orCrash('name', 'no name') // crashes with 'no name'
  * ```
  *
  * @param obj
  */
-export declare const genNakedPropGetters: <T extends object, K extends (T extends object ? keyof T : never) = T extends object ? keyof T : never>(obj: T) => NakedPropGetters<T, K>;
+export declare const genNakedPropGetters: <T extends object, K extends (T extends object ? keyof T : never) = T extends object ? keyof T : never>(obj: T, errorFactoryGeneric?: string | ((key: keyof T) => string | Error)) => NakedPropGetters<T, K>;
 interface NakedPropGetters<T extends object, K extends keyof T = keyof T> {
-    orCrash: <KK extends K, R extends T[KK]>(k: KK) => WithoutOptValues<R>;
+    orCrash: <KK extends K, R extends T[KK]>(k: KK, errorFactory?: string | ((key: keyof T) => string | Error)) => WithoutOptValues<R>;
     orNull: <KK extends K, R extends T[KK]>(k: KK) => WithoutOptValues<R> | null;
     orUndef: <KK extends K, R extends T[KK]>(k: KK) => WithoutOptValues<R> | undefined;
     orZero: <KK extends K, R extends T[KK]>(k: KK) => WithoutOptValues<R> | 0;
