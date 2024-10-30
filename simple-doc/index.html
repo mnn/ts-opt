@@ -1,0 +1,1504 @@
+
+<html>
+<head>
+<meta charset="utf-8">
+<title>ts-opt library documentation</title>
+<link rel="stylesheet" href="styles.css">
+
+</head>
+<body>
+<h1>Index</h1>
+
+<div class="info-box">
+Work In Progress. Some links might be broken.
+</div>
+
+These "simple docs" are meant mainly for purposes of search indexing and automated processing (for example AI assistants).
+If you are a human, please use the nicer <a href="..">documentation</a>.
+	<h2>Opt</h2>
+	<ul><li>
+		 <a href="Opt/fromObject.html">fromObject</a>
+		</li>
+	<li>
+		 <a href="Opt/toObject.html">toObject</a>
+		</li>
+	<li>
+		 <a href="Opt/mapFlow.html">mapFlow</a>
+		</li>
+	<li>
+		 <a href="Opt/act.html">act</a>
+		</li>
+	<li>
+		 <a href="Opt/chainFlow.html">chainFlow</a>
+		</li>
+	<li>
+		 <a href="Opt/actToOpt.html">actToOpt</a>
+		</li>
+	<li>
+		 <a href="Opt/chainToOptFlow.html">chainToOptFlow</a>
+		</li>
+	<li>
+		 <a href="Opt/pipe.html">pipe</a>
+		</li>
+	<li>
+		 <a href="Opt/const.html">const</a>
+		</li>
+	<li>
+		 <a href="Opt/isEmpty.html">isEmpty</a>
+		</li>
+	<li>
+		 <a href="Opt/nonEmpty.html">nonEmpty</a>
+		</li>
+	<li>
+		 <a href="Opt/isFull.html">isFull</a>
+		</li>
+	<li>
+		 <a href="Opt/length.html">length</a>
+		</li>
+	<li>
+		 <a href="Opt/end.html">end</a>
+		</li>
+	<li>
+		 <a href="Opt/isSome.html">isSome</a>
+		</li>
+	<li>
+		 <a href="Opt/isNone.html">isNone</a>
+		</li>
+	<li>
+		 <a href="Opt/lengthIn.html">lengthIn</a>
+		</li>
+	<li>
+		 <a href="Opt/fromArray.html">fromArray</a>
+		</li>
+	<li>
+		 <a href="Opt/toArray.html">toArray</a>
+		</li>
+	<li>
+		 <a href="Opt/serialize.html">serialize</a>
+		</li>
+	<li>
+		 <a href="Opt/deserialize.html">deserialize</a>
+		</li>
+	<li>
+		 <a href="Opt/map.html">map</a>
+		</li>
+	<li>
+		 <a href="Opt/mapIn.html">mapIn</a>
+		</li>
+	<li>
+		 <a href="Opt/mapWithIndexIn.html">mapWithIndexIn</a>
+		</li>
+	<li>
+		 <a href="Opt/mapPropNakedIn.html">mapPropNakedIn</a>
+		</li>
+	<li>
+		 <a href="Opt/mapStr.html">mapStr</a>
+		</li>
+	<li>
+		 <a href="Opt/flatMap.html">flatMap</a>
+		</li>
+	<li>
+		 <a href="Opt/chain.html">chain</a>
+		</li>
+	<li>
+		 <a href="Opt/flatMapIn.html">flatMapIn</a>
+		</li>
+	<li>
+		 <a href="Opt/chainIn.html">chainIn</a>
+		</li>
+	<li>
+		 <a href="Opt/chainToOpt.html">chainToOpt</a>
+		</li>
+	<li>
+		 <a href="Opt/join.html">join</a>
+		</li>
+	<li>
+		 <a href="Opt/orCrash.html">orCrash</a>
+		</li>
+	<li>
+		 <a href="Opt/someOrCrash.html">someOrCrash</a>
+		</li>
+	<li>
+		 <a href="Opt/orUndef.html">orUndef</a>
+		</li>
+	<li>
+		 <a href="Opt/orNull.html">orNull</a>
+		</li>
+	<li>
+		 <a href="Opt/orFalse.html">orFalse</a>
+		</li>
+	<li>
+		 <a href="Opt/orTrue.html">orTrue</a>
+		</li>
+	<li>
+		 <a href="Opt/orNaN.html">orNaN</a>
+		</li>
+	<li>
+		 <a href="Opt/caseOf.html">caseOf</a>
+		</li>
+	<li>
+		 <a href="Opt/fold.html">fold</a>
+		</li>
+	<li>
+		 <a href="Opt/foldIn.html">foldIn</a>
+		</li>
+	<li>
+		 <a href="Opt/onBoth.html">onBoth</a>
+		</li>
+	<li>
+		 <a href="Opt/onSome.html">onSome</a>
+		</li>
+	<li>
+		 <a href="Opt/onNone.html">onNone</a>
+		</li>
+	<li>
+		 <a href="Opt/contains.html">contains</a>
+		</li>
+	<li>
+		 <a href="Opt/has.html">has</a>
+		</li>
+	<li>
+		 <a href="Opt/hasIn.html">hasIn</a>
+		</li>
+	<li>
+		 <a href="Opt/containsIn.html">containsIn</a>
+		</li>
+	<li>
+		 <a href="Opt/elemOfIn.html">elemOfIn</a>
+		</li>
+	<li>
+		 <a href="Opt/elemOfStrIn.html">elemOfStrIn</a>
+		</li>
+	<li>
+		 <a href="Opt/isEmptyIn.html">isEmptyIn</a>
+		</li>
+	<li>
+		 <a href="Opt/exists.html">exists</a>
+		</li>
+	<li>
+		 <a href="Opt/existsIn.html">existsIn</a>
+		</li>
+	<li>
+		 <a href="Opt/forAll.html">forAll</a>
+		</li>
+	<li>
+		 <a href="Opt/forAllIn.html">forAllIn</a>
+		</li>
+	<li>
+		 <a href="Opt/orElse.html">orElse</a>
+		</li>
+	<li>
+		 <a href="Opt/orElseLazy.html">orElseLazy</a>
+		</li>
+	<li>
+		 <a href="Opt/orElseAny.html">orElseAny</a>
+		</li>
+	<li>
+		 <a href="Opt/alt.html">alt</a>
+		</li>
+	<li>
+		 <a href="Opt/altOpt.html">altOpt</a>
+		</li>
+	<li>
+		 <a href="Opt/bimap.html">bimap</a>
+		</li>
+	<li>
+		 <a href="Opt/flatBimap.html">flatBimap</a>
+		</li>
+	<li>
+		 <a href="Opt/toString.html">toString</a>
+		</li>
+	<li>
+		 <a href="Opt/zip.html">zip</a>
+		</li>
+	<li>
+		 <a href="Opt/zip3.html">zip3</a>
+		</li>
+	<li>
+		 <a href="Opt/zip4.html">zip4</a>
+		</li>
+	<li>
+		 <a href="Opt/zip5.html">zip5</a>
+		</li>
+	<li>
+		 <a href="Opt/zipIn.html">zipIn</a>
+		</li>
+	<li>
+		 <a href="Opt/filter.html">filter</a>
+		</li>
+	<li>
+		 <a href="Opt/filterIn.html">filterIn</a>
+		</li>
+	<li>
+		 <a href="Opt/filterByRe.html">filterByRe</a>
+		</li>
+	<li>
+		 <a href="Opt/findIn.html">findIn</a>
+		</li>
+	<li>
+		 <a href="Opt/noneIf.html">noneIf</a>
+		</li>
+	<li>
+		 <a href="Opt/noneIfEmpty.html">noneIfEmpty</a>
+		</li>
+	<li>
+		 <a href="Opt/noneWhen.html">noneWhen</a>
+		</li>
+	<li>
+		 <a href="Opt/count.html">count</a>
+		</li>
+	<li>
+		 <a href="Opt/countIn.html">countIn</a>
+		</li>
+	<li>
+		 <a href="Opt/narrow.html">narrow</a>
+		</li>
+	<li>
+		 <a href="Opt/narrowOrCrash.html">narrowOrCrash</a>
+		</li>
+	<li>
+		 <a href="Opt/print.html">print</a>
+		</li>
+	<li>
+		 <a href="Opt/equals.html">equals</a>
+		</li>
+	<li>
+		 <a href="Opt/widen.html">widen</a>
+		</li>
+	<li>
+		 <a href="Opt/prop.html">prop</a>
+		</li>
+	<li>
+		 <a href="Opt/propOrCrash.html">propOrCrash</a>
+		</li>
+	<li>
+		 <a href="Opt/propOrNull.html">propOrNull</a>
+		</li>
+	<li>
+		 <a href="Opt/propOrUndef.html">propOrUndef</a>
+		</li>
+	<li>
+		 <a href="Opt/propOrZero.html">propOrZero</a>
+		</li>
+	<li>
+		 <a href="Opt/genPropGetters.html">genPropGetters</a>
+		</li>
+	<li>
+		 <a href="Opt/swap.html">swap</a>
+		</li>
+	<li>
+		 <a href="Opt/at.html">at</a>
+		</li>
+	<li>
+		 <a href="Opt/headIn.html">headIn</a>
+		</li>
+	<li>
+		 <a href="Opt/minIn.html">minIn</a>
+		</li>
+	<li>
+		 <a href="Opt/maxIn.html">maxIn</a>
+		</li>
+	<li>
+		 <a href="Opt/lastIn.html">lastIn</a>
+		</li>
+	<li>
+		 <a href="Opt/testReOrFalse.html">testReOrFalse</a>
+		</li>
+	<li>
+		 <a href="Opt/apply.html">apply</a>
+		</li>
+	<li>
+		 <a href="Opt/onFunc.html">onFunc</a>
+		</li>
+	
+	</ul>
+
+	<h2>Root</h2>
+	<ul><li>
+		 <a href="Root/Error.html">Error</a>
+		</li>
+	<li>
+		 <a href="Root/act.html">act</a>
+		</li>
+	<li>
+		 <a href="Root/actToOpt.html">actToOpt</a>
+		</li>
+	<li>
+		 <a href="Root/alt.html">alt</a>
+		</li>
+	<li>
+		 <a href="Root/altOpt.html">altOpt</a>
+		</li>
+	<li>
+		 <a href="Root/and.html">and</a>
+		</li>
+	<li>
+		 <a href="Root/ap.html">ap</a>
+		</li>
+	<li>
+		 <a href="Root/apFn.html">apFn</a>
+		</li>
+	<li>
+		 <a href="Root/appendStr.html">appendStr</a>
+		</li>
+	<li>
+		 <a href="Root/apply.html">apply</a>
+		</li>
+	<li>
+		 <a href="Root/assertType.html">assertType</a>
+		</li>
+	<li>
+		 <a href="Root/at.html">at</a>
+		</li>
+	<li>
+		 <a href="Root/bimap.html">bimap</a>
+		</li>
+	<li>
+		 <a href="Root/bool.html">bool</a>
+		</li>
+	<li>
+		 <a href="Root/caseOf.html">caseOf</a>
+		</li>
+	<li>
+		 <a href="Root/catOpts.html">catOpts</a>
+		</li>
+	<li>
+		 <a href="Root/chain.html">chain</a>
+		</li>
+	<li>
+		 <a href="Root/chainFlow.html">chainFlow</a>
+		</li>
+	<li>
+		 <a href="Root/chainIn.html">chainIn</a>
+		</li>
+	<li>
+		 <a href="Root/chainToOpt.html">chainToOpt</a>
+		</li>
+	<li>
+		 <a href="Root/chainToOptFlow.html">chainToOptFlow</a>
+		</li>
+	<li>
+		 <a href="Root/clamp.html">clamp</a>
+		</li>
+	<li>
+		 <a href="Root/compose.html">compose</a>
+		</li>
+	<li>
+		 <a href="Root/contains.html">contains</a>
+		</li>
+	<li>
+		 <a href="Root/count.html">count</a>
+		</li>
+	<li>
+		 <a href="Root/countIn.html">countIn</a>
+		</li>
+	<li>
+		 <a href="Root/crash.html">crash</a>
+		</li>
+	<li>
+		 <a href="Root/curryTuple.html">curryTuple</a>
+		</li>
+	<li>
+		 <a href="Root/curryTuple3.html">curryTuple3</a>
+		</li>
+	<li>
+		 <a href="Root/curryTuple4.html">curryTuple4</a>
+		</li>
+	<li>
+		 <a href="Root/curryTuple5.html">curryTuple5</a>
+		</li>
+	<li>
+		 <a href="Root/dec.html">dec</a>
+		</li>
+	<li>
+		 <a href="Root/deserialize.html">deserialize</a>
+		</li>
+	<li>
+		 <a href="Root/deserializeOrCrash.html">deserializeOrCrash</a>
+		</li>
+	<li>
+		 <a href="Root/deserializeUnsafe.html">deserializeUnsafe</a>
+		</li>
+	<li>
+		 <a href="Root/elemOf.html">elemOf</a>
+		</li>
+	<li>
+		 <a href="Root/elemOfStr.html">elemOfStr</a>
+		</li>
+	<li>
+		 <a href="Root/elemOfStrIn.html">elemOfStrIn</a>
+		</li>
+	<li>
+		 <a href="Root/eq.html">eq</a>
+		</li>
+	<li>
+		 <a href="Root/eqAny.html">eqAny</a>
+		</li>
+	<li>
+		 <a href="Root/equals.html">equals</a>
+		</li>
+	<li>
+		 <a href="Root/exists.html">exists</a>
+		</li>
+	<li>
+		 <a href="Root/existsIn.html">existsIn</a>
+		</li>
+	<li>
+		 <a href="Root/filter.html">filter</a>
+		</li>
+	<li>
+		 <a href="Root/filterIn.html">filterIn</a>
+		</li>
+	<li>
+		 <a href="Root/find.html">find</a>
+		</li>
+	<li>
+		 <a href="Root/findIn.html">findIn</a>
+		</li>
+	<li>
+		 <a href="Root/flatBimap.html">flatBimap</a>
+		</li>
+	<li>
+		 <a href="Root/flatMap.html">flatMap</a>
+		</li>
+	<li>
+		 <a href="Root/flatMapIn.html">flatMapIn</a>
+		</li>
+	<li>
+		 <a href="Root/flow.html">flow</a>
+		</li>
+	<li>
+		 <a href="Root/fold.html">fold</a>
+		</li>
+	<li>
+		 <a href="Root/foldIn.html">foldIn</a>
+		</li>
+	<li>
+		 <a href="Root/forAll.html">forAll</a>
+		</li>
+	<li>
+		 <a href="Root/forAllIn.html">forAllIn</a>
+		</li>
+	<li>
+		 <a href="Root/fromArray.html">fromArray</a>
+		</li>
+	<li>
+		 <a href="Root/fromObject.html">fromObject</a>
+		</li>
+	<li>
+		 <a href="Root/genNakedPropGetters.html">genNakedPropGetters</a>
+		</li>
+	<li>
+		 <a href="Root/genNakedPropOrCrash.html">genNakedPropOrCrash</a>
+		</li>
+	<li>
+		 <a href="Root/has.html">has</a>
+		</li>
+	<li>
+		 <a href="Root/hasIn.html">hasIn</a>
+		</li>
+	<li>
+		 <a href="Root/head.html">head</a>
+		</li>
+	<li>
+		 <a href="Root/headIn.html">headIn</a>
+		</li>
+	<li>
+		 <a href="Root/id.html">id</a>
+		</li>
+	<li>
+		 <a href="Root/inc.html">inc</a>
+		</li>
+	<li>
+		 <a href="Root/isArray.html">isArray</a>
+		</li>
+	<li>
+		 <a href="Root/isEmpty.html">isEmpty</a>
+		</li>
+	<li>
+		 <a href="Root/isFull.html">isFull</a>
+		</li>
+	<li>
+		 <a href="Root/isFunction.html">isFunction</a>
+		</li>
+	<li>
+		 <a href="Root/isNumber.html">isNumber</a>
+		</li>
+	<li>
+		 <a href="Root/isObject.html">isObject</a>
+		</li>
+	<li>
+		 <a href="Root/isOpt.html">isOpt</a>
+		</li>
+	<li>
+		 <a href="Root/isOptSerialized.html">isOptSerialized</a>
+		</li>
+	<li>
+		 <a href="Root/isOrCrash.html">isOrCrash</a>
+		</li>
+	<li>
+		 <a href="Root/isReadonlyArray.html">isReadonlyArray</a>
+		</li>
+	<li>
+		 <a href="Root/isString.html">isString</a>
+		</li>
+	<li>
+		 <a href="Root/isUnknown.html">isUnknown</a>
+		</li>
+	<li>
+		 <a href="Root/joinOpt.html">joinOpt</a>
+		</li>
+	<li>
+		 <a href="Root/last.html">last</a>
+		</li>
+	<li>
+		 <a href="Root/lastIn.html">lastIn</a>
+		</li>
+	<li>
+		 <a href="Root/lengthIn.html">lengthIn</a>
+		</li>
+	<li>
+		 <a href="Root/map.html">map</a>
+		</li>
+	<li>
+		 <a href="Root/mapFlow.html">mapFlow</a>
+		</li>
+	<li>
+		 <a href="Root/mapIn.html">mapIn</a>
+		</li>
+	<li>
+		 <a href="Root/mapOpt.html">mapOpt</a>
+		</li>
+	<li>
+		 <a href="Root/mapStr.html">mapStr</a>
+		</li>
+	<li>
+		 <a href="Root/mapWithIndex.html">mapWithIndex</a>
+		</li>
+	<li>
+		 <a href="Root/mapWithIndexIn.html">mapWithIndexIn</a>
+		</li>
+	<li>
+		 <a href="Root/max.html">max</a>
+		</li>
+	<li>
+		 <a href="Root/max2All.html">max2All</a>
+		</li>
+	<li>
+		 <a href="Root/max2Any.html">max2Any</a>
+		</li>
+	<li>
+		 <a href="Root/max2Num.html">max2Num</a>
+		</li>
+	<li>
+		 <a href="Root/maxIn.html">maxIn</a>
+		</li>
+	<li>
+		 <a href="Root/min.html">min</a>
+		</li>
+	<li>
+		 <a href="Root/min2All.html">min2All</a>
+		</li>
+	<li>
+		 <a href="Root/min2Any.html">min2Any</a>
+		</li>
+	<li>
+		 <a href="Root/min2Num.html">min2Num</a>
+		</li>
+	<li>
+		 <a href="Root/minIn.html">minIn</a>
+		</li>
+	<li>
+		 <a href="Root/narrow.html">narrow</a>
+		</li>
+	<li>
+		 <a href="Root/narrowOrCrash.html">narrowOrCrash</a>
+		</li>
+	<li>
+		 <a href="Root/nonEmpty.html">nonEmpty</a>
+		</li>
+	<li>
+		 <a href="Root/noneIf.html">noneIf</a>
+		</li>
+	<li>
+		 <a href="Root/noneIfEmpty.html">noneIfEmpty</a>
+		</li>
+	<li>
+		 <a href="Root/noneWhen.html">noneWhen</a>
+		</li>
+	<li>
+		 <a href="Root/noop.html">noop</a>
+		</li>
+	<li>
+		 <a href="Root/not.html">not</a>
+		</li>
+	<li>
+		 <a href="Root/onBoth.html">onBoth</a>
+		</li>
+	<li>
+		 <a href="Root/onFunc.html">onFunc</a>
+		</li>
+	<li>
+		 <a href="Root/opt.html">opt</a>
+		</li>
+	<li>
+		 <a href="Root/optArrayOpt.html">optArrayOpt</a>
+		</li>
+	<li>
+		 <a href="Root/optEmptyArray.html">optEmptyArray</a>
+		</li>
+	<li>
+		 <a href="Root/optEmptyObject.html">optEmptyObject</a>
+		</li>
+	<li>
+		 <a href="Root/optEmptyString.html">optEmptyString</a>
+		</li>
+	<li>
+		 <a href="Root/optFalsy.html">optFalsy</a>
+		</li>
+	<li>
+		 <a href="Root/optInfinity.html">optInfinity</a>
+		</li>
+	<li>
+		 <a href="Root/optNegative.html">optNegative</a>
+		</li>
+	<li>
+		 <a href="Root/optZero.html">optZero</a>
+		</li>
+	<li>
+		 <a href="Root/or.html">or</a>
+		</li>
+	<li>
+		 <a href="Root/orCrash.html">orCrash</a>
+		</li>
+	<li>
+		 <a href="Root/orElse.html">orElse</a>
+		</li>
+	<li>
+		 <a href="Root/orElseAny.html">orElseAny</a>
+		</li>
+	<li>
+		 <a href="Root/orElseLazy.html">orElseLazy</a>
+		</li>
+	<li>
+		 <a href="Root/orFalse.html">orFalse</a>
+		</li>
+	<li>
+		 <a href="Root/orNaN.html">orNaN</a>
+		</li>
+	<li>
+		 <a href="Root/orNull.html">orNull</a>
+		</li>
+	<li>
+		 <a href="Root/orTrue.html">orTrue</a>
+		</li>
+	<li>
+		 <a href="Root/orUndef.html">orUndef</a>
+		</li>
+	<li>
+		 <a href="Root/parseFloat.html">parseFloat</a>
+		</li>
+	<li>
+		 <a href="Root/parseInt.html">parseInt</a>
+		</li>
+	<li>
+		 <a href="Root/parseJson.html">parseJson</a>
+		</li>
+	<li>
+		 <a href="Root/pipe.html">pipe</a>
+		</li>
+	<li>
+		 <a href="Root/prependStr.html">prependStr</a>
+		</li>
+	<li>
+		 <a href="Root/print.html">print</a>
+		</li>
+	<li>
+		 <a href="Root/prop.html">prop</a>
+		</li>
+	<li>
+		 <a href="Root/propNaked.html">propNaked</a>
+		</li>
+	<li>
+		 <a href="Root/propOrCrash.html">propOrCrash</a>
+		</li>
+	<li>
+		 <a href="Root/propOrNull.html">propOrNull</a>
+		</li>
+	<li>
+		 <a href="Root/propOrNullNaked.html">propOrNullNaked</a>
+		</li>
+	<li>
+		 <a href="Root/propOrUndef.html">propOrUndef</a>
+		</li>
+	<li>
+		 <a href="Root/propOrUndefNaked.html">propOrUndefNaked</a>
+		</li>
+	<li>
+		 <a href="Root/propOrZero.html">propOrZero</a>
+		</li>
+	<li>
+		 <a href="Root/propOrZeroNaked.html">propOrZeroNaked</a>
+		</li>
+	<li>
+		 <a href="Root/serialize.html">serialize</a>
+		</li>
+	<li>
+		 <a href="Root/some.html">some</a>
+		</li>
+	<li>
+		 <a href="Root/someOrCrash.html">someOrCrash</a>
+		</li>
+	<li>
+		 <a href="Root/swap.html">swap</a>
+		</li>
+	<li>
+		 <a href="Root/testRe.html">testRe</a>
+		</li>
+	<li>
+		 <a href="Root/testReOrFalse.html">testReOrFalse</a>
+		</li>
+	<li>
+		 <a href="Root/toArray.html">toArray</a>
+		</li>
+	<li>
+		 <a href="Root/toObject.html">toObject</a>
+		</li>
+	<li>
+		 <a href="Root/toString.html">toString</a>
+		</li>
+	<li>
+		 <a href="Root/tryRun.html">tryRun</a>
+		</li>
+	<li>
+		 <a href="Root/uncurryTuple.html">uncurryTuple</a>
+		</li>
+	<li>
+		 <a href="Root/uncurryTuple3.html">uncurryTuple3</a>
+		</li>
+	<li>
+		 <a href="Root/uncurryTuple4.html">uncurryTuple4</a>
+		</li>
+	<li>
+		 <a href="Root/uncurryTuple5.html">uncurryTuple5</a>
+		</li>
+	<li>
+		 <a href="Root/xor.html">xor</a>
+		</li>
+	<li>
+		 <a href="Root/zip3Opt.html">zip3Opt</a>
+		</li>
+	<li>
+		 <a href="Root/zip4Opt.html">zip4Opt</a>
+		</li>
+	<li>
+		 <a href="Root/zip5Opt.html">zip5Opt</a>
+		</li>
+	<li>
+		 <a href="Root/zipArray.html">zipArray</a>
+		</li>
+	<li>
+		 <a href="Root/zipIn.html">zipIn</a>
+		</li>
+	<li>
+		 <a href="Root/zipOpt.html">zipOpt</a>
+		</li>
+	<li>
+		 <a href="Root/zipToOptArray.html">zipToOptArray</a>
+		</li>
+	<li>
+		 <a href="Root/ActInClassFn.html">ActInClassFn</a>
+		</li>
+	<li>
+		 <a href="Root/ActToOptInClassFn.html">ActToOptInClassFn</a>
+		</li>
+	<li>
+		 <a href="Root/ConstInClassFn.html">ConstInClassFn</a>
+		</li>
+	<li>
+		 <a href="Root/name.html">name</a>
+		</li>
+	<li>
+		 <a href="Root/message.html">message</a>
+		</li>
+	<li>
+		 <a href="Root/stack.html">stack</a>
+		</li>
+	<li>
+		 <a href="Root/FromObjectFn.html">FromObjectFn</a>
+		</li>
+	<li>
+		 <a href="Root/MapFlowInClassFn.html">MapFlowInClassFn</a>
+		</li>
+	<li>
+		 <a href="Root/orCrash.html">orCrash</a>
+		</li>
+	<li>
+		 <a href="Root/orNull.html">orNull</a>
+		</li>
+	<li>
+		 <a href="Root/orUndef.html">orUndef</a>
+		</li>
+	<li>
+		 <a href="Root/orZero.html">orZero</a>
+		</li>
+	<li>
+		 <a href="Root/prop.html">prop</a>
+		</li>
+	<li>
+		 <a href="Root/PipeInClassFn.html">PipeInClassFn</a>
+		</li>
+	<li>
+		 <a href="Root/ToObjectFn.html">ToObjectFn</a>
+		</li>
+	<li>
+		 <a href="Root/value.html">value</a>
+		</li>
+	
+	</ul>
+
+	<h2>ReduxDevtoolsCompatibilityHelper</h2>
+	<ul><li>
+		 <a href="ReduxDevtoolsCompatibilityHelper/constructor.html">constructor</a>
+		</li>
+	<li>
+		 <a href="ReduxDevtoolsCompatibilityHelper/replacer.html">replacer</a>
+		</li>
+	<li>
+		 <a href="ReduxDevtoolsCompatibilityHelper/reviver.html">reviver</a>
+		</li>
+	
+	</ul>
+
+	<h2>_internal_.None</h2>
+	<ul><li>
+		 <a href="_internal_.None/constructor.html">constructor</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/fromObject.html">fromObject</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/toObject.html">toObject</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/mapFlow.html">mapFlow</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/act.html">act</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/chainFlow.html">chainFlow</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/actToOpt.html">actToOpt</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/chainToOptFlow.html">chainToOptFlow</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/pipe.html">pipe</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/const.html">const</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/__type.html">__type</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/nonEmpty.html">nonEmpty</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/isFull.html">isFull</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/length.html">length</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/end.html">end</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/isEmpty.html">isEmpty</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/isSome.html">isSome</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/isNone.html">isNone</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/fromArray.html">fromArray</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/serialize.html">serialize</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/deserialize.html">deserialize</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/mapPropNakedIn.html">mapPropNakedIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/chain.html">chain</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/chainIn.html">chainIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/chainToOpt.html">chainToOpt</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/join.html">join</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/foldIn.html">foldIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/has.html">has</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/containsIn.html">containsIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/elemOfIn.html">elemOfIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/elemOfStrIn.html">elemOfStrIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/isEmptyIn.html">isEmptyIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/filterByRe.html">filterByRe</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/findIn.html">findIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/noneIf.html">noneIf</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/noneIfEmpty.html">noneIfEmpty</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/noneWhen.html">noneWhen</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/count.html">count</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/widen.html">widen</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/propOrCrash.html">propOrCrash</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/propOrNull.html">propOrNull</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/propOrUndef.html">propOrUndef</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/propOrZero.html">propOrZero</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/genPropGetters.html">genPropGetters</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/headIn.html">headIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/lastIn.html">lastIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/testReOrFalse.html">testReOrFalse</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/apply.html">apply</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/onFunc.html">onFunc</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/toArray.html">toArray</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/lengthIn.html">lengthIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/flatMap.html">flatMap</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/flatMapIn.html">flatMapIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/map.html">map</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/mapIn.html">mapIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/mapWithIndexIn.html">mapWithIndexIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/mapStr.html">mapStr</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/orCrash.html">orCrash</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/someOrCrash.html">someOrCrash</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/orNull.html">orNull</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/orUndef.html">orUndef</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/orFalse.html">orFalse</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/orTrue.html">orTrue</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/orNaN.html">orNaN</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/caseOf.html">caseOf</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/fold.html">fold</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/onBoth.html">onBoth</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/onNone.html">onNone</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/onSome.html">onSome</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/contains.html">contains</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/hasIn.html">hasIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/exists.html">exists</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/existsIn.html">existsIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/forAll.html">forAll</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/forAllIn.html">forAllIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/orElse.html">orElse</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/orElseLazy.html">orElseLazy</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/alt.html">alt</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/altOpt.html">altOpt</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/orElseAny.html">orElseAny</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/bimap.html">bimap</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/flatBimap.html">flatBimap</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/toString.html">toString</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/zip.html">zip</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/zip3.html">zip3</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/zip4.html">zip4</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/zip5.html">zip5</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/filter.html">filter</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/filterIn.html">filterIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/zipIn.html">zipIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/countIn.html">countIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/narrow.html">narrow</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/narrowOrCrash.html">narrowOrCrash</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/print.html">print</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/equals.html">equals</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/prop.html">prop</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/swap.html">swap</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/at.html">at</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/maxIn.html">maxIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.None/minIn.html">minIn</a>
+		</li>
+	
+	</ul>
+
+	<h2>_internal_.OperationNotAvailable</h2>
+	<ul><li>
+		 <a href="_internal_.OperationNotAvailable/constructor.html">constructor</a>
+		</li>
+	<li>
+		 <a href="_internal_.OperationNotAvailable/__type.html">__type</a>
+		</li>
+	<li>
+		 <a href="_internal_.OperationNotAvailable/_notUsed1.html">_notUsed1</a>
+		</li>
+	<li>
+		 <a href="_internal_.OperationNotAvailable/_notUsed2.html">_notUsed2</a>
+		</li>
+	
+	</ul>
+
+	<h2>_internal_.Some</h2>
+	<ul><li>
+		 <a href="_internal_.Some/constructor.html">constructor</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/fromObject.html">fromObject</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/toObject.html">toObject</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/mapFlow.html">mapFlow</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/act.html">act</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/chainFlow.html">chainFlow</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/actToOpt.html">actToOpt</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/chainToOptFlow.html">chainToOptFlow</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/pipe.html">pipe</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/const.html">const</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/__type.html">__type</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/_value.html">_value</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/nonEmpty.html">nonEmpty</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/isFull.html">isFull</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/length.html">length</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/end.html">end</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/isEmpty.html">isEmpty</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/value.html">value</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/isSome.html">isSome</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/isNone.html">isNone</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/fromArray.html">fromArray</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/serialize.html">serialize</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/deserialize.html">deserialize</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/mapPropNakedIn.html">mapPropNakedIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/chain.html">chain</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/chainIn.html">chainIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/chainToOpt.html">chainToOpt</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/join.html">join</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/foldIn.html">foldIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/has.html">has</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/containsIn.html">containsIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/elemOfIn.html">elemOfIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/elemOfStrIn.html">elemOfStrIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/isEmptyIn.html">isEmptyIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/filterByRe.html">filterByRe</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/findIn.html">findIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/noneIf.html">noneIf</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/noneIfEmpty.html">noneIfEmpty</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/noneWhen.html">noneWhen</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/count.html">count</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/widen.html">widen</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/propOrCrash.html">propOrCrash</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/propOrNull.html">propOrNull</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/propOrUndef.html">propOrUndef</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/propOrZero.html">propOrZero</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/genPropGetters.html">genPropGetters</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/headIn.html">headIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/lastIn.html">lastIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/testReOrFalse.html">testReOrFalse</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/apply.html">apply</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/onFunc.html">onFunc</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/lengthIn.html">lengthIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/toArray.html">toArray</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/flatMap.html">flatMap</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/flatMapIn.html">flatMapIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/map.html">map</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/mapIn.html">mapIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/mapWithIndexIn.html">mapWithIndexIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/mapStr.html">mapStr</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/orCrash.html">orCrash</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/someOrCrash.html">someOrCrash</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/orNull.html">orNull</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/orUndef.html">orUndef</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/orFalse.html">orFalse</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/orTrue.html">orTrue</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/orNaN.html">orNaN</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/caseOf.html">caseOf</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/fold.html">fold</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/onBoth.html">onBoth</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/contains.html">contains</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/hasIn.html">hasIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/exists.html">exists</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/existsIn.html">existsIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/forAll.html">forAll</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/forAllIn.html">forAllIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/onNone.html">onNone</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/onSome.html">onSome</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/orElse.html">orElse</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/orElseLazy.html">orElseLazy</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/alt.html">alt</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/altOpt.html">altOpt</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/orElseAny.html">orElseAny</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/bimap.html">bimap</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/flatBimap.html">flatBimap</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/toString.html">toString</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/zip.html">zip</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/zip3.html">zip3</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/zip4.html">zip4</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/zip5.html">zip5</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/filter.html">filter</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/filterIn.html">filterIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/zipIn.html">zipIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/countIn.html">countIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/narrow.html">narrow</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/narrowOrCrash.html">narrowOrCrash</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/print.html">print</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/equals.html">equals</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/prop.html">prop</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/swap.html">swap</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/at.html">at</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/minIn.html">minIn</a>
+		</li>
+	<li>
+		 <a href="_internal_.Some/maxIn.html">maxIn</a>
+		</li>
+	
+	</ul>
+
+</body>
+</html>

@@ -1,0 +1,20 @@
+
+<html>
+<head>
+<meta charset="utf-8">
+<title>nonEmpty () - ts-opt library documentation</title>
+<link rel="stylesheet" href="../styles.css">
+
+</head>
+<body>
+<h1>nonEmpty ()</h1>
+<section class="tsd-panel" data-className="Root"><ul class="tsd-signatures"><li class="tsd-signature tsd-anchor-link" id="nonEmpty"><span class="tsd-kind-call-signature">non<wbr>Empty</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">x</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><a href=".." aria-label="Permalink" class="tsd-anchor-icon" data-origHref="#nonEmpty" data-debugInfo="unknown url"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li><li class="tsd-description"><div class="tsd-comment tsd-typography"><p>Negated version of <a href="../Root/isEmpty.html" class="tsd-kind-function" data-origHref="isEmpty.html" data-debugInfo="main return | category: <<undefined>>, fileName: <<isEmpty>>, memberName: <<undefined>>">isEmpty</a>.
+<code>nonEmpty(x)</code> is the same as <code>!isEmpty(x)</code>. It can be useful when composing functions (e.g. via <a href="../Root/pipe.html" class="tsd-kind-function" data-origHref="pipe.html" data-debugInfo="main return | category: <<undefined>>, fileName: <<pipe>>, memberName: <<undefined>>">pipe</a>).</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><h5><span class="tsd-kind-parameter">x</span>: <a href="../Root/_internal_.PossiblyEmpty.html" class="tsd-signature-type tsd-kind-type-alias" data-origHref="../types/_internal_.PossiblyEmpty.html" data-debugInfo="main return | category: <<types>>, fileName: <<_internal_.PossiblyEmpty>>, memberName: <<undefined>>">PossiblyEmpty</a></h5><div class="tsd-comment tsd-typography"></div></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><div class="tsd-comment tsd-typography"><h4>Example</h4><pre><code class="language-ts"><span class="hl-0">nonEmpty</span><span class="hl-1">(</span><span class="hl-0">opt</span><span class="hl-1">(</span><span class="hl-8">2</span><span class="hl-1">)) </span><span class="hl-6">// true</span><br><span class="hl-0">nonEmpty</span><span class="hl-1">([]) </span><span class="hl-6">// false</span><br><br><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-0">inc</span><span class="hl-1"> = (</span><span class="hl-5">x</span><span class="hl-1">: </span><span class="hl-7">number</span><span class="hl-1">) </span><span class="hl-3">=&gt;</span><span class="hl-1"> </span><span class="hl-5">x</span><span class="hl-1"> + </span><span class="hl-8">1</span><span class="hl-1">;</span><br><span class="hl-0">pipe</span><span class="hl-1">(</span><br><span class="hl-1">  </span><span class="hl-5">a</span><span class="hl-1">, </span><span class="hl-6">// Some(4)</span><br><span class="hl-1">  </span><span class="hl-0">map</span><span class="hl-1">(</span><span class="hl-5">inc</span><span class="hl-1">), </span><span class="hl-6">// Some(5)</span><br><span class="hl-1">  </span><span class="hl-5">nonEmpty</span><span class="hl-1">, </span><span class="hl-6">// true</span><br><span class="hl-1">) </span><span class="hl-6">// true</span>
+</code></pre>
+<h4>See</h4><p><a href="../Root/isEmpty.html" class="tsd-kind-function" data-origHref="isEmpty.html" data-debugInfo="main return | category: <<undefined>>, fileName: <<isEmpty>>, memberName: <<undefined>>">isEmpty</a></p>
+</div><aside class="tsd-sources"><ul><li>Defined in <a href=".." data-origHref="https://github.com/mnn/ts-opt/blob/8ad4f6f/src/Opt.ts#L3098" data-debugInfo="unknown url">Opt.ts:3098</a></li></ul></aside></li></ul></section>
+<hr/>
+<a href="..">Back to index</a>
+</body>
+</html>

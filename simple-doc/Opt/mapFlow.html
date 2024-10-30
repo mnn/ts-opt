@@ -1,0 +1,19 @@
+
+<html>
+<head>
+<meta charset="utf-8">
+<title>mapFlow (property) - ts-opt library documentation</title>
+<link rel="stylesheet" href="../styles.css">
+
+</head>
+<body>
+<h1>mapFlow (property)</h1>
+<section class="tsd-panel tsd-member" data-className="Opt"><a id="mapFlow" class="tsd-anchor" data-debugInfo="null url"></a><h3 class="tsd-anchor-link"><span>map<wbr>Flow</span><a href=".." aria-label="Permalink" class="tsd-anchor-icon" data-origHref="#mapFlow" data-debugInfo="unknown url"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3><div class="tsd-signature"><span class="tsd-kind-property">map<wbr>Flow</span><span class="tsd-signature-symbol">:</span> <a href="../Root/_internal_.MapFlowInClassFn.html" class="tsd-signature-type tsd-kind-interface" data-origHref="../interfaces/_internal_.MapFlowInClassFn.html" data-debugInfo="main return | category: <<interfaces>>, fileName: <<_internal_.MapFlowInClassFn>>, memberName: <<undefined>>">MapFlowInClassFn</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = ...</span></div><div class="tsd-comment tsd-typography"><p>Similar to <a href="../Opt/map.html" class="tsd-kind-method" data-origHref="Opt.html#map" data-debugInfo="main return | category: <<undefined>>, fileName: <<Opt>>, memberName: <<map>>">Opt.map</a>, but supports more functions which are called in succession, each on a result of a previous one.</p>
+</div><div class="tsd-comment tsd-typography"><h4>Example</h4><pre><code class="language-ts"><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-0">sq</span><span class="hl-1"> = (</span><span class="hl-5">x</span><span class="hl-1">: </span><span class="hl-7">number</span><span class="hl-1">) </span><span class="hl-3">=&gt;</span><span class="hl-1"> </span><span class="hl-5">x</span><span class="hl-1"> * </span><span class="hl-5">x</span><span class="hl-1">;</span><br><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-0">dec</span><span class="hl-1"> = (</span><span class="hl-5">x</span><span class="hl-1">: </span><span class="hl-7">number</span><span class="hl-1">) </span><span class="hl-3">=&gt;</span><span class="hl-1"> </span><span class="hl-5">x</span><span class="hl-1"> - </span><span class="hl-8">1</span><span class="hl-1">;</span><br><span class="hl-0">opt</span><span class="hl-1">(</span><span class="hl-8">4</span><span class="hl-1">).</span><span class="hl-0">mapFlow</span><span class="hl-1">(</span><span class="hl-5">sq</span><span class="hl-1">, </span><span class="hl-5">dec</span><span class="hl-1">) </span><span class="hl-6">// Some(15)</span><br><span class="hl-0">opt</span><span class="hl-1">(</span><span class="hl-3">null</span><span class="hl-1">).</span><span class="hl-0">mapFlow</span><span class="hl-1">(</span><span class="hl-5">sq</span><span class="hl-1">, </span><span class="hl-5">dec</span><span class="hl-1">) </span><span class="hl-6">// None</span>
+</code></pre>
+<h4>See</h4><p><a href="../Root/mapFlow.html" class="tsd-kind-function" data-origHref="../functions/mapFlow.html" data-debugInfo="main return | category: <<functions>>, fileName: <<mapFlow>>, memberName: <<undefined>>">mapFlow</a></p>
+<h4>Param</h4></div><aside class="tsd-sources"><ul><li>Defined in <a href=".." data-origHref="https://github.com/mnn/ts-opt/blob/8ad4f6f/src/Opt.ts#L273" data-debugInfo="unknown url">Opt.ts:273</a></li></ul></aside></section>
+<hr/>
+<a href="..">Back to index</a>
+</body>
+</html>
