@@ -3,6 +3,7 @@
 ts-opt
 ===
 
+[![GitLab](https://img.shields.io/badge/code-GitLab-orange?logo=gitlab)](https://gitlab.com/monnef/ts-opt)
 [![pipeline status](https://gitlab.com/monnef/ts-opt/badges/master/pipeline.svg)](https://gitlab.com/monnef/ts-opt/-/commits/master)
 [![coverage report](https://gitlab.com/monnef/ts-opt/badges/master/coverage.svg)](https://gitlab.com/monnef/ts-opt/-/commits/master)
 [![minified + gzipped size](badge-size.svg)](https://bundlephobia.com/package/ts-opt)
@@ -10,6 +11,7 @@ ts-opt
 [![license](https://badgen.net/npm/license/ts-opt)](LICENSE.md)
 [![dependencies](badge-dependency.svg)](package.json)
 [![docs](https://img.shields.io/badge/docs-▽-blue)](#documentation)
+[![AI Friendly](https://img.shields.io/badge/AI-Friendly-blue?logo=artificial-intelligence)](https://mnn.github.io/ts-opt/simple-doc)
 
 Typed Option/Maybe for TypeScript and JavaScript (based on Scala, Haskell and Sanctuary), created to simplify code involving optional values.
 
@@ -148,15 +150,24 @@ Documentation
 ===
 All methods are documented, if you don't see a description please make sure you are reading the base class page - `Opt`.
 
-* Main [Opt](https://monnef.gitlab.io/ts-opt/classes/Opt.html) class
-* [Module](https://monnef.gitlab.io/ts-opt/modules.html) (constructors and helper functions)
+GitHub Pages
+---
 
-["Simple" documentation](https://monnef.gitlab.io/ts-opt/simple-doc)
+* Main [Opt](https://mnn.github.io/ts-opt/classes/Opt.html) class
+* [Module](https://mnn.github.io/ts-opt/modules.html) (constructors and helper functions)
+
+["Simple" documentation](https://mnn.github.io/ts-opt/simple-doc) - more friendly for crawlers and AI (simple HTML structure, no JavaScript, minimal styling)
+
+GitLab Pages (Backup)
+---
+
+[Opt](https://monnef.gitlab.io/ts-opt/classes/Opt.html), [Module](https://monnef.gitlab.io/ts-opt/modules.html), ["Simple" documentation](https://monnef.gitlab.io/ts-opt/simple-doc)
 
 Custom GPTs
 ---
 
-A ChatGPT subscription is required, and it may not be suitable for more advanced use cases or refactoring (they tend to hallucinate a lot). Consulting the documentation is recommended.
+It may not be suitable for more advanced use cases or refactoring (they tend to hallucinate a lot).
+Consulting the documentation is recommended.
 
 * [Possibly ts-opt v2](https://chat.openai.com/g/g-3iYPOC6yz-possibly-ts-opt-v2) - docs, source code, tests, several detailed examples and some short QA texts
 * [Possibly ts-opt v1.0](https://chat.openai.com/g/g-sLbu6qTni-possibly-ts-opt-v1-0) - only docs
