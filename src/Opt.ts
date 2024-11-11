@@ -1177,6 +1177,7 @@ export abstract class Opt<T> {
    * @param guard
    * @param crashMessage
    */
+  abstract narrowOrCrash<U>(guard: (value: any) => value is U, errorFactory?: () => unknown): Opt<U>;
   abstract narrowOrCrash<U>(guard: (value: any) => value is U, crashMessage?: string): Opt<U>;
 
   /**
@@ -1737,7 +1738,9 @@ class None<T> extends Opt<T> {
 
   narrow<U>(_guard: (value: any) => value is U): Opt<U> { return this as unknown as Opt<U>; }
 
-  narrowOrCrash<U>(guard: (value: any) => value is U, _crashMessage?: string): Opt<U> {
+  narrowOrCrash<U>(guard: (value: any) => value is U, _crashMessage?: string): Opt<U>;
+  narrowOrCrash<U>(guard: (value: any) => value is U, _errorFactory?: () => unknown): Opt<U>;
+  narrowOrCrash<U>(guard: (value: any) => value is U, _msgOrErrorFactory?: string | (() => unknown)): Opt<U> {
     // don't crash on previous none
     return this.narrow(guard);
   }
@@ -1947,8 +1950,15 @@ class Some<T> extends Opt<T> {
     return guard(this._value) ? this as unknown as Opt<U> : none;
   }
 
-  narrowOrCrash<U>(guard: (value: any) => value is U, crashMessage?: string): Opt<U> {
-    return this.narrow(guard).someOrCrash(crashMessage ?? 'Unexpected type in opt.');
+  narrowOrCrash<U>(guard: (value: any) => value is U, _crashMessage?: string): Opt<U>
+  narrowOrCrash<U>(guard: (value: any) => value is U, _errorFactory?: () => unknown): Opt<U>
+  narrowOrCrash<U>(guard: (value: any) => value is U, _msgOrErrorFactory?: string | (() => unknown)): Opt<U> {
+    
+    if (!_msgOrErrorFactory || typeof _msgOrErrorFactory === 'string') {
+      return this.narrow(guard).someOrCrash(_msgOrErrorFactory ?? 'Unexpected type in opt.');
+    } else {
+      return this.narrow(guard).someOrCrash(_msgOrErrorFactory);
+    }
   }
 
   print(tag?: string): Opt<T> {
@@ -2671,7 +2681,15 @@ export const find = <T>(predicate: (_: T) => boolean) => (xs: readonly T[]): Opt
 export const narrow = <U>(guard: (value: any) => value is U) => <T>(x: Opt<T>): Opt<U> => x.narrow(guard);
 
 /** @see {@link Opt.narrowOrCrash} */
-export const narrowOrCrash = <T, U>(guard: (value: any) => value is U, crashMessage?: string) => (x: Opt<T>): Opt<U> => x.narrowOrCrash(guard, crashMessage);
+export function narrowOrCrash<T, U>(guard: (value: any) => value is U, errorFactory: () => unknown): (x: Opt<T>) => Opt<U>;
+export function narrowOrCrash<T, U>(guard: (value: any) => value is U, crashMessage?: string): (x: Opt<T>) => Opt<U>;
+export function narrowOrCrash<T, U>(guard: (value: any) => value is U, msgOrErrorFactory?: string | (() => unknown)) {
+  if (typeof msgOrErrorFactory === 'string') {
+    return (x: Opt<T>): Opt<U> => x.narrowOrCrash(guard, msgOrErrorFactory);
+  } else {
+    return (x: Opt<T>): Opt<U> => x.narrowOrCrash(guard, msgOrErrorFactory);
+  }
+}
 
 /**
  * Same as {@link Opt.print}, but supports arbitrary argument types.

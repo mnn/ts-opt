@@ -1096,6 +1096,9 @@ describe('opt', () => {
       const crashMessage = 'not a string';
       expect(() => opt(1).narrowOrCrash(isString, crashMessage)).to.throw(crashMessage);
     });
+    it('throws custom error from factory', () => {
+      expect(() => opt(1).narrowOrCrash(isString, () => new Error('not a string error'))).to.throw(Error, 'not a string error');
+    });
     it('narrows type', () => {
       const a: Opt<string> = opt('y').narrowOrCrash(isString);
       suppressUnused(a);
@@ -2853,6 +2856,10 @@ describe('narrow', () => {
 describe('narrowOrCrash', () => {
   it('crashes on narrowing failure', () => {
     expect(() => narrowOrCrash(isString)(opt(1))).to.throw();
+  });
+  it('crashes with custom error', () => {
+    expect(() => narrowOrCrash(isString, () => new Error('not a string error'))(opt(1))).to.throw(Error, 'not a string error');
+    expect(() => narrowOrCrash(isString, 'not a string error')(opt(1))).to.throw(Error, 'not a string error');
   });
 });
 
