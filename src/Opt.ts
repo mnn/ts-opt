@@ -443,12 +443,14 @@ export abstract class Opt<T> {
    * ```ts
    * some(1).someOrCrash('fail') // Some(1)
    * none.someOrCrash('fail') // throws
+   * none.someOrCrash(() => new Error('fail')) // throws Error('fail')
    * ```
    *
    * @see {@link someOrCrash}
    *
    * @param msg
    */
+  abstract someOrCrash(errorFactory: () => unknown): Some<T>;
   abstract someOrCrash(msg: string): Some<T>;
 
   /**
@@ -1645,8 +1647,15 @@ class None<T> extends Opt<T> {
       throw messageOrFactory();
     }
   }
-
-  someOrCrash(msg: string): Some<T> { throw new Error(msg); }
+  someOrCrash(msg: string): Some<T>
+  someOrCrash(errorFactory: () => unknown): Some<T>
+  someOrCrash(msgOrErrorFactory: string | (() => unknown)): Some<T> { 
+    if (typeof msgOrErrorFactory === 'string') {
+      throw new Error(msgOrErrorFactory);
+    } else {
+      throw msgOrErrorFactory();
+    }
+   }
 
   orNull(): T | null { return null; }
 
@@ -1823,7 +1832,11 @@ class Some<T> extends Opt<T> {
     return this._value;
   }
 
-  someOrCrash(_msg: string): Some<T> { return this; }
+  someOrCrash(_msg: string): Some<T>
+  someOrCrash(_errorFactory: () => unknown): Some<T>
+  someOrCrash(_msgOrErrorFactory: string | (() => unknown)): Some<T> {
+    return this;
+  }
 
   orNull(): T | null { return this._value; }
 

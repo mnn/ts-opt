@@ -351,6 +351,7 @@ describe('opt', () => {
     expect(() => opt(null).someOrCrash('')).to.throw();
     expect(opt(0).someOrCrash('').orNull()).to.be.eq(0);
     expect(opt([]).someOrCrash('').orNull()).to.be.eql([]);
+    expect(() => opt(null).someOrCrash(() => new Error(''))).to.throw(Error).with.property('message', '');
     const some0 = opt(0).someOrCrash('');
     expect(some0.value).to.be.eql(0);
   });
