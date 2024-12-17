@@ -3338,7 +3338,6 @@ export function isOrCrash<T>(guard: (x: unknown) => x is T, messageOrErrorFactor
   return (x: unknown): T => some(x).narrow(guard).orCrash(messageOrErrorFactory);
 }
 
-type AssertTypeFunc = <T>(x: unknown, guard: (x: unknown) => x is T, msg?: string) => asserts x is T;
 
 /**
  * Asserts a type via a given guard.
@@ -3354,9 +3353,15 @@ type AssertTypeFunc = <T>(x: unknown, guard: (x: unknown) => x is T, msg?: strin
  * @param guard
  * @param msg
  */
-export const assertType: AssertTypeFunc = (x, guard, msg = 'invalid value') => {
-  isOrCrash(guard, msg)(x);
-};
+export function assertType<T>(x: unknown, guard: (x: unknown) => x is T, message?: string): asserts x is T;
+export function assertType<T>(x: unknown, guard: (x: unknown) => x is T, errorFactory: () => unknown): asserts x is T;
+export function assertType<T>(x: unknown, guard: (x: unknown) => x is T, messageOrErrorFactory: string | (() => unknown) = 'invalid value'): asserts x is T {
+  if (typeof messageOrErrorFactory === 'string') {
+    isOrCrash(guard, messageOrErrorFactory)(x);
+    return;
+  }
+  isOrCrash(guard, messageOrErrorFactory)(x);
+}
 
 /** Returns the minimum value in an array. */
 export const min = <R>(x: readonly R[]): OptSafe<R> => opt(x).minIn();

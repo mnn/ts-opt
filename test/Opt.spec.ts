@@ -3983,6 +3983,11 @@ describe('assertType', () => {
     const errMsg = 'not a number';
     expect(() => assertType(a, isNumber, errMsg)).to.throw(errMsg);
   });
+
+  it('custom error factory', () => {
+    const a: unknown = '' as unknown;
+    expect(() => assertType(a, isNumber, () => new Error('not a number'))).to.throw('not a number');
+  });
 });
 
 describe('min', () => {
