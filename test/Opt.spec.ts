@@ -3962,6 +3962,9 @@ describe('isOrCrash', () => {
   it('custom message', () => {
     expect(() => isOrCrash(isNumber, 'nope')(null)).to.throw('nope');
   });
+  it('throws custom error', () => {
+    expect(() => isOrCrash(isNumber, () => new Error('custom error'))(null)).to.throw('custom error');
+  })
 });
 
 describe('assertType', () => {

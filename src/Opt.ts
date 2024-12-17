@@ -3327,10 +3327,16 @@ export const onFunc = < //
  * ```
  *
  * @param guard
- * @param msg
+ * @param message
  */
-export const isOrCrash = <T>(guard: (x: unknown) => x is T, msg = 'invalid value') => (x: unknown): T =>
-  some(x).narrow(guard).orCrash(msg);
+export function isOrCrash<T>(guard: (x: unknown) => x is T, message?: string): (x: unknown) => T;
+export function isOrCrash<T>(guard: (x: unknown) => x is T, errorFactory: () => unknown): (x: unknown) => T;
+export function isOrCrash<T>(guard: (x: unknown) => x is T, messageOrErrorFactory: string | (() => unknown) = 'invalid value') {
+  if (typeof messageOrErrorFactory === 'string') {
+    return (x: unknown): T => some(x).narrow(guard).orCrash(messageOrErrorFactory);
+  }
+  return (x: unknown): T => some(x).narrow(guard).orCrash(messageOrErrorFactory);
+}
 
 type AssertTypeFunc = <T>(x: unknown, guard: (x: unknown) => x is T, msg?: string) => asserts x is T;
 
