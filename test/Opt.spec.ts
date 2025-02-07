@@ -351,6 +351,7 @@ describe('opt', () => {
     expect(() => opt(null).someOrCrash('')).to.throw();
     expect(opt(0).someOrCrash('').orNull()).to.be.eq(0);
     expect(opt([]).someOrCrash('').orNull()).to.be.eql([]);
+    expect(() => opt(null).someOrCrash(() => new Error(''))).to.throw(Error).with.property('message', '');
     const some0 = opt(0).someOrCrash('');
     expect(some0.value).to.be.eql(0);
   });
@@ -1094,6 +1095,9 @@ describe('opt', () => {
     it('passes custom crash message', () => {
       const crashMessage = 'not a string';
       expect(() => opt(1).narrowOrCrash(isString, crashMessage)).to.throw(crashMessage);
+    });
+    it('throws custom error from factory', () => {
+      expect(() => opt(1).narrowOrCrash(isString, () => new Error('not a string error'))).to.throw(Error, 'not a string error');
     });
     it('narrows type', () => {
       const a: Opt<string> = opt('y').narrowOrCrash(isString);
@@ -2853,6 +2857,10 @@ describe('narrowOrCrash', () => {
   it('crashes on narrowing failure', () => {
     expect(() => narrowOrCrash(isString)(opt(1))).to.throw();
   });
+  it('crashes with custom error', () => {
+    expect(() => narrowOrCrash(isString, () => new Error('not a string error'))(opt(1))).to.throw(Error, 'not a string error');
+    expect(() => narrowOrCrash(isString, 'not a string error')(opt(1))).to.throw(Error, 'not a string error');
+  });
 });
 
 describe('print', () => {
@@ -3954,6 +3962,9 @@ describe('isOrCrash', () => {
   it('custom message', () => {
     expect(() => isOrCrash(isNumber, 'nope')(null)).to.throw('nope');
   });
+  it('throws custom error', () => {
+    expect(() => isOrCrash(isNumber, () => new Error('custom error'))(null)).to.throw('custom error');
+  })
 });
 
 describe('assertType', () => {
@@ -3971,6 +3982,11 @@ describe('assertType', () => {
     const a: unknown = '' as unknown;
     const errMsg = 'not a number';
     expect(() => assertType(a, isNumber, errMsg)).to.throw(errMsg);
+  });
+
+  it('custom error factory', () => {
+    const a: unknown = '' as unknown;
+    expect(() => assertType(a, isNumber, () => new Error('not a number'))).to.throw('not a number');
   });
 });
 
