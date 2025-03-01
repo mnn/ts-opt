@@ -25,9 +25,12 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.chainToOpt = exports.chainFlow = exports.act = exports.chainIn = exports.chain = exports.flatMapIn = exports.flatMap = exports.mapStr = exports.mapFlow = exports.mapWithIndexIn = exports.mapWithIndex = exports.mapIn = exports.map = exports.toObject = exports.fromObject = exports.toArray = exports.fromArray = exports.lengthIn = exports.joinOpt = exports.mapOpt = exports.catOpts = exports.apFn = exports.ap = exports.isOpt = exports.optArrayOpt = exports.optInfinity = exports.optNegative = exports.optZero = exports.optEmptyString = exports.optEmptyObject = exports.optEmptyArray = exports.optFalsy = exports.opt = exports.some = exports.none = exports.deserializeUnsafe = exports.deserializeOrCrash = exports.deserialize = exports.serialize = exports.ReduxDevtoolsCompatibilityHelper = exports.isOptSerialized = exports.Opt = exports.isUnknown = exports.isNumber = exports.isObject = exports.isFunction = exports.isReadonlyArray = exports.isArray = exports.toString = exports.isString = void 0;
-exports.equals = exports.print = exports.narrowOrCrash = exports.narrow = exports.find = exports.countIn = exports.count = exports.noneWhen = exports.noneIfEmpty = exports.noneIf = exports.findIn = exports.filterIn = exports.filter = exports.zipIn = exports.zip5Opt = exports.zip4Opt = exports.zip3Opt = exports.zipOpt = exports.zipArray = exports.flatBimap = exports.bimap = exports.altOpt = exports.alt = exports.orElseAny = exports.orElseLazy = exports.orElse = exports.forAllIn = exports.forAll = exports.existsIn = exports.exists = exports.hasIn = exports.elemOfStrIn = exports.elemOfStr = exports.elemOf = exports.has = exports.contains = exports.pipe = exports.onBoth = exports.foldIn = exports.fold = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOptFlow = exports.actToOpt = void 0;
-exports.max2Num = exports.min2Any = exports.min2All = exports.min2Num = exports.maxIn = exports.max = exports.minIn = exports.min = exports.assertType = exports.isOrCrash = exports.onFunc = exports.apply = exports.parseFloat = exports.parseInt = exports.parseJson = exports.tryRun = exports.testReOrFalse = exports.testRe = exports.zipToOptArray = exports.lastIn = exports.last = exports.headIn = exports.head = exports.at = exports.id = exports.isFull = exports.nonEmpty = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.genNakedPropGetters = exports.propOrZeroNaked = exports.propOrZero = exports.propOrUndefNaked = exports.propOrUndef = exports.propOrNullNaked = exports.propOrNull = exports.genNakedPropOrCrash = exports.propOrCrash = exports.propNaked = exports.prop = void 0;
-exports.noop = exports.eqAny = exports.eq = exports.crash = exports.appendStr = exports.prependStr = exports.dec = exports.inc = exports.bool = exports.xor = exports.or = exports.and = exports.not = exports.clamp = exports.max2Any = exports.max2All = void 0;
+exports.prop = exports.equals = exports.print = exports.narrow = exports.find = exports.countIn = exports.count = exports.noneWhen = exports.noneIfEmpty = exports.noneIf = exports.findIn = exports.filterIn = exports.filter = exports.zipIn = exports.zip5Opt = exports.zip4Opt = exports.zip3Opt = exports.zipOpt = exports.zipArray = exports.flatBimap = exports.bimap = exports.altOpt = exports.alt = exports.orElseAny = exports.orElseLazy = exports.orElse = exports.forAllIn = exports.forAll = exports.existsIn = exports.exists = exports.hasIn = exports.elemOfStrIn = exports.elemOfStr = exports.elemOf = exports.has = exports.contains = exports.pipe = exports.onBoth = exports.foldIn = exports.fold = exports.caseOf = exports.orNaN = exports.orTrue = exports.orFalse = exports.orNull = exports.orUndef = exports.orCrash = exports.someOrCrash = exports.chainToOptFlow = exports.actToOpt = void 0;
+exports.clamp = exports.max2Any = exports.max2All = exports.max2Num = exports.min2Any = exports.min2All = exports.min2Num = exports.maxIn = exports.max = exports.minIn = exports.min = exports.onFunc = exports.apply = exports.parseFloat = exports.parseInt = exports.parseJson = exports.tryRun = exports.testReOrFalse = exports.testRe = exports.zipToOptArray = exports.lastIn = exports.last = exports.headIn = exports.head = exports.at = exports.id = exports.isFull = exports.nonEmpty = exports.isEmpty = exports.uncurryTuple5 = exports.uncurryTuple4 = exports.uncurryTuple3 = exports.uncurryTuple = exports.curryTuple5 = exports.curryTuple4 = exports.curryTuple3 = exports.curryTuple = exports.compose = exports.flow = exports.swap = exports.genNakedPropGetters = exports.propOrZeroNaked = exports.propOrZero = exports.propOrUndefNaked = exports.propOrUndef = exports.propOrNullNaked = exports.propOrNull = exports.genNakedPropOrCrash = exports.propOrCrash = exports.propNaked = void 0;
+exports.noop = exports.eqAny = exports.eq = exports.crash = exports.appendStr = exports.prependStr = exports.dec = exports.inc = exports.bool = exports.xor = exports.or = exports.and = exports.not = void 0;
+exports.narrowOrCrash = narrowOrCrash;
+exports.isOrCrash = isOrCrash;
+exports.assertType = assertType;
 var someSymbol = Symbol('Some');
 var noneSymbol = Symbol('None');
 var errorSymbol = Symbol('Error');
@@ -886,7 +889,14 @@ var None = /** @class */ (function (_super) {
             throw messageOrFactory();
         }
     };
-    None.prototype.someOrCrash = function (msg) { throw new Error(msg); };
+    None.prototype.someOrCrash = function (msgOrErrorFactory) {
+        if (typeof msgOrErrorFactory === 'string') {
+            throw new Error(msgOrErrorFactory);
+        }
+        else {
+            throw msgOrErrorFactory();
+        }
+    };
     None.prototype.orNull = function () { return null; };
     None.prototype.orUndef = function () { return undefined; };
     None.prototype.orFalse = function () { return false; };
@@ -934,7 +944,7 @@ var None = /** @class */ (function (_super) {
     };
     None.prototype.countIn = function (_f) { return exports.none; };
     None.prototype.narrow = function (_guard) { return this; };
-    None.prototype.narrowOrCrash = function (guard, _crashMessage) {
+    None.prototype.narrowOrCrash = function (guard, _msgOrErrorFactory) {
         // don't crash on previous none
         return this.narrow(guard);
     };
@@ -1028,7 +1038,9 @@ var Some = /** @class */ (function (_super) {
     Some.prototype.orCrash = function (_messageOrFactory) {
         return this._value;
     };
-    Some.prototype.someOrCrash = function (_msg) { return this; };
+    Some.prototype.someOrCrash = function (_msgOrErrorFactory) {
+        return this;
+    };
     Some.prototype.orNull = function () { return this._value; };
     Some.prototype.orUndef = function () { return this._value; };
     Some.prototype.orFalse = function () { return this._value; };
@@ -1123,8 +1135,13 @@ var Some = /** @class */ (function (_super) {
     Some.prototype.narrow = function (guard) {
         return guard(this._value) ? this : exports.none;
     };
-    Some.prototype.narrowOrCrash = function (guard, crashMessage) {
-        return this.narrow(guard).someOrCrash(crashMessage !== null && crashMessage !== void 0 ? crashMessage : 'Unexpected type in opt.');
+    Some.prototype.narrowOrCrash = function (guard, _msgOrErrorFactory) {
+        if (!_msgOrErrorFactory || typeof _msgOrErrorFactory === 'string') {
+            return this.narrow(guard).someOrCrash(_msgOrErrorFactory !== null && _msgOrErrorFactory !== void 0 ? _msgOrErrorFactory : 'Unexpected type in opt.');
+        }
+        else {
+            return this.narrow(guard).someOrCrash(_msgOrErrorFactory);
+        }
     };
     Some.prototype.print = function (tag) {
         debugPrint(tag, 'Some:', this._value);
@@ -1853,9 +1870,14 @@ exports.find = find;
 /** @see {@link Opt.narrow} */
 var narrow = function (guard) { return function (x) { return x.narrow(guard); }; };
 exports.narrow = narrow;
-/** @see {@link Opt.narrowOrCrash} */
-var narrowOrCrash = function (guard, crashMessage) { return function (x) { return x.narrowOrCrash(guard, crashMessage); }; };
-exports.narrowOrCrash = narrowOrCrash;
+function narrowOrCrash(guard, msgOrErrorFactory) {
+    if (typeof msgOrErrorFactory === 'string') {
+        return function (x) { return x.narrowOrCrash(guard, msgOrErrorFactory); };
+    }
+    else {
+        return function (x) { return x.narrowOrCrash(guard, msgOrErrorFactory); };
+    }
+}
 /**
  * Same as {@link Opt.print}, but supports arbitrary argument types.
  * @see {@link Opt.print}
@@ -2485,44 +2507,21 @@ var onFunc = function () {
     return function (x) { return x.onFunc.apply(x, args); };
 };
 exports.onFunc = onFunc;
-/**
- * Verify the given value passes the guard. If not, throw an exception.
- *
- * @example
- * ```ts
- * const a = isOrCrash(isNumber)(4 as unknown); // a is of type number, doesn't throw
- * const b: number = a; // ok
- * ```
- *
- * @param guard
- * @param msg
- */
-var isOrCrash = function (guard, msg) {
-    if (msg === void 0) { msg = 'invalid value'; }
-    return function (x) {
-        return (0, exports.some)(x).narrow(guard).orCrash(msg);
-    };
-};
-exports.isOrCrash = isOrCrash;
-/**
- * Asserts a type via a given guard.
- *
- * @example
- * ```ts
- * const a: unknown = 1 as unknown;
- * assertType(a, isNumber);
- * const b: number = a; // ok
- * ```
- *
- * @param x
- * @param guard
- * @param msg
- */
-var assertType = function (x, guard, msg) {
-    if (msg === void 0) { msg = 'invalid value'; }
-    (0, exports.isOrCrash)(guard, msg)(x);
-};
-exports.assertType = assertType;
+function isOrCrash(guard, messageOrErrorFactory) {
+    if (messageOrErrorFactory === void 0) { messageOrErrorFactory = 'invalid value'; }
+    if (typeof messageOrErrorFactory === 'string') {
+        return function (x) { return (0, exports.some)(x).narrow(guard).orCrash(messageOrErrorFactory); };
+    }
+    return function (x) { return (0, exports.some)(x).narrow(guard).orCrash(messageOrErrorFactory); };
+}
+function assertType(x, guard, messageOrErrorFactory) {
+    if (messageOrErrorFactory === void 0) { messageOrErrorFactory = 'invalid value'; }
+    if (typeof messageOrErrorFactory === 'string') {
+        isOrCrash(guard, messageOrErrorFactory)(x);
+        return;
+    }
+    isOrCrash(guard, messageOrErrorFactory)(x);
+}
 /** Returns the minimum value in an array. */
 var min = function (x) { return (0, exports.opt)(x).minIn(); };
 exports.min = min;

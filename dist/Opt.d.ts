@@ -363,12 +363,14 @@ export declare abstract class Opt<T> {
      * ```ts
      * some(1).someOrCrash('fail') // Some(1)
      * none.someOrCrash('fail') // throws
+     * none.someOrCrash(() => new Error('fail')) // throws Error('fail')
      * ```
      *
      * @see {@link someOrCrash}
      *
      * @param msg
      */
+    abstract someOrCrash(errorFactory: () => unknown): Some<T>;
     abstract someOrCrash(msg: string): Some<T>;
     /**
      * Returns value for {@link Some} or `undefined` for {@link None}.
@@ -1016,6 +1018,7 @@ export declare abstract class Opt<T> {
      * @param guard
      * @param crashMessage
      */
+    abstract narrowOrCrash<U>(guard: (value: any) => value is U, errorFactory?: () => unknown): Opt<U>;
     abstract narrowOrCrash<U>(guard: (value: any) => value is U, crashMessage?: string): Opt<U>;
     /**
      * Print value to console.
@@ -1388,6 +1391,7 @@ declare class None<T> extends Opt<T> {
     mapStr(this: None<string>, _f: (c: string) => string): None<string>;
     orCrash(messageOrFactory: string | (() => unknown)): T;
     someOrCrash(msg: string): Some<T>;
+    someOrCrash(errorFactory: () => unknown): Some<T>;
     orNull(): T | null;
     orUndef(): T | undefined;
     orFalse(): false | T;
@@ -1422,6 +1426,7 @@ declare class None<T> extends Opt<T> {
     countIn<U>(this: None<U[]>, _f: (x: U) => boolean): Opt<number>;
     narrow<U>(_guard: (value: any) => value is U): Opt<U>;
     narrowOrCrash<U>(guard: (value: any) => value is U, _crashMessage?: string): Opt<U>;
+    narrowOrCrash<U>(guard: (value: any) => value is U, _errorFactory?: () => unknown): Opt<U>;
     print(tag?: string): Opt<T>;
     equals(other: Opt<T>, _comparator?: EqualityFunction): boolean;
     prop<K extends (T extends object ? keyof T : never)>(_key: K): OptSafe<T[K]>;
@@ -1451,6 +1456,7 @@ declare class Some<T> extends Opt<T> {
     orCrash(message: string): T;
     orCrash(errorFactory: () => unknown): T;
     someOrCrash(_msg: string): Some<T>;
+    someOrCrash(_errorFactory: () => unknown): Some<T>;
     orNull(): T | null;
     orUndef(): T | undefined;
     orFalse(): false | T;
@@ -1484,7 +1490,8 @@ declare class Some<T> extends Opt<T> {
     zipIn<U, V>(this: Opt<readonly U[]>, other: V[] | EmptyValue): Opt<readonly [U, V][]>;
     countIn<U>(this: Some<U[]>, f: (x: U) => boolean): Opt<number>;
     narrow<U>(guard: (value: any) => value is U): Opt<U>;
-    narrowOrCrash<U>(guard: (value: any) => value is U, crashMessage?: string): Opt<U>;
+    narrowOrCrash<U>(guard: (value: any) => value is U, _crashMessage?: string): Opt<U>;
+    narrowOrCrash<U>(guard: (value: any) => value is U, _errorFactory?: () => unknown): Opt<U>;
     print(tag?: string): Opt<T>;
     equals(other: Opt<T>, comparator?: EqualityFunction): boolean;
     prop<K extends (T extends object ? keyof T : never)>(key: K): OptSafe<T[K]>;
@@ -2008,7 +2015,8 @@ export declare const find: <T>(predicate: (_: T) => boolean) => (xs: readonly T[
 /** @see {@link Opt.narrow} */
 export declare const narrow: <U>(guard: (value: any) => value is U) => <T>(x: Opt<T>) => Opt<U>;
 /** @see {@link Opt.narrowOrCrash} */
-export declare const narrowOrCrash: <T, U>(guard: (value: any) => value is U, crashMessage?: string) => (x: Opt<T>) => Opt<U>;
+export declare function narrowOrCrash<T, U>(guard: (value: any) => value is U, errorFactory: () => unknown): (x: Opt<T>) => Opt<U>;
+export declare function narrowOrCrash<T, U>(guard: (value: any) => value is U, crashMessage?: string): (x: Opt<T>) => Opt<U>;
 /**
  * Same as {@link Opt.print}, but supports arbitrary argument types.
  * @see {@link Opt.print}
@@ -2500,10 +2508,10 @@ export declare const onFunc: <T extends AnyFunc, A extends Parameters<T>>(...arg
  * ```
  *
  * @param guard
- * @param msg
+ * @param message
  */
-export declare const isOrCrash: <T>(guard: (x: unknown) => x is T, msg?: string) => (x: unknown) => T;
-type AssertTypeFunc = <T>(x: unknown, guard: (x: unknown) => x is T, msg?: string) => asserts x is T;
+export declare function isOrCrash<T>(guard: (x: unknown) => x is T, message?: string): (x: unknown) => T;
+export declare function isOrCrash<T>(guard: (x: unknown) => x is T, errorFactory: () => unknown): (x: unknown) => T;
 /**
  * Asserts a type via a given guard.
  *
@@ -2518,7 +2526,8 @@ type AssertTypeFunc = <T>(x: unknown, guard: (x: unknown) => x is T, msg?: strin
  * @param guard
  * @param msg
  */
-export declare const assertType: AssertTypeFunc;
+export declare function assertType<T>(x: unknown, guard: (x: unknown) => x is T, message?: string): asserts x is T;
+export declare function assertType<T>(x: unknown, guard: (x: unknown) => x is T, errorFactory: () => unknown): asserts x is T;
 /** Returns the minimum value in an array. */
 export declare const min: <R>(x: readonly R[]) => OptSafe<R>;
 /** @see {@link Opt.minIn} */

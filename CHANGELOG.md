@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [6.1.0] - 2025-03-01
 ### Added
 - `propOrNull`, `propOrNullNaked`, `propOrUndef`, `propOrUndefNaked`, `propOrZero` and `propOrZeroNaked`
 - `genNakedPropGetters` and `genPropGetters`
